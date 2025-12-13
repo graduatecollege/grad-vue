@@ -1,22 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
-interface Props {
-    heading: string;
-    showTitle?: boolean;
-    titleH1?: boolean;
-    titleLink?: string;
-}
-
-const props = withDefaults(defineProps<Props>(), {
-    showTitle: true,
-    titleH1: false,
-    titleLink: undefined,
-});
-
-const titleText = computed(() => {
-    return props.heading;
-});
 </script>
 
 <template>
@@ -44,16 +28,8 @@ const titleText = computed(() => {
                 ></path>
             </svg>
         </div>
-        <div v-if="props.showTitle" class="title">
-            <h1 v-if="props.titleH1" class="app-name">
-                {{ titleText }}
-            </h1>
-            <router-link v-else-if="props.titleLink" :to="props.titleLink" class="app-name">
-                {{ titleText }}
-            </router-link>
-            <span v-else class="app-name">
-                {{ titleText }}
-            </span>
+        <div class="title">
+            <slot name="title"></slot>
         </div>
         <div id="header-title"></div>
         <div class="app-controls-wrap">
@@ -69,6 +45,26 @@ const titleText = computed(() => {
     --toolbar-background-gradient-start: transparent;
     --toolbar-app-name-color: var(--g-primary-500);
     --toolbar-hover-color: var(--g-accent-700);
+
+    .title {
+        display: flex;
+        align-items: center;
+        margin-left: 20px;
+        flex: 1;
+    }
+
+    .title > * {
+        font-size: 20px;
+        font-family: "Source Sans";
+        font-style: normal;
+        line-height: 30px;
+        color: var(--g-primary-500);
+        margin: 0;
+    }
+
+    .app-controls-wrap {
+        margin-right: 20px;
+    }
 }
 
 .app-name {
