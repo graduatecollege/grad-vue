@@ -1,0 +1,282 @@
+<script setup lang="ts">
+import { nextTick, onBeforeUnmount, ref, useTemplateRef, watch } from "vue";
+import { useOverlayStack } from "../compose/useOverlayStack.ts";
+import { useOverlayFocus } from "../compose/useOverlayFocus.ts";
+import { useOverlayEscape } from "../compose/useOverlayEscape.ts";
+import { calculatePopoverPosition } from "../compose/popoverPosition.ts";
+
+const props = defineProps({
+    modelValue: { type: Boolean, default: false },
+    minimal: { type: Boolean, default: false },
+});
+const emit = defineEmits(["update:modelValue", "show", "hide"]);
+
+const open = ref(props.modelValue);
+const triggerRef = useTemplateRef<HTMLElement | null>("triggerRef");
+const popoverRef = useTemplateRef<HTMLElement | null>("popoverRef");
+
+const { push, pop, isTop } = useOverlayStack();
+const { activate, deactivate } = useOverlayFocus(popoverRef, isTop);
+useOverlayEscape([popoverRef, triggerRef], isTop, open, hide, pop);
+
+watch(
+    () => props.modelValue,
+    (val) => {
+        open.value = val;
+    },
+);
+
+watch(open, (val) => {
+    emit("update:modelValue", val);
+    if (val) {
+        nextTick(() => {
+            nextTick(() => activate());
+        });
+        push();
+        emit("show");
+    } else {
+        deactivate();
+        pop();
+        emit("hide");
+    }
+});
+
+function show() {
+    open.value = true;
+}
+
+function hide() {
+    open.value = false;
+}
+
+function toggle() {
+    open.value = !open.value;
+}
+
+const popoverPosition = ref<Record<string, any>>({ top: 0, left: 0 });
+const arrowPosition = ref<Record<string, any>>({ left: "50%" });
+const popoverAbove = ref(false);
+const popoverOverlay = ref(false);
+let resizeObserver: ResizeObserver | null = null;
+
+function updatePopoverPosition() {
+    if (!triggerRef.value || !popoverRef.value) {
+        return;
+    }
+    const triggerRect = triggerRef.value.getBoundingClientRect();
+    const popoverRect = popoverRef.value.getBoundingClientRect();
+    // Account for possible vertical scrollbar reducing viewport width
+    const scrollbarWidth =
+        window.innerWidth - document.documentElement.clientWidth;
+    const viewportWidth = window.innerWidth - scrollbarWidth;
+    const viewportRect = new DOMRect(
+        window.scrollX,
+        window.scrollY,
+        viewportWidth,
+        window.innerHeight,
+    );
+
+    const triggerParent = triggerRef.value.parentElement;
+
+    const { top, left, xOffset, placedAbove, overlay } =
+        calculatePopoverPosition(triggerRect, popoverRect, viewportRect, {
+            gap: props.minimal ? 0 : 8,
+        });
+    popoverPosition.value = { top, left };
+    arrowPosition.value = {
+        left: `${popoverRect.width / 2 - xOffset}px`,
+        top: placedAbove ? "auto" : undefined,
+        bottom: placedAbove ? "-8px" : undefined,
+    };
+    popoverAbove.value = placedAbove;
+    popoverOverlay.value = overlay;
+}
+
+watch(open, (val) => {
+    if (val) {
+        nextTick(() => {
+            updatePopoverPosition();
+            window.addEventListener("resize", updatePopoverPosition);
+            if (popoverRef.value) {
+                if (resizeObserver) {
+                    resizeObserver.disconnect();
+                }
+                resizeObserver = new ResizeObserver(() =>
+                    updatePopoverPosition(),
+                );
+                resizeObserver.observe(popoverRef.value);
+            }
+        });
+    } else {
+        window.removeEventListener("resize", updatePopoverPosition);
+        if (resizeObserver) {
+            resizeObserver.disconnect();
+        }
+    }
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener("resize", updatePopoverPosition);
+    if (resizeObserver) {
+        resizeObserver.disconnect();
+    }
+});
+</script>
+
+<template>
+    <div ref="triggerRef" class="trigger-wrap">
+        <slot name="trigger" :onToggle="toggle"></slot>
+    </div>
+    <transition name="popover-expand" appear>
+        <div
+            v-if="open"
+            ref="popoverRef"
+            :class="{
+                'custom-popover': true,
+                'popover-above': popoverAbove,
+                'popover-below': !popoverAbove,
+                minimal,
+            }"
+            role="dialog"
+            aria-modal="true"
+            :style="{
+                top: popoverPosition.top + 'px',
+                left: popoverPosition.left + 'px',
+            }"
+        >
+            <div
+                v-if="!popoverOverlay && !minimal"
+                class="popover-arrow"
+                :class="{ 'arrow-above': popoverAbove }"
+                :style="arrowPosition"
+                aria-hidden="true"
+            ></div>
+            <slot name="content"></slot>
+            <button
+                v-if="!minimal"
+                class="p-button p-button-text popover-close fa-regular fa-close"
+                type="button"
+                aria-label="Close popover"
+                @click="hide"
+            ></button>
+        </div>
+    </transition>
+</template>
+
+<style>
+.custom-popover {
+    h2 {
+        font-size: 1.25rem;
+        margin: 0 0 0.75rem 0;
+    }
+    p {
+        margin: 0 0 0.5rem 0;
+    }
+}
+</style>
+
+<style scoped>
+.trigger-wrap {
+    display: inline-block;
+}
+.custom-popover {
+    position: fixed;
+    z-index: 1000;
+    background: var(--g-surface-0);
+    border: 1px solid var(--g-surface-200);
+    color: var(--g-surface-900);
+    font-weight: normal;
+    font-size: 1rem;
+    border-radius: 4px;
+    box-shadow: var(--il-shadow);
+    padding: 1.5rem 1rem 1rem;
+    min-width: 200px;
+    max-width: 500px;
+    top: 0;
+    left: 0;
+    text-align: left;
+}
+.custom-popover.minimal {
+    padding: 0;
+    min-width: 0;
+}
+
+.popover-arrow {
+    position: absolute;
+    top: -8px;
+    width: 20px;
+    height: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.popover-arrow::after {
+    content: "";
+    display: block;
+    margin: 0 auto;
+    width: 16px;
+    height: 8px;
+    background: transparent;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid white;
+    /* Add border for the arrow */
+    position: relative;
+    z-index: 2;
+}
+
+.popover-arrow::before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: -1px;
+    left: 1px;
+    width: 18px;
+    height: 9px;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid var(--g-surface-200, #ccc);
+    z-index: 1;
+}
+
+.arrow-above {
+    transform: translateX(-50%) rotate(180deg);
+}
+.popover-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    border: none;
+    font-size: 1rem;
+    line-height: 1;
+    padding: 0.25rem 0.5rem;
+}
+
+.popover-expand-enter-active,
+.popover-expand-leave-active {
+    transition:
+        opacity 0.18s cubic-bezier(0.4, 0, 0.2, 1),
+        transform 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.popover-expand-enter-from,
+.popover-expand-leave-to {
+    opacity: 0;
+    transform: scale(0.95);
+}
+
+.popover-expand-enter-to,
+.popover-expand-leave-from {
+    opacity: 1;
+    transform: scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .popover-expand-enter-active,
+    .popover-expand-leave-active {
+        transition: none !important;
+    }
+}
+</style>

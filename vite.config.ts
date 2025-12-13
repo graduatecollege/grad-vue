@@ -1,26 +1,21 @@
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
-import { resolve } from 'path'
+import { defineConfig } from "vite";
+// @ts-ignore Not sure why WebStorm is complaining about this line
+import vue from "@vitejs/plugin-vue";
+import dts from 'vite-plugin-dts'
+import { resolve } from "path";
 
-// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue()],
-  build: {
-    lib: {
-      entry: resolve(__dirname, 'src/index.ts'),
-      name: 'GradVue',
-      fileName: (format) => `grad-vue.${format}.js`
-    },
-    rollupOptions: {
-      // Externalize deps that shouldn't be bundled into the library
-      external: ['vue'],
-      output: {
-        // Provide global variables to use in the UMD build for externalized deps
-        globals: {
-          vue: 'Vue'
+    plugins: [vue(), dts()],
+    build: {
+        sourcemap: true,
+        lib: {
+            entry: resolve(__dirname, "src/grad-vue.ts"),
+            formats: ["es"],
+            fileName: "grad-vue",
+            name: "grad-vue",
         },
-        exports: 'named'
-      }
-    }
-  }
-})
+        rollupOptions: {
+            external: ["vue", "@vueuse/core", "@vueuse/integrations", "focus-trap"],
+        },
+    },
+});
