@@ -1,0 +1,48 @@
+{
+    "name": "@graduatecollege/grad-vue",
+    "version": "0.1.0",
+    "description": "Shared Vue.js components for Grad apps.",
+    "type": "module",
+    "main": "./dist/grad-vue.js",
+    "module": "./dist/grad-vue.js",
+    "exports": {
+        ".": {
+            "import": "./dist/grad-vue.js"
+        },
+        "./grad-vue.css": {
+            "import": "./dist/grad-vue.css"
+        }
+    },
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build && vue-tsc --emitDeclarationOnly",
+        "watch": "vue-tsc --watch & vite build --watch",
+        "preview": "vite preview"
+    },
+    "keywords": [
+        "vue",
+        "vue3",
+        "components",
+        "graduate-college"
+    ],
+    "author": "Graduate College",
+    "license": "MIT",
+    "dependencies": {
+        "vue": "^3.5.25",
+        "@vueuse/core": "^14.1.0",
+        "@vueuse/integrations": "^14.1.0",
+        "focus-trap": "^7.6.6"
+    },
+    "devDependencies": {
+        "@types/node": "^24.10.3",
+        "@vitejs/plugin-vue": "^6.0.3",
+        "vite-plugin-dts": "^4.5.4",
+        "typescript": "^5.9.3",
+        "vite": "^7.2.7",
+        "vue-tsc": "^3.1.8",
+        "prettier": "^3.7.4"
+    }
+}
