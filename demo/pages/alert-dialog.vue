@@ -1,7 +1,17 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-const isOpen = ref(false);
+const showDialog = ref(false);
+
+const handleConfirm = () => {
+  showDialog.value = false;
+  alert('Confirmed!');
+};
+
+const handleCancel = () => {
+  showDialog.value = false;
+  alert('Cancelled!');
+};
 </script>
 
 <template>
@@ -10,20 +20,21 @@ const isOpen = ref(false);
     
     <ComponentDemo
       name="Basic Alert Dialog"
-      description="A modal alert dialog for important user confirmations."
+      description="A modal alert dialog for important user confirmations. Click the button to open the dialog."
     >
-      <GButton @click="isOpen = true">Open Alert Dialog</GButton>
+      <GButton @click="showDialog = true">Open Alert Dialog</GButton>
       
-      <GAlertDialog v-model="isOpen">
-        <template #title>Important Notice</template>
-        <template #default>
-          <p>This is an important message that requires your attention.</p>
-        </template>
-        <template #actions>
-          <GButton @click="isOpen = false">OK</GButton>
-          <GButton theme="secondary" @click="isOpen = false">Cancel</GButton>
-        </template>
-      </GAlertDialog>
+      <Teleport to="body">
+        <GAlertDialog
+          v-if="showDialog"
+          label="Important Notice"
+          button-text="Confirm"
+          @confirm="handleConfirm"
+          @cancel="handleCancel"
+        >
+          <p>This is an important message that requires your attention. Please confirm or cancel.</p>
+        </GAlertDialog>
+      </Teleport>
     </ComponentDemo>
   </div>
 </template>
