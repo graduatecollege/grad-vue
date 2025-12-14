@@ -67,3 +67,20 @@ import { GButton } from '@illinois-grad/grad-vue'
   <GButton @click="handleClick">Click me</GButton>
 </template>
 ```
+
+## Release Process
+
+This package is automatically published to NPM when a semantic version tag (prefixed with `v`) is pushed to the repository. For example:
+
+```bash
+# Create and push a new release
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+This will:
+1. Build the package
+2. Create a GitHub release with auto-generated release notes
+3. Publish the package to NPM
+
+**Note:** Ensure the version in `package.json` matches the tag version before pushing.
