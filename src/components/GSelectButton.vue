@@ -56,7 +56,7 @@ function onChange(val: string | number) {
 
 <template>
     <fieldset :class="groupClasses" :disabled="props.disabled">
-        <legend class="legend">{{ props.label }}</legend>
+        <legend class="g-select-btn-legend">{{ props.label }}</legend>
         <div class="g-select-btn-row">
             <template v-for="(option, idx) in normalizedOptions" :key="option.value">
                 <input
@@ -88,7 +88,7 @@ function onChange(val: string | number) {
     min-width: 0;
 }
 
-.legend {
+.g-select-btn-legend {
     position: static;
     display: block;
     margin: 0 0 0.5rem 0;

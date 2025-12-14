@@ -10,7 +10,6 @@
         "resolveJsonModule": true,
         "isolatedModules": true,
 
-        /* Linting */
         "strict": true,
         "noFallthroughCasesInSwitch": true,
         "declaration": true,

@@ -87,7 +87,7 @@ function onKeydown(e: KeyboardEvent) {
 </script>
 
 <template>
-    <div class="g-text-input-wrap" :class="{ 'has-error': props.error }">
+    <div class="g-text-input-wrap" :class="{ 'g-text-input-has-error': props.error }">
         <input
             :value="model"
             :placeholder="props.placeholder"
@@ -118,7 +118,7 @@ function onKeydown(e: KeyboardEvent) {
     background: var(--g-surface-0);
     color: var(--g-surface-950);
 }
-.has-error {
+.g-text-input-has-error {
     .g-text-input {
         border-color: var(--g-danger-600);
         background: var(--g-danger-100);

@@ -76,8 +76,6 @@ function updatePopoverPosition() {
         window.innerHeight,
     );
 
-    const triggerParent = triggerRef.value.parentElement;
-
     const { top, left, xOffset, placedAbove, overlay } =
         calculatePopoverPosition(triggerRect, popoverRect, viewportRect, {
             gap: props.minimal ? 0 : 8,
@@ -124,18 +122,18 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <div ref="triggerRef" class="trigger-wrap">
+    <div ref="triggerRef" class="g-popover-trigger">
         <slot name="trigger" :onToggle="toggle"></slot>
     </div>
-    <transition name="popover-expand" appear>
+    <transition name="g-popover-expand" appear>
         <div
             v-if="open"
             ref="popoverRef"
             :class="{
-                'custom-popover': true,
-                'popover-above': popoverAbove,
-                'popover-below': !popoverAbove,
-                minimal,
+                'g-popover': true,
+                'g-popover-above': popoverAbove,
+                'g-popover-below': !popoverAbove,
+                'g-popover-minimal': minimal,
             }"
             role="dialog"
             aria-modal="true"
@@ -146,15 +144,15 @@ onBeforeUnmount(() => {
         >
             <div
                 v-if="!popoverOverlay && !minimal"
-                class="popover-arrow"
-                :class="{ 'arrow-above': popoverAbove }"
+                class="g-popover-arrow"
+                :class="{ 'g-popover-arrow-above': popoverAbove }"
                 :style="arrowPosition"
                 aria-hidden="true"
             ></div>
             <slot name="content"></slot>
             <button
                 v-if="!minimal"
-                class="p-button p-button-text popover-close fa-regular fa-close"
+                class="p-button p-button-text g-popover-close fa-regular fa-close"
                 type="button"
                 aria-label="Close popover"
                 @click="hide"
@@ -164,7 +162,7 @@ onBeforeUnmount(() => {
 </template>
 
 <style>
-.custom-popover {
+.g-popover {
     h2 {
         font-size: 1.25rem;
         margin: 0 0 0.75rem 0;
@@ -176,10 +174,10 @@ onBeforeUnmount(() => {
 </style>
 
 <style scoped>
-.trigger-wrap {
+.g-popover-trigger {
     display: inline-block;
 }
-.custom-popover {
+.g-popover {
     position: fixed;
     z-index: 1000;
     background: var(--g-surface-0);
@@ -196,12 +194,12 @@ onBeforeUnmount(() => {
     left: 0;
     text-align: left;
 }
-.custom-popover.minimal {
+.g-popover.g-popover-minimal {
     padding: 0;
     min-width: 0;
 }
 
-.popover-arrow {
+.g-popover-arrow {
     position: absolute;
     top: -8px;
     width: 20px;
@@ -212,7 +210,7 @@ onBeforeUnmount(() => {
     z-index: 1;
 }
 
-.popover-arrow::after {
+.g-popover-arrow::after {
     content: "";
     display: block;
     margin: 0 auto;
@@ -227,7 +225,7 @@ onBeforeUnmount(() => {
     z-index: 2;
 }
 
-.popover-arrow::before {
+.g-popover-arrow::before {
     content: "";
     display: block;
     position: absolute;
@@ -241,10 +239,10 @@ onBeforeUnmount(() => {
     z-index: 1;
 }
 
-.arrow-above {
+.g-popover-arrow-above {
     transform: translateX(-50%) rotate(180deg);
 }
-.popover-close {
+.g-popover-close {
     position: absolute;
     top: 0;
     right: 0;
@@ -254,28 +252,28 @@ onBeforeUnmount(() => {
     padding: 0.25rem 0.5rem;
 }
 
-.popover-expand-enter-active,
-.popover-expand-leave-active {
+.g-popover-expand-enter-active,
+.g-popover-expand-leave-active {
     transition:
         opacity 0.18s cubic-bezier(0.4, 0, 0.2, 1),
         transform 0.18s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.popover-expand-enter-from,
-.popover-expand-leave-to {
+.g-popover-expand-enter-from,
+.g-popover-expand-leave-to {
     opacity: 0;
     transform: scale(0.95);
 }
 
-.popover-expand-enter-to,
-.popover-expand-leave-from {
+.g-popover-expand-enter-to,
+.g-popover-expand-leave-from {
     opacity: 1;
     transform: scale(1);
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .popover-expand-enter-active,
-    .popover-expand-leave-active {
+    .g-popover-expand-enter-active,
+    .g-popover-expand-leave-active {
         transition: none !important;
     }
 }

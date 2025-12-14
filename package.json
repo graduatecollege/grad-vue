@@ -1,7 +1,16 @@
 {
-    "name": "@graduatecollege/grad-vue",
+    "name": "@illinois-grad/grad-vue",
     "version": "0.1.0",
-    "description": "Shared Vue.js components for Grad apps.",
+    "description": "Shared Vue.js components for Graduate College apps.",
+    "keywords": [
+        "vue",
+        "vue3",
+        "components",
+        "graduate-college"
+    ],
+    "author": "University of Illinois Graduate College",
+    "license": "MIT",
+    "repository": "github:graduatecollege/grad-vue",
     "type": "module",
     "main": "./dist/grad-vue.js",
     "module": "./dist/grad-vue.js",
@@ -22,14 +31,6 @@
         "watch": "vue-tsc --watch & vite build --watch",
         "preview": "vite preview"
     },
-    "keywords": [
-        "vue",
-        "vue3",
-        "components",
-        "graduate-college"
-    ],
-    "author": "Graduate College",
-    "license": "MIT",
     "dependencies": {
         "vue": "^3.5.25",
         "@vueuse/core": "^14.1.0",

@@ -2,12 +2,10 @@
     -webkit-text-size-adjust: 100%;
     word-break: normal;
     tab-size: 4;
-    --background: #fff;
-    --toolbar-height: 48px;
+    --g-toolbar-height: 48px;
     --g-border-radius-s: 2px;
     --g-border-radius-m: 4px;
     --g-border-radius-l: 8px;
-
 
     --g-green-500: var(--il-prairie);
 

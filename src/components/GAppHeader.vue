@@ -6,54 +6,49 @@ import { computed } from "vue";
 <template>
     <header
         :class="{
-            'grad-app-header': true,
+            'g-app-header': true,
         }"
     >
-        <div class="header-background">
-            <div class="background-pattern"></div>
-            <div class="background-gradient"></div>
+        <div class="g-app-header__background">
+            <div class="g-app-header__background-pattern"></div>
+            <div class="g-app-header__background-gradient"></div>
         </div>
-        <div class="grad">
+        <div class="g-app-header__brand">
             <router-link to="/">
                 <em>GRAD</em>
             </router-link>
         </div>
-        <div class="block-i-container">
-            <svg class="block-i" role="img" width="55" viewBox="0 0 55 79" xmlns="http://www.w3.org/2000/svg">
+        <div class="g-app-header__block-i-container">
+            <svg class="g-app-header__block-i" role="img" width="55" viewBox="0 0 55 79" xmlns="http://www.w3.org/2000/svg">
                 <title>Block I logo</title>
-                <path class="block-i__outline" d="M54.2 21.1V0H0v21.1h12v36.1H0v21.1h54.2V57.2h-12V21.1z"></path>
+                <path class="g-app-header__block-i-outline" d="M54.2 21.1V0H0v21.1h12v36.1H0v21.1h54.2V57.2h-12V21.1z"></path>
                 <path
-                    class="block-i__fill"
+                    class="g-app-header__block-i-fill"
                     d="M42.1 18.1h9V3H3v15h9c1.7 0 3 1.3 3 3v36.1c0 1.7-1.3 3-3 3H3v15h48.1v-15h-9c-1.7 0-3-1.3-3-3v-36c0-1.7 1.4-3 3-3z"
                 ></path>
             </svg>
         </div>
-        <div class="title">
+        <div class="g-app-header__title">
             <slot name="title"></slot>
         </div>
         <div id="header-title"></div>
-        <div class="app-controls-wrap">
-            <slot name="app-controls" class="app-controls"></slot>
+        <div class="g-app-header__app-controls-wrap">
+            <slot name="app-controls" class="g-app-header__app-controls"></slot>
         </div>
     </header>
 </template>
 
 <style>
-.grad-app-header {
-    --toolbar-border-color: var(--g-accent-500);
-    --toolbar-background: var(--g-surface-100);
-    --toolbar-background-gradient-start: transparent;
-    --toolbar-app-name-color: var(--g-primary-500);
-    --toolbar-hover-color: var(--g-accent-700);
+.g-app-header {
 
-    .title {
+    .g-app-header__title {
         display: flex;
         align-items: center;
         margin-left: 20px;
         flex: 1;
     }
 
-    .title > * {
+    .g-app-header__title > * {
         font-size: 20px;
         font-family: "Source Sans";
         font-style: normal;
@@ -62,13 +57,13 @@ import { computed } from "vue";
         margin: 0;
     }
 
-    .app-controls-wrap {
+    .g-app-header__app-controls-wrap {
         margin-right: 20px;
     }
 }
 
 .app-name {
-    color: var(--toolbar-app-name-color);
+    color: var(--g-primary-500);
     font-size: 1.25rem;
     font-family: "Source Sans";
     font-style: normal;
@@ -78,11 +73,11 @@ import { computed } from "vue";
     text-decoration: none;
 
     a {
-        color: var(--toolbar-app-name-color);
+        color: var(--g-primary-500);
 
         &:hover {
             text-decoration: underline;
-            color: var(--toolbar-hover-color);
+            color: var(--g-accent-700);
         }
     }
 
@@ -93,40 +88,27 @@ import { computed } from "vue";
 a.app-name {
     &:hover {
         text-decoration: underline;
-        color: var(--toolbar-hover-color);
-    }
-}
-
-.has-department-selector .app-name {
-    @media screen and (max-width: 870px) {
-        clip: rect(1px, 1px, 1px, 1px) !important;
-        clip-path: inset(50%) !important;
-        height: 1px !important;
-        margin: -1px !important;
-        overflow: hidden !important;
-        padding: 0 !important;
-        position: absolute !important;
-        width: 1px !important;
+        color: var(--g-accent-700);
     }
 }
 </style>
 
 <style scoped>
-.grad-app-header {
-    background-color: var(--toolbar-background);
+.g-app-header {
+    background-color: var(--g-surface-100);
     position: sticky;
     top: 0;
     display: flex;
     align-items: center;
     z-index: 2;
-    height: var(--toolbar-height);
-    border-bottom: 2px solid var(--toolbar-border-color);
+    height: var(--g-toolbar-height);
+    border-bottom: 2px solid var(--g-accent-500);
     box-shadow:
         0px 1px 2px 0px rgba(0, 0, 0, 0.25),
         0px 1px 10px 5px rgba(0, 0, 0, 0.08);
 }
 
-.header-background {
+.g-app-header__background {
     position: absolute;
     z-index: -1;
     top: 0;
@@ -135,7 +117,7 @@ a.app-name {
     width: 470px;
 }
 
-.background-pattern {
+.g-app-header__background-pattern {
     position: absolute;
     top: 0;
     left: 0;
@@ -147,20 +129,20 @@ a.app-name {
 }
 
 .darkmode {
-    .background-pattern {
+    .g-app-header__background-pattern {
         background-image: url('data:image/svg+xml,<%3Fxml version="1.0" encoding="UTF-8"%3F><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 712.9248 669.165"><defs><linearGradient id="linear-gradient" x1="-1489.8977" y1="3840.7045" x2="-1497.1206" y2="3367.6068" gradientTransform="translate(-3080.7102 -3500.1236) rotate(-180) scale(2.0465 -1)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="%2313294b"/><stop offset="1" stop-color="%230071ce"/></linearGradient><linearGradient id="linear-gradient-2" x1="-1489.8977" y1="4093.3564" x2="-1497.1204" y2="3620.2586" gradientTransform="translate(-2902.0583 -3574.1233) rotate(-180) scale(2.0465 -1)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="%2313294b"/><stop offset="1" stop-color="%230071ce"/></linearGradient><linearGradient id="linear-gradient-3" x1="-1489.8976" y1="4346.0085" x2="-1497.1205" y2="3872.9108" gradientTransform="translate(-2723.4065 -3648.1232) rotate(-180) scale(2.0465 -1)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="%2313294b"/><stop offset="1" stop-color="%230071ce"/></linearGradient><linearGradient id="linear-gradient-4" x1="-1489.8976" y1="4598.6606" x2="-1497.1205" y2="4125.5627" gradientTransform="translate(-2544.7544 -3722.123) rotate(-180) scale(2.0465 -1)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="%2313294b"/><stop offset="1" stop-color="%230071ce"/></linearGradient></defs><g id="Blue"><g clip-path="url(%23clippath)"><g><rect x="-1471.1094" y="79.7585" width="2887.354" height="252.652" transform="translate(-153.7585 40.9631) rotate(-45)" fill="url(%23linear-gradient)"/><rect x="-1292.4576" y="258.4107" width="2887.354" height="252.652" transform="translate(-227.7588 219.615) rotate(-45)" fill="url(%23linear-gradient-2)"/><rect x="-1113.8058" y="437.0627" width="2887.354" height="252.652" transform="translate(-301.759 398.2669) rotate(-45)" fill="url(%23linear-gradient-3)"/><rect x="-935.1538" y="615.715" width="2887.354" height="252.652" transform="translate(-375.7592 576.919) rotate(-45)" fill="url(%23linear-gradient-4)"/><rect x="-756.5019" y="794.367" width="2887.354" height="252.652" transform="translate(-449.7594 755.5709) rotate(-45)" fill="url(%23linear-gradient-5)"/><rect x="-577.8503" y="973.0192" width="2887.3541" height="252.652" transform="translate(-523.7597 934.2227) rotate(-45)" fill="url(%23linear-gradient-6)"/></g></g></g></svg>');
     }
 
-    .block-i-container {
+    .g-app-header__block-i-container {
         background: var(--il-orange);
     }
 
-    .block-i__fill {
+    .g-app-header__block-i-fill {
         fill: var(--il-blue);
     }
 }
 
-.background-gradient {
+.g-app-header__background-gradient {
     position: absolute;
     top: 0;
     left: 0;
@@ -168,18 +150,18 @@ a.app-name {
     right: 0;
     background: linear-gradient(
         90deg,
-        var(--toolbar-background-gradient-start) -15.89%,
-        var(--toolbar-background) 95.85%
+        transparent -15.89%,
+        var(--g-surface-100) 95.85%
     );
 }
 
-.grad {
+.g-app-header__brand {
     &:deep(a) {
         text-decoration: none;
 
         &:hover {
             text-decoration: underline;
-            color: var(--toolbar-app-name-color);
+            color: var(--g-primary-500);
         }
 
         @media screen and (max-width: 740px) {
@@ -200,15 +182,15 @@ a.app-name {
     min-width: 1rem;
 }
 
-.block-i-container {
-    height: calc(var(--toolbar-height) + 3px);
+.g-app-header__block-i-container {
+    height: calc(var(--g-toolbar-height) + 3px);
     margin-top: 6px;
     box-shadow:
         0px 0px 1px 1px rgba(0, 0, 0, 0.08),
         2px 1px 10px 0px rgba(0, 0, 0, 0.35);
 }
 
-.app-controls {
+.g-app-header__app-controls {
     flex: 1;
     display: flex;
     justify-content: flex-end;

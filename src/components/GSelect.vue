@@ -257,11 +257,11 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <div class="g-select-root combo" :class="{ open: open }">
-        <div v-if="!hiddenLabel" :id="baseId + '-label'" class="combo-label g-select-label">{{ props.label }}</div>
+    <div class="g-select-root g-select-combo" :class="{ 'g-select-open': open }">
+        <div v-if="!hiddenLabel" :id="baseId + '-label'" class="g-select-combo-label g-select-label">{{ props.label }}</div>
         <div
             v-if="props.searchable"
-            class="combo-input g-select-control"
+            class="g-select-combo-input g-select-control"
             :id="baseId"
             role="combobox"
             :aria-controls="baseId + '-listbox'"
@@ -301,13 +301,13 @@ onBeforeUnmount(() => {
             >
                 <span aria-hidden="true" class="fa fa-regular fa-close"></span>
             </button>
-            <span class="fa fa-caret-down select-caret"></span>
+            <span class="fa fa-caret-down g-select-caret"></span>
         </div>
         <div
             v-else
             ref="comboRef"
             :id="baseId"
-            class="combo-button g-select-control"
+            class="g-select-combo-button g-select-control"
             role="combobox"
             :aria-controls="baseId + '-listbox'"
             :aria-expanded="open ? 'true' : 'false'"
@@ -330,12 +330,12 @@ onBeforeUnmount(() => {
             >
                 <span aria-hidden="true" class="fa fa-regular fa-close"></span>
             </button>
-            <span class="fa fa-caret-down select-caret"></span>
+            <span class="fa fa-caret-down g-select-caret"></span>
         </div>
         <div
             v-show="open"
             ref="listboxRef"
-            class="combo-menu g-select-list"
+            class="g-select-combo-menu g-select-list"
             role="listbox"
             :id="baseId + '-listbox'"
             v-bind="hiddenLabel ? { 'aria-label': props.label } : { 'aria-labelledby': baseId + '-label' }"
@@ -346,9 +346,9 @@ onBeforeUnmount(() => {
                     v-for="(option, idx) in filteredOptions"
                     :key="option.value"
                     :id="baseId + '-option-' + idx"
-                    class="combo-option g-select-option"
+                    class="g-select-combo-option g-select-option"
                     :class="{
-                        'option-current': idx === activeIndex,
+                        'g-select-option-current': idx === activeIndex,
                         'ilw-theme-blue': option.value === modelValue,
                     }"
                     role="option"
@@ -362,7 +362,7 @@ onBeforeUnmount(() => {
                 </div>
             </template>
             <template v-else>
-                <div aria-live="polite" class="combo-option g-select-option g-select-no-results">No results found.</div>
+                <div aria-live="polite" class="g-select-combo-option g-select-option g-select-no-results">No results found.</div>
             </template>
         </div>
     </div>
@@ -407,20 +407,20 @@ onBeforeUnmount(() => {
     }
 }
 
-.combo-button {
+.g-select-combo-button {
     padding: 0.42rem 1.5rem 0.42rem 1rem;
 }
 
-.select-caret {
+.g-select-caret {
     position: absolute;
     right: 0.5rem;
     line-height: 1.5rem;
     top: calc(50% - 0.8rem);
-    color: var(--g-primary-500-link-hover);
+    color: var(--g-primary-500);
     pointer-events: none;
 }
 
-.combo-menu {
+.g-select-combo-menu {
     background-color: var(--g-surface-0);
     border: 1px solid var(--g-surface-200);
     border-radius: 0 0 var(--g-border-radius-m) var(--g-border-radius-m);
@@ -434,11 +434,11 @@ onBeforeUnmount(() => {
     display: none;
 }
 
-.open .combo-menu {
+.g-select-open .g-select-combo-menu {
     display: block;
 }
 
-.combo-option {
+.g-select-combo-option {
     padding: 10px 12px 12px;
     font-size: 1.125rem;
     cursor: pointer;
@@ -453,7 +453,7 @@ onBeforeUnmount(() => {
     }
 }
 
-.option-current {
+.g-select-option-current {
     border-color: var(--g-accent-700);
 }
 

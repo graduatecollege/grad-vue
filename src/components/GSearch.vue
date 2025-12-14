@@ -165,7 +165,7 @@ watch(
                             :key="item.id"
                             :id="'g-search-option-' + item.id"
                             class="g-search-option"
-                            :class="{ active: flatResults[activeIndex] && flatResults[activeIndex].id === item.id }"
+                            :class="{ 'g-search-option-active': flatResults[activeIndex] && flatResults[activeIndex].id === item.id }"
                             role="option"
                             @mousedown.prevent="selectResult(item)"
                             :aria-selected="flatResults[activeIndex] && flatResults[activeIndex].id === item.id"
@@ -183,7 +183,7 @@ watch(
                     :key="item.id"
                     :id="'g-search-option-' + item.id"
                     class="g-search-option"
-                    :class="{ active: activeIndex === idx }"
+                    :class="{ 'g-search-option-active': activeIndex === idx }"
                     role="option"
                     @mousedown.prevent="selectResult(item)"
                     :aria-selected="activeIndex === idx"
@@ -289,7 +289,7 @@ watch(
     }
 }
 
-.g-search-option.active {
+.g-search-option.g-search-option-active {
     background: var(--g-info-200);
     color: var(--g-primary-500);
     border: 2px solid var(--g-primary-500);
