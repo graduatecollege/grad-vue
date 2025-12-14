@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 
 const selectedValue = ref<string | number | undefined>(undefined);
+const searchableValue = ref<string | number | undefined>(undefined);
 const selectOptions = ref([
   { value: 'option1', label: 'Option 1' },
   { value: 'option2', label: 'Option 2' },
@@ -31,12 +32,13 @@ const selectOptions = ref([
       description="Select with search functionality to filter options."
     >
       <GSelect
-        :model-value="selectedValue"
-        @update:model-value="selectedValue = $event"
+        :model-value="searchableValue"
+        @update:model-value="searchableValue = $event"
         :options="selectOptions"
         label="Searchable select"
         searchable
       />
+      <p style="margin-top: 1rem; color: #6b7280;">Selected: {{ searchableValue }}</p>
     </ComponentDemo>
   </section>
 </template>

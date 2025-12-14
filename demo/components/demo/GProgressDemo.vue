@@ -1,9 +1,3 @@
-<script setup lang="ts">
-import { ref } from 'vue';
-
-const progressValue = ref(50);
-</script>
-
 <template>
   <section id="progress" class="demo-section">
     <h2 class="demo-section__title">GProgress</h2>
