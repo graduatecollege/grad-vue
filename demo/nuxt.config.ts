@@ -12,18 +12,7 @@ export default defineNuxtConfig({
   
   nitro: {
     prerender: {
-      routes: [
-        '/',
-        '/button',
-        '/text-input',
-        '/select',
-        '/select-button',
-        '/search',
-        '/progress',
-        '/popover',
-        '/alert-dialog',
-        '/app-header'
-      ]
+      routes: ['/']
     }
   }
 })
