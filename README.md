@@ -12,6 +12,12 @@ All grad-vue components are **accessibility-first**. We can't make guarantees ab
 complying with specific accessibility standards, but all components are built with
 consideration for all users.
 
+## Demo Site
+
+View live interactive demos and documentation at: [https://graduatecollege.github.io/grad-vue/](https://graduatecollege.github.io/grad-vue/)
+
+The demo site is located in the `demo/` directory and is built with Nuxt 4.
+
 ## Installation
 
 ```bash

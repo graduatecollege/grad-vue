@@ -12,6 +12,12 @@ dist
 dist-ssr
 *.local
 
+# Demo app artifacts
+demo/.nuxt
+demo/.output
+demo/node_modules
+demo/dist
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
