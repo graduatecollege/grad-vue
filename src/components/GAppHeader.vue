@@ -156,6 +156,9 @@ a.app-name {
 }
 
 .g-app-header__brand {
+    min-width: 1rem;
+    margin-top: 2px;
+
     &:deep(a) {
         text-decoration: none;
 
@@ -178,8 +181,6 @@ a.app-name {
         font-weight: 800;
         color: var(--g-primary-300);
     }
-
-    min-width: 1rem;
 }
 
 .g-app-header__block-i-container {
@@ -197,4 +198,22 @@ a.app-name {
     padding: 0 10px;
     gap: 10px;
 }
+.g-app-header__block-i-container {
+    background-color: var(--il-blue);
+    padding: 8px 10px;
+
+    .g-app-header__block-i {
+        display: block;
+        width: 24px;
+    }
+
+    .g-app-header__block-i-outline {
+        fill: #fff;
+    }
+
+    .g-app-header__block-i-fill {
+        fill: var(--il-orange);
+    }
+}
+
 </style>
