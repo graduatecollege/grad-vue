@@ -17,6 +17,10 @@
 
         "outDir": "./dist"
     },
-    "include": ["src/**/*.ts", "src/**/*.vue"],
+    "include": [
+        "src/**/*.ts",
+        "src/**/*.vue",
+        "demo/.nuxt/types/imports.d.ts"
+    ],
     "exclude": ["node_modules", "dist"]
 }

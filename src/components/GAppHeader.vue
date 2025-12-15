@@ -39,6 +39,14 @@ import { computed } from "vue";
 </template>
 
 <style>
+
+html {
+    scroll-padding-top: 70px;
+}
+
+:root {
+    --g-toolbar-height: 56px;
+}
 .g-app-header {
 
     .g-app-header__title {
@@ -95,6 +103,7 @@ a.app-name {
 
 <style scoped>
 .g-app-header {
+    box-sizing: border-box;
     background-color: var(--g-surface-100);
     position: sticky;
     top: 0;
@@ -185,6 +194,7 @@ a.app-name {
 
 .g-app-header__block-i-container {
     height: calc(var(--g-toolbar-height) + 3px);
+    box-sizing: border-box;
     margin-top: 6px;
     box-shadow:
         0px 0px 1px 1px rgba(0, 0, 0, 0.08),
