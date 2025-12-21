@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import ComponentDemo from '../ComponentDemo.vue';
+import { GAlertDialog, GButton } from '@illinois-grad/grad-vue';
 
 const showDialog = ref(false);
 const handleConfirm = () => {
@@ -14,7 +16,7 @@ const handleCancel = () => {
 
 <template>
   <section id="alert-dialog" class="demo-section">
-    <h2 class="demo-section__title">GAlertDialog</h2>
+    <h2 class="demo-section__title">Alert Dialog</h2>
     
     <ComponentDemo
       name="Basic Alert Dialog"

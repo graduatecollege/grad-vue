@@ -27,7 +27,7 @@
     ],
     "scripts": {
         "dev:components": "vite playground",
-        "build": "vite build && vue-tsc --emitDeclarationOnly",
+        "build:components": "vite build && vue-tsc --emitDeclarationOnly",
         "watch": "vue-tsc --watch & vite build --watch",
         "preview": "vite preview"
     },

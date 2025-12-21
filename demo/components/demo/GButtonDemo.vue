@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import ComponentDemo from '../ComponentDemo.vue';
+import { GButton } from '@illinois-grad/grad-vue';
 
 const clickCount = ref(0);
 const handleClick = () => {
@@ -9,7 +11,7 @@ const handleClick = () => {
 
 <template>
   <section id="button" class="demo-section">
-    <h2 class="demo-section__title">GButton</h2>
+    <h2 class="demo-section__title">Button</h2>
     
     <ComponentDemo
       name="Basic Button"

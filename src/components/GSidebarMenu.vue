@@ -1,14 +1,5 @@
-<script setup lang="ts">
-import {
-    computed,
-    getCurrentInstance,
-    onBeforeUnmount,
-    onMounted,
-    ref,
-    watch,
-} from "vue";
-import { useIntersectionObserver } from "@vueuse/core";
-import { useActiveLinkStore } from "../stores/activeLink.store.ts";
+<script setup lang="ts" >
+import { computed, getCurrentInstance } from "vue";
 
 type MenuItem = {
     label: string;
@@ -28,21 +19,23 @@ interface Props {
     offset?: number;
     /** Enable automatic active link tracking for in-page links */
     spy?: boolean;
+    theme: "light" | "dark";
 }
 
 const props = withDefaults(defineProps<Props>(), {
     offset: 70,
     spy: true,
+    theme: "dark",
 });
 
-const activeLinkStore = useActiveLinkStore();
+const activeId = defineModel<string | null>({ default: null, type: String });
 
 const activeLink = computed(() => {
-    if(props.spy && activeLinkStore.activeId) {
-        return "#" + activeLinkStore.activeId;
+    if (props.spy && activeId.value) {
+        return "#" + activeId.value;
     }
     return null;
-})
+});
 
 // Detect vue-router without adding it as a dependency
 const instance = getCurrentInstance();
@@ -60,22 +53,29 @@ function onLinkClick(e: MouseEvent, item: MenuItem) {
     }
 
     const id = item.href.slice(1);
-    const el = document.getElementById(id)?.querySelector<HTMLElement>("h2, h3, h4, h5");
+    const el = document
+        .getElementById(id)
+        ?.querySelector<HTMLElement>("h2, h3, h4, h5");
     if (!el) {
         return;
     }
     e.preventDefault();
     el.setAttribute("tabindex", "-1");
     el.focus();
+    el.scrollIntoView({ block: "start" });
 
     history.replaceState(null, "", item.href);
 }
-
 </script>
 
 <template>
-    <nav class="g-sidebar-menu" :aria-label="title || 'Sidebar navigation'">
+    <nav
+        class="g-sidebar-menu"
+        :class="`g-sidebar-menu__${props.theme}`"
+        :aria-label="title || 'Sidebar navigation'"
+    >
         <h2 v-if="title" class="g-sidebar-menu__title">{{ title }}</h2>
+        <div class="g-sidebar-menu__divider"></div>
         <ul class="g-sidebar-menu__list">
             <li
                 v-for="item in items"
@@ -97,9 +97,14 @@ function onLinkClick(e: MouseEvent, item: MenuItem) {
                     class="g-sidebar-menu__link"
                     :href="item.href || item.to || '#'"
                     :class="{
-                        'is-active': activeLink === (item.href || '')
+                        'g-sidebar-menu__is-active':
+                            activeLink === (item.href || ''),
                     }"
-                    :aria-current="activeLink === (item.href || '') ? 'location' : undefined"
+                    :aria-current="
+                        activeLink === (item.href || '')
+                            ? 'location'
+                            : undefined
+                    "
                     @click="(e) => onLinkClick(e, item)"
                 >
                     {{ item.label }}
@@ -111,35 +116,77 @@ function onLinkClick(e: MouseEvent, item: MenuItem) {
 
 <style scoped>
 .g-sidebar-menu {
-    padding: 1rem;
     color: var(--g-surface-0);
 }
 .g-sidebar-menu__title {
-    margin: 0 0 0.5rem;
-    font-size: 0.95rem;
+    margin: 0 2rem 0.5rem;
+    font-size: 2rem;
+    font-family: var(--il-font-heading);
     color: var(--g-surface-0);
+}
+.g-sidebar-menu__divider {
+    margin-left: 2rem;
+    height: 4px;
+    width: 60px;
+    background: var(--g-accent-500);
 }
 .g-sidebar-menu__list {
     list-style: none;
-    margin: 0;
+    margin: 1rem 0;
     padding: 0;
 }
-.g-sidebar-menu__item + .g-sidebar-menu__item {
-    margin-top: 0.25rem;
+.g-sidebar-menu__item {
+    display: block;
+    margin: 0;
 }
 .g-sidebar-menu__link {
-    display: inline-block;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
+    display: block;
+    padding: 0.5rem calc(2rem - 8px);
+    border-left: 8px solid transparent;
     color: var(--g-surface-0);
     text-decoration: none;
+    font-size: 1.25rem;
+    font-weight: bold;
+
+    &:hover {
+        text-decoration: underline;
+        color: var(--g-accent-500);
+    }
+
+    &.g-sidebar-menu__is-active {
+        background: var(--g-primary-500);
+        border-left: 8px solid var(--g-accent-500);
+    }
+
+    &:focus {
+        background: var(--ilw-color--focus--background);
+        color: var(--ilw-color--focus--text);
+    }
 }
-.g-sidebar-menu__link:hover,
-.g-sidebar-menu__link:focus {
-    text-decoration: underline;
-}
-.g-sidebar-menu__link.is-active {
-    color: var(--g-accent-500);
-    background: var(--g-primary-500);
+
+.g-sidebar-menu__light {
+    background: var(--g-surface-50);
+
+    .g-sidebar-menu__title,
+    .g-sidebar-menu__link {
+        color: var(--g-primary-500);
+    }
+
+    .g-sidebar-menu__link {
+        &:hover {
+            color: var(--g-accent-700);
+        }
+
+        &.g-sidebar-menu__is-active {
+            background: var(--g-accent-500);
+            color: var(--g-surface-0);
+            border-left: 8px solid var(--g-primary-500);
+        }
+
+        &:focus {
+            background: var(--ilw-color--focus--background);
+            color: var(--ilw-color--focus--text);
+        }
+    }
 }
 </style>

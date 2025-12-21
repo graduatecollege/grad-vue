@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import ComponentDemo from '../ComponentDemo.vue';
+import { GTextInput } from '@illinois-grad/grad-vue';
 
 const textValue = ref('');
 </script>
 
 <template>
   <section id="text-input" class="demo-section">
-    <h2 class="demo-section__title">GTextInput</h2>
+    <h2 class="demo-section__title">Text Input</h2>
     
     <ComponentDemo
       name="Basic Text Input"

@@ -6,9 +6,13 @@ const buttons = useTemplateRef("buttons");
 const text = useTemplateRef("text");
 const popover = useTemplateRef("popover");
 
-const sections = computed(() => [buttons.value, text.value, popover.value].filter(it => !!it));
+const activeId = ref<string>("");
 
-const { stop } = useActiveLinkContent(sections, 70);
+const sections = computed(() =>
+    [buttons.value, text.value, popover.value].filter((it) => !!it),
+);
+
+const { stop } = useActiveLinkContent(sections, 70, activeId);
 </script>
 
 <template>
@@ -16,14 +20,17 @@ const { stop } = useActiveLinkContent(sections, 70);
         <GAppHeader title="grad-vue playground" />
 
         <div class="wrap">
-            <GSidebar class="sidebar">
+            <GSidebar class="sidebar" theme="light">
                 <GSidebarMenu
+                    class="sidebar-menu"
                     title="Components"
+                    theme="light"
                     :items="[
                         { label: 'Buttons', href: '#buttons' },
                         { label: 'Text Input', href: '#text-input' },
                         { label: 'Popover', href: '#popover' },
                     ]"
+                    v-model="activeId"
                 />
             </GSidebar>
             <main class="main">
@@ -83,5 +90,9 @@ h2 {
 }
 section > *:not(h2) {
     margin-right: 0.5rem;
+}
+
+.sidebar-menu {
+    margin-top: 3rem;
 }
 </style>

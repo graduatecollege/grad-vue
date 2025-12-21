@@ -1,26 +1,91 @@
+<script setup lang="ts">
+import { GSidebar, GSidebarMenu } from "@illinois-grad/grad-vue";
+import { useActiveLinkStore } from "~/stores/test.store";
+import { storeToRefs } from "pinia";
+import GAlertDialogDemo from "~/components/demo/GAlertDialogDemo.vue";
+import GAppHeaderDemo from "~/components/demo/GAppHeaderDemo.vue";
+import GButtonDemo from "~/components/demo/GButtonDemo.vue";
+import GPopoverDemo from "~/components/demo/GPopoverDemo.vue";
+import GProgressDemo from "~/components/demo/GProgressDemo.vue";
+import GSearchDemo from "~/components/demo/GSearchDemo.vue";
+import GSelectDemo from "~/components/demo/GSelectDemo.vue";
+import GSelectButtonDemo from "~/components/demo/GSelectButtonDemo.vue";
+import GSidebarDemo from "~/components/demo/GSidebarDemo.vue";
+import GSidebarMenuDemo from "~/components/demo/GSidebarMenuDemo.vue";
+import GTextInputDemo from "~/components/demo/GTextInputDemo.vue";
+import { useTemplateRef } from "vue";
+import { useActiveLinkContent } from "@illinois-grad/grad-vue";
+
+const { activeId } = storeToRefs(useActiveLinkStore());
+
+const demoComponents: { label: string; component: any }[] = [
+    { label: "Alert Dialog", component: GAlertDialogDemo },
+    { label: "App Header", component: GAppHeaderDemo },
+    { label: "Button", component: GButtonDemo },
+    { label: "Popover", component: GPopoverDemo },
+    { label: "Progress", component: GProgressDemo },
+    { label: "Search", component: GSearchDemo },
+    { label: "Select", component: GSelectDemo },
+    { label: "Select Button", component: GSelectButtonDemo },
+    { label: "Sidebar", component: GSidebarDemo },
+    { label: "Sidebar Menu", component: GSidebarMenuDemo },
+    { label: "Text Input", component: GTextInputDemo },
+];
+
+const demo = useTemplateRef<HTMLElement[]>("demo");
+
+useActiveLinkContent(demo as any, 0, activeId);
+</script>
+
 <template>
     <div class="app">
-        <GSidebar class="sidebar"></GSidebar>
+        <GSidebar class="sidebar" theme="light">
+            <GSidebarMenu
+                class="sidebar-menu"
+                title="Components"
+                theme="light"
+                :items="
+                    demoComponents.map((comp) => ({
+                        label: comp.label,
+                        href: '#' + comp.component.__name,
+                    }))
+                "
+                v-model="activeId"
+            ></GSidebarMenu>
+        </GSidebar>
         <main class="app-main">
             <div class="demo-page">
                 <div class="demo-page__intro">
-                    <h1>Grad-Vue Component Library</h1>
+                    <h1>
+                        <img src="/grad-vue.svg" alt="grad-vue" width="350" />
+                    </h1>
                     <p class="demo-page__description">
-                        Interactive demos showcasing all components available in
-                        the Grad-Vue library. Scroll down to explore each
-                        component with customizable props and live examples.
+                        Vue.js 3 component library.
+                    </p>
+                    <p class="demo-page__description">
+                        <a href="https://github.com/graduatecollege/grad-vue">
+                            <img
+                                src="/github-mark.svg"
+                                alt="GitHub Repository"
+                                width="32"
+                            />
+                        </a>
                     </p>
                 </div>
-
-                <GButtonDemo />
-                <GTextInputDemo />
-                <GSelectDemo />
-                <GSelectButtonDemo />
-                <GSearchDemo />
-                <GProgressDemo />
-                <GPopoverDemo />
-                <GAlertDialogDemo />
-                <GAppHeaderDemo />
+                <h2>Introduction</h2>
+                <p>
+                    This is a demo application showcasing the components
+                    available in the
+                    <strong>grad-vue</strong> library. Use the sidebar to
+                    navigate between different component demos.
+                </p>
+                <component
+                    v-for="demo in demoComponents"
+                    :is="demo.component"
+                    :key="demo.label"
+                    :id="demo.component.__name"
+                    ref="demo"
+                />
             </div>
         </main>
     </div>
@@ -33,13 +98,8 @@
 
 body {
     margin: 0;
-    font-family:
-        -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-        "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-        sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    background: #f3f4f6;
+    font-family: var(--il-font-sans);
+    background: #fff;
 }
 
 .app {
@@ -63,16 +123,15 @@ body {
 }
 
 .demo-page__intro h1 {
-    margin: 0 0 1rem 0;
-    font-size: 2.5rem;
-    color: #1f2937;
+    margin: 2rem 0 0;
+    text-align: center;
 }
 
 .demo-page__description {
     font-size: 1.125rem;
-    line-height: 1.7;
-    color: #4b5563;
-    margin: 0;
+    line-height: 1.5;
+    margin: 0 0 1rem;
+    text-align: center;
 }
 
 .demo-section {

@@ -52,3 +52,5 @@ export {
     useOverlayStack,
     useOverlayStackState,
 } from "./compose/useOverlayStack";
+
+export { useActiveLinkContent } from "./compose/useActiveLink";

@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import ComponentDemo from '../ComponentDemo.vue';
+import { GSelectButton } from '@illinois-grad/grad-vue';
 
 const selectButtonValue = ref('option1');
 const selectButtonOptions = ref([
@@ -11,7 +13,7 @@ const selectButtonOptions = ref([
 
 <template>
   <section id="select-button" class="demo-section">
-    <h2 class="demo-section__title">GSelectButton</h2>
+    <h2 class="demo-section__title">Select Button</h2>
     
     <ComponentDemo
       name="Basic Select Button"

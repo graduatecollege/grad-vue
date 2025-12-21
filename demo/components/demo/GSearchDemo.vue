@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import ComponentDemo from '../ComponentDemo.vue';
+import { GSearch } from '@illinois-grad/grad-vue';
 
 const searchQuery = ref('');
 interface SearchResult {
@@ -15,7 +17,7 @@ const searchResults = ref<SearchResult[]>([
 
 <template>
   <section id="search" class="demo-section">
-    <h2 class="demo-section__title">GSearch</h2>
+    <h2 class="demo-section__title">Search</h2>
     
     <ComponentDemo
       name="Basic Search"

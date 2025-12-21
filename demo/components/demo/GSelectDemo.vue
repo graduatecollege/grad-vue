@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import ComponentDemo from '../ComponentDemo.vue';
+import { GSelect } from '@illinois-grad/grad-vue';
 
 const selectedValue = ref<string | number | undefined>(undefined);
 const searchableValue = ref<string | number | undefined>(undefined);
@@ -12,7 +14,7 @@ const selectOptions = ref([
 
 <template>
   <section id="select" class="demo-section">
-    <h2 class="demo-section__title">GSelect</h2>
+    <h2 class="demo-section__title">Select</h2>
     
     <ComponentDemo
       name="Basic Select"

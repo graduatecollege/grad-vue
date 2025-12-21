@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import ComponentDemo from '../ComponentDemo.vue';
+import { GPopover, GButton } from '@illinois-grad/grad-vue';
 
 const isPopoverOpen = ref(false);
 </script>
 
 <template>
   <section id="popover" class="demo-section">
-    <h2 class="demo-section__title">GPopover</h2>
+    <h2 class="demo-section__title">Popover</h2>
     
     <ComponentDemo
       name="Basic Popover"
