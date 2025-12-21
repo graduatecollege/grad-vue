@@ -1,0 +1,22 @@
+{
+    "name": "demo",
+    "type": "module",
+    "private": true,
+    "scripts": {
+        "build": "nuxt build",
+        "build:gh-pages": "NITRO_PRESET=github_pages nuxt build",
+        "dev": "nuxt dev",
+        "generate": "nuxt generate",
+        "generate:gh-pages": "NITRO_PRESET=github_pages nuxt generate",
+        "preview": "nuxt preview",
+        "postinstall": "nuxt prepare"
+    },
+    "dependencies": {
+        "@illinois-grad/grad-vue": "file:..",
+        "@pinia/nuxt": "^0.11.3",
+        "pinia": "^3.0.4",
+        "nuxt": "^4.2.2",
+        "vue": "^3.5.25",
+        "vue-router": "^4.6.3"
+    }
+}

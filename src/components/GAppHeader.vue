@@ -1,6 +1,11 @@
 <script setup lang="ts">
-import { computed } from "vue";
+type Props = {
+    illinois?: boolean;
+};
 
+const props = withDefaults(defineProps<Props>(), {
+    illinois: false,
+});
 </script>
 
 <template>
@@ -19,14 +24,25 @@ import { computed } from "vue";
             </router-link>
         </div>
         <div class="g-app-header__block-i-container">
-            <svg class="g-app-header__block-i" role="img" width="55" viewBox="0 0 55 79" xmlns="http://www.w3.org/2000/svg">
+            <svg
+                v-if="illinois"
+                class="g-app-header__block-i"
+                role="img"
+                width="55"
+                viewBox="0 0 55 79"
+                xmlns="http://www.w3.org/2000/svg"
+            >
                 <title>Block I logo</title>
-                <path class="g-app-header__block-i-outline" d="M54.2 21.1V0H0v21.1h12v36.1H0v21.1h54.2V57.2h-12V21.1z"></path>
+                <path
+                    class="g-app-header__block-i-outline"
+                    d="M54.2 21.1V0H0v21.1h12v36.1H0v21.1h54.2V57.2h-12V21.1z"
+                ></path>
                 <path
                     class="g-app-header__block-i-fill"
                     d="M42.1 18.1h9V3H3v15h9c1.7 0 3 1.3 3 3v36.1c0 1.7-1.3 3-3 3H3v15h48.1v-15h-9c-1.7 0-3-1.3-3-3v-36c0-1.7 1.4-3 3-3z"
                 ></path>
             </svg>
+            <slot v-else name="icon"></slot>
         </div>
         <div class="g-app-header__title">
             <slot name="title"></slot>
@@ -39,8 +55,14 @@ import { computed } from "vue";
 </template>
 
 <style>
-.g-app-header {
+html {
+    scroll-padding-top: 70px;
+}
 
+:root {
+    --g-toolbar-height: 56px;
+}
+.g-app-header {
     .g-app-header__title {
         display: flex;
         align-items: center;
@@ -95,6 +117,7 @@ a.app-name {
 
 <style scoped>
 .g-app-header {
+    box-sizing: border-box;
     background-color: var(--g-surface-100);
     position: sticky;
     top: 0;
@@ -156,6 +179,9 @@ a.app-name {
 }
 
 .g-app-header__brand {
+    min-width: 1rem;
+    margin-top: 2px;
+
     &:deep(a) {
         text-decoration: none;
 
@@ -178,12 +204,11 @@ a.app-name {
         font-weight: 800;
         color: var(--g-primary-300);
     }
-
-    min-width: 1rem;
 }
 
 .g-app-header__block-i-container {
     height: calc(var(--g-toolbar-height) + 3px);
+    box-sizing: border-box;
     margin-top: 6px;
     box-shadow:
         0px 0px 1px 1px rgba(0, 0, 0, 0.08),
@@ -196,5 +221,23 @@ a.app-name {
     justify-content: flex-end;
     padding: 0 10px;
     gap: 10px;
+}
+.g-app-header__block-i-container {
+    background-color: var(--il-blue);
+    min-width: 40px;
+    padding: 8px 10px;
+
+    .g-app-header__block-i {
+        display: block;
+        width: 24px;
+    }
+
+    .g-app-header__block-i-outline {
+        fill: #fff;
+    }
+
+    .g-app-header__block-i-fill {
+        fill: var(--il-orange);
+    }
 }
 </style>
