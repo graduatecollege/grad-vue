@@ -26,8 +26,8 @@
         "dist"
     ],
     "scripts": {
-        "dev:components": "vite playground",
-        "build:components": "vite build && vue-tsc --emitDeclarationOnly",
+        "dev": "vite playground",
+        "build": "vite build && vue-tsc --emitDeclarationOnly",
         "watch": "vue-tsc --watch & vite build --watch",
         "preview": "vite preview"
     },
