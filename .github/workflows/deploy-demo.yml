@@ -33,7 +33,7 @@ jobs:
         run: cd demo && npm ci
 
       - name: Build demo site
-        run: cd demo && npm run generate:gh-pages
+        run: cd demo && npm run build:gh-pages
         env:
           NODE_ENV: production
 
