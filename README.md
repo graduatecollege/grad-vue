@@ -80,7 +80,7 @@ import { GButton } from '@illinois-grad/grad-vue'
 
 The project uses Vitest 4 for unit and accessibility testing in **browser mode**. All components include:
 - Functional tests for basic component behavior
-- Accessibility tests using @sa11y/vitest to ensure WCAG compliance
+- Accessibility tests using axe-core to ensure WCAG compliance
 - Tests run in a real Chromium browser via Playwright for accurate DOM behavior
 
 ```bash

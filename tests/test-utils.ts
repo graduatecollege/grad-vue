@@ -1,9 +1,9 @@
 import { mount, VueWrapper } from "@vue/test-utils";
-import { toBeAccessible } from "@sa11y/vitest";
+import axe from "axe-core";
 import { Component } from "vue";
 
 /**
- * Run accessibility tests on a component
+ * Run accessibility tests on a component using axe-core
  * @param component The Vue component to test
  * @param props Optional props to pass to the component
  * @param slots Optional slots to pass to the component
@@ -19,13 +19,38 @@ export async function testAccessibility(
         attachTo: document.body,
     });
 
-    // Use @sa11y/vitest matcher directly
-    const result = await toBeAccessible(wrapper.element as HTMLElement);
-    if (!result.pass) {
-        throw new Error(result.message());
-    }
+    // Run axe accessibility tests
+    const results = await axe.run(wrapper.element as HTMLElement, {
+        rules: {
+            // Enable important WCAG rules
+            "color-contrast": { enabled: true },
+            label: { enabled: true },
+            "button-name": { enabled: true },
+            "link-name": { enabled: true },
+            "aria-required-attr": { enabled: true },
+            "aria-valid-attr": { enabled: true },
+            "aria-valid-attr-value": { enabled: true },
+        },
+    });
 
     wrapper.unmount();
+
+    // Check for violations
+    if (results.violations.length > 0) {
+        const violationMessages = results.violations.map((violation) => {
+            const nodeMessages = violation.nodes
+                .map((node) => {
+                    return `  - ${node.html}\n    ${node.failureSummary}`;
+                })
+                .join("\n");
+
+            return `[${violation.id}] ${violation.description}\nHelp: ${violation.helpUrl}\nImpact: ${violation.impact}\nAffected nodes:\n${nodeMessages}`;
+        });
+
+        throw new Error(
+            `Accessibility violations found:\n\n${violationMessages.join("\n\n")}`
+        );
+    }
 }
 
 /**

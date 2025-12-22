@@ -1,6 +1,6 @@
 # Testing Guide
 
-This project uses Vitest 4 for unit testing and @sa11y/vitest for accessibility testing. All components are tested for both functional behavior and accessibility compliance.
+This project uses Vitest 4 for unit testing and axe-core for accessibility testing. All components are tested for both functional behavior and accessibility compliance.
 
 **Tests run in browser mode** using Playwright's Chromium browser to provide a real browser environment for testing Vue components.
 
@@ -37,8 +37,7 @@ Tests are organized by component in the `tests/` directory:
 ```
 tests/
 ├── setup.ts                    # Global test setup
-├── test-utils.ts               # Reusable test utilities
-├── vitest.d.ts                 # TypeScript declarations
+├── test-utils.ts               # Reusable test utilities (includes axe-core helper)
 ├── GAlertDialog.test.ts        # Alert dialog component tests
 ├── GAppHeader.test.ts          # App header component tests
 ├── GButton.test.ts             # Button component tests
@@ -64,13 +63,15 @@ Each component has basic functional tests that verify:
 
 ### Accessibility Tests
 
-All components include accessibility tests using @sa11y/vitest that verify:
+All components include accessibility tests using axe-core that verify:
 - WCAG compliance using axe-core rules
 - Proper ARIA attributes
 - Keyboard navigation
 - Screen reader compatibility
 - Color contrast
 - Form labels
+
+The `testAccessibility` helper in `tests/test-utils.ts` uses axe-core directly to run accessibility checks on mounted components.
 
 ## Writing Tests
 
@@ -136,9 +137,9 @@ Tests run automatically on every commit via GitHub Actions. See `.github/workflo
 
 ## Troubleshooting
 
-### Console Warnings Suppressed
+### Vue Compiler Warnings
 
-The test setup automatically suppresses the harmless Vue compiler warning about `decodeEntities` in browser mode. This warning is misleading because tests ARE running in a real browser via Playwright. The suppression is configured in `tests/setup.ts`.
+You may see warnings like `[@vue/compiler-core] decodeEntities option is passed but will be ignored in non-browser builds.` during test runs. These are harmless warnings from Vue's template compiler and do not affect test results. They appear because @vue/test-utils passes certain options to the compiler, but the compiler's browser detection doesn't fully recognize Vitest's browser mode.
 
 ### Focus Trap Errors
 
