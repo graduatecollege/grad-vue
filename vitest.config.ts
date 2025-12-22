@@ -4,7 +4,15 @@ import { resolve } from "path";
 import { playwright } from "@vitest/browser-playwright";
 
 export default defineConfig({
-    plugins: [vue()],
+    plugins: [
+        vue({
+            template: {
+                compilerOptions: {
+                    isCustomElement: (tag) => false,
+                },
+            },
+        }),
+    ],
     test: {
         globals: true,
         browser: {
@@ -36,5 +44,6 @@ export default defineConfig({
     },
     define: {
         "process.env": {},
+        __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: "false",
     },
 });

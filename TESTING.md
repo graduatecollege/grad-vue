@@ -136,6 +136,10 @@ Tests run automatically on every commit via GitHub Actions. See `.github/workflo
 
 ## Troubleshooting
 
+### Console Warnings Suppressed
+
+The test setup automatically suppresses the harmless Vue compiler warning about `decodeEntities` in browser mode. This warning is misleading because tests ARE running in a real browser via Playwright. The suppression is configured in `tests/setup.ts`.
+
 ### Focus Trap Errors
 
 Some components (like GAlertDialog) use focus-trap which can be difficult to test in isolation. These tests may be skipped with proper documentation.
