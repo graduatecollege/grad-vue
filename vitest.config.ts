@@ -13,8 +13,9 @@ export default defineConfig({
             reporter: ["text", "json", "html"],
             include: ["src/**/*.{vue,ts}"],
         },
-        reporters: ["default", "html"],
+        reporters: ["default", "json", "html"],
         outputFile: {
+            json: "./test-results/results.json",
             html: "./test-results/index.html",
         },
     },

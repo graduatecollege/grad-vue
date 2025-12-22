@@ -32,7 +32,7 @@
         "preview": "vite preview",
         "test": "vitest",
         "test:ui": "vitest --ui",
-        "test:run": "vitest run",
+        "test:run": "vitest run && node scripts/transform-test-results.js",
         "test:coverage": "vitest run --coverage"
     },
     "dependencies": {

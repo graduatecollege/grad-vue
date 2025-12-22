@@ -74,6 +74,38 @@ import { GButton } from '@illinois-grad/grad-vue'
 </template>
 ```
 
+## Development
+
+### Running Tests
+
+The project uses Vitest 4 for unit and accessibility testing. All components include:
+- Functional tests for basic component behavior
+- Accessibility tests using @sa11y/vitest to ensure WCAG compliance
+
+```bash
+# Run tests in watch mode
+npm test
+
+# Run tests once
+npm run test:run
+
+# Run tests with UI
+npm run test:ui
+
+# Run tests with coverage
+npm run test:coverage
+```
+
+### Building
+
+```bash
+# Build the library
+npm run build
+
+# Watch for changes during development
+npm run watch
+```
+
 ## Release Process
 
 This package is automatically published to NPM when a semantic version tag (prefixed with `v`) is pushed to the repository. For example:
