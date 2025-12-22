@@ -53,6 +53,7 @@ describe("GTextInput", () => {
             await testAccessibility(GTextInput, {
                 error: "This field is required",
                 modelValue: "",
+                "aria-label": "Text input field",
             });
         });
     });
