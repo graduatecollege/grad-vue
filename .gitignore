@@ -18,6 +18,11 @@ demo/.output
 demo/node_modules
 demo/dist
 
+# Test artifacts
+test-results
+coverage
+.vitest
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
