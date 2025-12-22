@@ -1,12 +1,22 @@
 import { defineConfig } from "vitest/config";
 import vue from "@vitejs/plugin-vue";
 import { resolve } from "path";
+import { playwright } from "@vitest/browser-playwright";
 
 export default defineConfig({
     plugins: [vue()],
     test: {
         globals: true,
-        environment: "jsdom",
+        browser: {
+            enabled: true,
+            instances: [
+                {
+                    browser: "chromium",
+                },
+            ],
+            provider: playwright(),
+            headless: true,
+        },
         setupFiles: ["./tests/setup.ts"],
         coverage: {
             provider: "v8",
@@ -23,5 +33,8 @@ export default defineConfig({
         alias: {
             "@": resolve(__dirname, "./src"),
         },
+    },
+    define: {
+        "process.env": {},
     },
 });

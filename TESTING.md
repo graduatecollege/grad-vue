@@ -2,6 +2,8 @@
 
 This project uses Vitest 4 for unit testing and @sa11y/vitest for accessibility testing. All components are tested for both functional behavior and accessibility compliance.
 
+**Tests run in browser mode** using Playwright's Chromium browser to provide a real browser environment for testing Vue components.
+
 ## Running Tests
 
 ```bash
@@ -17,6 +19,16 @@ npm run test:ui
 # Run tests with coverage
 npm run test:coverage
 ```
+
+## Browser Mode
+
+Tests are configured to run in a real Chromium browser using Playwright. This provides:
+- Accurate DOM rendering and behavior
+- Real browser APIs and events
+- Better simulation of user interactions
+- More reliable accessibility testing
+
+The browser runs in headless mode by default for CI/CD environments.
 
 ## Test Structure
 
