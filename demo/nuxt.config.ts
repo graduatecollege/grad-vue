@@ -13,5 +13,10 @@ export default defineNuxtConfig({
         head: {
             title: "grad-vue"
         }
+    },
+    vite: {
+        build: {
+            minify: false
+        }
     }
 });

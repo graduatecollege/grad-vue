@@ -32,6 +32,7 @@ jobs:
         run: cd demo && npm run build:gh-pages
         env:
           NODE_ENV: production
+          NUXT_APP_BASE_URL: "/grad-vue/"
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, useTemplateRef } from "vue";
+import { computed, onMounted, ref, useTemplateRef } from "vue";
 import { useActiveLinkContent } from "../src/compose/useActiveLink";
 
 const buttons = useTemplateRef("buttons");
@@ -8,16 +8,17 @@ const popover = useTemplateRef("popover");
 
 const activeId = ref<string>("");
 
-const sections = computed(() =>
-    [buttons.value, text.value, popover.value].filter((it) => !!it),
-);
+const main = useTemplateRef("main");
 
-const { stop } = useActiveLinkContent(sections, 70, activeId);
+onMounted(() => {
+    useActiveLinkContent(main, 70, activeId);
+});
+
 </script>
 
 <template>
     <div class="playground">
-        <GAppHeader title="grad-vue playground" />
+        <GAppHeader title="grad-vue playground" illinois />
 
         <div class="wrap">
             <GSidebar class="sidebar" theme="light">
@@ -33,7 +34,7 @@ const { stop } = useActiveLinkContent(sections, 70, activeId);
                     v-model="activeId"
                 />
             </GSidebar>
-            <main class="main">
+            <main class="main" ref="main">
                 <section id="buttons" ref="buttons">
                     <h2>Buttons</h2>
                     <GButton>Default</GButton>

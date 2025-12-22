@@ -3,7 +3,7 @@
     "type": "module",
     "private": true,
     "scripts": {
-        "build:gh-pages": "NUXT_APP_BASE_URL=/grad-vue/ nuxt build --preset github_pages",
+        "build:gh-pages": "nuxt build --preset github_pages",
         "dev:demo": "nuxt dev",
         "preview": "nuxt preview",
         "postinstall": "nuxt prepare"
