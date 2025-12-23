@@ -19,7 +19,7 @@ interface Props {
     offset?: number;
     /** Enable automatic active link tracking for in-page links */
     spy?: boolean;
-    theme: "light" | "dark";
+    theme?: "light" | "dark";
 }
 
 const props = withDefaults(defineProps<Props>(), {

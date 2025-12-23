@@ -5,6 +5,7 @@ import Main from "~/components/Main.vue";
 
 <template>
     <Main></Main>
+    <div id="modal-root"></div>
 </template>
 
 <style>

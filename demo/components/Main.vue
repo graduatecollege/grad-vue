@@ -42,10 +42,11 @@ onMounted(() => {
 
 <template>
     <div class="app">
-        <GSidebar class="sidebar">
+        <GSidebar class="sidebar" theme="light">
             <GSidebarMenu
                 class="sidebar-menu"
                 title="Components"
+                theme="light"
                 :items="
                     demoComponents.map((comp) => ({
                         label: comp.label,

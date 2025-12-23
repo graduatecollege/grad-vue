@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
-import { GPopover, GButton } from '@illinois-grad/grad-vue';
+import { computed, ref } from "vue";
+import { GButton, GPopover } from "@illinois-grad/grad-vue";
 import componentResults from "../public/component-results.json";
 
 interface Props {
@@ -11,7 +11,7 @@ interface Props {
 }
 
 interface PropConfig {
-    type: 'string' | 'boolean' | 'number' | 'select';
+    type: "string" | "boolean" | "number" | "select";
     default?: any;
     options?: any[];
     label?: string;
@@ -19,7 +19,7 @@ interface PropConfig {
 
 interface TestResult {
     title: string;
-    status: 'passed' | 'failed' | 'skipped' | 'pending' | 'todo' | 'disabled';
+    status: "passed" | "failed" | "skipped" | "pending" | "todo" | "disabled";
     ancestors: string[];
 }
 
@@ -43,9 +43,9 @@ interface TestResults {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    description: '',
+    description: "",
     propsConfig: () => ({}),
-    component: ''
+    component: "",
 });
 
 // Store the dynamic props values
@@ -56,7 +56,9 @@ Object.entries(props.propsConfig).forEach(([key, config]) => {
     dynamicProps.value[key] = config.default;
 });
 
-const hasPropsConfig = computed(() => Object.keys(props.propsConfig).length > 0);
+const hasPropsConfig = computed(
+    () => Object.keys(props.propsConfig).length > 0,
+);
 
 // Load test results
 const testResults = ref<TestResults>(componentResults as any);
@@ -69,17 +71,18 @@ const componentResult = computed<ComponentResult | null>(() => {
 
 const isPopoverOpen = ref(false);
 
-const isTestSkipped = (status: TestResult['status']) => {
-    return status === 'skipped' || status === 'pending' || status === 'todo';
+const isTestSkipped = (status: TestResult["status"]) => {
+    return status === "skipped" || status === "pending" || status === "todo";
 };
-
 </script>
 
 <template>
     <div class="component-demo">
         <div class="component-demo__header">
             <h2 class="component-demo__title">{{ name }}</h2>
-            <p v-if="description" class="component-demo__description">{{ description }}</p>
+            <p v-if="description" class="component-demo__description">
+                {{ description }}
+            </p>
         </div>
 
         <div class="component-demo__content">
@@ -90,14 +93,19 @@ const isTestSkipped = (status: TestResult['status']) => {
             </div>
 
             <div v-if="hasPropsConfig" class="component-demo__controls">
-                <h3 class="component-demo__controls-title">Props Configuration</h3>
+                <h3 class="component-demo__controls-title">
+                    Props Configuration
+                </h3>
                 <div class="component-demo__controls-form">
                     <div
                         v-for="(config, key) in propsConfig"
                         :key="key"
                         class="component-demo__control"
                     >
-                        <label :for="`prop-${key}`" class="component-demo__label">
+                        <label
+                            :for="`prop-${key}`"
+                            class="component-demo__label"
+                        >
                             {{ config.label || key }}
                         </label>
 
@@ -155,19 +163,35 @@ const isTestSkipped = (status: TestResult['status']) => {
                     <span
                         :class="{
                             'component-demo__tests-status': true,
-                            'component-demo__tests-status--passed': componentResult.status === 'passed',
-                            'component-demo__tests-status--failed': componentResult.status === 'failed',
-                            'component-demo__tests-status--skipped': componentResult.status === 'skipped'
+                            'component-demo__tests-status--passed':
+                                componentResult.status === 'passed',
+                            'component-demo__tests-status--failed':
+                                componentResult.status === 'failed',
+                            'component-demo__tests-status--skipped':
+                                componentResult.status === 'skipped',
                         }"
                     >
-                        {{ componentResult.status === 'passed' ? '✓' : componentResult.status === 'failed' ? '✗' : '○' }}
+                        {{
+                            componentResult.status === "passed"
+                                ? "✓"
+                                : componentResult.status === "failed"
+                                  ? "✗"
+                                  : "○"
+                        }}
                     </span>
                     <span class="component-demo__tests-text">
-                        {{ componentResult.passed }}/{{ componentResult.total }} tests passed
-                        <span v-if="componentResult.failed > 0" class="component-demo__tests-failed">
+                        {{ componentResult.passed }}/{{ componentResult.total }}
+                        tests passed
+                        <span
+                            v-if="componentResult.failed > 0"
+                            class="component-demo__tests-failed"
+                        >
                             ({{ componentResult.failed }} failed)
                         </span>
-                        <span v-if="componentResult.skipped > 0" class="component-demo__tests-skipped">
+                        <span
+                            v-if="componentResult.skipped > 0"
+                            class="component-demo__tests-skipped"
+                        >
                             ({{ componentResult.skipped }} skipped)
                         </span>
                     </span>
@@ -187,25 +211,43 @@ const isTestSkipped = (status: TestResult['status']) => {
                                 <h2>{{ props.component }} Test Details</h2>
                                 <div class="component-demo__tests-list">
                                     <div
-                                        v-for="(test, index) in componentResult.tests"
+                                        v-for="(
+                                            test, index
+                                        ) in componentResult.tests"
                                         :key="index"
                                         class="component-demo__test-item"
                                     >
                                         <span
                                             :class="{
                                                 'component-demo__test-status': true,
-                                                'component-demo__test-status--passed': test.status === 'passed',
-                                                'component-demo__test-status--failed': test.status === 'failed',
-                                                'component-demo__test-status--skipped': isTestSkipped(test.status)
+                                                'component-demo__test-status--passed':
+                                                    test.status === 'passed',
+                                                'component-demo__test-status--failed':
+                                                    test.status === 'failed',
+                                                'component-demo__test-status--skipped':
+                                                    isTestSkipped(test.status),
                                             }"
                                         >
-                                            {{ test.status === 'passed' ? '✓' : test.status === 'failed' ? '✗' : '○' }}
+                                            {{
+                                                test.status === "passed"
+                                                    ? "✓"
+                                                    : test.status === "failed"
+                                                      ? "✗"
+                                                      : "○"
+                                            }}
                                         </span>
                                         <div class="component-demo__test-info">
-                                            <div v-if="test.ancestors.length > 0" class="component-demo__test-ancestors">
-                                                {{ test.ancestors.join(' > ') }}
+                                            <div
+                                                v-if="test.ancestors.length > 0"
+                                                class="component-demo__test-ancestors"
+                                            >
+                                                {{ test.ancestors.join(" > ") }}
                                             </div>
-                                            <div class="component-demo__test-title">{{ test.title }}</div>
+                                            <div
+                                                class="component-demo__test-title"
+                                            >
+                                                {{ test.title }}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

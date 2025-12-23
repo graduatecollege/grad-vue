@@ -41,7 +41,12 @@ const demoItems = [
         >
             <template #default="{ props }">
                 <div
-                    style="display: grid; grid-template-columns: 280px 1fr; gap: 1rem; align-items: start"
+                    style="
+                        display: grid;
+                        grid-template-columns: 280px 1fr;
+                        gap: 1rem;
+                        align-items: start;
+                    "
                 >
                     <GSidebarMenu
                         :title="props.title"
@@ -53,24 +58,33 @@ const demoItems = [
                     />
 
                     <div style="padding: 0.5rem 0">
-                        <section id="sidebar-menu-demo-overview" style="margin-bottom: 1.25rem">
+                        <section
+                            id="sidebar-menu-demo-overview"
+                            style="margin-bottom: 1.25rem"
+                        >
                             <h3 style="margin: 0 0 0.5rem 0">Overview</h3>
                             <p style="margin: 0">
-                                This content area provides destinations for the menu’s in-page links.
+                                This content area provides destinations for the
+                                menu’s in-page links.
                             </p>
                         </section>
 
-                        <section id="sidebar-menu-demo-details" style="margin-bottom: 1.25rem">
+                        <section
+                            id="sidebar-menu-demo-details"
+                            style="margin-bottom: 1.25rem"
+                        >
                             <h3 style="margin: 0 0 0.5rem 0">Details</h3>
                             <p style="margin: 0">
-                                When using hash links, the component focuses the destination heading.
+                                When using hash links, the component focuses the
+                                destination heading.
                             </p>
                         </section>
 
                         <section id="sidebar-menu-demo-more">
                             <h3 style="margin: 0 0 0.5rem 0">More</h3>
                             <p style="margin: 0">
-                                Current active id: <code>{{ demoActiveId || "(none)" }}</code>
+                                Current active id:
+                                <code>{{ demoActiveId || "(none)" }}</code>
                             </p>
                         </section>
                     </div>

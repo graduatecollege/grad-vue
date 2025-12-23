@@ -35,12 +35,20 @@ import { GSidebar } from "@illinois-grad/grad-vue";
                     :theme="props.theme"
                     :background-color="props.backgroundColor"
                     :background-image="props.backgroundImage"
-                    style="width: 320px; min-height: 260px; border-radius: 8px; overflow: hidden"
+                    style="
+                        width: 320px;
+                        min-height: 260px;
+                        border-radius: 8px;
+                        overflow: hidden;
+                    "
                 >
                     <div style="padding: 1.25rem">
-                        <p style="margin: 0; font-weight: 600">Graduate College</p>
+                        <p style="margin: 0; font-weight: 600">
+                            Graduate College
+                        </p>
                         <p style="margin: 0.75rem 0 0">
-                            Use this area for navigation, filters, and contextual actions.
+                            Use this area for navigation, filters, and
+                            contextual actions.
                         </p>
                     </div>
                 </GSidebar>
@@ -53,11 +61,18 @@ import { GSidebar } from "@illinois-grad/grad-vue";
         >
             <GSidebar
                 theme="light"
-                style="width: 320px; min-height: 180px; border-radius: 8px; overflow: hidden"
+                style="
+                    width: 320px;
+                    min-height: 180px;
+                    border-radius: 8px;
+                    overflow: hidden;
+                "
             >
                 <div style="padding: 1.25rem">
                     <p style="margin: 0; font-weight: 600">Sidebar (Light)</p>
-                    <p style="margin: 0.75rem 0 0">This is a simple content slot.</p>
+                    <p style="margin: 0.75rem 0 0">
+                        This is a simple content slot.
+                    </p>
                 </div>
             </GSidebar>
         </ComponentDemo>

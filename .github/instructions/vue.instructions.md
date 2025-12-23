@@ -12,3 +12,4 @@ When creating Vue components:
     - `defineEmits`
     - `defineExpose`
     - `useSlots`
+- Only use the HTML style attribute for dynamic styles, in other cases always place CSS in the style tag.
