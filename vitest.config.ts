@@ -5,13 +5,7 @@ import { playwright } from "@vitest/browser-playwright";
 
 export default defineConfig({
     plugins: [
-        vue({
-            template: {
-                compilerOptions: {
-                    isCustomElement: (tag) => false,
-                },
-            },
-        }),
+        vue(),
     ],
     test: {
         globals: true,
@@ -23,14 +17,8 @@ export default defineConfig({
                 },
             ],
             provider: playwright(),
-            headless: true,
         },
         setupFiles: ["./tests/setup.ts"],
-        coverage: {
-            provider: "v8",
-            reporter: ["text", "json", "html"],
-            include: ["src/**/*.{vue,ts}"],
-        },
         reporters: ["default", "json", "html"],
         outputFile: {
             json: "./test-results/results.json",
@@ -41,9 +29,5 @@ export default defineConfig({
         alias: {
             "@": resolve(__dirname, "./src"),
         },
-    },
-    define: {
-        "process.env": {},
-        __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: "false",
     },
 });

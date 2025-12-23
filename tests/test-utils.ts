@@ -1,4 +1,4 @@
-import { mount, VueWrapper } from "@vue/test-utils";
+import { mount, RouterLinkStub, VueWrapper } from "@vue/test-utils";
 import axe from "axe-core";
 import { Component } from "vue";
 
@@ -13,27 +13,12 @@ export async function testAccessibility(
     props?: Record<string, any>,
     slots?: Record<string, any>
 ): Promise<void> {
-    const wrapper = mount(component, {
+    const wrapper = mnt(component, {
         props,
-        slots,
-        attachTo: document.body,
+        slots
     });
 
-    // Run axe accessibility tests
-    const results = await axe.run(wrapper.element as HTMLElement, {
-        rules: {
-            // Enable important WCAG rules
-            "color-contrast": { enabled: true },
-            label: { enabled: true },
-            "button-name": { enabled: true },
-            "link-name": { enabled: true },
-            "aria-required-attr": { enabled: true },
-            "aria-valid-attr": { enabled: true },
-            "aria-valid-attr-value": { enabled: true },
-        },
-    });
-
-    wrapper.unmount();
+    const results = await axe.run(wrapper.element);
 
     // Check for violations
     if (results.violations.length > 0) {
@@ -58,7 +43,7 @@ export async function testAccessibility(
  * @param component The Vue component to mount
  * @param options Mount options
  */
-export function createWrapper(
+export function mnt(
     component: Component,
     options?: {
         props?: Record<string, any>;
@@ -70,5 +55,10 @@ export function createWrapper(
         props: options?.props,
         slots: options?.slots,
         attachTo: options?.attachTo || document.body,
+        global: {
+            stubs: {
+                RouterLink: RouterLinkStub
+            }
+        }
     });
 }

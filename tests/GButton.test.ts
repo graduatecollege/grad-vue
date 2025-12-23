@@ -1,12 +1,12 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
 import GButton from "../src/components/GButton.vue";
-import { testAccessibility } from "./test-utils";
+import { mnt, testAccessibility } from "./test-utils";
 
 describe("GButton", () => {
     describe("Functional Tests", () => {
         it("renders with default props", () => {
-            const wrapper = mount(GButton, {
+            const wrapper = mnt(GButton, {
                 slots: {
                     default: "Click me",
                 },
@@ -57,6 +57,22 @@ describe("GButton", () => {
     describe("Accessibility Tests", () => {
         it("passes accessibility tests with default props", async () => {
             await testAccessibility(GButton, {}, { default: "Click me" });
+        });
+
+        describe.for(["small", "medium", "large"] as const)("Size: %s", (size) => {
+            describe.for(["primary", "secondary", "accent", "danger"] as const)("Theme: %s", (theme) => {
+               it.for([
+                   {outlined: true},
+                   {text: true},
+                   {}
+               ])("Variant: %o", async (variant) => {
+                   await testAccessibility(
+                       GButton,
+                       { size, theme, ...variant },
+                       { default: "Button" }
+                   );
+               });
+            });
         });
 
         it("passes accessibility tests with different sizes", async () => {
