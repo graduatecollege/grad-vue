@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /**
  * Transform Vitest JSON results into a component-grouped format for the demo page
  */
@@ -31,7 +30,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 try {
     const resultsPath = resolve(__dirname, '../test-results/results.json');
-    const outputPath = resolve(__dirname, '../test-results/component-results.json');
+    const outputPath = resolve(__dirname, '../demo/public/component-results.json');
 
     const results: JsonTestResults = JSON.parse(readFileSync(resultsPath, 'utf-8'));
 

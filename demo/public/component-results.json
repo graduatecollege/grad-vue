@@ -1,0 +1,765 @@
+{
+  "totalComponents": 11,
+  "totalTests": 82,
+  "passedTests": 78,
+  "failedTests": 4,
+  "skippedTests": 0,
+  "components": {
+    "GAlertDialog": {
+      "component": "GAlertDialog",
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed",
+      "tests": [
+        {
+          "title": "renders with default props",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with default props",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        }
+      ]
+    },
+    "GAppHeader": {
+      "component": "GAppHeader",
+      "total": 3,
+      "passed": 2,
+      "failed": 1,
+      "skipped": 0,
+      "status": "failed",
+      "tests": [
+        {
+          "title": "renders with default props",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with title",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with navigation slot",
+          "status": "failed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        }
+      ]
+    },
+    "GButton": {
+      "component": "GButton",
+      "total": 45,
+      "passed": 42,
+      "failed": 3,
+      "skipped": 0,
+      "status": "failed",
+      "tests": [
+        {
+          "title": "renders with default props",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "emits click event when clicked",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "applies size classes correctly",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "applies theme classes correctly",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with default props",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "Variant: { outlined: true }",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests",
+            "Size: small",
+            "Theme: primary"
+          ]
+        },
+        {
+          "title": "Variant: { text: true }",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests",
+            "Size: small",
+            "Theme: primary"
+          ]
+        },
+        {
+          "title": "Variant: {}",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests",
+            "Size: small",
+            "Theme: primary"
+          ]
+        },
+        {
+          "title": "Variant: { outlined: true }",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests",
+            "Size: small",
+            "Theme: secondary"
+          ]
+        },
+        {
+          "title": "Variant: { text: true }",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests",
+            "Size: small",
+            "Theme: secondary"
+          ]
+        },
+        {
+          "title": "Variant: {}",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests",
+            "Size: small",
+            "Theme: secondary"
+          ]
+        },
+        {
+          "title": "Variant: { outlined: true }",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests",
+            "Size: small",
+            "Theme: accent"
+          ]
+        },
+        {
+          "title": "Variant: { text: true }",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests",
+            "Size: small",
+            "Theme: accent"
+          ]
+        },
+        {
+          "title": "Variant: {}",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests",
+            "Size: small",
+            "Theme: accent"
+          ]
+        },
+        {
+          "title": "Variant: { outlined: true }",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests",
+            "Size: small",
+            "Theme: danger"
+          ]
+        },
+        {
+          "title": "Variant: { text: true }",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests",
+            "Size: small",
+            "Theme: danger"
+          ]
+        },
+        {
+          "title": "Variant: {}",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests",
+            "Size: small",
+            "Theme: danger"
+          ]
+        },
+        {
+          "title": "Variant: { outlined: true }",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests",
+            "Size: medium",
+            "Theme: primary"
+          ]
+        },
+        {
+          "title": "Variant: { text: true }",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests",
+            "Size: medium",
+            "Theme: primary"
+          ]
+        },
+        {
+          "title": "Variant: {}",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests",
+            "Size: medium",
+            "Theme: primary"
+          ]
+        },
+        {
+          "title": "Variant: { outlined: true }",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests",
+            "Size: medium",
+            "Theme: secondary"
+          ]
+        },
+        {
+          "title": "Variant: { text: true }",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests",
+            "Size: medium",
+            "Theme: secondary"
+          ]
+        },
+        {
+          "title": "Variant: {}",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests",
+            "Size: medium",
+            "Theme: secondary"
+          ]
+        },
+        {
+          "title": "Variant: { outlined: true }",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests",
+            "Size: medium",
+            "Theme: accent"
+          ]
+        },
+        {
+          "title": "Variant: { text: true }",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests",
+            "Size: medium",
+            "Theme: accent"
+          ]
+        },
+        {
+          "title": "Variant: {}",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests",
+            "Size: medium",
+            "Theme: accent"
+          ]
+        },
+        {
+          "title": "Variant: { outlined: true }",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests",
+            "Size: medium",
+            "Theme: danger"
+          ]
+        },
+        {
+          "title": "Variant: { text: true }",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests",
+            "Size: medium",
+            "Theme: danger"
+          ]
+        },
+        {
+          "title": "Variant: {}",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests",
+            "Size: medium",
+            "Theme: danger"
+          ]
+        },
+        {
+          "title": "Variant: { outlined: true }",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests",
+            "Size: large",
+            "Theme: primary"
+          ]
+        },
+        {
+          "title": "Variant: { text: true }",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests",
+            "Size: large",
+            "Theme: primary"
+          ]
+        },
+        {
+          "title": "Variant: {}",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests",
+            "Size: large",
+            "Theme: primary"
+          ]
+        },
+        {
+          "title": "Variant: { outlined: true }",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests",
+            "Size: large",
+            "Theme: secondary"
+          ]
+        },
+        {
+          "title": "Variant: { text: true }",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests",
+            "Size: large",
+            "Theme: secondary"
+          ]
+        },
+        {
+          "title": "Variant: {}",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests",
+            "Size: large",
+            "Theme: secondary"
+          ]
+        },
+        {
+          "title": "Variant: { outlined: true }",
+          "status": "failed",
+          "ancestors": [
+            "Accessibility Tests",
+            "Size: large",
+            "Theme: accent"
+          ]
+        },
+        {
+          "title": "Variant: { text: true }",
+          "status": "failed",
+          "ancestors": [
+            "Accessibility Tests",
+            "Size: large",
+            "Theme: accent"
+          ]
+        },
+        {
+          "title": "Variant: {}",
+          "status": "failed",
+          "ancestors": [
+            "Accessibility Tests",
+            "Size: large",
+            "Theme: accent"
+          ]
+        },
+        {
+          "title": "Variant: { outlined: true }",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests",
+            "Size: large",
+            "Theme: danger"
+          ]
+        },
+        {
+          "title": "Variant: { text: true }",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests",
+            "Size: large",
+            "Theme: danger"
+          ]
+        },
+        {
+          "title": "Variant: {}",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests",
+            "Size: large",
+            "Theme: danger"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with different sizes",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with different themes",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with outlined variant",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with text variant",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        }
+      ]
+    },
+    "GPopover": {
+      "component": "GPopover",
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed",
+      "tests": [
+        {
+          "title": "renders with default props",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with trigger and content",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with custom label",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        }
+      ]
+    },
+    "GProgress": {
+      "component": "GProgress",
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed",
+      "tests": [
+        {
+          "title": "renders with default props",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with indeterminate state",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with determinate value",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with different sizes",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with custom aria-label",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        }
+      ]
+    },
+    "GSearch": {
+      "component": "GSearch",
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed",
+      "tests": [
+        {
+          "title": "renders with default props",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with basic props",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with placeholder",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with aria-label",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        }
+      ]
+    },
+    "GSelect": {
+      "component": "GSelect",
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed",
+      "tests": [
+        {
+          "title": "renders with label and options",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with basic props",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with selected value",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with object options",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with searchable enabled",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        }
+      ]
+    },
+    "GSelectButton": {
+      "component": "GSelectButton",
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed",
+      "tests": [
+        {
+          "title": "renders with default props",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with basic props",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with selected value",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with object options",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        }
+      ]
+    },
+    "GSidebar": {
+      "component": "GSidebar",
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed",
+      "tests": [
+        {
+          "title": "renders with default props",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with content",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with different positions",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        }
+      ]
+    },
+    "GSidebarMenu": {
+      "component": "GSidebarMenu",
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed",
+      "tests": [
+        {
+          "title": "renders with default props",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with menu items",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with nested menu items",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        }
+      ]
+    },
+    "GTextInput": {
+      "component": "GTextInput",
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed",
+      "tests": [
+        {
+          "title": "renders with placeholder",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "renders with disabled state",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with basic props",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with aria-label",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with error state",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        }
+      ]
+    }
+  }
+}
