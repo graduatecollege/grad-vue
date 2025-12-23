@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { GPopover, GButton } from '@illinois-grad/grad-vue';
 
 interface Props {
@@ -68,6 +68,10 @@ const componentResult = computed<ComponentResult | null>(() => {
 
 const isPopoverOpen = ref(false);
 
+const isTestSkipped = (status: TestResult['status']) => {
+    return status === 'skipped' || status === 'pending' || status === 'todo';
+};
+
 // Fetch test results
 async function loadTestResults() {
     try {
@@ -76,11 +80,14 @@ async function loadTestResults() {
             testResults.value = await response.json();
         }
     } catch (error) {
-        console.log('Test results not available');
+        // Test results file not available - this is expected in development
+        // when tests haven't been run yet
     }
 }
 
-loadTestResults();
+onMounted(() => {
+    loadTestResults();
+});
 </script>
 
 <template>
@@ -204,7 +211,7 @@ loadTestResults();
                                                 'component-demo__test-status': true,
                                                 'component-demo__test-status--passed': test.status === 'passed',
                                                 'component-demo__test-status--failed': test.status === 'failed',
-                                                'component-demo__test-status--skipped': test.status === 'skipped' || test.status === 'pending' || test.status === 'todo'
+                                                'component-demo__test-status--skipped': isTestSkipped(test.status)
                                             }"
                                         >
                                             {{ test.status === 'passed' ? '✓' : test.status === 'failed' ? '✗' : '○' }}
