@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { GPopover, GButton } from '@illinois-grad/grad-vue';
+import componentResults from "../public/component-results.json";
 
 interface Props {
     name: string;
@@ -58,7 +59,7 @@ Object.entries(props.propsConfig).forEach(([key, config]) => {
 const hasPropsConfig = computed(() => Object.keys(props.propsConfig).length > 0);
 
 // Load test results
-const testResults = ref<TestResults | null>(null);
+const testResults = ref<TestResults>(componentResults as any);
 const componentResult = computed<ComponentResult | null>(() => {
     if (!testResults.value || !props.component) {
         return null;
@@ -72,22 +73,6 @@ const isTestSkipped = (status: TestResult['status']) => {
     return status === 'skipped' || status === 'pending' || status === 'todo';
 };
 
-// Fetch test results
-async function loadTestResults() {
-    try {
-        const response = await fetch('/test-results/component-results.json');
-        if (response.ok) {
-            testResults.value = await response.json();
-        }
-    } catch (error) {
-        // Test results file not available - this is expected in development
-        // when tests haven't been run yet
-    }
-}
-
-onMounted(() => {
-    loadTestResults();
-});
 </script>
 
 <template>

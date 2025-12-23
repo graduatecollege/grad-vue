@@ -19,7 +19,7 @@ import { useTemplateRef } from "#imports";
 
 const { activeId } = storeToRefs(useActiveLinkStore());
 
-const demoComponents = reactive<{ label: string; component: any }[]>([
+const demoComponents = [
     { label: "Alert Dialog", component: GAlertDialogDemo },
     { label: "App Header", component: GAppHeaderDemo },
     { label: "Button", component: GButtonDemo },
@@ -31,7 +31,7 @@ const demoComponents = reactive<{ label: string; component: any }[]>([
     { label: "Sidebar", component: GSidebarDemo },
     { label: "Sidebar Menu", component: GSidebarMenuDemo },
     { label: "Text Input", component: GTextInputDemo },
-]);
+];
 
 const demo = useTemplateRef("demo");
 
@@ -42,11 +42,10 @@ onMounted(() => {
 
 <template>
     <div class="app">
-        <GSidebar class="sidebar" theme="light">
+        <GSidebar class="sidebar">
             <GSidebarMenu
                 class="sidebar-menu"
                 title="Components"
-                theme="light"
                 :items="
                     demoComponents.map((comp) => ({
                         label: comp.label,
