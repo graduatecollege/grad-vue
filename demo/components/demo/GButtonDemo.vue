@@ -63,8 +63,8 @@ const handleClick = () => {
 
         <div class="additional-demos">
             <ComponentDemo
+                additional
                 name="Button Sizes"
-                description="Buttons are available in three sizes: small, medium (default), and large."
             >
                 <div class="demo-variants">
                     <GButton size="small">Small Button</GButton>
@@ -74,8 +74,8 @@ const handleClick = () => {
             </ComponentDemo>
 
             <ComponentDemo
+                additional
                 name="Button Themes"
-                description="Multiple theme options to match your application design."
             >
                 <div class="demo-variants">
                     <GButton theme="primary">Primary</GButton>
@@ -86,13 +86,12 @@ const handleClick = () => {
             </ComponentDemo>
 
             <ComponentDemo
+                additional
                 name="Button Variants"
-                description="Outlined and text variants for different use cases."
             >
                 <div class="demo-variants">
                     <GButton outlined>Outlined</GButton>
                     <GButton text>Text Button</GButton>
-                    <GButton theme="accent" outlined>Accent Outlined</GButton>
                 </div>
             </ComponentDemo>
         </div>
@@ -105,31 +104,5 @@ const handleClick = () => {
     gap: 1rem;
     align-items: center;
     flex-wrap: wrap;
-}
-
-.additional-demos {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-    margin-top: 1.5rem;
-}
-
-@media (min-width: 768px) {
-    .additional-demos {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-.additional-demos :deep(.component-demo) {
-    background: #fafbfc;
-    border-color: #d1d5db;
-}
-
-.additional-demos :deep(.component-demo__header) {
-    background: #f3f4f6;
-}
-
-.additional-demos :deep(.component-demo__title) {
-    font-size: 1.125rem;
 }
 </style>

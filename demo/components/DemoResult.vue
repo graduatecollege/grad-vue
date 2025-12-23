@@ -19,23 +19,20 @@ withDefaults(defineProps<Props>(), {
 
 <style scoped>
 .demo-result {
-    margin-top: 1rem;
-    padding: 0.75rem 1rem;
-    background-color: #f3f4f6;
-    border-radius: 6px;
-    border: 1px solid #e5e7eb;
-    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
-        "Liberation Mono", monospace;
-    font-size: 0.875rem;
+    margin-top: 3rem;
 }
 
 .demo-result__label {
-    color: #6b7280;
-    font-weight: 500;
 }
 
 .demo-result__value {
-    color: #1f2937;
     margin-left: 0.5rem;
+    display: inline-block;
+    padding: 0.2rem;
+    background-color: var(--il-storm-95);
+    border-radius: 6px;
+    border: 1px solid var(--il-storm-80);
+    font-family: monospace;
+    font-size: 0.875rem;
 }
 </style>

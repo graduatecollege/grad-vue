@@ -5,26 +5,8 @@ import { readFileSync, writeFileSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { type JsonTestResults } from "vitest/reporters";
+import { ComponentResult, SummaryResult } from "./results";
 
-interface Result {
-    component: string;
-    total: number;
-    passed: number;
-    failed: number;
-    skipped: number;
-    status: string;
-    tests: {
-        title: string;
-        status:
-            | "passed"
-            | "failed"
-            | "skipped"
-            | "pending"
-            | "todo"
-            | "disabled";
-        ancestors: string[];
-    }[];
-}
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -35,7 +17,7 @@ try {
     const results: JsonTestResults = JSON.parse(readFileSync(resultsPath, 'utf-8'));
 
     // Group tests by component
-    const componentResults: Record<string, Result> = {};
+    const componentResults: Record<string, ComponentResult> = {};
 
     for (let testFile of results.testResults) {
         if (!testFile) {
@@ -69,7 +51,7 @@ try {
         };
     }
 
-    const summary = {
+    const summary: SummaryResult = {
         totalComponents: Object.keys(componentResults).length,
         totalTests: results.numTotalTests,
         passedTests: results.numPassedTests,

@@ -7,7 +7,9 @@
     --g-border-radius-m: 4px;
     --g-border-radius-l: 8px;
 
+    --g-green-100: #bae8cb;
     --g-green-500: var(--il-prairie);
+    --g-green-700: #003519;
 
     --g-danger-100: #f8d7da;
     --g-danger-500: #D40C0C;

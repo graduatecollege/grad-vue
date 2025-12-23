@@ -11,6 +11,7 @@ import { GSidebar } from "@illinois-grad/grad-vue";
             name="Basic Sidebar"
             description="A container component intended for persistent side navigation."
             component="GSidebar"
+            padding="0"
             :props-config="{
                 theme: {
                     type: 'select',
@@ -38,11 +39,7 @@ import { GSidebar } from "@illinois-grad/grad-vue";
                     class="sidebar-demo"
                 >
                     <div class="sidebar-content">
-                        <p class="sidebar-title">Graduate College</p>
-                        <p class="sidebar-description">
-                            Use this area for navigation, filters, and
-                            contextual actions.
-                        </p>
+                        <h3 class="sidebar-title">Sample Heading</h3>
                     </div>
                 </GSidebar>
             </template>
@@ -65,11 +62,18 @@ import { GSidebar } from "@illinois-grad/grad-vue";
 </template>
 
 <style scoped>
+.demo-section {
+    :deep(.g-sidebar__light) {
+        h3 {
+            color: #000;
+        }
+    }
+}
 .sidebar-demo {
-    width: 320px;
-    min-height: 260px;
-    border-radius: 8px;
+    width: 300px;
+    min-height: 360px;
     overflow: hidden;
+    color: #fff;
 }
 
 .sidebar-demo--compact {
@@ -81,8 +85,8 @@ import { GSidebar } from "@illinois-grad/grad-vue";
 }
 
 .sidebar-title {
-    margin: 0;
-    font-weight: 600;
+    font-size: 1.75rem;
+    font-family: var(--il-font-heading);
 }
 
 .sidebar-description {
