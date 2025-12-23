@@ -22,6 +22,7 @@ demo/dist
 test-results
 coverage
 .vitest
+tests/__screenshots__
 
 # Editor directories and files
 .vscode/*

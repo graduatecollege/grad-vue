@@ -5,6 +5,27 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { type JsonTestResults } from "vitest/reporters";
+
+interface Result {
+    component: string;
+    total: number;
+    passed: number;
+    failed: number;
+    skipped: number;
+    status: string;
+    tests: {
+        title: string;
+        status:
+            | "passed"
+            | "failed"
+            | "skipped"
+            | "pending"
+            | "todo"
+            | "disabled";
+        ancestors: string[];
+    }[];
+}
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -12,16 +33,24 @@ try {
     const resultsPath = resolve(__dirname, '../test-results/results.json');
     const outputPath = resolve(__dirname, '../test-results/component-results.json');
 
-    const results = JSON.parse(readFileSync(resultsPath, 'utf-8'));
+    const results: JsonTestResults = JSON.parse(readFileSync(resultsPath, 'utf-8'));
 
     // Group tests by component
-    const componentResults = {};
+    const componentResults: Record<string, Result> = {};
 
-    results.testResults.forEach((testFile) => {
-        const fileName = testFile.name.split('/').pop().replace('.test.ts', '');
-        const componentName = fileName;
+    for (let testFile of results.testResults) {
+        if (!testFile) {
+            continue;
+        }
 
         const totalTests = testFile.assertionResults.length;
+
+        if (totalTests === 0) {
+            continue;
+        }
+
+        const componentName = testFile.assertionResults[0].ancestorTitles[0];
+
         const passedTests = testFile.assertionResults.filter(t => t.status === 'passed').length;
         const failedTests = testFile.assertionResults.filter(t => t.status === 'failed').length;
         const skippedTests = testFile.assertionResults.filter(t => t.status === 'skipped' || t.status === 'pending' || t.status === 'todo').length;
@@ -33,14 +62,13 @@ try {
             failed: failedTests,
             skipped: skippedTests,
             status: failedTests > 0 ? 'failed' : (skippedTests === totalTests ? 'skipped' : 'passed'),
-            duration: testFile.endTime - testFile.startTime,
             tests: testFile.assertionResults.map(test => ({
                 title: test.title,
                 status: test.status,
-                duration: test.duration || 0,
+                ancestors: test.ancestorTitles.slice(1)
             })),
         };
-    });
+    }
 
     const summary = {
         totalComponents: Object.keys(componentResults).length,
@@ -56,6 +84,6 @@ try {
     console.log(`  ${summary.totalTests} tests across ${summary.totalComponents} components`);
     console.log(`  ${summary.passedTests} passed, ${summary.failedTests} failed, ${summary.skippedTests} skipped`);
 } catch (error) {
-    console.error('Error transforming test results:', error.message);
+    console.error('Error transforming test results:', error);
     process.exit(1);
 }
