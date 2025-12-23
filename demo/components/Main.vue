@@ -42,11 +42,10 @@ onMounted(() => {
 
 <template>
     <div class="app">
-        <GSidebar class="sidebar" theme="light">
+        <GSidebar class="sidebar">
             <GSidebarMenu
                 class="sidebar-menu"
                 title="Components"
-                theme="light"
                 :items="
                     demoComponents.map((comp) => ({
                         label: comp.label,
@@ -74,14 +73,20 @@ onMounted(() => {
                             />
                         </a>
                     </p>
+                    <h2>Introduction</h2>
+                    <p>
+                        This is a demo application showcasing the components
+                        available in the
+                        <strong>grad-vue</strong> library.
+                    </p>
+
+                    <h3>Installation</h3>
+                    <p>To install grad-vue, use npm:</p>
+                    <pre><code>npm install @illinois-grad/grad-vue</code></pre>
+                    <h3>More Information</h3>
+                    <p>More details about the library can be found in the <a href="https://github.com/graduatecollege/grad-vue">GitHub repository</a>.</p>
+
                 </div>
-                <h2>Introduction</h2>
-                <p>
-                    This is a demo application showcasing the components
-                    available in the
-                    <strong>grad-vue</strong> library. Use the sidebar to
-                    navigate between different component demos.
-                </p>
                 <div class="demo" ref="demo">
                     <component
                         v-for="demo in demoComponents"
@@ -114,6 +119,12 @@ onMounted(() => {
 
 .demo-page__intro {
     margin-bottom: 3rem;
+    font-size: 1.25rem;
+
+    p {
+        font-size: 1.125rem;
+        line-height: 1.666;
+    }
 }
 
 .demo-page__intro h1 {
@@ -122,9 +133,6 @@ onMounted(() => {
 }
 
 .demo-page__description {
-    font-size: 1.125rem;
-    line-height: 1.5;
-    margin: 0 0 1rem;
     text-align: center;
 }
 
@@ -136,9 +144,9 @@ onMounted(() => {
 .demo-section__title {
     margin: 0 0 1.5rem 0;
     padding-bottom: 0.5rem;
-    border-bottom: 2px solid #e5e7eb;
+    border-bottom: 2px solid var(--il-storm-80);
     font-size: 1.875rem;
-    color: #1f2937;
+    color: var(--il-blue);
 }
 
 .sidebar {

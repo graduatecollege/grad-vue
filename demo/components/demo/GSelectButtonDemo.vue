@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import ComponentDemo from "../ComponentDemo.vue";
+import DemoResult from "../DemoResult.vue";
 import { GSelectButton } from "@illinois-grad/grad-vue";
 
 const selectButtonValue = ref("option1");
@@ -25,9 +26,7 @@ const selectButtonOptions = ref([
                 :options="selectButtonOptions"
                 label="Choose an option"
             />
-            <p style="margin-top: 1rem; color: #6b7280">
-                Selected: {{ selectButtonValue }}
-            </p>
+            <DemoResult label="Selected">{{ selectButtonValue }}</DemoResult>
         </ComponentDemo>
     </section>
 </template>

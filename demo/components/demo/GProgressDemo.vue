@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ComponentDemo from "../ComponentDemo.vue";
+import DemoResult from "../DemoResult.vue";
 import { GProgress } from "@illinois-grad/grad-vue";
 </script>
 
@@ -21,9 +22,7 @@ import { GProgress } from "@illinois-grad/grad-vue";
         >
             <template #default="{ props }">
                 <GProgress :value="props.value" />
-                <p style="margin-top: 1rem; color: #6b7280">
-                    Progress: {{ props.value }}%
-                </p>
+                <DemoResult label="Progress">{{ props.value }}%</DemoResult>
             </template>
         </ComponentDemo>
     </section>
