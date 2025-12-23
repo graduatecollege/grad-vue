@@ -13,6 +13,7 @@ const textValue = ref('');
     <ComponentDemo
       name="Basic Text Input"
       description="A text input component with label and validation support."
+      component="GTextInput"
       :props-config="{
         placeholder: {
           type: 'string',

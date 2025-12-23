@@ -10,6 +10,7 @@ import { GAppHeader, GButton } from "@illinois-grad/grad-vue";
         <ComponentDemo
             name="Basic App Header"
             description="An application header component with Block I branding and Illinois styling."
+            component="GAppHeader"
             :props-config="{
                 illinois: {
                     type: 'boolean',

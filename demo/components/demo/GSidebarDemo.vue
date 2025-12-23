@@ -10,6 +10,7 @@ import { GSidebar } from "@illinois-grad/grad-vue";
         <ComponentDemo
             name="Basic Sidebar"
             description="A container component intended for persistent side navigation."
+            component="GSidebar"
             :props-config="{
                 theme: {
                     type: 'select',

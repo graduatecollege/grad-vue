@@ -18,6 +18,7 @@ const selectButtonOptions = ref([
     <ComponentDemo
       name="Basic Select Button"
       description="A button-style select component for choosing between options."
+      component="GSelectButton"
     >
       <GSelectButton
         v-model="selectButtonValue"

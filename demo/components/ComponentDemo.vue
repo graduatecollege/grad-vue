@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import { GPopover, GButton } from '@illinois-grad/grad-vue';
 
 interface Props {
     name: string;
     description?: string;
     propsConfig?: Record<string, PropConfig>;
+    component?: string;
 }
 
 interface PropConfig {
@@ -14,9 +16,35 @@ interface PropConfig {
     label?: string;
 }
 
+interface TestResult {
+    title: string;
+    status: 'passed' | 'failed' | 'skipped' | 'pending' | 'todo' | 'disabled';
+    ancestors: string[];
+}
+
+interface ComponentResult {
+    component: string;
+    total: number;
+    passed: number;
+    failed: number;
+    skipped: number;
+    status: string;
+    tests: TestResult[];
+}
+
+interface TestResults {
+    totalComponents: number;
+    totalTests: number;
+    passedTests: number;
+    failedTests: number;
+    skippedTests: number;
+    components: Record<string, ComponentResult>;
+}
+
 const props = withDefaults(defineProps<Props>(), {
     description: '',
-    propsConfig: () => ({})
+    propsConfig: () => ({}),
+    component: ''
 });
 
 // Store the dynamic props values
@@ -28,6 +56,31 @@ Object.entries(props.propsConfig).forEach(([key, config]) => {
 });
 
 const hasPropsConfig = computed(() => Object.keys(props.propsConfig).length > 0);
+
+// Load test results
+const testResults = ref<TestResults | null>(null);
+const componentResult = computed<ComponentResult | null>(() => {
+    if (!testResults.value || !props.component) {
+        return null;
+    }
+    return testResults.value.components[props.component] || null;
+});
+
+const isPopoverOpen = ref(false);
+
+// Fetch test results
+async function loadTestResults() {
+    try {
+        const response = await fetch('/test-results/component-results.json');
+        if (response.ok) {
+            testResults.value = await response.json();
+        }
+    } catch (error) {
+        console.log('Test results not available');
+    }
+}
+
+loadTestResults();
 </script>
 
 <template>
@@ -103,12 +156,71 @@ const hasPropsConfig = computed(() => Object.keys(props.propsConfig).length > 0)
             </div>
         </div>
 
-        <div class="component-demo__footer">
+        <div v-if="componentResult" class="component-demo__footer">
             <div class="component-demo__tests">
                 <h3 class="component-demo__tests-title">Test Results</h3>
-                <p class="component-demo__tests-placeholder">
-                    ✓ Test results will be displayed here
-                </p>
+                <div class="component-demo__tests-summary">
+                    <span
+                        :class="{
+                            'component-demo__tests-status': true,
+                            'component-demo__tests-status--passed': componentResult.status === 'passed',
+                            'component-demo__tests-status--failed': componentResult.status === 'failed',
+                            'component-demo__tests-status--skipped': componentResult.status === 'skipped'
+                        }"
+                    >
+                        {{ componentResult.status === 'passed' ? '✓' : componentResult.status === 'failed' ? '✗' : '○' }}
+                    </span>
+                    <span class="component-demo__tests-text">
+                        {{ componentResult.passed }}/{{ componentResult.total }} tests passed
+                        <span v-if="componentResult.failed > 0" class="component-demo__tests-failed">
+                            ({{ componentResult.failed }} failed)
+                        </span>
+                        <span v-if="componentResult.skipped > 0" class="component-demo__tests-skipped">
+                            ({{ componentResult.skipped }} skipped)
+                        </span>
+                    </span>
+                    <GPopover v-model="isPopoverOpen">
+                        <template #trigger="{ onToggle }">
+                            <GButton
+                                size="small"
+                                theme="secondary"
+                                outlined
+                                @click="onToggle"
+                            >
+                                {{ props.component }} Test Details
+                            </GButton>
+                        </template>
+                        <template #content>
+                            <div class="component-demo__tests-details">
+                                <h2>{{ props.component }} Test Details</h2>
+                                <div class="component-demo__tests-list">
+                                    <div
+                                        v-for="(test, index) in componentResult.tests"
+                                        :key="index"
+                                        class="component-demo__test-item"
+                                    >
+                                        <span
+                                            :class="{
+                                                'component-demo__test-status': true,
+                                                'component-demo__test-status--passed': test.status === 'passed',
+                                                'component-demo__test-status--failed': test.status === 'failed',
+                                                'component-demo__test-status--skipped': test.status === 'skipped' || test.status === 'pending' || test.status === 'todo'
+                                            }"
+                                        >
+                                            {{ test.status === 'passed' ? '✓' : test.status === 'failed' ? '✗' : '○' }}
+                                        </span>
+                                        <div class="component-demo__test-info">
+                                            <div v-if="test.ancestors.length > 0" class="component-demo__test-ancestors">
+                                                {{ test.ancestors.join(' > ') }}
+                                            </div>
+                                            <div class="component-demo__test-title">{{ test.title }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </GPopover>
+                </div>
             </div>
         </div>
     </div>
@@ -220,6 +332,117 @@ const hasPropsConfig = computed(() => Object.keys(props.propsConfig).length > 0)
     margin: 0 0 0.5rem 0;
     font-size: 1rem;
     font-weight: 600;
+    color: #1f2937;
+}
+
+.component-demo__tests-summary {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.component-demo__tests-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 0.875rem;
+}
+
+.component-demo__tests-status--passed {
+    background-color: #d1fae5;
+    color: #059669;
+}
+
+.component-demo__tests-status--failed {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+.component-demo__tests-status--skipped {
+    background-color: #e5e7eb;
+    color: #6b7280;
+}
+
+.component-demo__tests-text {
+    font-size: 0.875rem;
+    color: #374151;
+}
+
+.component-demo__tests-failed {
+    color: #dc2626;
+    font-weight: 500;
+}
+
+.component-demo__tests-skipped {
+    color: #6b7280;
+}
+
+.component-demo__tests-details {
+    max-height: 400px;
+    overflow-y: auto;
+    min-width: 400px;
+}
+
+.component-demo__tests-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.component-demo__test-item {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 4px;
+    background-color: #f9fafb;
+}
+
+.component-demo__test-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-size: 0.75rem;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.component-demo__test-status--passed {
+    background-color: #d1fae5;
+    color: #059669;
+}
+
+.component-demo__test-status--failed {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+.component-demo__test-status--skipped {
+    background-color: #e5e7eb;
+    color: #6b7280;
+}
+
+.component-demo__test-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.component-demo__test-ancestors {
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+.component-demo__test-title {
+    font-size: 0.875rem;
     color: #1f2937;
 }
 

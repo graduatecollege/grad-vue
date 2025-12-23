@@ -22,6 +22,7 @@ const searchResults = ref<SearchResult[]>([
     <ComponentDemo
       name="Basic Search"
       description="A search input component with autocomplete results."
+      component="GSearch"
       :props-config="{
         placeholder: {
           type: 'string',

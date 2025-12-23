@@ -16,6 +16,7 @@ const handleClick = () => {
     <ComponentDemo
       name="Basic Button"
       description="A versatile button component with multiple size and theme options."
+      component="GButton"
       :props-config="{
         size: {
           type: 'select',

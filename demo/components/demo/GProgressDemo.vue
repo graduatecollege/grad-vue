@@ -10,6 +10,7 @@ import { GProgress } from "@illinois-grad/grad-vue";
         <ComponentDemo
             name="Basic Progress"
             description="A progress indicator component."
+            component="GProgress"
             :props-config="{
                 value: {
                     type: 'number',

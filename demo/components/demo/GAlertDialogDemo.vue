@@ -21,6 +21,7 @@ const handleCancel = () => {
     <ComponentDemo
       name="Basic Alert Dialog"
       description="A modal alert dialog for important user confirmations. Click the button to open the dialog."
+      component="GAlertDialog"
     >
       <GButton @click="showDialog = true">Open Alert Dialog</GButton>
       

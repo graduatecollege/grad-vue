@@ -13,6 +13,7 @@ const isPopoverOpen = ref(false);
     <ComponentDemo
       name="Basic Popover"
       description="A popover overlay component that appears relative to a trigger element."
+      component="GPopover"
     >
       <GPopover v-model="isPopoverOpen">
         <template #trigger>

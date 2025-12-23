@@ -19,6 +19,7 @@ const selectOptions = ref([
     <ComponentDemo
       name="Basic Select"
       description="A dropdown select component with customizable options."
+      component="GSelect"
     >
       <GSelect
         :model-value="selectedValue"

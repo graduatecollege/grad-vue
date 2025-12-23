@@ -19,6 +19,7 @@ const demoItems = [
         <ComponentDemo
             name="Basic Sidebar Menu"
             description="A sidebar navigation menu with accessible in-page link focus management."
+            component="GSidebarMenu"
             :props-config="{
                 title: {
                     type: 'string',
