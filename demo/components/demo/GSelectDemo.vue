@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import ComponentDemo from "../ComponentDemo.vue";
+import DemoResult from "../DemoResult.vue";
 import { GSelect } from "@illinois-grad/grad-vue";
 
 const selectedValue = ref<string | number | undefined>(undefined);
@@ -27,9 +28,7 @@ const selectOptions = ref([
                 :options="selectOptions"
                 label="Select an option"
             />
-            <p style="margin-top: 1rem; color: #6b7280">
-                Selected: {{ selectedValue }}
-            </p>
+            <DemoResult label="Selected">{{ selectedValue }}</DemoResult>
         </ComponentDemo>
 
         <ComponentDemo
@@ -43,9 +42,7 @@ const selectOptions = ref([
                 label="Searchable select"
                 searchable
             />
-            <p style="margin-top: 1rem; color: #6b7280">
-                Selected: {{ searchableValue }}
-            </p>
+            <DemoResult label="Selected">{{ searchableValue }}</DemoResult>
         </ComponentDemo>
     </section>
 </template>

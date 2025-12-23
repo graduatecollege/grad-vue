@@ -239,7 +239,12 @@ const isTestSkipped = (status: TestResult["status"]) => {
                                         <div class="component-demo__test-info">
                                             <div
                                                 v-if="test.ancestors.length > 0"
-                                                class="component-demo__test-ancestors"
+                                                :class="{
+                                                    'component-demo__test-ancestors': true,
+                                                    'component-demo__test-ancestors--accessibility':
+                                                        test.ancestors[0] ===
+                                                        'Accessibility Tests',
+                                                }"
                                             >
                                                 {{ test.ancestors.join(" > ") }}
                                             </div>
@@ -473,6 +478,19 @@ const isTestSkipped = (status: TestResult["status"]) => {
 .component-demo__test-ancestors {
     font-size: 0.75rem;
     color: #6b7280;
+}
+
+.component-demo__test-ancestors--accessibility {
+    color: #059669;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.component-demo__test-ancestors--accessibility::before {
+    content: "♿";
+    font-size: 0.875rem;
 }
 
 .component-demo__test-title {

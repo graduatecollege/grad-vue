@@ -22,20 +22,12 @@ const isPopoverOpen = ref(false);
                     >
                 </template>
                 <template #default>
-                    <div
-                        style="
-                            padding: 1rem;
-                            background: white;
-                            border: 1px solid #e5e7eb;
-                            border-radius: 8px;
-                            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                        "
-                    >
-                        <p style="margin: 0">This is popover content!</p>
+                    <div class="popover-content">
+                        <p class="popover-text">This is popover content!</p>
                         <GButton
                             size="small"
+                            class="popover-button"
                             @click="isPopoverOpen = false"
-                            style="margin-top: 0.5rem"
                             >Close</GButton
                         >
                     </div>
@@ -44,3 +36,21 @@ const isPopoverOpen = ref(false);
         </ComponentDemo>
     </section>
 </template>
+
+<style scoped>
+.popover-content {
+    padding: 1rem;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.popover-text {
+    margin: 0;
+}
+
+.popover-button {
+    margin-top: 0.5rem;
+}
+</style>

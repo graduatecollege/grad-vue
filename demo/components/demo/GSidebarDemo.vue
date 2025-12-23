@@ -35,18 +35,11 @@ import { GSidebar } from "@illinois-grad/grad-vue";
                     :theme="props.theme"
                     :background-color="props.backgroundColor"
                     :background-image="props.backgroundImage"
-                    style="
-                        width: 320px;
-                        min-height: 260px;
-                        border-radius: 8px;
-                        overflow: hidden;
-                    "
+                    class="sidebar-demo"
                 >
-                    <div style="padding: 1.25rem">
-                        <p style="margin: 0; font-weight: 600">
-                            Graduate College
-                        </p>
-                        <p style="margin: 0.75rem 0 0">
+                    <div class="sidebar-content">
+                        <p class="sidebar-title">Graduate College</p>
+                        <p class="sidebar-description">
                             Use this area for navigation, filters, and
                             contextual actions.
                         </p>
@@ -59,18 +52,10 @@ import { GSidebar } from "@illinois-grad/grad-vue";
             name="Light Theme"
             description="Use the light theme when the surrounding layout is light."
         >
-            <GSidebar
-                theme="light"
-                style="
-                    width: 320px;
-                    min-height: 180px;
-                    border-radius: 8px;
-                    overflow: hidden;
-                "
-            >
-                <div style="padding: 1.25rem">
-                    <p style="margin: 0; font-weight: 600">Sidebar (Light)</p>
-                    <p style="margin: 0.75rem 0 0">
+            <GSidebar theme="light" class="sidebar-demo sidebar-demo--compact">
+                <div class="sidebar-content">
+                    <p class="sidebar-title">Sidebar (Light)</p>
+                    <p class="sidebar-description">
                         This is a simple content slot.
                     </p>
                 </div>
@@ -78,3 +63,29 @@ import { GSidebar } from "@illinois-grad/grad-vue";
         </ComponentDemo>
     </section>
 </template>
+
+<style scoped>
+.sidebar-demo {
+    width: 320px;
+    min-height: 260px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.sidebar-demo--compact {
+    min-height: 180px;
+}
+
+.sidebar-content {
+    padding: 1.25rem;
+}
+
+.sidebar-title {
+    margin: 0;
+    font-weight: 600;
+}
+
+.sidebar-description {
+    margin: 0.75rem 0 0;
+}
+</style>

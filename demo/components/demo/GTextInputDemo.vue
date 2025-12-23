@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import ComponentDemo from "../ComponentDemo.vue";
+import DemoResult from "../DemoResult.vue";
 import { GTextInput } from "@illinois-grad/grad-vue";
 
 const textValue = ref("");
@@ -28,9 +29,7 @@ const textValue = ref("");
                     :placeholder="props.placeholder"
                     label="Example Label"
                 />
-                <p style="margin-top: 1rem; color: #6b7280">
-                    Value: {{ textValue }}
-                </p>
+                <DemoResult>{{ textValue }}</DemoResult>
             </template>
         </ComponentDemo>
     </section>

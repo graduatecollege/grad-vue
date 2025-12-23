@@ -22,18 +22,10 @@ import { GAppHeader, GButton } from "@illinois-grad/grad-vue";
             <template #default="{ props }">
                 <GAppHeader :illinois="props.illinois">
                     <template #title>
-                        <span style="font-size: 1.25rem; font-weight: 600"
-                            >Portal</span
-                        >
+                        <span class="header-title">Portal</span>
                     </template>
                     <template #app-controls>
-                        <nav
-                            style="
-                                display: flex;
-                                gap: 1rem;
-                                align-items: center;
-                            "
-                        >
+                        <nav class="header-controls">
                             <GButton size="small">Logout</GButton>
                         </nav>
                     </template>
@@ -42,3 +34,16 @@ import { GAppHeader, GButton } from "@illinois-grad/grad-vue";
         </ComponentDemo>
     </section>
 </template>
+
+<style scoped>
+.header-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.header-controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+</style>

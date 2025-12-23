@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import ComponentDemo from "../ComponentDemo.vue";
+import DemoResult from "../DemoResult.vue";
 import { GSearch } from "@illinois-grad/grad-vue";
 
 const searchQuery = ref("");
@@ -39,9 +40,7 @@ const searchResults = ref<SearchResult[]>([
                     :results="searchResults"
                     @select="(item) => console.log('Selected:', item)"
                 />
-                <p style="margin-top: 1rem; color: #6b7280">
-                    Search query: {{ searchQuery }}
-                </p>
+                <DemoResult label="Search query">{{ searchQuery }}</DemoResult>
             </template>
         </ComponentDemo>
     </section>
