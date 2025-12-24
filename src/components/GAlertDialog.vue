@@ -22,7 +22,7 @@ const emit = defineEmits(["cancel", "confirm"]);
 const dialog = ref<HTMLElement | null>(null);
 const open = ref(true);
 
-const { id, pop, push, isTop } = useOverlayStack(true);
+const { id, pop, push, isTop, zIndex } = useOverlayStack(true);
 
 const { deactivate, activate } = useOverlayFocus(dialog, isTop);
 
@@ -53,6 +53,7 @@ onBeforeMount(() => {
             :aria-labelledby="'alertdialog-label-' + id"
             :aria-describedby="'alertdialog-description-' + id"
             ref="dialog"
+            :style="{ zIndex }"
         >
             <div class="g-alertdialog-inner">
                 <h2 :id="'alertdialog-label-' + id" class="g-alertdialog-label">
@@ -82,6 +83,7 @@ onBeforeMount(() => {
     background: var(--g-surface-50);
     border-top: 8px solid var(--g-accent-500);
     padding: 2rem;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.4), 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 .g-alertdialog-label {
     font-family: var(--il-font-heading);
