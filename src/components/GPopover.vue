@@ -75,12 +75,7 @@ function updatePopoverPosition() {
     const scrollbarWidth =
         window.innerWidth - document.documentElement.clientWidth;
     const viewportWidth = window.innerWidth - scrollbarWidth;
-    const viewportRect = new DOMRect(
-        window.scrollX,
-        window.scrollY,
-        viewportWidth,
-        window.innerHeight,
-    );
+    const viewportRect = new DOMRect(0, 0, viewportWidth, window.innerHeight);
 
     const { top, left, xOffset, placedAbove, overlay } =
         calculatePopoverPosition(triggerRect, popoverRect, viewportRect, {
@@ -159,11 +154,23 @@ onBeforeUnmount(() => {
             <slot name="content"></slot>
             <button
                 v-if="!minimal"
-                class="p-button p-button-text g-popover-close fa-regular fa-close"
+                class="p-button p-button-text g-popover-close"
                 type="button"
                 aria-label="Close popover"
                 @click="hide"
-            ></button>
+            >
+                <svg
+                    class="g-popover-close-icon"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 51.26 51.26"
+                    aria-hidden="true"
+                >
+                    <path
+                        fill="currentColor"
+                        d="m37.84 32.94-7.63-7.63 7.63-7.63a3.24 3.24 0 0 0-4.58-4.58l-7.63 7.63L18 13.1a3.24 3.24 0 0 0-4.58 4.58L21 25.31l-7.62 7.63A3.24 3.24 0 1 0 18 37.52l7.63-7.63 7.63 7.63a3.24 3.24 0 0 0 4.58-4.58Z"
+                    />
+                </svg>
+            </button>
         </div>
     </transition>
 </template>
@@ -207,6 +214,7 @@ onBeforeUnmount(() => {
 }
 
 .g-popover-arrow {
+    box-sizing: border-box;
     position: absolute;
     top: -8px;
     width: 20px;
@@ -218,6 +226,7 @@ onBeforeUnmount(() => {
 }
 
 .g-popover-arrow::after {
+    box-sizing: border-box;
     content: "";
     display: block;
     margin: 0 auto;
@@ -233,6 +242,7 @@ onBeforeUnmount(() => {
 }
 
 .g-popover-arrow::before {
+    box-sizing: border-box;
     content: "";
     display: block;
     position: absolute;
@@ -251,12 +261,28 @@ onBeforeUnmount(() => {
 }
 .g-popover-close {
     position: absolute;
-    top: 0;
-    right: 0;
+    display: block;
+    top: 1px;
+    right: 1px;
     border: none;
-    font-size: 1rem;
-    line-height: 1;
-    padding: 0.25rem 0.5rem;
+    padding: 0.25rem 0.25rem;
+    border-radius: 7px;
+    background: transparent;
+    cursor: pointer;
+
+    &:hover {
+        background: var(--g-primary-500);
+        color: var(--g-surface-0);
+    }
+    &:focus-visible {
+        background: var(--ilw-color--focus--background);
+        color: var(--ilw-color--focus--text);
+    }
+
+    .g-popover-close-icon {
+        width: 1.25rem;
+        height: 1.25rem;
+    }
 }
 
 .g-popover-expand-enter-active,

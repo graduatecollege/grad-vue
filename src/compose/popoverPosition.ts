@@ -64,6 +64,7 @@ export function calculatePopoverPosition(
     if (left + popoverRect.width > viewportRect.right - margin) {
         left = viewportRect.right - popoverRect.width - margin;
     }
+    // Final safety clamp (if popover is wider than viewport)
     if (left < viewportRect.left + margin) {
         left = viewportRect.left + margin;
     }

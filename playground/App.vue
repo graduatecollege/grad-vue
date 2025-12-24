@@ -13,7 +13,6 @@ const main = useTemplateRef("main");
 onMounted(() => {
     useActiveLinkContent(main, 70, activeId);
 });
-
 </script>
 
 <template>
@@ -50,14 +49,17 @@ onMounted(() => {
 
                 <section id="popover" ref="popover">
                     <h2>Popover</h2>
-                    <GPopover>
-                        <template #trigger>
-                            <GButton>Open popover</GButton>
+                    <GPopover label="Popover Demo">
+                        <template #trigger="{ onToggle }">
+                            <GButton @click="onToggle">Open popover</GButton>
                         </template>
-                        <div style="padding: 0.5rem 1rem">
-                            Hello from popover
-                        </div>
-                        <div style="height: 500px"></div>
+                        <template #content>
+                            <div style="padding: 0.5rem 1rem">
+                                Hello from popover a a a a a a a a ab
+                            </div>
+                            <div style="height: 200px"></div>
+                            <div>yo</div>
+                        </template>
                     </GPopover>
                 </section>
             </main>
