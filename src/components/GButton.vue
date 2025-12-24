@@ -16,7 +16,7 @@ const props = withDefaults(defineProps<Props>(), {
     outlined: false,
     text: false,
     to: undefined,
-    component: undefined
+    component: undefined,
 });
 
 defineEmits([
@@ -71,9 +71,9 @@ const classes = computed(() => [
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-family: inherit;
+    font-family: var(--il-font-sans);
     font-weight: 700;
-    font-size: 1.188rem;
+    font-size: 1.1875rem;
     line-height: 1.1;
     border: 2px solid var(--ilw-color--background);
     background: var(--ilw-color--background);
@@ -118,7 +118,7 @@ const classes = computed(() => [
 }
 
 .g-btn--large {
-    font-size: 1.125rem;
+    font-size: 1.1875rem;
     padding: 0.75em 1.75em;
 }
 
@@ -172,5 +172,4 @@ const classes = computed(() => [
         background: var(--ilw-color--focus--background);
     }
 }
-
 </style>

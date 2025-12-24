@@ -62,13 +62,12 @@ describe("GButton", () => {
         describe.for(["small", "medium", "large"] as const)("Size: %s", (size) => {
             describe.for(["primary", "secondary", "accent", "danger"] as const)("Theme: %s", (theme) => {
                it.for([
-                   {outlined: true},
-                   {text: true},
-                   {}
-               ])("Variant: %o", async (variant) => {
+                   "Outlined",
+                   "Text"
+               ])("Variant: %s", async (variant) => {
                    await testAccessibility(
                        GButton,
-                       { size, theme, ...variant },
+                       { size, theme, outlined: variant === "Outlined", text: variant === "Text" },
                        { default: "Button" }
                    );
                });

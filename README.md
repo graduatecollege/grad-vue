@@ -16,7 +16,7 @@ consideration for all users.
 
 View live interactive demos and documentation at: [https://graduatecollege.github.io/grad-vue/](https://graduatecollege.github.io/grad-vue/)
 
-The demo site is located in the `demo/` directory and is built with Nuxt 4.
+The demo site is located in the [`demo/`](./demo) directory and is built with Nuxt 4.
 
 ## Installation
 
@@ -78,10 +78,7 @@ import { GButton } from '@illinois-grad/grad-vue'
 
 ### Running Tests
 
-The project uses Vitest 4 for unit and accessibility testing in **browser mode**. All components include:
-- Functional tests for basic component behavior
-- Accessibility tests using axe-core to ensure WCAG compliance
-- Tests run in a real Chromium browser via Playwright for accurate DOM behavior
+The project uses Vitest 4 for unit and accessibility testing in **browser mode**.
 
 ```bash
 # Run tests in watch mode
@@ -89,12 +86,6 @@ npm test
 
 # Run tests once
 npm run test:run
-
-# Run tests with UI
-npm run test:ui
-
-# Run tests with coverage
-npm run test:coverage
 ```
 
 ### Building
@@ -116,10 +107,3 @@ This package is automatically published to NPM when a semantic version tag (pref
 git tag v1.0.0
 git push origin v1.0.0
 ```
-
-This will:
-1. Build the package
-2. Create a GitHub release with auto-generated release notes
-3. Publish the package to NPM
-
-**Note:** Ensure the version in `package.json` matches the tag version before pushing.

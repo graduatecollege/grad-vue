@@ -1,34 +1,84 @@
-import { describe, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import GPopover from "../src/components/GPopover.vue";
-import { testAccessibility } from "./test-utils";
+import { mnt, testAccessibility } from "./test-utils";
+import { h } from "vue";
+import { page } from "@vitest/browser/context";
+import { mount } from "@vue/test-utils";
+
+function defaultWrapper() {
+    return mnt(GPopover, {
+        slots: {
+            trigger: (props: { onToggle: () => void }) =>
+                h("button", { onClick: props.onToggle }, "Open"),
+            content: "Popover content",
+        },
+        props: { label: "Additional information" },
+    });
+}
 
 describe("GPopover", () => {
     describe("Functional Tests", () => {
-        it("renders with default props", () => {
-            // Basic rendering test
+        it("renders with required props", () => {
+            const wrapper = defaultWrapper();
+
+            expect(wrapper.isVisible()).toBe(true);
+        });
+
+        it("remains in viewport when on the bottom", async (ctx) => {
+            await page.viewport(420, 500);
+
+            const content = document.createElement("div");
+            content.style.height = "450px";
+            document.body.appendChild(content);
+
+            const wrapper = defaultWrapper();
+            await wrapper.find("button").trigger("click");
+            await wrapper.vm.$nextTick();
+
+            expect(wrapper.find("[role=dialog]").element).toBeInViewport({ratio: 1});
+
+            wrapper.unmount();
+        });
+
+        it("remains in viewport when large", async (ctx) => {
+            await page.viewport(420, 500);
+
+            const content = document.createElement("div");
+            content.style.height = "150px";
+            document.body.appendChild(content);
+
+            const wrapper = mnt(GPopover, {
+                slots: {
+                    trigger: (props: { onToggle: () => void }) =>
+                        h("button", { onClick: props.onToggle }, "Open"),
+                    content: "<h2>Popover content</h2><p style='margin-top: 250px'>Popover content</p>",
+                },
+                props: { label: "Additional information" },
+            });
+            await wrapper.find("button").trigger("click");
+            await wrapper.vm.$nextTick();
+
+            expect(wrapper.find("[role=dialog]").element).toBeInViewport({ratio: 1});
+
+            wrapper.unmount();
         });
     });
 
     describe("Accessibility Tests", () => {
-        it("passes accessibility tests with trigger and content", async () => {
+        it("passes accessibility tests when open", async () => {
+            const wrapper = defaultWrapper();
+
+            await wrapper.find("button").trigger("click");
+
             await testAccessibility(
-                GPopover,
-                {},
+                wrapper.element,
+                {
+                    label: "Additional information",
+                },
                 {
                     trigger: "<button>Open</button>",
                     default: "Popover content",
-                }
-            );
-        });
-
-        it("passes accessibility tests with custom label", async () => {
-            await testAccessibility(
-                GPopover,
-                { label: "Additional information" },
-                {
-                    trigger: "<button>Info</button>",
-                    default: "More details here",
-                }
+                },
             );
         });
     });

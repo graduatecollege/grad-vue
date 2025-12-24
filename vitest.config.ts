@@ -8,10 +8,8 @@ export default defineConfig({
         vue(),
     ],
     test: {
-        globals: true,
         browser: {
             enabled: true,
-            headless: true,
             instances: [
                 {
                     browser: "chromium",
@@ -24,7 +22,7 @@ export default defineConfig({
         outputFile: {
             json: "./test-results/results.json",
             html: "./test-results/index.html",
-        },
+        }
     },
     resolve: {
         alias: {

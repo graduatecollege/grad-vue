@@ -72,11 +72,12 @@ onBeforeMount(() => {
 
 <style scoped>
 .g-alertdialog {
-    position: absolute;
+    position: fixed;
     left: 50vw;
     top: 50vh;
     transform: translate(-50%, -50%);
-    width: 400px;
+    max-width: 400px;
+    min-width: 300px;
     height: auto;
     background: var(--g-surface-50);
     border-top: 8px solid var(--g-accent-500);
@@ -85,6 +86,7 @@ onBeforeMount(() => {
 .g-alertdialog-label {
     font-family: var(--il-font-heading);
     font-size: 2rem;
+    margin-top: 0;
     color: var(--g-primary-500);
 }
 .g-alertdialog-content {

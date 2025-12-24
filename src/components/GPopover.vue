@@ -5,9 +5,15 @@ import { useOverlayFocus } from "../compose/useOverlayFocus.ts";
 import { useOverlayEscape } from "../compose/useOverlayEscape.ts";
 import { calculatePopoverPosition } from "../compose/popoverPosition.ts";
 
-const props = defineProps({
-    modelValue: { type: Boolean, default: false },
-    minimal: { type: Boolean, default: false },
+interface Props {
+    label: string;
+    modelValue?: boolean;
+    minimal?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+    modelValue: false,
+    minimal: false,
 });
 const emit = defineEmits(["update:modelValue", "show", "hide"]);
 
@@ -137,6 +143,7 @@ onBeforeUnmount(() => {
             }"
             role="dialog"
             aria-modal="true"
+            :aria-label="label"
             :style="{
                 top: popoverPosition.top + 'px',
                 left: popoverPosition.left + 'px',

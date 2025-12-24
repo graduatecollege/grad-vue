@@ -4,21 +4,28 @@ import { Component } from "vue";
 
 /**
  * Run accessibility tests on a component using axe-core
- * @param component The Vue component to test
+ * @param component The Vue component or HTMLElement to test
  * @param props Optional props to pass to the component
  * @param slots Optional slots to pass to the component
  */
 export async function testAccessibility(
-    component: Component,
+    component: Component | HTMLElement,
     props?: Record<string, any>,
     slots?: Record<string, any>
 ): Promise<void> {
-    const wrapper = mnt(component, {
-        props,
-        slots
-    });
+    let el: HTMLElement;
+    let wrapper: VueWrapper | null = null;
+    if (component instanceof HTMLElement) {
+        el = component;
+    } else {
+        wrapper = mnt(component, {
+            props,
+            slots
+        });
+        el = wrapper.element;
+    }
 
-    const results = await axe.run(wrapper.element);
+    const results = await axe.run(el);
 
     // Check for violations
     if (results.violations.length > 0) {
@@ -36,6 +43,10 @@ export async function testAccessibility(
             `Accessibility violations found:\n\n${violationMessages.join("\n\n")}`
         );
     }
+
+    if (wrapper) {
+        wrapper.unmount();
+    }
 }
 
 /**
@@ -49,6 +60,7 @@ export function mnt(
         props?: Record<string, any>;
         slots?: Record<string, any>;
         attachTo?: HTMLElement;
+        teleport?: boolean;
     }
 ): VueWrapper {
     return mount(component, {
@@ -57,7 +69,8 @@ export function mnt(
         attachTo: options?.attachTo || document.body,
         global: {
             stubs: {
-                RouterLink: RouterLinkStub
+                RouterLink: RouterLinkStub,
+                teleport: options?.teleport ?? false
             }
         }
     });
