@@ -21,7 +21,7 @@ const open = ref(props.modelValue);
 const triggerRef = useTemplateRef<HTMLElement | null>("triggerRef");
 const popoverRef = useTemplateRef<HTMLElement | null>("popoverRef");
 
-const { push, pop, isTop } = useOverlayStack();
+const { push, pop, isTop, zIndex } = useOverlayStack();
 const { activate, deactivate } = useOverlayFocus(popoverRef, isTop);
 useOverlayEscape([popoverRef, triggerRef], isTop, open, hide, pop);
 
@@ -142,6 +142,7 @@ onBeforeUnmount(() => {
             :style="{
                 top: popoverPosition.top + 'px',
                 left: popoverPosition.left + 'px',
+                zIndex
             }"
         >
             <div

@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, useTemplateRef } from "vue";
 import { useActiveLinkContent } from "../src/compose/useActiveLink";
+import GAlertDialog from "../src/components/GAlertDialog.vue";
+import GButton from "../src/components/GButton.vue";
 
 const buttons = useTemplateRef("buttons");
 const text = useTemplateRef("text");
 const popover = useTemplateRef("popover");
 
 const activeId = ref<string>("");
+const alertOpen = ref(false);
+const alert2Open = ref(false);
 
 const main = useTemplateRef("main");
 
@@ -29,6 +33,7 @@ onMounted(() => {
                         { label: 'Buttons', href: '#buttons' },
                         { label: 'Text Input', href: '#text-input' },
                         { label: 'Popover', href: '#popover' },
+                        { label: 'Alert Dialog', href: '#alert-dialog' },
                     ]"
                     v-model="activeId"
                 />
@@ -62,9 +67,35 @@ onMounted(() => {
                         </template>
                     </GPopover>
                 </section>
+                <section id="alert-dialog" ref="alert">
+                    <h2>Alert Dialog</h2>
+                    <GButton @click="alertOpen = true"
+                        >Open Alert Dialog</GButton
+                    >
+                    <GAlertDialog
+                        v-if="alertOpen"
+                        label="Alert Dialog Demo"
+                        button-text="Confirm"
+                        @cancel="alertOpen = false"
+                        @confirm="alertOpen = false"
+                    >
+                        Foobar
+                        <GButton @click="alert2Open = true">Open Alert Dialog 2</GButton>
+                    </GAlertDialog>
+                    <GAlertDialog
+                        v-if="alert2Open"
+                        label="Alert Dialog Demo 2"
+                        button-text="Confirm"
+                        @cancel="alert2Open = false"
+                        @confirm="alert2Open = false"
+                    >
+                        Foobar
+                    </GAlertDialog>
+                </section>
             </main>
         </div>
     </div>
+    <div id="modal-root"></div>
 </template>
 
 <style scoped>

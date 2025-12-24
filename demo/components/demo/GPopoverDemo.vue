@@ -4,6 +4,9 @@ import ComponentDemo from "../ComponentDemo.vue";
 import { GButton, GPopover } from "@illinois-grad/grad-vue";
 
 const isPopoverOpen = ref(false);
+const isPopover2Open = ref(false);
+const isPopover3Open = ref(false);
+
 </script>
 
 <template>
@@ -21,15 +24,33 @@ const isPopoverOpen = ref(false);
                         >Toggle Popover</GButton
                     >
                 </template>
-                <template #default>
+                <template #content>
                     <div class="popover-content">
                         <p class="popover-text">This is popover content!</p>
-                        <GButton
-                            size="small"
-                            class="popover-button"
-                            @click="isPopoverOpen = false"
-                            >Close</GButton
-                        >
+                        <GPopover v-model="isPopover2Open">
+                            <template #trigger>
+                                <GButton @click="isPopover2Open = !isPopover2Open"
+                                    >Can Popovers have Popovers?</GButton
+                                >
+                            </template>
+                            <template #content>
+                                <div class="popover-content">
+                                    <p class="popover-text">This is popover content 2!</p>
+                                    <GPopover v-model="isPopover3Open">
+                                        <template #trigger>
+                                            <GButton @click="isPopover3Open = !isPopover3Open"
+                                                >Can Popovers' Popovers have Popovers?</GButton
+                                            >
+                                        </template>
+                                        <template #content>
+                                            <div class="popover-content">
+                                                <p class="popover-text">Even if they can, should they?</p>
+                                            </div>
+                                        </template>
+                                    </GPopover>
+                                </div>
+                            </template>
+                        </GPopover>
                     </div>
                 </template>
             </GPopover>

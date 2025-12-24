@@ -21,8 +21,12 @@ export function useOverlayStack(modal = false) {
         }
         return stackRef.value.length > 0 && stackRef.value[stackRef.value.length - 1] === id;
     });
+    const zIndex = computed(() => {
+        const pos = stackRef.value.indexOf(id);
+        return pos === -1 ? 0 : (modal ? 200 : 100) + pos;
+    })
     onBeforeUnmount(pop);
-    return { push, pop, isTop, id };
+    return { push, pop, isTop, id, zIndex };
 }
 
 export function useOverlayStackState() {
