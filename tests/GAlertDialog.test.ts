@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import GAlertDialog from "../src/components/GAlertDialog.vue";
 import { mnt, testAccessibility } from "./test-utils";
 import { mount } from "@vue/test-utils";
-import { page } from "@vitest/browser/context";
+import { page } from "vitest/browser";
 
 beforeEach(() => {
     // create teleport target
@@ -76,7 +76,7 @@ describe("GAlertDialog", () => {
             await wrapper.vm.$nextTick();
 
             const dialog = wrapper.find("[role=alertdialog]");
-            expect(dialog.element).toBeInViewport();
+            await expect(dialog.element).toBeInViewport();
         });
     });
 

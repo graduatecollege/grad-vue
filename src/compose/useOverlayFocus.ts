@@ -1,4 +1,4 @@
-import { Ref, ref, watch } from "vue";
+import { nextTick, Ref, ref, watch } from "vue";
 import { useFocusTrap } from "@vueuse/integrations/useFocusTrap";
 
 export function useOverlayFocus(element: Ref<HTMLElement | null>, isTop: Ref<boolean>) {
@@ -26,15 +26,24 @@ export function useOverlayFocus(element: Ref<HTMLElement | null>, isTop: Ref<boo
         },
         onPostPause: () => (unpausing.value = true),
         onPostUnpause: () => {
-            setTimeout(() => {
+            nextTick(() => {
                 unpausing.value = false;
-            }, 0);
+            }).catch((err) => {
+                console.error(err);
+            })
         },
     });
 
     watch(isTop, (top) => {
         if (top) {
-            unpause();
+            // If the overlay is open immediately on mount, this can
+            // fail if we don't wait for the next tick because there are no
+            // focusable elements yet.
+            nextTick(() => {
+                unpause();
+            }).catch((err) => {
+                console.error(err);
+            })
         } else {
             pause();
         }

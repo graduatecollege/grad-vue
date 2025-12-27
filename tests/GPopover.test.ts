@@ -2,8 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import GPopover from "../src/components/GPopover.vue";
 import { mnt, testAccessibility } from "./test-utils";
 import { h } from "vue";
-import { page } from "@vitest/browser/context";
-import { mount } from "@vue/test-utils";
+import { page } from "vitest/browser";
 
 function defaultWrapper() {
     return mnt(GPopover, {
@@ -22,6 +21,7 @@ describe("GPopover", () => {
             const wrapper = defaultWrapper();
 
             expect(wrapper.isVisible()).toBe(true);
+            wrapper.unmount();
         });
 
         it("remains in viewport when on the bottom", async (ctx) => {
@@ -35,9 +35,12 @@ describe("GPopover", () => {
             await wrapper.find("button").trigger("click");
             await wrapper.vm.$nextTick();
 
-            expect(wrapper.find("[role=dialog]").element).toBeInViewport({ratio: 1});
+            await expect(wrapper.find("[role=dialog]").element).toBeInViewport({
+                ratio: 1,
+            });
 
             wrapper.unmount();
+            content.remove();
         });
 
         it("remains in viewport when large", async (ctx) => {
@@ -55,12 +58,14 @@ describe("GPopover", () => {
                 },
                 props: { label: "Additional information" },
             });
+            await wrapper.vm.$nextTick();
             await wrapper.find("button").trigger("click");
             await wrapper.vm.$nextTick();
 
-            expect(wrapper.find("[role=dialog]").element).toBeInViewport({ratio: 1});
+            await expect(wrapper.find("[role=dialog]").element).toBeInViewport({ratio: 1});
 
             wrapper.unmount();
+            content.remove();
         });
     });
 
@@ -80,6 +85,7 @@ describe("GPopover", () => {
                     default: "Popover content",
                 },
             );
+            wrapper.unmount();
         });
     });
 });

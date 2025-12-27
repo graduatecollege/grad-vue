@@ -13,6 +13,7 @@ describe("GSearch", () => {
         it("passes accessibility tests with basic props", async () => {
             await testAccessibility(GSearch, {
                 modelValue: "",
+                results: [],
             });
         });
 
@@ -20,12 +21,14 @@ describe("GSearch", () => {
             await testAccessibility(GSearch, {
                 placeholder: "Search...",
                 modelValue: "",
+                results: [],
             });
         });
 
         it("passes accessibility tests with aria-label", async () => {
             await testAccessibility(GSearch, {
                 modelValue: "",
+                results: [],
                 "aria-label": "Search the site",
             });
         });

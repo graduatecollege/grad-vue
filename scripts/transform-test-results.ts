@@ -4,8 +4,8 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { type JsonTestResults } from "vitest/reporters";
-import { ComponentResult, SummaryResult } from "./results";
+import type { JsonTestResults } from "vitest/reporters";
+import type { ComponentResult, SummaryResult } from "./results.ts";
 
 
 const __dirname = dirname(fileURLToPath(import.meta.url));

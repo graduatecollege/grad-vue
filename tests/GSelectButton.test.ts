@@ -16,7 +16,7 @@ describe("GSelectButton", () => {
             await testAccessibility(GSelectButton, {
                 label: "Choose option",
                 options,
-                modelValue: null,
+                modelValue: ""
             });
         });
 

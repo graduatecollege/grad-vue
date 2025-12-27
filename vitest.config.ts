@@ -18,6 +18,12 @@ export default defineConfig({
             provider: playwright(),
         },
         setupFiles: ["./tests/setup.ts"],
+        onConsoleLog(log: string) {
+            // As much as I hate doing this, the unavoidable log spam is a big problem
+            if (log.includes("decodeEntities option is passed but will be ignored in non-browser builds")) {
+                return false;
+            }
+        },
         reporters: ["default", "json", "html"],
         outputFile: {
             json: "./test-results/results.json",
