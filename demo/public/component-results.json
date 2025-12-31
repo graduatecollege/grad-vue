@@ -1,7 +1,7 @@
 {
-  "totalComponents": 11,
-  "totalTests": 75,
-  "passedTests": 75,
+  "totalComponents": 13,
+  "totalTests": 95,
+  "passedTests": 95,
   "failedTests": 0,
   "skippedTests": 0,
   "components": {
@@ -384,6 +384,75 @@
         }
       ]
     },
+    "GClipboard": {
+      "component": "GClipboard",
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed",
+      "tests": [
+        {
+          "title": "passes accessibility tests with basic content",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with focus",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "should have aria description",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "after click should update aria description",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        }
+      ]
+    },
+    "GHistoryScroller": {
+      "component": "GHistoryScroller",
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed",
+      "tests": [
+        {
+          "title": "should start scrolled to the bottom",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "should focus jump-to-bottom before list elements",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with default content",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        }
+      ]
+    },
     "GPopover": {
       "component": "GPopover",
       "total": 4,
@@ -469,14 +538,63 @@
     },
     "GSearch": {
       "component": "GSearch",
-      "total": 4,
-      "passed": 4,
+      "total": 12,
+      "passed": 12,
       "failed": 0,
       "skipped": 0,
       "status": "passed",
       "tests": [
         {
           "title": "renders with default props",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "with auto enabled, submit event should be fired with typing, after debounce",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "with auto enabled, typing and waiting for debounce, and then typing again, should submit again",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "with auto disabled, should not submit on typing",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "with auto disabled, should submit on enter after typing",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "with options open, arrow down should move to next result",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "with options open, arrow up should move back to previous result",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "with options open, enter should select result",
           "status": "passed",
           "ancestors": [
             "Functional Tests"
@@ -490,14 +608,21 @@
           ]
         },
         {
-          "title": "passes accessibility tests with placeholder",
+          "title": "passes accessibility tests with input",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
           ]
         },
         {
-          "title": "passes accessibility tests with aria-label",
+          "title": "passes accessibility tests with 0 results",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with 2 results",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
@@ -552,14 +677,35 @@
     },
     "GSelectButton": {
       "component": "GSelectButton",
-      "total": 4,
-      "passed": 4,
+      "total": 6,
+      "passed": 6,
       "failed": 0,
       "skipped": 0,
       "status": "passed",
       "tests": [
         {
           "title": "renders with default props",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "updates model value when an option is clicked",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "emits change event when an option is clicked",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "updates model value and emits change event when using arrow keys",
           "status": "passed",
           "ancestors": [
             "Functional Tests"
@@ -574,13 +720,6 @@
         },
         {
           "title": "passes accessibility tests with selected value",
-          "status": "passed",
-          "ancestors": [
-            "Accessibility Tests"
-          ]
-        },
-        {
-          "title": "passes accessibility tests with object options",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
@@ -645,8 +784,8 @@
     },
     "GTextInput": {
       "component": "GTextInput",
-      "total": 5,
-      "passed": 5,
+      "total": 8,
+      "passed": 8,
       "failed": 0,
       "skipped": 0,
       "status": "passed",
@@ -681,6 +820,27 @@
         },
         {
           "title": "passes accessibility tests with error state",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with label",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with label and instructions",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with label and instructions and error state",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"

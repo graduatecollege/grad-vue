@@ -6,6 +6,7 @@ import GButton from "../src/components/GButton.vue";
 import GSelect from "../src/components/GSelect.vue";
 import GSearch from "../src/components/GSearch.vue";
 import GHistoryScroller from "../src/components/GHistoryScroller.vue";
+import GSelectButton from "../src/components/GSelectButton.vue";
 
 const buttons = useTemplateRef("buttons");
 const text = useTemplateRef("text");
@@ -103,6 +104,11 @@ const historyEntries = ref([
                     <div style="height: 500px"></div>
                 </section>
 
+                <section id="select-buttons">
+                    <h2>Select Buttons</h2>
+                    <GSelectButton v-model="select" label="Select" :options="['foo', 'bar', 'baz']" />
+                </section>
+
                 <section id="search" ref="search">
                     <GSearch
                         label="Search"
@@ -116,7 +122,9 @@ const historyEntries = ref([
 
                 <section id="text-input" ref="text">
                     <h2>Text Input</h2>
-                    <GTextInput placeholder="Type here..." error="It's bad" />
+                    <GTextInput label="Text Input" placeholder="Type here..." error="It's bad" />
+                    <GTextInput label="Text Input" placeholder="Type here..." instructions="This is very instructive!">
+                    </GTextInput>
                     <div style="height: 500px"></div>
                 </section>
                 <section id="select" style="max-width: 400px">
