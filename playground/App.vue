@@ -5,6 +5,7 @@ import GAlertDialog from "../src/components/GAlertDialog.vue";
 import GButton from "../src/components/GButton.vue";
 import GSelect from "../src/components/GSelect.vue";
 import GSearch from "../src/components/GSearch.vue";
+import GHistoryScroller from "../src/components/GHistoryScroller.vue";
 
 const buttons = useTemplateRef("buttons");
 const text = useTemplateRef("text");
@@ -53,6 +54,22 @@ function selected(item: SearchResult) {
     console.log("Selected:", item);
     select.value = item.title;
 }
+
+const historyEntries = ref([
+    {id: "twelve"},
+    {id: "eleven"},
+    {id: "ten"},
+    {id: "nine"},
+    {id: "eight"},
+    {id: "seven"},
+    {id: "six"},
+    {id: "five"},
+    {id: "four"},
+    {id: "three"},
+    {id: "two"},
+    {id: "one"},
+])
+
 </script>
 
 <template>
@@ -73,6 +90,7 @@ function selected(item: SearchResult) {
                         { label: 'Popover', href: '#popover' },
                         { label: 'Alert Dialog', href: '#alert-dialog' },
                                             { label: 'Clipboard', href: '#clipboard' },
+                        { label: 'History Scroller', href: '#history-scroller' },
 ]"
                     v-model="activeId"
                 />
@@ -164,6 +182,17 @@ function selected(item: SearchResult) {
                     <h2>Clipboard</h2>
                     <GClipboard text="Clipboard text"></GClipboard>
                 </section>
+                <section id="history-scroller">
+                    <h2>History Scroller</h2>
+                    <GHistoryScroller :entries="historyEntries" class="history-scroller">
+                        <template #default="{ entry }">
+                            <div class="history-entry">
+                                This is history for: {{ entry.id }}
+                            </div>
+                        </template>
+
+                    </GHistoryScroller>
+                </section>
             </main>
         </div>
     </div>
@@ -200,5 +229,16 @@ section > *:not(h2) {
 
 .sidebar-menu {
     margin-top: 3rem;
+}
+
+.history-scroller {
+    display: block;
+    height: 200px;
+    width: 500px;
+}
+
+.history-entry {
+    font-size: 1.125rem;
+    line-height: 1.5rem;
 }
 </style>

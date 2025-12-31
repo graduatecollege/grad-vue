@@ -14,6 +14,7 @@ import GSidebarDemo from "~/components/demo/GSidebarDemo.vue";
 import GSidebarMenuDemo from "~/components/demo/GSidebarMenuDemo.vue";
 import GTextInputDemo from "~/components/demo/GTextInputDemo.vue";
 import GClipboardDemo from "~/components/demo/GClipboardDemo.vue";
+import GHistoryScrollerDemo from "~/components/demo/GHistoryScrollerDemo.vue";
 import { onMounted, reactive, ref } from "vue";
 import { useActiveLinkContent } from "@illinois-grad/grad-vue";
 import { useTemplateRef } from "#imports";
@@ -33,6 +34,7 @@ const demoComponents = [
     { label: "Sidebar", component: GSidebarDemo },
     { label: "Sidebar Menu", component: GSidebarMenuDemo },
     { label: "Text Input", component: GTextInputDemo },
+    { label: "History Scroller", component: GHistoryScrollerDemo },
 ];
 
 const demo = useTemplateRef("demo");
