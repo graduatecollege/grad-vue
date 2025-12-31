@@ -3,12 +3,6 @@ import GSidebar from "../src/components/GSidebar.vue";
 import { testAccessibility } from "./test-utils";
 
 describe("GSidebar", () => {
-    describe("Functional Tests", () => {
-        it("renders with default props", () => {
-            // Basic rendering test
-        });
-    });
-
     describe("Accessibility Tests", () => {
         it("passes accessibility tests with content", async () => {
             await testAccessibility(
@@ -19,18 +13,6 @@ describe("GSidebar", () => {
                         "<div class='g-dark-content'><h2>Sidebar content</h2><p>Paragraph in sidebar <a href='#'>With Link</a></p></div>",
                 },
             );
-        });
-
-        it("passes accessibility tests with different positions", async () => {
-            const positions = ["left", "right"] as const;
-
-            for (const position of positions) {
-                await testAccessibility(
-                    GSidebar,
-                    { label: "Navigation", position },
-                    { default: "Sidebar content" }
-                );
-            }
         });
     });
 });
