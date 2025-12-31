@@ -1,11 +1,27 @@
 <script setup lang="ts">
+/**
+ * A versatile button component that can also act as a link.
+ */
 import { computed, useAttrs } from "vue";
 
 interface Props {
+    /**
+     * Button size
+     */
     size?: "small" | "medium" | "large";
+    /**
+     * Button color theme
+     */
     theme?: "primary" | "secondary" | "accent" | "danger" | "none";
+    /**
+     * Use outlined style
+     */
     outlined?: boolean;
+    /**
+     * Use text style
+     */
     text?: boolean;
+
     to?: string | Record<string, any>;
     component?: string;
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, useId, useModel } from "vue";
 import DemoControlCheckbox from "./controls/DemoControlCheckbox.vue";
 import DemoControlText from "./controls/DemoControlText.vue";
 import DemoControlNumber from "./controls/DemoControlNumber.vue";
@@ -7,6 +7,7 @@ import DemoControlSelect from "./controls/DemoControlSelect.vue";
 import DemoTestResults from "./DemoTestResults.vue";
 import componentResults from "../public/component-results.json";
 import type { ComponentResult, SummaryResult } from "../../scripts/results";
+import { useTemplateRef } from "#imports";
 
 interface Props {
     name: string;
@@ -15,6 +16,7 @@ interface Props {
     component?: string;
     additional?: boolean;
     padding?: string;
+    sample?: string;
 }
 
 interface PropConfig {
@@ -52,6 +54,11 @@ const componentResult = computed<ComponentResult | null>(() => {
     }
     return testResults.value.components[props.component] || null;
 });
+
+const demoId = useId();
+
+const inner = useTemplateRef("inner");
+const slotContent = computed(() => inner.value?.innerHTML);
 </script>
 
 <template>
@@ -64,11 +71,22 @@ const componentResult = computed<ComponentResult | null>(() => {
             <p v-if="description" class="component-demo__description">
                 {{ description }}
             </p>
+            <div class="component-demo__collapsibles">
+                <div v-if="$slots.docs" class="component-demo__docs">
+                    <details class="component-demo__docs-details">
+                        <summary class="component-demo__docs-summary">
+                            Additional Documentation
+                        </summary>
+
+                        <slot name="docs" />
+                    </details>
+                </div>
+            </div>
         </div>
 
         <div class="component-demo__content">
-            <div class="component-demo__preview" :style="{padding}">
-                <div class="component-demo__preview-inner">
+            <div class="component-demo__preview" :style="{ padding }">
+                <div class="component-demo__preview-inner" ref="inner">
                     <slot :props="dynamicProps" />
                 </div>
             </div>
@@ -81,28 +99,28 @@ const componentResult = computed<ComponentResult | null>(() => {
                     <template v-for="(config, key) in propsConfig" :key="key">
                         <DemoControlCheckbox
                             v-if="config.type === 'boolean'"
-                            :id="`prop-${key}`"
+                            :id="`${demoId}-prop-${key}`"
                             v-model="dynamicProps[key]"
                             :label="config.label || key"
                         />
 
                         <DemoControlText
                             v-else-if="config.type === 'string'"
-                            :id="`prop-${key}`"
+                            :id="`${demoId}-prop-${key}`"
                             v-model="dynamicProps[key]"
                             :label="config.label || key"
                         />
 
                         <DemoControlNumber
                             v-else-if="config.type === 'number'"
-                            :id="`prop-${key}`"
+                            :id="`${demoId}-prop-${key}`"
                             v-model="dynamicProps[key]"
                             :label="config.label || key"
                         />
 
                         <DemoControlSelect
                             v-else-if="config.type === 'select'"
-                            :id="`prop-${key}`"
+                            :id="`${demoId}-prop-${key}`"
                             v-model="dynamicProps[key]"
                             :label="config.label || key"
                             :options="config.options || []"
@@ -216,6 +234,37 @@ const componentResult = computed<ComponentResult | null>(() => {
     .component-demo__header {
         border-bottom: 1px solid var(--il-storm-95);
         padding: 1rem;
+    }
+}
+
+.component-demo__collapsibles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: 1rem;
+}
+.component-demo__docs-details {
+    margin-top: 1rem;
+    max-width: 40rem;
+}
+.component-demo__docs-summary {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+
+    &:hover {
+        color: var(--g-accent-700);
+        text-decoration: underline;
+    }
+
+    &::marker {
+        color: var(--g-accent-700);
+    }
+}
+
+.component-demo__docs {
+    :deep(code) {
+        font-size: 1.1em;
+        color: var(--g-green-500);
     }
 }
 </style>

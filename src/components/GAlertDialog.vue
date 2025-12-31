@@ -1,4 +1,16 @@
 <script setup lang="ts">
+/**
+ * Alert dialog for confirming or canceling actions.
+ *
+ * Clicking on the outside or pressing the escape key will close the dialog
+ * and that counts as canceling.
+ *
+ * The surrounding page **must** have an element with the id `modal-root`,
+ * this dialog will be teleported to it, so it can properly be over all
+ * other content. The `modal-root` should be somewhere near the end of the
+ * page structure.
+ */
+
 import { onBeforeMount, onMounted, ref } from "vue";
 import { useOverlayStack } from "../compose/useOverlayStack.ts";
 import { useOverlayFocus } from "../compose/useOverlayFocus.ts";
@@ -6,8 +18,17 @@ import { useOverlayEscape } from "../compose/useOverlayEscape.ts";
 import GButton from "./GButton.vue";
 
 interface Props {
+    /**
+     * Dialog label
+     */
     label?: string;
+    /**
+     * Accept button text
+     */
     buttonText?: string;
+    /**
+     * Accept button color
+     */
     buttonColor?: "primary" | "secondary" | "danger";
 }
 
@@ -27,7 +48,7 @@ const { id, pop, push, isTop, zIndex } = useOverlayStack(true);
 const { deactivate, activate } = useOverlayFocus(dialog, isTop);
 
 function close() {
-    open.value = false;
+    emit("cancel");
 }
 
 useOverlayEscape([dialog], isTop, open, close, pop);

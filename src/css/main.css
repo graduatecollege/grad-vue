@@ -1,3 +1,20 @@
 @import "illinois.css";
 @import "ilw.css";
 @import "colors.css";
+
+.g-dark-content {
+    color: var(--g-surface-0);
+
+    a {
+        color: var(--g-accent-500);
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+        &:focus {
+            color: var(--ilw-color--focus--text);
+            background: var(--ilw-color--focus--background);
+        }
+    }
+}

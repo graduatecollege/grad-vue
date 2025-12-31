@@ -14,13 +14,13 @@ import { GAppHeader, GButton } from "@illinois-grad/grad-vue";
             :props-config="{
                 illinois: {
                     type: 'boolean',
-                    default: false,
-                    label: 'Illinois',
-                },
+                    label: 'Use the Illinois logo',
+                    default: true
+                }
             }"
         >
             <template #default="{ props }">
-                <GAppHeader :illinois="props.illinois">
+                <GAppHeader v-bind="props">
                     <template #title>
                         <span class="header-title">Portal</span>
                     </template>

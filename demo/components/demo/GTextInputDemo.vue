@@ -18,15 +18,25 @@ const textValue = ref("");
             :props-config="{
                 placeholder: {
                     type: 'string',
-                    default: 'Enter text...',
-                    label: 'Placeholder',
+                    label: 'Placeholder text',
+                    default: ''
                 },
+                disabled: {
+                    type: 'boolean',
+                    label: 'Disabled',
+                    default: false
+                },
+                error: {
+                    type: 'string',
+                    label: 'Error message',
+                    default: ''
+                }
             }"
         >
             <template #default="{ props }">
                 <GTextInput
                     v-model="textValue"
-                    :placeholder="props.placeholder"
+                    v-bind="props"
                     label="Example Label"
                 />
                 <DemoResult>{{ textValue }}</DemoResult>

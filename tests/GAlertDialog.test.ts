@@ -13,7 +13,7 @@ beforeEach(() => {
 
 afterEach(() => {
     // clean up
-    document.body.innerHTML = "";
+    // document.body.innerHTML = "";
 });
 
 describe("GAlertDialog", () => {
@@ -29,6 +29,7 @@ describe("GAlertDialog", () => {
             });
 
             expect(wrapper.exists()).toBe(true);
+            wrapper.unmount();
         });
         it("renders with custom label", () => {
             const wrapper = mount(GAlertDialog, {
@@ -43,6 +44,7 @@ describe("GAlertDialog", () => {
                 },
             });
             expect(wrapper.find("h2").text()).toBe("Hello Alert");
+            wrapper.unmount();
         });
         it("is visible when opened in a scrolled container", async (ctx) => {
             await page.viewport(420, 500);
@@ -66,9 +68,6 @@ describe("GAlertDialog", () => {
                         teleport: true,
                     },
                 },
-                props: {
-                    modelValue: true, // Open the dialog
-                },
             });
 
             scrollContainer.scrollTop = 600;
@@ -77,7 +76,19 @@ describe("GAlertDialog", () => {
 
             const dialog = wrapper.find("[role=alertdialog]");
             await expect(dialog.element).toBeInViewport();
+            wrapper.unmount();
+            scrollContainer.remove();
         });
+        it("escape should cancel the dialog", async () => {
+            const wrapper = mnt(GAlertDialog, { teleport: true });
+            await wrapper.vm.$nextTick();
+            await wrapper.trigger("keydown", { key: "Escape" });
+            await wrapper.vm.$nextTick();
+
+            expect(wrapper.emitted("cancel")).toHaveLength(1);
+
+            wrapper.unmount();
+        })
     });
 
     describe("Accessibility Tests", () => {
@@ -89,18 +100,22 @@ describe("GAlertDialog", () => {
                 {},
                 { default: "Alert message" },
             );
+
+            wrapper.unmount();
         });
 
         it("label should match accessible name", async () => {
             const wrapper = mnt(GAlertDialog, { teleport: true, slots: { default: "Are you sure?"} });
             const label = wrapper.find("[role=alertdialog]");
             expect(label.element).toHaveAccessibleName("Confirmation");
+            wrapper.unmount();
         });
 
         it("description should match content", async () => {
             const wrapper = mnt(GAlertDialog, { teleport: true, slots: { default: "Are you sure?"} });
             const description = wrapper.find("[role=alertdialog]");
             expect(description.element).toHaveAccessibleDescription("Are you sure?");
+            wrapper.unmount();
         });
     });
 });

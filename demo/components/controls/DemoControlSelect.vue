@@ -2,11 +2,12 @@
 defineProps<{
     id: string;
     label: string;
-    modelValue: any;
     options: any[];
 }>();
 
-defineEmits<{
+const modelValue = defineModel<string>();
+
+const emit = defineEmits<{
     (e: "update:modelValue", value: any): void;
 }>();
 </script>
@@ -18,9 +19,9 @@ defineEmits<{
         </label>
         <select
             :id="id"
-            :value="modelValue"
+            v-model="modelValue"
             class="select-control"
-            @change="$emit('update:modelValue', ($event.target as HTMLSelectElement).value)"
+            @change="emit('update:modelValue', ($event.target as HTMLSelectElement).value)"
         >
             <option
                 v-for="option in options"

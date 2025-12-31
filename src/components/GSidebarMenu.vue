@@ -1,31 +1,32 @@
-<script setup lang="ts" >
+<script setup lang="ts">
 import { computed, getCurrentInstance } from "vue";
 
 type MenuItem = {
     label: string;
-    /** Standard link. Supports in-page links like #section-id */
     href?: string;
-    /** Route path for vue-router (string only). If vue-router is not present, falls back to anchor navigation. */
     to?: string;
 };
 
 interface Props {
-    title?: string;
-    items: MenuItem[];
     /**
-     * Pixels to offset when determining which section is active.
-     * Useful if there is a fixed header.
+     * Title and accessible name
      */
+    title?: string; // Demo: Sidebar Menu
+    items: MenuItem[];
+    // Offset for tracking active position to account for toolbars
     offset?: number;
-    /** Enable automatic active link tracking for in-page links */
+    // Track active position for in-page links
     spy?: boolean;
+    /**
+     * Sidebar theme
+     */
     theme?: "light" | "dark";
 }
 
 const props = withDefaults(defineProps<Props>(), {
     offset: 70,
     spy: true,
-    theme: "dark",
+    theme: "light",
 });
 
 const activeId = defineModel<string | null>({ default: null, type: String });

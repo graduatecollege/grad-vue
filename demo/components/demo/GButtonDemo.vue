@@ -20,40 +20,41 @@ const handleClick = () => {
             :props-config="{
                 size: {
                     type: 'select',
-                    options: ['small', 'medium', 'large'],
+                    label: 'Button size',
                     default: 'medium',
-                    label: 'Size',
+                    options: [
+                        'small',
+                        'medium',
+                        'large'
+                    ]
                 },
                 theme: {
                     type: 'select',
+                    label: 'Button color theme',
+                    default: 'primary',
                     options: [
                         'primary',
                         'secondary',
                         'accent',
                         'danger',
-                        'none',
-                    ],
-                    default: 'primary',
-                    label: 'Theme',
+                        'none'
+                    ]
                 },
                 outlined: {
                     type: 'boolean',
-                    default: false,
-                    label: 'Outlined',
+                    label: 'Use outlined style',
+                    default: false
                 },
                 text: {
                     type: 'boolean',
-                    default: false,
-                    label: 'Text Style',
-                },
+                    label: 'Use text style',
+                    default: false
+                }
             }"
+            docs=""
         >
             <template #default="{ props }">
-                <GButton
-                    :size="props.size"
-                    :theme="props.theme"
-                    :outlined="props.outlined"
-                    :text="props.text"
+                <GButton v-bind="props"
                     @click="handleClick"
                 >
                     Click Me ({{ clickCount }})

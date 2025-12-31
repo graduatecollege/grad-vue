@@ -3,6 +3,8 @@ import { computed, onMounted, ref, useTemplateRef } from "vue";
 import { useActiveLinkContent } from "../src/compose/useActiveLink";
 import GAlertDialog from "../src/components/GAlertDialog.vue";
 import GButton from "../src/components/GButton.vue";
+import GSelect from "../src/components/GSelect.vue";
+import GSearch from "../src/components/GSearch.vue";
 
 const buttons = useTemplateRef("buttons");
 const text = useTemplateRef("text");
@@ -12,11 +14,45 @@ const activeId = ref<string>("");
 const alertOpen = ref(false);
 const alert2Open = ref(false);
 
+const selectValue = ref("");
+
 const main = useTemplateRef("main");
 
 onMounted(() => {
     useActiveLinkContent(main, 70, activeId);
 });
+const searchQuery = ref("");
+const select = ref("");
+const searchLoading = ref(false);
+
+interface SearchResult {
+    id: string | number;
+    title: string;
+}
+
+const searchData = ref<SearchResult[]>([
+    { id: 1, title: "The Quick Fox" },
+    { id: 2, title: "The Lazy Dog" },
+    { id: 3, title: "The Brown Bear" },
+    { id: 4, title: "The Quick Brown Fox" },
+    { id: 5, title: "The Quick Brown Fox Jumps Over The Lazy Dog" },
+]);
+const searchResults = ref<SearchResult[]>([]);
+
+function submit(query: string) {
+    console.log("submit", query);
+    searchLoading.value = true;
+    setTimeout(() => {
+        searchResults.value = searchData.value.filter((result) =>
+            result.title.toLowerCase().includes(query.toLowerCase()),
+        );
+        searchLoading.value = false;
+    }, 2000);
+}
+function selected(item: SearchResult) {
+    console.log("Selected:", item);
+    select.value = item.title;
+}
 </script>
 
 <template>
@@ -31,7 +67,9 @@ onMounted(() => {
                     theme="light"
                     :items="[
                         { label: 'Buttons', href: '#buttons' },
+                        { label: 'Search', href: '#search' },
                         { label: 'Text Input', href: '#text-input' },
+                        { label: 'Select', href: '#select' },
                         { label: 'Popover', href: '#popover' },
                         { label: 'Alert Dialog', href: '#alert-dialog' },
                     ]"
@@ -46,10 +84,37 @@ onMounted(() => {
                     <div style="height: 500px"></div>
                 </section>
 
+                <section id="search" ref="search">
+                    <GSearch
+                        label="Search"
+                        v-model="searchQuery"
+                        @submit="submit"
+                        @select="selected"
+                        :results="searchResults"
+                        :loading="searchLoading"
+                    />
+                </section>
+
                 <section id="text-input" ref="text">
                     <h2>Text Input</h2>
-                    <GTextInput placeholder="Type here..." />
+                    <GTextInput placeholder="Type here..." error="It's bad" />
                     <div style="height: 500px"></div>
+                </section>
+                <section id="select" style="max-width: 400px">
+                    <h2>Select</h2>
+                    <GSelect
+                        v-model="selectValue"
+                        label="Select"
+                        clear-button
+                        :options="['foo', 'bar', 'baz']"
+                    />
+                    <GSelect
+                        v-model="selectValue"
+                        label="Select 2"
+                        clear-button
+                        :options="['foo', 'bar', 'baz']"
+                        searchable
+                    />
                 </section>
 
                 <section id="popover" ref="popover">
@@ -80,7 +145,9 @@ onMounted(() => {
                         @confirm="alertOpen = false"
                     >
                         Foobar
-                        <GButton @click="alert2Open = true">Open Alert Dialog 2</GButton>
+                        <GButton @click="alert2Open = true"
+                            >Open Alert Dialog 2</GButton
+                        >
                     </GAlertDialog>
                     <GAlertDialog
                         v-if="alert2Open"

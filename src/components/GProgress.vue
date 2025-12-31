@@ -2,8 +2,17 @@
 import { computed } from "vue";
 
 type Props = {
-    value?: number; // 1-100 for determinate, undefined for indeterminate
-    size?: "small" | "medium" | "large";
+    /**
+     * Progress 1-100 or blank
+     */
+    value?: number;
+    /**
+     * Progress circle size
+     */
+    size?: "tiny" | "small" | "medium" | "large";
+    /**
+     * Accessible label
+     */
     ariaLabel?: string;
 }
 
@@ -16,6 +25,8 @@ const props = withDefaults(defineProps<Props>(), {
 const isDeterminate = computed(() => typeof props.value === "number" && props.value >= 1 && props.value <= 100);
 const radius = computed(() => {
     switch (props.size) {
+        case "tiny":
+            return 9;
         case "small":
             return 12;
         case "large":

@@ -1,40 +1,55 @@
-import { describe, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import GSidebarMenu from "../src/components/GSidebarMenu.vue";
-import { testAccessibility } from "./test-utils";
+import { mnt, testAccessibility } from "./test-utils";
+import { mount } from "@vue/test-utils";
 
 describe("GSidebarMenu", () => {
     const menuItems = [
-        { label: "Home", url: "/" },
-        { label: "About", url: "/about" },
+        { label: "Home", href: "/" },
+        { label: "About", href: "#about" },
     ];
 
     describe("Functional Tests", () => {
-        it("renders with default props", () => {
-            // Basic rendering test
+        it("renders with basic props", () => {
+
+            const wrapper = mnt(GSidebarMenu, {
+                props: {
+                    title: "Sidebar Menu",
+                    items: menuItems
+                }
+            });
+
+            expect(wrapper.exists()).toBe(true);
+            wrapper.unmount();
         });
     });
 
     describe("Accessibility Tests", () => {
         it("passes accessibility tests with menu items", async () => {
             await testAccessibility(GSidebarMenu, {
+                title: "Sidebar Menu",
                 items: menuItems,
             });
         });
-
-        it("passes accessibility tests with nested menu items", async () => {
-            const nestedItems = [
-                {
-                    label: "Section",
-                    children: [
-                        { label: "Item 1", url: "/1" },
-                        { label: "Item 2", url: "/2" },
-                    ],
-                },
-            ];
-
+        it("passes accessibility tests with an active item", async () => {
             await testAccessibility(GSidebarMenu, {
-                items: nestedItems,
+                title: "Sidebar Menu",
+                items: menuItems,
+                spy: true,
+                modelValue: "about",
             });
+        });
+        it("activeId should add aria-current", () => {
+            const wrapper = mnt(GSidebarMenu, {
+                props: {
+                    title: "Sidebar Menu",
+                    items: menuItems,
+                    spy: true,
+                    modelValue: "about"
+                },
+            });
+
+            expect(wrapper.find("a[href='#about']").attributes("aria-current")).toBe("location");
         });
     });
 });

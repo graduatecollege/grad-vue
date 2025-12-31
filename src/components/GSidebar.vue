@@ -2,14 +2,23 @@
 import { computed } from "vue";
 
 interface Props {
+    /**
+     * Custom background color
+     */
     backgroundColor?: string;
-    backgroundImage?: string;
+    /**
+     * Custom background image
+     */
+    backgroundImage?: string; // Demo: none
+    /**
+     * Sidebar theme
+     */
     theme?: "light" | "dark";
 }
 
 const props = withDefaults(defineProps<Props>(), {
     backgroundColor: "",
-    backgroundImage: "",
+    backgroundImage: "none",
     theme: "dark",
 });
 

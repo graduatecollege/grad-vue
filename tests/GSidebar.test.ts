@@ -14,7 +14,10 @@ describe("GSidebar", () => {
             await testAccessibility(
                 GSidebar,
                 { label: "Navigation" },
-                { default: "<nav>Sidebar content</nav>" }
+                {
+                    default:
+                        "<div class='g-dark-content'><h2>Sidebar content</h2><p>Paragraph in sidebar <a href='#'>With Link</a></p></div>",
+                },
             );
         });
 

@@ -10,11 +10,29 @@ interface OptionType {
 interface Props {
     modelValue: string | number | undefined | null;
     options: Array<string | OptionType>;
-    label: string;
+    /**
+     * Accessible label
+     */
+    label: string; // Demo: Select Option
+    /**
+     * Hide the label visually
+     */
     hiddenLabel?: boolean;
+    /**
+     * Disabled
+     */
     disabled?: boolean;
+    /**
+     * Name
+     */
     name?: string;
+    /**
+     * Searchable
+     */
     searchable?: boolean;
+    /**
+     * Show clear button
+     */
     clearButton?: boolean;
 }
 
@@ -50,11 +68,15 @@ const filteredOptions = computed(() => {
         return normalizedOptions.value;
     }
     const q = searchQuery.value.toLowerCase();
-    return normalizedOptions.value.filter((opt) => opt.label.toLowerCase().includes(q));
+    return normalizedOptions.value.filter((opt) =>
+        opt.label.toLowerCase().includes(q),
+    );
 });
 
 const selectedIndex = computed(() => {
-    return filteredOptions.value.findIndex((opt) => opt.value === props.modelValue);
+    return filteredOptions.value.findIndex(
+        (opt) => opt.value === props.modelValue,
+    );
 });
 
 watch(
@@ -84,7 +106,9 @@ function openMenu() {
     if (props.searchable) {
         searchQuery.value = "";
         // If a value is selected, highlight it in filtered list
-        const idx = filteredOptions.value.findIndex((opt) => opt.value === props.modelValue);
+        const idx = filteredOptions.value.findIndex(
+            (opt) => opt.value === props.modelValue,
+        );
         activeIndex.value = idx !== -1 ? idx : 0;
         nextTick(() => {
             if (comboInputRef.value) {
@@ -120,18 +144,24 @@ function onComboInput(e: Event) {
     }
     searchQuery.value = (e.target as HTMLInputElement).value;
     // Always highlight the first filtered option, or selected if present
-    const idx = filteredOptions.value.findIndex((opt) => opt.value === props.modelValue);
+    const idx = filteredOptions.value.findIndex(
+        (opt) => opt.value === props.modelValue,
+    );
     activeIndex.value = idx !== -1 ? idx : 0;
 }
 
 function onComboBlur(e: FocusEvent) {
     // Prevent closing if focus moves to the dropdown menu (e.g. scrollbar interaction)
-    const relatedTarget = (e.relatedTarget as HTMLElement | null);
+    const relatedTarget = e.relatedTarget as HTMLElement | null;
     if (ignoreBlur.value) {
         ignoreBlur.value = false;
         return;
     }
-    if (relatedTarget && listboxRef.value && listboxRef.value.contains(relatedTarget)) {
+    if (
+        relatedTarget &&
+        listboxRef.value &&
+        listboxRef.value.contains(relatedTarget)
+    ) {
         // Focus moved inside the dropdown, don't close
         return;
     }
@@ -230,16 +260,23 @@ function onOptionMouseDown() {
 
 function scrollOptionIntoView() {
     nextTick(() => {
-        const el = document.getElementById(`${baseId}-option-${activeIndex.value}`);
+        const el = document.getElementById(
+            `${baseId}-option-${activeIndex.value}`,
+        );
         if (el) {
             el.scrollIntoView({ block: "nearest" });
         }
     });
 }
 
-const  showClearButton = computed(() => {
-    return props.clearButton && props.modelValue !== null && props.modelValue !== undefined && !props.disabled;
-})
+const showClearButton = computed(() => {
+    return (
+        props.clearButton &&
+        props.modelValue !== null &&
+        props.modelValue !== undefined &&
+        !props.disabled
+    );
+});
 
 function clearValue() {
     if (!props.disabled) {
@@ -257,18 +294,21 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <div class="g-select-root g-select-combo" :class="{ 'g-select-open': open }">
-        <div v-if="!hiddenLabel" :id="baseId + '-label'" class="g-select-combo-label g-select-label">{{ props.label }}</div>
+    <div
+        class="g-select-root g-select-combo"
+        :class="{ 'g-select-open': open }"
+    >
+        <div
+            v-if="!hiddenLabel"
+            :id="baseId + '-label'"
+            class="g-select-combo-label g-select-label"
+        >
+            {{ props.label }}
+        </div>
         <div
             v-if="props.searchable"
             class="g-select-combo-input g-select-control"
             :id="baseId"
-            role="combobox"
-            :aria-controls="baseId + '-listbox'"
-            :aria-expanded="open ? 'true' : 'false'"
-            aria-haspopup="listbox"
-            v-bind="hiddenLabel ? { 'aria-label': props.label } : { 'aria-labelledby': baseId + '-label' }"
-            :aria-activedescendant="open ? baseId + '-option-' + activeIndex : undefined"
         >
             <input
                 ref="comboInputRef"
@@ -276,7 +316,13 @@ onBeforeUnmount(() => {
                 name="comboInput"
                 class="g-select-search-input"
                 :class="{ 'g-select-clearable': showClearButton }"
-                :value="open ? searchQuery : (normalizedOptions[selectedIndex] ? normalizedOptions[selectedIndex].label : '')"
+                :value="
+                    open
+                        ? searchQuery
+                        : normalizedOptions[selectedIndex]
+                          ? normalizedOptions[selectedIndex].label
+                          : ''
+                "
                 :placeholder="open ? '' : props.label"
                 :disabled="props.disabled"
                 @focus="onComboFocus"
@@ -287,8 +333,14 @@ onBeforeUnmount(() => {
                 :aria-controls="baseId + '-listbox'"
                 :aria-expanded="open ? 'true' : 'false'"
                 aria-haspopup="listbox"
-                :aria-activedescendant="open ? baseId + '-option-' + activeIndex : undefined"
-                v-bind="hiddenLabel ? { 'aria-label': props.label } : { 'aria-labelledby': baseId + '-label' }"
+                :aria-activedescendant="
+                    open ? baseId + '-option-' + activeIndex : undefined
+                "
+                v-bind="
+                    hiddenLabel
+                        ? { 'aria-label': props.label }
+                        : { 'aria-labelledby': baseId + '-label' }
+                "
                 role="combobox"
                 autocomplete="off"
             />
@@ -296,12 +348,34 @@ onBeforeUnmount(() => {
                 v-if="showClearButton"
                 type="button"
                 class="g-select-clear-btn"
-                aria-label="Clear selection"
                 @click="clearValue"
             >
-                <span aria-hidden="true" class="fa fa-regular fa-close"></span>
+                <svg
+                    role="img"
+                    aria-label="Clear Selection"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 51.26 51.26"
+                    width="1.125em"
+                >
+                    <path
+                        fill="currentColor"
+                        d="m37.84 32.94-7.63-7.63 7.63-7.63a3.24 3.24 0 0 0-4.58-4.58l-7.63 7.63L18 13.1a3.24 3.24 0 0 0-4.58 4.58L21 25.31l-7.62 7.63A3.24 3.24 0 1 0 18 37.52l7.63-7.63 7.63 7.63a3.24 3.24 0 0 0 4.58-4.58Z"
+                    />
+                </svg>
             </button>
-            <span class="fa fa-caret-down g-select-caret"></span>
+
+            <svg
+                class="g-select-caret"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 51.26 51.26"
+                aria-hidden="true"
+                width="1.125em"
+            >
+                <path
+                    fill="currentColor"
+                    d="M38.75 24.13a1.36 1.36 0 0 1 0 2.36l-12.44 7.18-12.43 7.18a1.36 1.36 0 0 1-2.05-1.18V11a1.36 1.36 0 0 1 2.05-1.18L26.31 17Z"
+                />
+            </svg>
         </div>
         <div
             v-else
@@ -312,25 +386,57 @@ onBeforeUnmount(() => {
             :aria-controls="baseId + '-listbox'"
             :aria-expanded="open ? 'true' : 'false'"
             aria-haspopup="listbox"
-            v-bind="hiddenLabel ? { 'aria-label': props.label } : { 'aria-labelledby': baseId + '-label' }"
-            :aria-activedescendant="open ? baseId + '-option-' + activeIndex : undefined"
+            v-bind="
+                hiddenLabel
+                    ? { 'aria-label': props.label }
+                    : { 'aria-labelledby': baseId + '-label' }
+            "
+            :aria-activedescendant="
+                open ? baseId + '-option-' + activeIndex : undefined
+            "
             tabindex="0"
             @click="onComboClick"
             @keydown="onComboKeydown"
             @focus="onComboFocus"
             @blur="onComboBlur"
         >
-            {{ normalizedOptions[selectedIndex] ? normalizedOptions[selectedIndex].label : "" }}
+            {{
+                normalizedOptions[selectedIndex]
+                    ? normalizedOptions[selectedIndex].label
+                    : ""
+            }}
             <button
                 v-if="showClearButton"
                 type="button"
                 class="g-select-clear-btn"
-                aria-label="Clear selection"
                 @click.stop="clearValue"
             >
-                <span aria-hidden="true" class="fa fa-regular fa-close"></span>
+                <svg
+                    role="img"
+                    aria-label="Clear Selection"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 51.26 51.26"
+                    width="1.125em"
+                >
+                    <path
+                        fill="currentColor"
+                        d="m37.84 32.94-7.63-7.63 7.63-7.63a3.24 3.24 0 0 0-4.58-4.58l-7.63 7.63L18 13.1a3.24 3.24 0 0 0-4.58 4.58L21 25.31l-7.62 7.63A3.24 3.24 0 1 0 18 37.52l7.63-7.63 7.63 7.63a3.24 3.24 0 0 0 4.58-4.58Z"
+                    />
+                </svg>
             </button>
-            <span class="fa fa-caret-down g-select-caret"></span>
+
+            <svg
+                class="g-select-caret"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 51.26 51.26"
+                aria-hidden="true"
+                width="1.125em"
+            >
+                <path
+                    fill="currentColor"
+                    d="M38.75 24.13a1.36 1.36 0 0 1 0 2.36l-12.44 7.18-12.43 7.18a1.36 1.36 0 0 1-2.05-1.18V11a1.36 1.36 0 0 1 2.05-1.18L26.31 17Z"
+                />
+            </svg>
         </div>
         <div
             v-show="open"
@@ -338,7 +444,11 @@ onBeforeUnmount(() => {
             class="g-select-combo-menu g-select-list"
             role="listbox"
             :id="baseId + '-listbox'"
-            v-bind="hiddenLabel ? { 'aria-label': props.label } : { 'aria-labelledby': baseId + '-label' }"
+            v-bind="
+                hiddenLabel
+                    ? { 'aria-label': props.label }
+                    : { 'aria-labelledby': baseId + '-label' }
+            "
             tabindex="-1"
         >
             <template v-if="filteredOptions.length > 0">
@@ -352,17 +462,29 @@ onBeforeUnmount(() => {
                         'ilw-theme-blue': option.value === modelValue,
                     }"
                     role="option"
-                    :aria-selected="option.value === modelValue ? 'true' : 'false'"
+                    :aria-selected="
+                        option.value === modelValue ? 'true' : 'false'
+                    "
                     @mousedown="onOptionMouseDown"
                     @click="onOptionClick(idx)"
                 >
-                    <slot name="option" :option="option" :selected="option.value === modelValue" :index="idx">
+                    <slot
+                        name="option"
+                        :option="option"
+                        :selected="option.value === modelValue"
+                        :index="idx"
+                    >
                         {{ option.label }}
                     </slot>
                 </div>
             </template>
             <template v-else>
-                <div aria-live="polite" class="g-select-combo-option g-select-option g-select-no-results">No results found.</div>
+                <div
+                    aria-live="polite"
+                    class="g-select-combo-option g-select-option g-select-no-results"
+                >
+                    No results found.
+                </div>
             </template>
         </div>
     </div>
@@ -381,6 +503,7 @@ onBeforeUnmount(() => {
 
 .g-select-control {
     font-size: 1.125rem;
+    line-height: 1.5;
     cursor: pointer;
     background: var(--g-surface-0);
     color: var(--g-surface-900);
@@ -389,6 +512,8 @@ onBeforeUnmount(() => {
     min-width: 120px;
     text-align: left;
     position: relative;
+    min-height: 1.5em;
+    box-sizing: content-box;
 
     &:focus-visible {
         background: var(--g-info-200);
@@ -415,9 +540,15 @@ onBeforeUnmount(() => {
     position: absolute;
     right: 0.5rem;
     line-height: 1.5rem;
-    top: calc(50% - 0.8rem);
-    color: var(--g-primary-500);
+    top: calc(50% - 0.55rem);
+    color: var(--g-accent-700);
     pointer-events: none;
+    //height: 1.25rem;
+    transform: rotate(90deg);
+}
+
+.g-select-open .g-select-caret {
+    transform: rotate(-90deg);
 }
 
 .g-select-combo-menu {
@@ -460,7 +591,11 @@ onBeforeUnmount(() => {
 .g-select-search-input {
     width: 100%;
     height: 100%;
-    padding: 0.5rem 1rem 0.5rem 0.5rem;
+    box-sizing: border-box;
+    font-size: 1.125rem;
+    font-family: var(--il-font-sans);
+    padding: 0.5rem 1rem 0.5rem 1rem;
+    border: none;
 
     &.g-select-clearable {
         padding-right: 3rem; /* Space for clear button */
@@ -477,14 +612,13 @@ onBeforeUnmount(() => {
 .g-select-clear-btn {
     position: absolute;
     right: 1.25rem;
-    top: 50%;
-    transform: translateY(-50%);
+    top: calc(50% - 1.15rem);
     background: none;
     border: none;
     color: var(--g-accent-700);
     font-size: 1.125rem;
     cursor: pointer;
-    padding: 0.5rem;
+    padding: 0.55rem 0.55rem 0.4rem;
     line-height: 1;
 
     &:hover {

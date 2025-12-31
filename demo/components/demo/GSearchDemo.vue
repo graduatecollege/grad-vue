@@ -1,19 +1,40 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import ComponentDemo from "../ComponentDemo.vue";
 import DemoResult from "../DemoResult.vue";
-import { GSearch } from "@illinois-grad/grad-vue";
+import GSearch from "../../../src/components/GSearch.vue";
 
 const searchQuery = ref("");
+const select = ref("");
+const searchLoading = ref(false);
+
 interface SearchResult {
-    id: string | number;
+    id: string;
     title: string;
 }
-const searchResults = ref<SearchResult[]>([
-    { id: 1, title: "Result 1" },
-    { id: 2, title: "Result 2" },
-    { id: 3, title: "Result 3" },
+
+const searchData = ref<SearchResult[]>([
+    { id: "1", title: "The Quick Fox" },
+    { id: "2", title: "The Lazy Dog" },
+    { id: "3", title: "The Brown Bear" },
+    { id: "4", title: "The Quick Brown Fox" },
+    { id: "5", title: "The Quick Brown Fox Jumps Over The Lazy Dog" },
 ]);
+const searchResults = ref<SearchResult[]>([]);
+
+function submit(query: string) {
+    searchLoading.value = true;
+    setTimeout(() => {
+        searchResults.value = searchData.value.filter((result) =>
+            result.title.toLowerCase().includes(query.toLowerCase()),
+        );
+        searchLoading.value = false;
+    }, 1000);
+}
+function selected(item: SearchResult) {
+    console.log("Selected:", item);
+    select.value = item.title;
+}
 </script>
 
 <template>
@@ -27,20 +48,31 @@ const searchResults = ref<SearchResult[]>([
             :props-config="{
                 placeholder: {
                     type: 'string',
-                    default: 'Search...',
                     label: 'Placeholder',
+                    default: 'Search...'
                 },
+                ariaLabel: {
+                    type: 'string',
+                    label: 'Accessible label',
+                    default: 'Search'
+                },
+                auto: {
+                    type: 'boolean',
+                    label: 'Automatic search'
+                }
             }"
         >
             <template #default="{ props }">
                 <GSearch
-                    :model-value="searchQuery"
-                    @update:model-value="searchQuery = $event"
-                    :placeholder="props.placeholder"
+                    v-bind="props"
+                    v-model="searchQuery"
+                    @submit="submit"
+                    @select="selected"
                     :results="searchResults"
-                    @select="(item) => console.log('Selected:', item)"
+                    :loading="searchLoading"
                 />
                 <DemoResult label="Search query">{{ searchQuery }}</DemoResult>
+                <DemoResult label="Selected result">{{ select }}</DemoResult>
             </template>
         </ComponentDemo>
     </section>

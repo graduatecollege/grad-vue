@@ -6,8 +6,15 @@ import { useOverlayEscape } from "../compose/useOverlayEscape.ts";
 import { calculatePopoverPosition } from "../compose/popoverPosition.ts";
 
 interface Props {
-    label: string;
+    /**
+     * Accessible label
+     */
+    label: string; // Demo: Sample Popover
     modelValue?: boolean;
+
+    /**
+     * Render without padding
+     */
     minimal?: boolean;
 }
 
@@ -142,7 +149,7 @@ onBeforeUnmount(() => {
             :style="{
                 top: popoverPosition.top + 'px',
                 left: popoverPosition.left + 'px',
-                zIndex
+                zIndex,
             }"
         >
             <div

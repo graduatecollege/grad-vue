@@ -20,13 +20,55 @@ const selectButtonOptions = ref([
             name="Basic Select Button"
             description="A button-style select component for choosing between options."
             component="GSelectButton"
+            :props-config="{
+                label: {
+                    type: 'string',
+                    label: 'Accessible label',
+                    default: 'Select Option'
+                },
+                size: {
+                    type: 'select',
+                    label: 'Size',
+                    default: 'medium',
+                    options: [
+                        'small',
+                        'medium',
+                        'large'
+                    ]
+                },
+                theme: {
+                    type: 'select',
+                    label: 'Color theme',
+                    default: 'primary',
+                    options: [
+                        'primary',
+                        'secondary',
+                        'accent',
+                        'danger'
+                    ]
+                },
+                name: {
+                    type: 'string',
+                    label: 'Name',
+                    default: null
+                },
+                disabled: {
+                    type: 'boolean',
+                    label: 'Disabled',
+                    default: false
+                }
+            }"
         >
-            <GSelectButton
-                v-model="selectButtonValue"
-                :options="selectButtonOptions"
-                label="Choose an option"
-            />
-            <DemoResult label="Selected">{{ selectButtonValue }}</DemoResult>
+            <template #default="{ props }">
+                <GSelectButton
+                    v-model="selectButtonValue"
+                    v-bind="props"
+                    :options="selectButtonOptions"
+                />
+                <DemoResult label="Selected">{{
+                    selectButtonValue
+                }}</DemoResult>
+            </template>
         </ComponentDemo>
     </section>
 </template>

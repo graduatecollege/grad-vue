@@ -1,10 +1,13 @@
 <script setup lang="ts">
 type Props = {
+    /**
+     * Use the Illinois logo
+     */
     illinois?: boolean;
 };
 
 const props = withDefaults(defineProps<Props>(), {
-    illinois: false,
+    illinois: true,
 });
 </script>
 
@@ -23,9 +26,8 @@ const props = withDefaults(defineProps<Props>(), {
                 <em>GRAD</em>
             </router-link>
         </div>
-        <div class="g-app-header__block-i-container">
+        <div v-if="illinois" class="g-app-header__block-i-container">
             <svg
-                v-if="illinois"
                 class="g-app-header__block-i"
                 role="img"
                 width="55"
@@ -42,8 +44,8 @@ const props = withDefaults(defineProps<Props>(), {
                     d="M42.1 18.1h9V3H3v15h9c1.7 0 3 1.3 3 3v36.1c0 1.7-1.3 3-3 3H3v15h48.1v-15h-9c-1.7 0-3-1.3-3-3v-36c0-1.7 1.4-3 3-3z"
                 ></path>
             </svg>
-            <slot v-else name="icon"></slot>
         </div>
+        <slot v-else name="icon"></slot>
         <div class="g-app-header__title">
             <slot name="title"></slot>
         </div>

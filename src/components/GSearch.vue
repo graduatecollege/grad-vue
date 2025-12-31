@@ -1,9 +1,16 @@
-<script setup lang="ts" generic="T extends {
-    id: string | number;
-    title: string;
-}">
+<script
+    setup
+    lang="ts"
+    generic="
+        T extends {
+            id: string | number;
+            title: string;
+        }
+    "
+>
 import { computed, nextTick, ref, watch } from "vue";
 import { useDebounceFn, useFocusWithin } from "@vueuse/core";
+import GProgress from "./GProgress.vue";
 
 export interface GSearchGroup<R> {
     type: string;
@@ -14,11 +21,21 @@ export interface GSearchGroup<R> {
 type Props = {
     modelValue: string | null | undefined;
     results: GSearchGroup<T>[] | T[];
+    /**
+     * Placeholder
+     */
     placeholder?: string;
+    /**
+     * Accessible label
+     */
     ariaLabel?: string;
+    /**
+     * Automatic search
+     */
     auto?: boolean;
-    loading?: boolean | null | undefined;
-}
+    // Show search loading indicator
+    loading?: boolean;
+};
 
 const props = withDefaults(defineProps<Props>(), {
     placeholder: "Search...",
@@ -28,10 +45,14 @@ const emit = defineEmits(["update:modelValue", "select", "submit"]);
 
 const inputRef = ref<HTMLInputElement | null>(null);
 const listboxRef = ref<HTMLDivElement | null>(null);
-const closed = ref(false);
+const closed = ref(true);
 const activeIndex = ref<number>(-1);
 const flatResults = computed(() => {
-    if (Array.isArray(props.results) && props.results.length && "items" in props.results[0]) {
+    if (
+        Array.isArray(props.results) &&
+        props.results.length &&
+        "items" in props.results[0]
+    ) {
         // Grouped results
         return (props.results as GSearchGroup<T>[]).flatMap((g) => g.items);
     } else {
@@ -41,9 +62,12 @@ const flatResults = computed(() => {
 const resultCount = computed(() => flatResults.value.length);
 
 function onInput(ev: Event) {
-    closed.value = false;
+    console.log("onInput");
     const value = (ev.target as HTMLInputElement).value;
     emit("update:modelValue", value);
+    if (props.auto && value.length > 1) {
+        closed.value = false;
+    }
 }
 
 function scrollOptionIntoView() {
@@ -58,11 +82,11 @@ function scrollOptionIntoView() {
 const { focused } = useFocusWithin(inputRef);
 
 function onKeydown(ev: KeyboardEvent) {
-    if (!resultCount.value) {
-        return;
-    }
     const altKey = ev.altKey;
     if (ev.key === "ArrowDown") {
+        if (!resultCount.value) {
+            return;
+        }
         ev.preventDefault();
         closed.value = false;
         if (!altKey) {
@@ -70,19 +94,37 @@ function onKeydown(ev: KeyboardEvent) {
             scrollOptionIntoView();
         }
     } else if (ev.key === "ArrowUp") {
+        if (!resultCount.value) {
+            return;
+        }
         ev.preventDefault();
         closed.value = false;
-        activeIndex.value = (activeIndex.value - 1 + resultCount.value) % resultCount.value;
+        activeIndex.value =
+            (activeIndex.value - 1 + resultCount.value) % resultCount.value;
         scrollOptionIntoView();
     } else if (ev.key === "Enter") {
-        selectResult(flatResults.value[activeIndex.value]);
+        if (closed.value) {
+            // Don't debounce on enter
+            emit("submit", props.modelValue);
+            closed.value = false;
+            ev.preventDefault();
+        } else {
+            selectResult(flatResults.value[activeIndex.value]);
+        }
     } else if (ev.key === "Escape") {
+        if (!resultCount.value) {
+            return;
+        }
         ev.preventDefault();
         if (!expanded.value) {
             emit("update:modelValue", "");
         }
         closed.value = true;
         activeIndex.value = -1;
+    }
+
+    if (["Backspace", "Delete", "Clear", "Undo"].includes(ev.key)) {
+        closed.value = true;
     }
 }
 
@@ -98,13 +140,11 @@ const isLoading = computed(() => {
 });
 
 const expanded = computed(() => {
-    return !!(focused.value && !closed.value && (resultCount.value > 0 || (props?.modelValue?.length && props.modelValue.length > 1)));
+    return focused.value && !closed.value;
 });
 
 const submit = useDebounceFn(() => {
-    if (props.auto) {
-        emit("submit", props.modelValue);
-    }
+    emit("submit", props.modelValue);
 }, 300);
 
 watch(
@@ -136,11 +176,32 @@ watch(
                 :aria-expanded="expanded"
                 aria-autocomplete="list"
                 aria-controls="g-search-list"
-                :aria-activedescendant="activeIndex >= 0 ? 'g-search-option-' + flatResults[activeIndex].id : undefined"
+                :aria-activedescendant="
+                    activeIndex >= 0
+                        ? 'g-search-option-' + flatResults[activeIndex].id
+                        : undefined
+                "
             />
-            <button type="submit" class="g-search-submit" aria-label="Submit search">
-                <i v-if="isLoading" class="fa fa-solid fa-circle-notch fa-spin" aria-hidden="true"></i>
-                <i v-else class="fa fa-magnifying-glass" aria-hidden="true"></i>
+            <button
+                type="submit"
+                class="g-search-submit"
+                aria-label="Submit search"
+                @keydown="onKeydown"
+            >
+                <template v-if="isLoading">
+                    <GProgress size="tiny" />
+                </template>
+                <svg
+                    role="img"
+                    aria-label="Search"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 51.26 51.26"
+                >
+                    <path
+                        fill="currentColor"
+                        d="M30 9.76A14.05 14.05 0 1 0 28.3 31l11.3 13a3.34 3.34 0 0 0 4.72-4.72L31.44 27.86A14.05 14.05 0 0 0 30 9.76ZM27.27 27a10.26 10.26 0 1 1 0-14.5 10.25 10.25 0 0 1 0 14.5Z"
+                    />
+                </svg>
             </button>
         </form>
         <div
@@ -152,23 +213,43 @@ watch(
             aria-label="Search results"
         >
             <div aria-live="polite" class="g-search-result-count">
-                <template v-if="!isLoading"> {{ resultCount }} result{{ resultCount === 1 ? "" : "s" }}</template>
+                <template v-if="!isLoading">
+                    {{ resultCount }} result{{
+                        resultCount === 1 ? "" : "s"
+                    }}</template
+                >
             </div>
             <template v-if="resultCount > 0 && 'items' in props.results[0]">
-                <template v-for="(group, gIdx) in props.results as GSearchGroup<T>[]" :key="group.type">
-                    <div class="g-search-group" role="group" :aria-label="group.label">
+                <template
+                    v-for="(group, gIdx) in props.results as GSearchGroup<T>[]"
+                    :key="group.type"
+                >
+                    <div
+                        class="g-search-group"
+                        role="group"
+                        :aria-label="group.label"
+                    >
                         <slot name="group" :group="group">
-                            <div class="g-search-group-label">{{ group.label }}</div>
+                            <div class="g-search-group-label">
+                                {{ group.label }}
+                            </div>
                         </slot>
                         <div
                             v-for="(item, idx) in group.items"
                             :key="item.id"
                             :id="'g-search-option-' + item.id"
                             class="g-search-option"
-                            :class="{ 'g-search-option-active': flatResults[activeIndex] && flatResults[activeIndex].id === item.id }"
+                            :class="{
+                                'g-search-option-active':
+                                    flatResults[activeIndex] &&
+                                    flatResults[activeIndex].id === item.id,
+                            }"
                             role="option"
                             @mousedown.prevent="selectResult(item)"
-                            :aria-selected="flatResults[activeIndex] && flatResults[activeIndex].id === item.id"
+                            :aria-selected="
+                                flatResults[activeIndex] &&
+                                flatResults[activeIndex].id === item.id
+                            "
                         >
                             <slot name="option" :option="item">
                                 {{ item.title }}
@@ -228,19 +309,20 @@ watch(
 }
 
 .g-search-submit {
+    box-sizing: border-box;
     background: var(--g-surface-0);
     color: var(--g-accent-700);
     border: 2px solid var(--g-primary-500);
     border-left-width: 1px;
     border-top-right-radius: var(--g-border-radius-m);
     border-bottom-right-radius: var(--g-border-radius-m);
-    padding: 0.5rem 0.6rem;
+    padding: 0.2rem 0.5rem;
     font-size: 1rem;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 42px;
+    width: 44px;
     &:focus {
         outline: 2px solid var(--g-primary-500);
     }
@@ -296,7 +378,7 @@ watch(
 }
 
 .fa-spin {
-    color:var(--g-primary-300);
+    color: var(--g-primary-300);
 }
 
 @media (max-width: 960px) {

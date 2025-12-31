@@ -15,13 +15,29 @@ import { GProgress } from "@illinois-grad/grad-vue";
             :props-config="{
                 value: {
                     type: 'number',
-                    default: 50,
-                    label: 'Progress Value',
+                    label: 'Progress 1-100 or blank',
+                    default: null
                 },
+                size: {
+                    type: 'select',
+                    label: 'Progress circle size',
+                    default: 'medium',
+                    options: [
+                        'tiny',
+                        'small',
+                        'medium',
+                        'large'
+                    ]
+                },
+                ariaLabel: {
+                    type: 'string',
+                    label: 'Accessible label',
+                    default: 'Loading'
+                }
             }"
         >
             <template #default="{ props }">
-                <GProgress :value="props.value" />
+                <GProgress v-bind="props" />
                 <DemoResult label="Progress">{{ props.value }}%</DemoResult>
             </template>
         </ComponentDemo>

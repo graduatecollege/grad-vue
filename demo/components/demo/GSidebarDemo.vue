@@ -13,29 +13,30 @@ import { GSidebar } from "@illinois-grad/grad-vue";
             component="GSidebar"
             padding="0"
             :props-config="{
-                theme: {
-                    type: 'select',
-                    options: ['dark', 'light'],
-                    default: 'dark',
-                    label: 'Theme',
-                },
                 backgroundColor: {
                     type: 'string',
-                    default: '',
-                    label: 'Background Color',
+                    label: 'Custom background color',
+                    default: ''
                 },
                 backgroundImage: {
                     type: 'string',
-                    default: '',
-                    label: 'Background Image',
+                    label: 'Custom background image',
+                    default: 'none'
                 },
+                theme: {
+                    type: 'select',
+                    label: 'Sidebar theme',
+                    default: 'dark',
+                    options: [
+                        'light',
+                        'dark'
+                    ]
+                }
             }"
         >
             <template #default="{ props }">
                 <GSidebar
-                    :theme="props.theme"
-                    :background-color="props.backgroundColor"
-                    :background-image="props.backgroundImage"
+                    v-bind="props"
                     class="sidebar-demo"
                 >
                     <div class="sidebar-content">
@@ -43,20 +44,6 @@ import { GSidebar } from "@illinois-grad/grad-vue";
                     </div>
                 </GSidebar>
             </template>
-        </ComponentDemo>
-
-        <ComponentDemo
-            name="Light Theme"
-            description="Use the light theme when the surrounding layout is light."
-        >
-            <GSidebar theme="light" class="sidebar-demo sidebar-demo--compact">
-                <div class="sidebar-content">
-                    <p class="sidebar-title">Sidebar (Light)</p>
-                    <p class="sidebar-description">
-                        This is a simple content slot.
-                    </p>
-                </div>
-            </GSidebar>
         </ComponentDemo>
     </section>
 </template>

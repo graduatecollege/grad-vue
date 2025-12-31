@@ -46,6 +46,7 @@ onMounted(() => {
             <GSidebarMenu
                 class="sidebar-menu"
                 title="Components"
+                theme="dark"
                 :items="
                     demoComponents.map((comp) => ({
                         label: comp.label,

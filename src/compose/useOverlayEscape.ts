@@ -1,4 +1,4 @@
-import { onBeforeUnmount, onMounted, Ref } from "vue";
+import { nextTick, onBeforeUnmount, onMounted, Ref } from "vue";
 
 export function useOverlayEscape(
     containers: Ref<Element | null>[],
@@ -20,7 +20,9 @@ export function useOverlayEscape(
         if (e.key === "Escape" && open.value) {
             if (isTop.value) {
                 e.preventDefault();
-                setTimeout(() => hide(), 0);
+                nextTick(hide).catch((err) => {
+                    console.error(err);
+                })
             }
         }
     }

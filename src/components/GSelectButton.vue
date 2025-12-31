@@ -9,11 +9,26 @@ interface OptionType {
 interface Props {
     options: Array<string | OptionType>;
     modelValue: string | number;
+    /**
+     * Accessible label
+     */
+    label: string; // Demo: Select Option
+    /**
+     * Size
+     */
     size?: "small" | "medium" | "large";
+    /**
+     * Color theme
+     */
     theme?: "primary" | "secondary" | "accent" | "danger";
+    /**
+     * Name
+     */
     name?: string;
+    /**
+     * Disabled
+     */
     disabled?: boolean;
-    label: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -37,7 +52,10 @@ const normalizedOptions = computed(() => {
     });
 });
 
-const groupClasses = computed(() => ["g-select-btn-group", `g-select-btn-group--${props.size}`]);
+const groupClasses = computed(() => [
+    "g-select-btn-group",
+    `g-select-btn-group--${props.size}`,
+]);
 
 const getBtnClasses = (selected: boolean) => [
     "g-select-btn",
@@ -58,7 +76,10 @@ function onChange(val: string | number) {
     <fieldset :class="groupClasses" :disabled="props.disabled">
         <legend class="g-select-btn-legend">{{ props.label }}</legend>
         <div class="g-select-btn-row">
-            <template v-for="(option, idx) in normalizedOptions" :key="option.value">
+            <template
+                v-for="(option, idx) in normalizedOptions"
+                :key="option.value"
+            >
                 <input
                     class="g-select-btn-radio"
                     type="radio"
@@ -160,5 +181,4 @@ function onChange(val: string | number) {
     border-bottom-right-radius: var(--g-border-radius-m);
     border-right-width: 2px;
 }
-
 </style>

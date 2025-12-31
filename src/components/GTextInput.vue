@@ -5,8 +5,17 @@ defineOptions({
 });
 
 type Props = {
+    /**
+     * Placeholder text
+     */
     placeholder?: string;
+    /**
+     * Disabled
+     */
     disabled?: boolean;
+    /**
+     * Error message
+     */
     error?: string;
 };
 

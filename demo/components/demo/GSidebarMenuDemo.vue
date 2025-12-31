@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import { ref } from "vue";
 import ComponentDemo from "../ComponentDemo.vue";
 import { GSidebarMenu } from "@illinois-grad/grad-vue";
-
-const demoActiveId = ref<string | null>(null);
 
 const demoItems = [
     { label: "Overview", href: "#sidebar-menu-demo-overview" },
     { label: "Details", href: "#sidebar-menu-demo-details" },
     { label: "More", href: "#sidebar-menu-demo-more" },
+    { label: "About", href: "#sidebar-menu-demo-more" },
+    { label: "Help", href: "#sidebar-menu-demo-more" },
 ];
 </script>
 
@@ -24,71 +23,27 @@ const demoItems = [
             :props-config="{
                 title: {
                     type: 'string',
-                    default: 'Demo Menu',
-                    label: 'Title',
+                    label: 'Title and accessible name',
+                    default: 'Sidebar Menu'
                 },
                 theme: {
                     type: 'select',
-                    options: ['dark', 'light'],
+                    label: 'Sidebar theme',
                     default: 'light',
-                    label: 'Theme',
-                },
-                spy: {
-                    type: 'boolean',
-                    default: false,
-                    label: 'Spy (auto-active)',
-                },
+                    options: [
+                        'light',
+                        'dark'
+                    ]
+                }
             }"
         >
             <template #default="{ props }">
-                <div
-                    style="
-                        display: grid;
-                        grid-template-columns: 280px 1fr;
-                        gap: 1rem;
-                        align-items: start;
-                    "
-                >
+                <div style="max-width: 300px">
                     <GSidebarMenu
-                        :title="props.title"
-                        :theme="props.theme"
-                        :spy="props.spy"
+                        v-bind="props"
                         :items="demoItems"
-                        v-model:activeId="demoActiveId"
-                        style="border-radius: 8px; overflow: hidden"
+                        v-model="demoActiveId"
                     />
-
-                    <div style="padding: 0.5rem 0">
-                        <section
-                            id="sidebar-menu-demo-overview"
-                            style="margin-bottom: 1.25rem"
-                        >
-                            <h3 style="margin: 0 0 0.5rem 0">Overview</h3>
-                            <p style="margin: 0">
-                                This content area provides destinations for the
-                                menu’s in-page links.
-                            </p>
-                        </section>
-
-                        <section
-                            id="sidebar-menu-demo-details"
-                            style="margin-bottom: 1.25rem"
-                        >
-                            <h3 style="margin: 0 0 0.5rem 0">Details</h3>
-                            <p style="margin: 0">
-                                When using hash links, the component focuses the
-                                destination heading.
-                            </p>
-                        </section>
-
-                        <section id="sidebar-menu-demo-more">
-                            <h3 style="margin: 0 0 0.5rem 0">More</h3>
-                            <p style="margin: 0">
-                                Current active id:
-                                <code>{{ demoActiveId || "(none)" }}</code>
-                            </p>
-                        </section>
-                    </div>
                 </div>
             </template>
         </ComponentDemo>
