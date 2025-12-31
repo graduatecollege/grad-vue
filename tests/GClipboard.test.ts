@@ -1,38 +1,50 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import GClipboard from "../src/components/GClipboard.vue";
 import { mnt, testAccessibility } from "./test-utils";
 import { page, userEvent } from "vitest/browser";
 
+beforeEach(() => {
+    document.body.innerHTML = "";
+})
+
 describe("GClipboard", () => {
     describe("Accessibility Tests", () => {
         it("passes accessibility tests with basic content", async () => {
-            await testAccessibility(
-                GClipboard,
-                { label: "Clipboard", text: "Example text" },
-            );
+            await testAccessibility(GClipboard, {
+                label: "Clipboard",
+                text: "Example text",
+            });
         });
         it("passes accessibility tests with focus", async () => {
-            const { container, instance, unmount, vm} = mnt(GClipboard, {
+            const { container, instance, unmount, vm } = mnt(GClipboard, {
                 props: { label: "Clipboard", text: "Example text" },
             });
 
             await userEvent.keyboard("{Tab}");
+
+            // CSS animation can cause issue with axe-core's ability to detect color contrast
+            await new Promise(resolve => setTimeout(resolve, 150));
 
             await testAccessibility(container);
 
+
             unmount();
         });
-        it("should have aria description", async () =>{
-            const { container, instance, unmount, vm} = mnt(GClipboard, {
+        it("should have aria description", async () => {
+            const { container, instance, unmount, vm } = mnt(GClipboard, {
                 props: { label: "Clipboard", text: "Example text" },
             });
 
             await userEvent.keyboard("{Tab}");
 
-            await expect.element(page.getByLabelText("Copy")).toHaveAccessibleDescription("Copy to clipboard");
+            await expect
+                .element(page.getByLabelText("Copy"))
+                .toHaveAccessibleDescription("Copy to clipboard");
+
+            unmount();
         });
-        it("after click should update aria description", async () =>{
-            const { container, instance, unmount, vm} = mnt(GClipboard, {
+        it("after click should update aria description", async () => {
+            const { container, instance, unmount, vm } = mnt(GClipboard, {
                 props: { label: "Clipboard", text: "Example text" },
             });
 
@@ -42,7 +54,10 @@ describe("GClipboard", () => {
             // This doesn't use expect.element because Playwright seems to
             // make the button lose focus and thus it resets the text after.
             // Without .element the check is immediate, whereas .element waits for a match.
-            await expect(page.getByLabelText("Copy")).toHaveAccessibleDescription("Copied");
+            await expect(
+                page.getByLabelText("Copy"),
+            ).toHaveAccessibleDescription("Copied");
+            unmount();
         });
     });
 });

@@ -8,7 +8,7 @@
         }
     "
 >
-import { computed, nextTick, ref, watch } from "vue";
+import { computed, nextTick, ref, useId, watch } from "vue";
 import { useDebounceFn, useFocusWithin } from "@vueuse/core";
 import GProgress from "./GProgress.vue";
 
@@ -19,7 +19,6 @@ export interface GSearchGroup<R> {
 }
 
 type Props = {
-    modelValue: string | null | undefined;
     results: GSearchGroup<T>[] | T[];
     /**
      * Placeholder
@@ -37,11 +36,13 @@ type Props = {
     loading?: boolean;
 };
 
+const modelValue = defineModel({default: () => ""});
+
 const props = withDefaults(defineProps<Props>(), {
     placeholder: "Search...",
     label: "Search",
 });
-const emit = defineEmits(["update:modelValue", "select", "submit"]);
+const emit = defineEmits(["select", "submit"]);
 
 const inputRef = ref<HTMLInputElement | null>(null);
 const listboxRef = ref<HTMLDivElement | null>(null);
@@ -62,9 +63,8 @@ const flatResults = computed(() => {
 const resultCount = computed(() => flatResults.value.length);
 
 function onInput(ev: Event) {
-    console.log("onInput");
     const value = (ev.target as HTMLInputElement).value;
-    emit("update:modelValue", value);
+    modelValue.value = value;
     if (props.auto && value.length > 1) {
         closed.value = false;
     }
@@ -105,7 +105,7 @@ function onKeydown(ev: KeyboardEvent) {
     } else if (ev.key === "Enter") {
         if (closed.value) {
             // Don't debounce on enter
-            emit("submit", props.modelValue);
+            emit("submit", modelValue.value);
             closed.value = false;
             ev.preventDefault();
         } else {
@@ -117,7 +117,7 @@ function onKeydown(ev: KeyboardEvent) {
         }
         ev.preventDefault();
         if (!expanded.value) {
-            emit("update:modelValue", "");
+            modelValue.value = "";
         }
         closed.value = true;
         activeIndex.value = -1;
@@ -130,7 +130,7 @@ function onKeydown(ev: KeyboardEvent) {
 
 function selectResult(result: T | null) {
     emit("select", result);
-    emit("update:modelValue", "");
+    modelValue.value = "";
     closed.value = true;
     activeIndex.value = -1;
 }
@@ -144,11 +144,11 @@ const expanded = computed(() => {
 });
 
 const submit = useDebounceFn(() => {
-    emit("submit", props.modelValue);
+    emit("submit", modelValue.value);
 }, 300);
 
 watch(
-    () => props.modelValue,
+    () => modelValue.value,
     (val) => {
         if (!val) {
             activeIndex.value = -1;
@@ -158,6 +158,8 @@ watch(
         }
     },
 );
+const id = useId();
+
 </script>
 
 <template>
@@ -169,13 +171,13 @@ watch(
                 name="search"
                 type="search"
                 :placeholder="props.placeholder"
-                :value="props.modelValue"
+                :value="modelValue"
                 @input="onInput"
                 @keydown="onKeydown"
                 role="combobox"
                 :aria-expanded="expanded"
                 aria-autocomplete="list"
-                aria-controls="g-search-list"
+                :aria-controls="`${id}-list`"
                 :aria-activedescendant="
                     activeIndex >= 0
                         ? 'g-search-option-' + flatResults[activeIndex].id
@@ -207,10 +209,6 @@ watch(
         <div
             v-if="expanded"
             class="g-search-dropdown"
-            role="listbox"
-            id="g-search-list"
-            ref="listboxRef"
-            aria-label="Search results"
         >
             <div aria-live="polite" class="g-search-result-count">
                 <template v-if="!isLoading">
@@ -219,6 +217,12 @@ watch(
                     }}</template
                 >
             </div>
+            <div
+                role="listbox"
+                :id="`${id}-list`"
+                ref="listboxRef"
+                aria-label="Search results"
+            >
             <template v-if="resultCount > 0 && 'items' in props.results[0]">
                 <template
                     v-for="(group, gIdx) in props.results as GSearchGroup<T>[]"
@@ -274,6 +278,7 @@ watch(
                     </slot>
                 </div>
             </template>
+            </div>
         </div>
     </div>
 </template>
@@ -324,7 +329,8 @@ watch(
     justify-content: center;
     width: 44px;
     &:focus {
-        outline: 2px solid var(--g-primary-500);
+        color: var(--ilw-color--focus--text);
+        background: var(--ilw-color--focus--background);
     }
 }
 
