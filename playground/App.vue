@@ -72,7 +72,8 @@ function selected(item: SearchResult) {
                         { label: 'Select', href: '#select' },
                         { label: 'Popover', href: '#popover' },
                         { label: 'Alert Dialog', href: '#alert-dialog' },
-                    ]"
+                                            { label: 'Clipboard', href: '#clipboard' },
+]"
                     v-model="activeId"
                 />
             </GSidebar>
@@ -158,6 +159,10 @@ function selected(item: SearchResult) {
                     >
                         Foobar
                     </GAlertDialog>
+                </section>
+                <section id="clipboard">
+                    <h2>Clipboard</h2>
+                    <GClipboard text="Clipboard text"></GClipboard>
                 </section>
             </main>
         </div>

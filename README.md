@@ -76,6 +76,19 @@ import { GButton } from '@illinois-grad/grad-vue'
 
 ## Development
 
+### Bootstrapping a New Component
+
+```bash
+# Create a new component scaffold (plus test, demo, exports, and playground wiring)
+npm run component:new -- GMyNewComponent
+
+# Preview changes without writing files
+npm run component:new -- GMyNewComponent --dry-run
+
+# Overwrite files if they already exist
+npm run component:new -- GMyNewComponent --force
+```
+
 ### Running Tests
 
 The project uses Vitest 4 for unit and accessibility testing in **browser mode**.

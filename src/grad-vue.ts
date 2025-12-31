@@ -10,8 +10,10 @@ import GSearch from "./components/GSearch.vue";
 import GAppHeader from "./components/GAppHeader.vue";
 import GSidebar from "./components/GSidebar.vue";
 import GSidebarMenu from "./components/GSidebarMenu.vue";
+import GClipboard from "./components/GClipboard.vue";
 
 import "./css/main.css";
+import VGtooltip from "./directives/v-gtooltip.ts";
 
 // Export individual components
 export {
@@ -26,11 +28,13 @@ export {
     GSearch,
     GSidebar,
     GSidebarMenu,
+    GClipboard,
 };
 
 // Export a plugin for installing all components
 export default {
     install(app: App) {
+        app.directive("gtooltip", VGtooltip)
         app.component("GAppHeader", GAppHeader);
         app.component("GButton", GButton);
         app.component("GTextInput", GTextInput);
@@ -42,6 +46,7 @@ export default {
         app.component("GSearch", GSearch);
         app.component("GSidebar", GSidebar);
         app.component("GSidebarMenu", GSidebarMenu);
+        app.component("GClipboard", GClipboard);
     },
 };
 

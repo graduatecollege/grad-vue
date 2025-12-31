@@ -13,6 +13,7 @@ import GSelectButtonDemo from "~/components/demo/GSelectButtonDemo.vue";
 import GSidebarDemo from "~/components/demo/GSidebarDemo.vue";
 import GSidebarMenuDemo from "~/components/demo/GSidebarMenuDemo.vue";
 import GTextInputDemo from "~/components/demo/GTextInputDemo.vue";
+import GClipboardDemo from "~/components/demo/GClipboardDemo.vue";
 import { onMounted, reactive, ref } from "vue";
 import { useActiveLinkContent } from "@illinois-grad/grad-vue";
 import { useTemplateRef } from "#imports";
@@ -23,6 +24,7 @@ const demoComponents = [
     { label: "Alert Dialog", component: GAlertDialogDemo },
     { label: "App Header", component: GAppHeaderDemo },
     { label: "Button", component: GButtonDemo },
+    { label: "Clipboard", component: GClipboardDemo },
     { label: "Popover", component: GPopoverDemo },
     { label: "Progress", component: GProgressDemo },
     { label: "Search", component: GSearchDemo },
@@ -85,8 +87,12 @@ onMounted(() => {
                     <p>To install grad-vue, use npm:</p>
                     <pre><code>npm install @illinois-grad/grad-vue</code></pre>
                     <h3>More Information</h3>
-                    <p>More details about the library can be found in the <a href="https://github.com/graduatecollege/grad-vue">GitHub repository</a>.</p>
-
+                    <p>
+                        More details about the library can be found in the
+                        <a href="https://github.com/graduatecollege/grad-vue"
+                            >GitHub repository</a
+                        >.
+                    </p>
                 </div>
                 <div class="demo" ref="demo">
                     <component

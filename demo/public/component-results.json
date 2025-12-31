@@ -7,8 +7,8 @@
   "components": {
     "GAlertDialog": {
       "component": "GAlertDialog",
-      "total": 6,
-      "passed": 6,
+      "total": 7,
+      "passed": 7,
       "failed": 0,
       "skipped": 0,
       "status": "passed",
@@ -29,6 +29,13 @@
         },
         {
           "title": "is visible when opened in a scrolled container",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "escape should cancel the dialog",
           "status": "passed",
           "ancestors": [
             "Functional Tests"
@@ -583,28 +590,14 @@
     },
     "GSidebar": {
       "component": "GSidebar",
-      "total": 3,
-      "passed": 3,
+      "total": 1,
+      "passed": 1,
       "failed": 0,
       "skipped": 0,
       "status": "passed",
       "tests": [
         {
-          "title": "renders with default props",
-          "status": "passed",
-          "ancestors": [
-            "Functional Tests"
-          ]
-        },
-        {
           "title": "passes accessibility tests with content",
-          "status": "passed",
-          "ancestors": [
-            "Accessibility Tests"
-          ]
-        },
-        {
-          "title": "passes accessibility tests with different positions",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
@@ -614,14 +607,14 @@
     },
     "GSidebarMenu": {
       "component": "GSidebarMenu",
-      "total": 3,
-      "passed": 3,
+      "total": 4,
+      "passed": 4,
       "failed": 0,
       "skipped": 0,
       "status": "passed",
       "tests": [
         {
-          "title": "renders with default props",
+          "title": "renders with basic props",
           "status": "passed",
           "ancestors": [
             "Functional Tests"
@@ -635,7 +628,14 @@
           ]
         },
         {
-          "title": "passes accessibility tests with nested menu items",
+          "title": "passes accessibility tests with an active item",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "activeId should add aria-current",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"

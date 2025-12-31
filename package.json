@@ -32,7 +32,8 @@
         "preview": "vite preview",
         "test": "vitest",
         "test:ui": "vitest --ui",
-        "test:run": "vitest run --browser.headless && node --experimental-strip-types scripts/transform-test-results.ts"
+        "test:run": "vitest run --browser.headless && node --experimental-strip-types scripts/transform-test-results.ts",
+        "component:new": "node --experimental-strip-types scripts/bootstrap-component.ts"
     },
     "dependencies": {
         "@vueuse/core": "^14",
