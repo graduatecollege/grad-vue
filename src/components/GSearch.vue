@@ -28,7 +28,7 @@ type Props = {
     /**
      * Accessible label
      */
-    ariaLabel?: string;
+    label?: string;
     /**
      * Automatic search
      */
@@ -39,7 +39,7 @@ type Props = {
 
 const props = withDefaults(defineProps<Props>(), {
     placeholder: "Search...",
-    ariaLabel: "Search",
+    label: "Search",
 });
 const emit = defineEmits(["update:modelValue", "select", "submit"]);
 
@@ -161,7 +161,7 @@ watch(
 </script>
 
 <template>
-    <div class="g-search" role="search" :aria-label="props.ariaLabel">
+    <div class="g-search" role="search" :aria-label="props.label">
         <form class="g-search-form" @submit.prevent="selectResult(null)">
             <input
                 ref="inputRef"

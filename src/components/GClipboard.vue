@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useClipboard } from "@vueuse/core";
 import { ref } from "vue";
+import VGtooltip from "../directives/v-gtooltip.ts";
 
 interface Props {
     /**
@@ -10,6 +11,8 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+
+const vGtooltip = VGtooltip;
 
 const { text, copy, copied, isSupported } = useClipboard({
     source: props.text,

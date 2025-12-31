@@ -140,6 +140,10 @@ a.app-name {
     left: 0;
     bottom: 0;
     width: 470px;
+
+    @media screen and (max-width: 640px) {
+        width: 80%;
+    }
 }
 
 .g-app-header__background-pattern {

@@ -8,6 +8,7 @@ export default defineConfig({
         vue(),
     ],
     test: {
+        testTimeout: 5000,
         browser: {
             enabled: true,
             instances: [

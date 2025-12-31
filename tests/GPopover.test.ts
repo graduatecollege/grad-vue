@@ -9,7 +9,7 @@ function defaultWrapper() {
         slots: {
             trigger: (props: { onToggle: () => void }) =>
                 h("button", { onClick: props.onToggle }, "Open"),
-            content: "Popover content",
+            content: () => "Popover content",
         },
         props: { label: "Additional information" },
     });
@@ -17,11 +17,11 @@ function defaultWrapper() {
 
 describe("GPopover", () => {
     describe("Functional Tests", () => {
-        it("renders with required props", () => {
-            const wrapper = defaultWrapper();
+        it("renders with required props", async () => {
+            const { unmount, instance } = defaultWrapper();
 
-            expect(wrapper.isVisible()).toBe(true);
-            wrapper.unmount();
+            await expect.element(instance).toBeVisible();
+            unmount();
         });
 
         it("remains in viewport when on the bottom", async (ctx) => {
@@ -32,10 +32,10 @@ describe("GPopover", () => {
             document.body.appendChild(content);
 
             const wrapper = defaultWrapper();
-            await wrapper.find("button").trigger("click");
+            await page.getByRole("button", { name: "Open" }).click();
             await wrapper.vm.$nextTick();
 
-            await expect(wrapper.find("[role=dialog]").element).toBeInViewport({
+            await expect.element(page.getByRole("dialog")).toBeInViewport({
                 ratio: 1,
             });
 
@@ -54,15 +54,15 @@ describe("GPopover", () => {
                 slots: {
                     trigger: (props: { onToggle: () => void }) =>
                         h("button", { onClick: props.onToggle }, "Open"),
-                    content: "<h2>Popover content</h2><p style='margin-top: 250px'>Popover content</p>",
+                    content: () => "<h2>Popover content</h2><p style='margin-top: 250px'>Popover content</p>",
                 },
                 props: { label: "Additional information" },
             });
             await wrapper.vm.$nextTick();
-            await wrapper.find("button").trigger("click");
+            await page.getByRole("button", { name: "Open" }).click();
             await wrapper.vm.$nextTick();
 
-            await expect(wrapper.find("[role=dialog]").element).toBeInViewport({ratio: 1});
+            await expect.element(page.getByRole("dialog")).toBeInViewport({ratio: 1});
 
             wrapper.unmount();
             content.remove();
@@ -73,10 +73,10 @@ describe("GPopover", () => {
         it("passes accessibility tests when open", async () => {
             const wrapper = defaultWrapper();
 
-            await wrapper.find("button").trigger("click");
+            await page.getByRole("button", { name: "Open" }).click();
 
             await testAccessibility(
-                wrapper.element,
+                wrapper.container,
                 {
                     label: "Additional information",
                 },

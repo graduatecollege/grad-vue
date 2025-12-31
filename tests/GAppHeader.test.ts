@@ -1,17 +1,22 @@
 import { describe, it } from "vitest";
 import GAppHeader from "../src/components/GAppHeader.vue";
-import { testAccessibility } from "./test-utils";
+import { mnt, testAccessibility } from "./test-utils";
 
 describe("GAppHeader", () => {
     describe("Functional Tests", () => {
         it("renders with default props", () => {
-            // Basic rendering test
+            const { unmount } = mnt(GAppHeader, {});
+            unmount();
         });
     });
 
     describe("Accessibility Tests", () => {
         it("passes accessibility tests with title", async () => {
-            await testAccessibility(GAppHeader, {}, { default: "Application Title" });
+            await testAccessibility(
+                GAppHeader,
+                {},
+                { default: "Application Title" },
+            );
         });
 
         it("passes accessibility tests with navigation slot", async () => {
@@ -21,7 +26,7 @@ describe("GAppHeader", () => {
                 {
                     default: "App",
                     navigation: "<nav><a href='/'>Home</a></nav>",
-                }
+                },
             );
         });
     });

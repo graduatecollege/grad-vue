@@ -1,120 +1,104 @@
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import GAlertDialog from "../src/components/GAlertDialog.vue";
 import { mnt, testAccessibility } from "./test-utils";
-import { mount } from "@vue/test-utils";
-import { page } from "vitest/browser";
-
-beforeEach(() => {
-    // create teleport target
-    const el = document.createElement("div");
-    el.id = "modal-root";
-    document.body.appendChild(el);
-});
-
-afterEach(() => {
-    // clean up
-    // document.body.innerHTML = "";
-});
+import { page, userEvent } from "vitest/browser";
 
 describe("GAlertDialog", () => {
     describe("Functional Tests", () => {
-        it("renders with default props", () => {
-            const wrapper = mount(GAlertDialog, {
-                attachTo: document.body,
-                global: {
-                    stubs: {
-                        teleport: true,
-                    },
-                },
-            });
+        it("renders with default props", async () => {
+            const wrapper = mnt(GAlertDialog, { teleport: true });
 
-            expect(wrapper.exists()).toBe(true);
+            await expect.element(wrapper.instance).toBeInTheDocument();
             wrapper.unmount();
         });
-        it("renders with custom label", () => {
-            const wrapper = mount(GAlertDialog, {
-                attachTo: document.body,
-                global: {
-                    stubs: {
-                        teleport: true,
-                    },
-                },
+        it("renders with custom label", async () => {
+            const wrapper = mnt(GAlertDialog, {
                 props: {
                     label: "Hello Alert",
                 },
+                teleport: true,
             });
-            expect(wrapper.find("h2").text()).toBe("Hello Alert");
+            await expect
+                .element(page.getByRole("heading", { name: "Hello Alert" }))
+                .toBeInTheDocument();
             wrapper.unmount();
         });
         it("is visible when opened in a scrolled container", async (ctx) => {
             await page.viewport(420, 500);
 
-            // Create a scrollable container
-            const scrollContainer = document.createElement("div");
-            scrollContainer.style.height = "500px";
-            scrollContainer.style.overflow = "auto";
-            document.body.appendChild(scrollContainer);
-
-            // Add content to enable scrolling
-            const content = document.createElement("div");
-            content.style.height = "1500px";
-            scrollContainer.appendChild(content);
-
-            // Mount the GAlertDialog inside the scrollable container
-            const wrapper = mount(GAlertDialog, {
-                attachTo: scrollContainer,
-                global: {
-                    stubs: {
-                        teleport: true,
-                    },
-                },
+            // Mount the GAlertDialog
+            const { container, unmount, vm } = mnt(GAlertDialog, {
+                teleport: true,
             });
 
-            scrollContainer.scrollTop = 600;
+            container.style.height = "400px";
+            container.style.overflow = "scroll";
 
-            await wrapper.vm.$nextTick();
+            const content = document.createElement("div");
+            content.style.height = "1500px";
+            container.prepend(content);
 
-            const dialog = wrapper.find("[role=alertdialog]");
-            await expect(dialog.element).toBeInViewport();
-            wrapper.unmount();
-            scrollContainer.remove();
+            container.scrollTop = 600;
+
+            await vm.$nextTick();
+
+            await expect
+                .element(page.getByRole("alertdialog"))
+                .toBeInViewport();
+            unmount();
         });
         it("escape should cancel the dialog", async () => {
-            const wrapper = mnt(GAlertDialog, { teleport: true });
-            await wrapper.vm.$nextTick();
-            await wrapper.trigger("keydown", { key: "Escape" });
-            await wrapper.vm.$nextTick();
+            const onCancel = vi.fn();
+            const { container, unmount, vm } = mnt(GAlertDialog, {
+                props: {
+                    onCancel,
+                },
+                teleport: true,
+            });
+            await vm.$nextTick();
+            await userEvent.keyboard("{Escape}");
+            await vm.$nextTick();
 
-            expect(wrapper.emitted("cancel")).toHaveLength(1);
+            expect(onCancel).toHaveBeenCalled();
 
-            wrapper.unmount();
-        })
+            unmount();
+        });
     });
 
     describe("Accessibility Tests", () => {
         it("passes accessibility tests with default props", async () => {
-            const wrapper = mnt(GAlertDialog, { teleport: true });
+            const wrapper = mnt(GAlertDialog, {
+                teleport: true,
+            });
 
             await testAccessibility(
-                wrapper.element,
+                wrapper.container,
                 {},
-                { default: "Alert message" },
+                { default: () => "Alert message" },
             );
 
             wrapper.unmount();
         });
 
         it("label should match accessible name", async () => {
-            const wrapper = mnt(GAlertDialog, { teleport: true, slots: { default: "Are you sure?"} });
-            const label = wrapper.find("[role=alertdialog]");
-            expect(label.element).toHaveAccessibleName("Confirmation");
+            const wrapper = mnt(GAlertDialog, {
+                slots: { default: () => "Are you sure?" },
+                teleport: true,
+            });
+            await expect
+                .element(page.getByRole("alertdialog"))
+                .toHaveAccessibleName("Confirmation");
             wrapper.unmount();
         });
 
         it("description should match content", async () => {
-            const wrapper = mnt(GAlertDialog, { teleport: true, slots: { default: "Are you sure?"} });
-            const description = wrapper.find("[role=alertdialog]");
-            expect(description.element).toHaveAccessibleDescription("Are you sure?");
+            const wrapper = mnt(GAlertDialog, {
+                slots: { default: () => "Are you sure?" },
+                teleport: true,
+            });
+            await expect
+                .element(page.getByRole("alertdialog"))
+                .toHaveAccessibleDescription("Are you sure?");
             wrapper.unmount();
         });
     });

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import GSidebarMenu from "../src/components/GSidebarMenu.vue";
 import { mnt, testAccessibility } from "./test-utils";
-import { mount } from "@vue/test-utils";
+import { page } from "vitest/browser";
 
 describe("GSidebarMenu", () => {
     const menuItems = [
@@ -10,7 +10,7 @@ describe("GSidebarMenu", () => {
     ];
 
     describe("Functional Tests", () => {
-        it("renders with basic props", () => {
+        it("renders with basic props", async () => {
 
             const wrapper = mnt(GSidebarMenu, {
                 props: {
@@ -19,7 +19,7 @@ describe("GSidebarMenu", () => {
                 }
             });
 
-            expect(wrapper.exists()).toBe(true);
+            await expect.element(wrapper.instance).toBeInTheDocument();
             wrapper.unmount();
         });
     });
@@ -39,7 +39,7 @@ describe("GSidebarMenu", () => {
                 modelValue: "about",
             });
         });
-        it("activeId should add aria-current", () => {
+        it("activeId should add aria-current", async () => {
             const wrapper = mnt(GSidebarMenu, {
                 props: {
                     title: "Sidebar Menu",
@@ -49,7 +49,8 @@ describe("GSidebarMenu", () => {
                 },
             });
 
-            expect(wrapper.find("a[href='#about']").attributes("aria-current")).toBe("location");
+            await expect.element(page.getByRole("link", { name: "About" })).toHaveAttribute("aria-current", "location");
+            wrapper.unmount();
         });
     });
 });

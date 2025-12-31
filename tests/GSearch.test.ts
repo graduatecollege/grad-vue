@@ -29,7 +29,7 @@ describe("GSearch", () => {
             await testAccessibility(GSearch, {
                 modelValue: "",
                 results: [],
-                "aria-label": "Search the site",
+                label: "Search the site",
             });
         });
     });
