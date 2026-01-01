@@ -1,9 +1,41 @@
 <script lang="ts" setup generic="T extends { id: string | number }">
+/**
+ * A scroller that is used for content that's typically shown like a chat log,
+ * meaning it starts at the bottom, and you scroll up for older entries.
+ *
+ * The scroller automatically starts at the bottom. When scrolled up, a button
+ * appears that jumps to the bottom. This button is also the first focusable
+ * element for accessibility.
+ *
+ * If the `label` is provided, the scroller will have the ARIA `role="log"` and
+ * the label as the `aria-label`.
+ *
+ * **Slot** `default` is what will be rendered for each entry in the
+ * `entries`. For example:
+ *
+ * ```vue-html
+ * <GHistoryScroller
+ *     v-bind="props"
+ *     :entries="historyEntries"
+ *     class="history-scroller">
+ *     <template #default="{ entry }">
+ *         <div class="history-entry">
+ *             This is history for: {{ entry.id }}
+ *         </div>
+ *     </template>
+ * </GHistoryScroller>
+ * ```
+ */
+
 import { computed, nextTick, onMounted, ref, watch } from "vue";
 import { useResizeObserver } from "@vueuse/core";
 import GButton from "./GButton.vue";
 
 type Props = {
+    /**
+     * Accessible label
+     */
+    label?: string; // Demo: History
     entries: T[];
 };
 
@@ -37,10 +69,8 @@ function handleScroll() {
     if (!scrollerRef.value) return;
     const { scrollTop, scrollHeight, clientHeight } = scrollerRef.value;
     // Consider within 2px of bottom/top as "at bottom/top"
-    isAtBottom.value = scrollTop + clientHeight >= scrollHeight -2;
+    isAtBottom.value = scrollTop + clientHeight >= scrollHeight - 2;
     isAtTop.value = scrollTop <= 2;
-
-
 }
 
 onMounted(() => {
@@ -88,8 +118,8 @@ const reversedEntries = computed(() => [...props.entries].reverse());
         <div
             ref="scrollerRef"
             class="g-history-scroller"
-            role="log"
-            aria-live="polite"
+            :role="label ? 'log' : undefined"
+            :aria-label="label"
             @scroll="handleScroll"
         >
             <GButton

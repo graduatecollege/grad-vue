@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ref } from "vue";
+import ComponentSection from "../ComponentSection.vue";
 import ComponentDemo from "../ComponentDemo.vue";
 import { GSidebarMenu } from "@illinois-grad/grad-vue";
 
@@ -9,12 +11,12 @@ const demoItems = [
     { label: "About", href: "#sidebar-menu-demo-more" },
     { label: "Help", href: "#sidebar-menu-demo-more" },
 ];
+
+const demoActiveId = ref(demoItems[0].href);
 </script>
 
 <template>
-    <section id="sidebar-menu" class="demo-section">
-        <h2 class="demo-section__title">Sidebar Menu</h2>
-
+    <ComponentSection title="Sidebar Menu">
         <ComponentDemo
             name="Basic Sidebar Menu"
             description="A sidebar navigation menu with accessible in-page link focus management."
@@ -37,6 +39,7 @@ const demoItems = [
                 }
             }"
         >
+            <template #docs></template>
             <template #default="{ props }">
                 <div style="max-width: 300px">
                     <GSidebarMenu
@@ -47,5 +50,5 @@ const demoItems = [
                 </div>
             </template>
         </ComponentDemo>
-    </section>
+    </ComponentSection>
 </template>

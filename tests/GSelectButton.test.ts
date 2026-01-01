@@ -25,7 +25,7 @@ describe("GSelectButton", () => {
 
         it("updates model value when an option is clicked", async () => {
             const callback = vi.fn();
-            const { unmount, instance } = mnt(GSelectButton, {
+            const { unmount, instance, vm } = mnt(GSelectButton, {
                 props: {
                     label: "Choose option",
                     options,
@@ -35,6 +35,7 @@ describe("GSelectButton", () => {
             });
 
             await userEvent.click(instance.getByText("Option 2"));
+            await vi.waitFor(() => callback.mock.lastCall);
 
             expect(callback).toHaveBeenCalledWith("Option 2");
 
@@ -43,7 +44,7 @@ describe("GSelectButton", () => {
 
         it("emits change event when an option is clicked", async () => {
             const callback = vi.fn();
-            const { unmount, instance } = mnt(GSelectButton, {
+            const { unmount, instance, vm } = mnt(GSelectButton, {
                 props: {
                     label: "Choose option",
                     options,
@@ -52,6 +53,7 @@ describe("GSelectButton", () => {
             });
 
             await userEvent.click(instance.getByText("Option 3"));
+            await vi.waitFor(() => callback.mock.lastCall);
 
             expect(callback).toHaveBeenCalledWith("Option 3");
 
@@ -61,7 +63,7 @@ describe("GSelectButton", () => {
         it("updates model value and emits change event when using arrow keys", async () => {
             const callback = vi.fn();
             const callback2 = vi.fn();
-            const { unmount, instance } = mnt(GSelectButton, {
+            const { unmount, instance, vm } = mnt(GSelectButton, {
                 props: {
                     label: "Choose option",
                     options,
@@ -73,6 +75,8 @@ describe("GSelectButton", () => {
 
             await userEvent.keyboard("{Tab}");
             await userEvent.keyboard("{ArrowRight}");
+
+            await vi.waitFor(() => callback.mock.lastCall);
 
             expect(callback2).toHaveBeenCalledWith("Option 2");
             expect(callback).toHaveBeenCalledWith("Option 2");

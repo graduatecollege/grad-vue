@@ -543,7 +543,7 @@ onBeforeUnmount(() => {
     top: calc(50% - 0.55rem);
     color: var(--g-accent-700);
     pointer-events: none;
-    //height: 1.25rem;
+
     transform: rotate(90deg);
 }
 
