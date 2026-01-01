@@ -2,12 +2,11 @@
 defineProps<{
     id: string;
     label: string;
-    modelValue: string;
+    instructions?: string;
 }>();
 
-defineEmits<{
-    (e: "update:modelValue", value: string): void;
-}>();
+const modelValue = defineModel<string>();
+
 </script>
 
 <template>
@@ -15,12 +14,19 @@ defineEmits<{
         <label :for="id" class="text-label">
             {{ label }}
         </label>
+        <p
+            v-if="instructions"
+            :id="`${id}-instructions`"
+            class="demo-control__instructions"
+        >
+            {{ instructions }}
+        </p>
         <input
             :id="id"
             type="text"
-            :value="modelValue"
+            v-model="modelValue"
             class="text-input"
-            @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
+            :aria-describedby="instructions ? `${id}-instructions` : undefined"
         />
     </div>
 </template>
@@ -33,7 +39,6 @@ defineEmits<{
 }
 
 .text-label {
-    font-size: 0.875rem;
     font-weight: 500;
 }
 
@@ -42,5 +47,12 @@ defineEmits<{
     border: 2px solid var(--il-blue);
     border-radius: 4px;
     font-size: 0.875rem;
+    font-family: var(--il-font-sans);
+}
+
+.demo-control__instructions {
+    margin: 0;
+    line-height: 1.35;
+    color: #374151;
 }
 </style>

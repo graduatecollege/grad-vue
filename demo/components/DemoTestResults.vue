@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
 import { GButton, GPopover } from "@illinois-grad/grad-vue";
-import type { ComponentResult, ComponentTestResult } from "../../scripts/results";
+import type {
+    ComponentResult,
+    ComponentTestResult,
+} from "../../scripts/results";
 
 interface Props {
     componentName: string;
@@ -9,8 +11,6 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-
-const isPopoverOpen = ref(false);
 
 const isTestSkipped = (status: ComponentTestResult["status"]) => {
     return status === "skipped" || status === "pending" || status === "todo";
@@ -23,11 +23,9 @@ const isTestSkipped = (status: ComponentTestResult["status"]) => {
         <div class="test__summary">
             <span
                 :class="{
-                    'test__status': true,
-                    'test__status--passed':
-                        componentResult.status === 'passed',
-                    'test__status--failed':
-                        componentResult.status === 'failed',
+                    test__status: true,
+                    'test__status--passed': componentResult.status === 'passed',
+                    'test__status--failed': componentResult.status === 'failed',
                     'test__status--skipped':
                         componentResult.status === 'skipped',
                 }"
@@ -43,82 +41,71 @@ const isTestSkipped = (status: ComponentTestResult["status"]) => {
             <span class="test__text">
                 {{ componentResult.passed }}/{{ componentResult.total }}
                 tests passed
-                <span
-                    v-if="componentResult.failed > 0"
-                    class="test__failed"
-                >
+                <span v-if="componentResult.failed > 0" class="test__failed">
                     ({{ componentResult.failed }} failed)
                 </span>
-                <span
-                    v-if="componentResult.skipped > 0"
-                    class="test__skipped"
-                >
+                <span v-if="componentResult.skipped > 0" class="test__skipped">
                     ({{ componentResult.skipped }} skipped)
                 </span>
             </span>
-            <GPopover v-model="isPopoverOpen">
-                <template #trigger="{ onToggle }">
+            <GPopover>
+                <template #trigger="{ toggle }">
                     <GButton
                         size="small"
                         theme="secondary"
                         outlined
-                        @click="onToggle"
+                        @click="toggle"
                     >
                         {{ componentName }} Test Details
                     </GButton>
                 </template>
-                <template #content>
-                    <div class="test__details">
-                        <h2>{{ componentName }} Test Details</h2>
-                        <ul class="test__list">
-                            <li
-                                v-for="(
-                                    test, index
-                                ) in componentResult.tests"
-                                :key="index"
-                                class="test__item"
+                <div class="test__details">
+                    <h2>{{ componentName }} Test Details</h2>
+                    <ul class="test__list">
+                        <li
+                            v-for="(test, index) in componentResult.tests"
+                            :key="index"
+                            class="test__item"
+                        >
+                            <span
+                                :class="{
+                                    'test-status': true,
+                                    'test-status--passed':
+                                        test.status === 'passed',
+                                    'test-status--failed':
+                                        test.status === 'failed',
+                                    'test-status--skipped': isTestSkipped(
+                                        test.status,
+                                    ),
+                                }"
                             >
-                                <span
+                                {{
+                                    test.status === "passed"
+                                        ? "Pass"
+                                        : test.status === "failed"
+                                          ? "Fail"
+                                          : "Skip"
+                                }}
+                            </span>
+                            <div class="test-info">
+                                <div
+                                    v-if="test.ancestors.length > 0"
                                     :class="{
-                                        'test-status': true,
-                                        'test-status--passed':
-                                            test.status === 'passed',
-                                        'test-status--failed':
-                                            test.status === 'failed',
-                                        'test-status--skipped':
-                                            isTestSkipped(test.status),
+                                        'test-ancestors': true,
+                                        'test-ancestors--accessibility':
+                                            test.ancestors[0] ===
+                                            'Accessibility Tests',
                                     }"
                                 >
-                                    {{
-                                        test.status === "passed"
-                                            ? "Pass"
-                                            : test.status === "failed"
-                                              ? "Fail"
-                                              : "Skip"
-                                    }}
-                                </span>
-                                <div class="test-info">
-                                    <div
-                                        v-if="test.ancestors.length > 0"
-                                        :class="{
-                                            'test-ancestors': true,
-                                            'test-ancestors--accessibility':
-                                                test.ancestors[0] ===
-                                                'Accessibility Tests',
-                                        }"
-                                    >
-                                        {{ test.ancestors.join(" > ") }}
-                                    </div>
-                                    <div
-                                        class="test-title"
-                                    >
-                                        {{ test.title }}
-                                    </div>
+                                    {{ test.ancestors.join(" > ") }}
                                 </div>
-                            </li>
-                        </ul>
-                    </div>
-                </template>
+                                <div class="test-title">
+                                    {{ test.title }}
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
             </GPopover>
         </div>
     </div>
@@ -246,5 +233,4 @@ const isTestSkipped = (status: ComponentTestResult["status"]) => {
     content: "♿";
     font-size: 0.875rem;
 }
-
 </style>

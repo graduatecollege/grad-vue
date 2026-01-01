@@ -1,6 +1,15 @@
 <script setup lang="ts">
 /**
- * A versatile button component that can also act as a link.
+ * The element or component can be set with the `component` prop, so it can be
+ * a link or `router-link` component from vue-router. For example:
+ *
+ * ```vue-html
+ * <GButton component="router-link" to="/some-route">
+ *     Click me
+ * </GButton>
+ * ```
+ *
+ * Note that grad-vue doesn't include vue-router as a dependency.
  */
 import { computed, useAttrs } from "vue";
 

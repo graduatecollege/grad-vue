@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import ComponentSection from "../ComponentSection.vue";
 import ComponentDemo from "../ComponentDemo.vue";
 import DemoResult from "../DemoResult.vue";
 import { GSelectButton } from "@illinois-grad/grad-vue";
@@ -13,9 +14,7 @@ const selectButtonOptions = ref([
 </script>
 
 <template>
-    <section id="select-button" class="demo-section">
-        <h2 class="demo-section__title">Select Button</h2>
-
+    <ComponentSection title="Select Button">
         <ComponentDemo
             name="Basic Select Button"
             description="A button-style select component for choosing between options."
@@ -59,6 +58,7 @@ const selectButtonOptions = ref([
                 }
             }"
         >
+            <template #docs></template>
             <template #default="{ props }">
                 <GSelectButton
                     v-model="selectButtonValue"
@@ -70,5 +70,5 @@ const selectButtonOptions = ref([
                 }}</DemoResult>
             </template>
         </ComponentDemo>
-    </section>
+    </ComponentSection>
 </template>

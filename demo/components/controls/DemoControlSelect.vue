@@ -3,13 +3,11 @@ defineProps<{
     id: string;
     label: string;
     options: any[];
+    instructions?: string;
 }>();
 
 const modelValue = defineModel<string>();
 
-const emit = defineEmits<{
-    (e: "update:modelValue", value: any): void;
-}>();
 </script>
 
 <template>
@@ -21,7 +19,7 @@ const emit = defineEmits<{
             :id="id"
             v-model="modelValue"
             class="select-control"
-            @change="emit('update:modelValue', ($event.target as HTMLSelectElement).value)"
+            :aria-describedby="instructions ? `${id}-instructions` : undefined"
         >
             <option
                 v-for="option in options"
@@ -31,6 +29,13 @@ const emit = defineEmits<{
                 {{ option }}
             </option>
         </select>
+        <p
+            v-if="instructions"
+            :id="`${id}-instructions`"
+            class="demo-control__instructions"
+        >
+            {{ instructions }}
+        </p>
     </div>
 </template>
 
@@ -52,5 +57,12 @@ const emit = defineEmits<{
     border: 1px solid #d1d5db;
     border-radius: 4px;
     font-size: 0.875rem;
+}
+
+.demo-control__instructions {
+    margin: 0;
+    font-size: 0.8125rem;
+    line-height: 1.35;
+    color: #374151;
 }
 </style>

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends Record<string, any>">
 import { computed, ref, useId, useModel } from "vue";
 import DemoControlCheckbox from "./controls/DemoControlCheckbox.vue";
 import DemoControlText from "./controls/DemoControlText.vue";
@@ -9,10 +9,20 @@ import componentResults from "../public/component-results.json";
 import type { ComponentResult, SummaryResult } from "../../scripts/results";
 import { useTemplateRef } from "#imports";
 
+type TypeForProps<T> = {
+    [K in keyof T]: PropConfig;
+};
+
+type TypeForAny<T> = {
+    [K in keyof T]?: any;
+};
+
+type Propped = TypeForProps<T>;
+
 interface Props {
-    name: string;
+    name?: string;
     description?: string;
-    propsConfig?: Record<string, PropConfig>;
+    propsConfig?: Propped;
     component?: string;
     additional?: boolean;
     padding?: string;
@@ -24,18 +34,19 @@ interface PropConfig {
     default?: any;
     options?: any[];
     label?: string;
+    instructions?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
     description: "",
-    propsConfig: () => ({}),
+    propsConfig: () => ({}) as TypeForProps<T>,
     component: "",
     additional: false,
     padding: "1.5rem",
 });
 
 // Store the dynamic props values
-const dynamicProps = ref<Record<string, any>>({});
+const dynamicProps = ref<TypeForAny<T>>({});
 
 // Initialize default values
 Object.entries(props.propsConfig).forEach(([key, config]) => {
@@ -67,7 +78,7 @@ const slotContent = computed(() => inner.value?.innerHTML);
         :class="{ 'component-demo--additional': props.additional }"
     >
         <div class="component-demo__header">
-            <h2 class="component-demo__title">{{ name }}</h2>
+            <h2 class="component-demo__title" v-if="name">{{ name }}</h2>
             <p v-if="description" class="component-demo__description">
                 {{ description }}
             </p>
@@ -96,34 +107,41 @@ const slotContent = computed(() => inner.value?.innerHTML);
                     Props Configuration
                 </h3>
                 <div class="component-demo__controls-form">
-                    <template v-for="(config, key) in propsConfig" :key="key">
+                    <template
+                        v-for="[key, config] in Object.entries(propsConfig)"
+                        :key="key"
+                    >
                         <DemoControlCheckbox
                             v-if="config.type === 'boolean'"
                             :id="`${demoId}-prop-${key}`"
-                            v-model="dynamicProps[key]"
+                            v-model="(dynamicProps as any)[key]"
                             :label="config.label || key"
+                            :instructions="config.instructions"
                         />
 
                         <DemoControlText
                             v-else-if="config.type === 'string'"
                             :id="`${demoId}-prop-${key}`"
-                            v-model="dynamicProps[key]"
+                            v-model="(dynamicProps as any)[key]"
                             :label="config.label || key"
+                            :instructions="config.instructions"
                         />
 
                         <DemoControlNumber
                             v-else-if="config.type === 'number'"
                             :id="`${demoId}-prop-${key}`"
-                            v-model="dynamicProps[key]"
+                            v-model="(dynamicProps as any)[key]"
                             :label="config.label || key"
+                            :instructions="config.instructions"
                         />
 
                         <DemoControlSelect
                             v-else-if="config.type === 'select'"
                             :id="`${demoId}-prop-${key}`"
-                            v-model="dynamicProps[key]"
+                            v-model="(dynamicProps as any)[key]"
                             :label="config.label || key"
                             :options="config.options || []"
+                            :instructions="config.instructions"
                         />
                     </template>
                 </div>
@@ -177,13 +195,13 @@ const slotContent = computed(() => inner.value?.innerHTML);
 
 .component-demo__description {
     margin: 0;
+    font-size: 1.125rem;
     line-height: 1.5;
 }
 
 .component-demo__content {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1.5rem;
 }
 
 @media (min-width: 768px) {
@@ -244,11 +262,20 @@ const slotContent = computed(() => inner.value?.innerHTML);
 }
 .component-demo__docs-details {
     margin-top: 1rem;
-    max-width: 40rem;
+    max-width: 50rem;
+    font-size: 1.125rem;
+    border-radius: 8px;
+
+    background: #fff;
+    padding: 1rem 2rem;
+
+    box-shadow:
+        2px 0 1rem rgba(0, 0, 0, 0.05),
+        0 0 0.25rem rgba(0, 0, 0, 0.05);
 }
 .component-demo__docs-summary {
     font-size: 1.25rem;
-    margin-bottom: 0.5rem;
+    margin: 0.25rem 0;
     cursor: pointer;
 
     &:hover {
@@ -257,14 +284,6 @@ const slotContent = computed(() => inner.value?.innerHTML);
     }
 
     &::marker {
-        color: var(--g-accent-700);
-    }
-}
-
-.component-demo__docs {
-    :deep(code) {
-        font-size: 1.1em;
-        color: var(--g-green-500);
     }
 }
 </style>

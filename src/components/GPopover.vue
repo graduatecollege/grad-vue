@@ -1,5 +1,37 @@
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, ref, useTemplateRef, watch } from "vue";
+/**
+ * Popover that appears next to or over a trigger element, staying visible
+ * in the viewport as much as possible.
+ *
+ * **Slot** `trigger` must have an interactive element for which
+ * the only interaction is to open the popover. The trigger element is also used
+ * for `aria-labelledby`. The trigger is passed a prop `toggle` which is a function
+ * that toggles the popover's open state.
+ *
+ * **Slot** `default` is the content of the popover.
+ *
+ * Example:
+ *
+ * ```vue-html
+ * <GPopover>
+ *     <template #trigger="{ toggle }">
+ *         <GButton @click="toggle">
+ *             Can Popovers' Popovers have Popovers?
+ *         </GButton>
+ *     </template>
+ *     <div>Even if they can, should they?</div>
+ * </GPopover>
+ * ```
+ */
+
+import {
+    nextTick,
+    onBeforeUnmount,
+    ref,
+    useId,
+    useTemplateRef,
+    watch,
+} from "vue";
 import { useOverlayStack } from "../compose/useOverlayStack.ts";
 import { useOverlayFocus } from "../compose/useOverlayFocus.ts";
 import { useOverlayEscape } from "../compose/useOverlayEscape.ts";
@@ -7,24 +39,17 @@ import { calculatePopoverPosition } from "../compose/popoverPosition.ts";
 
 interface Props {
     /**
-     * Accessible label
-     */
-    label: string; // Demo: Sample Popover
-    modelValue?: boolean;
-
-    /**
      * Render without padding
      */
     minimal?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    modelValue: false,
     minimal: false,
 });
-const emit = defineEmits(["update:modelValue", "show", "hide"]);
+const emit = defineEmits(["show", "hide"]);
+const open = defineModel<boolean>({ default: false });
 
-const open = ref(props.modelValue);
 const triggerRef = useTemplateRef<HTMLElement | null>("triggerRef");
 const popoverRef = useTemplateRef<HTMLElement | null>("popoverRef");
 
@@ -32,15 +57,7 @@ const { push, pop, isTop, zIndex } = useOverlayStack();
 const { activate, deactivate } = useOverlayFocus(popoverRef, isTop);
 useOverlayEscape([popoverRef, triggerRef], isTop, open, hide, pop);
 
-watch(
-    () => props.modelValue,
-    (val) => {
-        open.value = val;
-    },
-);
-
 watch(open, (val) => {
-    emit("update:modelValue", val);
     if (val) {
         nextTick(() => {
             nextTick(() => activate());
@@ -127,11 +144,13 @@ onBeforeUnmount(() => {
         resizeObserver.disconnect();
     }
 });
+
+const id = useId();
 </script>
 
 <template>
-    <div ref="triggerRef" class="g-popover-trigger">
-        <slot name="trigger" :onToggle="toggle"></slot>
+    <div ref="triggerRef" class="g-popover-trigger" :id="`${id}-trigger`">
+        <slot name="trigger" :toggle="toggle"></slot>
     </div>
     <transition name="g-popover-expand" appear>
         <div
@@ -145,7 +164,7 @@ onBeforeUnmount(() => {
             }"
             role="dialog"
             aria-modal="true"
-            :aria-label="label"
+            :aria-labelledby="`${id}-trigger`"
             :style="{
                 top: popoverPosition.top + 'px',
                 left: popoverPosition.left + 'px',
@@ -159,7 +178,7 @@ onBeforeUnmount(() => {
                 :style="arrowPosition"
                 aria-hidden="true"
             ></div>
-            <slot name="content"></slot>
+            <slot></slot>
             <button
                 v-if="!minimal"
                 class="p-button p-button-text g-popover-close"
@@ -193,12 +212,12 @@ onBeforeUnmount(() => {
         margin: 0 0 0.5rem 0;
     }
 }
-</style>
-
-<style scoped>
 .g-popover-trigger {
     display: inline-block;
 }
+</style>
+
+<style scoped>
 .g-popover {
     position: fixed;
     z-index: 1000;

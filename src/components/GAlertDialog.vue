@@ -5,10 +5,15 @@
  * Clicking on the outside or pressing the escape key will close the dialog
  * and that counts as canceling.
  *
- * The surrounding page **must** have an element with the id `modal-root`,
- * this dialog will be teleported to it, so it can properly be over all
- * other content. The `modal-root` should be somewhere near the end of the
- * page structure.
+ * > [!IMPORTANT]
+ * >
+ * > The surrounding page **must** have an element with the id `modal-root`,
+ * > this dialog will be teleported to it, so it can properly be over all
+ * > other content. The `modal-root` should be somewhere near the end of the
+ * > page structure.
+ *
+ * **Slot** `default` is used as the content of the alert, and also becomes
+ * the ARIA description of the alert.
  */
 
 import { onBeforeMount, onMounted, ref } from "vue";

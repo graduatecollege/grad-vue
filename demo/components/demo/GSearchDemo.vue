@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import ComponentSection from "../ComponentSection.vue";
 import ComponentDemo from "../ComponentDemo.vue";
 import DemoResult from "../DemoResult.vue";
 import GSearch from "../../../src/components/GSearch.vue";
@@ -38,9 +39,7 @@ function selected(item: SearchResult) {
 </script>
 
 <template>
-    <section id="search" class="demo-section">
-        <h2 class="demo-section__title">Search</h2>
-
+    <ComponentSection title="Search">
         <ComponentDemo
             name="Basic Search"
             description="A search input component with autocomplete results."
@@ -51,7 +50,7 @@ function selected(item: SearchResult) {
                     label: 'Placeholder',
                     default: 'Search...'
                 },
-                ariaLabel: {
+                label: {
                     type: 'string',
                     label: 'Accessible label',
                     default: 'Search'
@@ -62,6 +61,7 @@ function selected(item: SearchResult) {
                 }
             }"
         >
+            <template #docs></template>
             <template #default="{ props }">
                 <GSearch
                     v-bind="props"
@@ -75,5 +75,5 @@ function selected(item: SearchResult) {
                 <DemoResult label="Selected result">{{ select }}</DemoResult>
             </template>
         </ComponentDemo>
-    </section>
+    </ComponentSection>
 </template>

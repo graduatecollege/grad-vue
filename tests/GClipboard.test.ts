@@ -3,10 +3,6 @@ import GClipboard from "../src/components/GClipboard.vue";
 import { mnt, testAccessibility } from "./test-utils";
 import { page, userEvent } from "vitest/browser";
 
-beforeEach(() => {
-    document.body.innerHTML = "";
-})
-
 describe("GClipboard", () => {
     describe("Accessibility Tests", () => {
         it("passes accessibility tests with basic content", async () => {

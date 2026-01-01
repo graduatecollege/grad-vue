@@ -1,12 +1,11 @@
 <script setup lang="ts">
+import ComponentSection from "../ComponentSection.vue";
 import ComponentDemo from "../ComponentDemo.vue";
 import { GSidebar } from "@illinois-grad/grad-vue";
 </script>
 
 <template>
-    <section id="sidebar" class="demo-section">
-        <h2 class="demo-section__title">Sidebar</h2>
-
+    <ComponentSection title="Sidebar">
         <ComponentDemo
             name="Basic Sidebar"
             description="A container component intended for persistent side navigation."
@@ -34,18 +33,16 @@ import { GSidebar } from "@illinois-grad/grad-vue";
                 }
             }"
         >
+            <template #docs></template>
             <template #default="{ props }">
-                <GSidebar
-                    v-bind="props"
-                    class="sidebar-demo"
-                >
+                <GSidebar v-bind="props" class="sidebar-demo">
                     <div class="sidebar-content">
                         <h3 class="sidebar-title">Sample Heading</h3>
                     </div>
                 </GSidebar>
             </template>
         </ComponentDemo>
-    </section>
+    </ComponentSection>
 </template>
 
 <style scoped>

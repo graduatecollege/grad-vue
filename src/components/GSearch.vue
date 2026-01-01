@@ -8,6 +8,10 @@
         }
     "
 >
+/**
+ * A combobox-style search that shows a list of results as an auto
+ * complete dropdown.
+ */
 import { computed, nextTick, ref, useId, watch } from "vue";
 import { useDebounceFn, useFocusWithin } from "@vueuse/core";
 import GProgress from "./GProgress.vue";

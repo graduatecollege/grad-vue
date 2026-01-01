@@ -173,6 +173,7 @@ const VGtooltip = {
                 data.resizeObserver.disconnect();
             }
             data.tooltip.value.remove();
+            data.tooltip.value = null;
         }
         el.removeEventListener("mouseenter", data.onMouseEnter);
         el.removeEventListener("mouseleave", data.onMouseLeave);
