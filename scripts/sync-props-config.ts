@@ -1,15 +1,58 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { marked } from "marked";
+import { Marked } from "marked";
+import markedAlert from "marked-alert";
+import markedShiki from "marked-shiki";
+import { codeToHtml } from "shiki";
+
+// This script updates the demo component props config with the component's props.
+// It also updates the demo docs from a JSDoc comment at the top of the script tag.
+// Run this script after updating the component's props.
 
 const componentsDir = 'src/components';
 const demosDir = 'demo/components/demo';
+
+const marked = new Marked();
+marked.use(markedAlert()).use(
+    markedShiki({
+        async highlight(code, lang) {
+            return await codeToHtml(code, {
+                lang,
+                theme: "light-plus",
+            });
+        },
+        container: `<figure class="highlighted-code">
+%s
+</figure>
+`,
+    }),
+);
 
 function toLabel(name: string) {
     return name
         .replace(/([A-Z])/g, ' $1')
         .replace(/^./, (str) => str.toUpperCase())
         .trim();
+}
+
+function parseJsDoc(jsDocRaw: string) {
+    const cleaned = jsDocRaw.replace(/^\s*\* ?/gm, '').trim();
+    if (!cleaned) {
+        return { label: null as string | null, instructions: null as string | null };
+    }
+
+    const lines = cleaned.split(/\r?\n/);
+    const firstLineIndex = lines.findIndex((line) => line.trim().length > 0);
+    if (firstLineIndex < 0) {
+        return { label: null as string | null, instructions: null as string | null };
+    }
+
+    const label = lines[firstLineIndex].trim();
+    const rest = lines.slice(firstLineIndex + 1).join('\n').trim();
+    return {
+        label: label || null,
+        instructions: rest || null,
+    };
 }
 
 function parseProps(content: string) {
@@ -58,11 +101,16 @@ function parseProps(content: string) {
              type = 'string';
         }
 
+        const { label, instructions } = parseJsDoc(jsDoc);
+
         props[name] = {
             type,
-            label: jsDoc || toLabel(name),
-            default: demoDefault
+            label: label || toLabel(name),
+            default: demoDefault,
         };
+        if (instructions) {
+            props[name].instructions = instructions;
+        }
         if (options && options.length > 0) {
             props[name].options = options;
         }
@@ -93,7 +141,7 @@ function parseProps(content: string) {
     return { props, docs: componentDocs };
 }
 
-function updateDemo(componentName: string, propsConfig: Record<string, any>, docs: string | null) {
+async function updateDemo(componentName: string, propsConfig: Record<string, any>, docs: string | null) {
     const demoPath = path.join(demosDir, `${componentName}Demo.vue`);
     if (!fs.existsSync(demoPath)) return;
 
@@ -111,9 +159,9 @@ function updateDemo(componentName: string, propsConfig: Record<string, any>, doc
     let newContent = content.replace(/:props-config="\{[\s\S]*?\}"/, `:props-config="${indentedConfig}"`);
     
     if (docs) {
-        const html = marked(docs);
+        const html = (await marked.parse(docs)).replace(/{/g, "&lcub;");
         newContent = newContent.replace(
-            /<template #docs>.*?<\/template>/s,
+            /<template #docs\s*>.*?<\/template>/s,
             `<template #docs>${html}</template>`,
         );
     }

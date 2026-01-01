@@ -57,7 +57,7 @@ export async function testAccessibility(
     }
 
     if (wrapper) {
-        //wrapper.unmount();
+        wrapper.unmount();
     }
 }
 
@@ -106,12 +106,14 @@ export function mnt(
         vm,
         container,
         instance,
+        state,
         setProps(newProps: Record<string, any>) {
             Object.assign(state.props, newProps);
         },
         unmount() {
             app.unmount();
             container.remove();
+            modalRoot.remove();
         },
     };
 }

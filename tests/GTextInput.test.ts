@@ -56,5 +56,29 @@ describe("GTextInput", () => {
                 "aria-label": "Text input field",
             });
         });
+
+        it("passes accessibility tests with label", async () => {
+            await testAccessibility(GTextInput, {
+                label: "Text Input",
+                placeholder: "Enter text",
+                modelValue: ""
+            });
+        });
+
+        it("passes accessibility tests with label and instructions", async () => {
+            await testAccessibility(GTextInput, {
+                label: "Text Input",
+                instructions: "Enter text here",
+                placeholder: "Enter text",
+            });
+        })
+
+        it("passes accessibility tests with label and instructions and error state", async () => {
+            await testAccessibility(GTextInput, {
+                label: "Text Input",
+                instructions: "Enter text here",
+                error: "This field has an error",
+            })
+        })
     });
 });

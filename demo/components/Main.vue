@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { GSidebar, GSidebarMenu } from "@illinois-grad/grad-vue";
+import {
+    GSidebar,
+    GSidebarMenu,
+    useActiveLinkContent,
+} from "@illinois-grad/grad-vue";
 import { useActiveLinkStore } from "~/stores/test.store";
 import { storeToRefs } from "pinia";
 import GAlertDialogDemo from "~/components/demo/GAlertDialogDemo.vue";
@@ -14,11 +18,18 @@ import GSidebarDemo from "~/components/demo/GSidebarDemo.vue";
 import GSidebarMenuDemo from "~/components/demo/GSidebarMenuDemo.vue";
 import GTextInputDemo from "~/components/demo/GTextInputDemo.vue";
 import GClipboardDemo from "~/components/demo/GClipboardDemo.vue";
-import { onMounted, reactive, ref } from "vue";
-import { useActiveLinkContent } from "@illinois-grad/grad-vue";
+import GHistoryScrollerDemo from "~/components/demo/GHistoryScrollerDemo.vue";
+import { onMounted } from "vue";
 import { useTemplateRef } from "#imports";
 
 const { activeId } = storeToRefs(useActiveLinkStore());
+
+const slugify = (value: string) =>
+    value
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "");
 
 const demoComponents = [
     { label: "Alert Dialog", component: GAlertDialogDemo },
@@ -33,6 +44,7 @@ const demoComponents = [
     { label: "Sidebar", component: GSidebarDemo },
     { label: "Sidebar Menu", component: GSidebarMenuDemo },
     { label: "Text Input", component: GTextInputDemo },
+    { label: "History Scroller", component: GHistoryScrollerDemo },
 ];
 
 const demo = useTemplateRef("demo");
@@ -52,7 +64,7 @@ onMounted(() => {
                 :items="
                     demoComponents.map((comp) => ({
                         label: comp.label,
-                        href: '#' + comp.component.__name,
+                        href: '#' + slugify(comp.label),
                     }))
                 "
                 v-model="activeId"
@@ -99,7 +111,6 @@ onMounted(() => {
                         v-for="demo in demoComponents"
                         :is="demo.component"
                         :key="demo.label"
-                        :id="demo.component.__name"
                     />
                 </div>
             </div>
@@ -166,5 +177,101 @@ onMounted(() => {
 
 .sidebar-menu {
     margin-top: 2rem;
+}
+
+.markdown-alert {
+    padding: 0 1em;
+    margin-bottom: 16px;
+    color: inherit;
+    border-left: 0.25em solid var(--il-storm-30);
+
+    p {
+        margin-top: 0;
+    }
+}
+
+.markdown-alert-title {
+    display: inline-flex;
+    align-items: center;
+    font-weight: 700;
+    margin: 0;
+    font-size: 1.125rem;
+
+    path {
+        fill: currentColor;
+    }
+
+    svg {
+        margin-right: 0.5em;
+    }
+}
+
+.markdown-alert-note {
+    border-left-color: var(--il-industrial);
+
+    > .markdown-alert-title {
+        color: var(--il-industrial);
+    }
+}
+
+.markdown-alert-tip {
+    border-left-color: #014020;
+
+    > .markdown-alert-title {
+        color: #014020;
+    }
+}
+
+.markdown-alert-important {
+    border-left-color: var(--il-berry);
+
+    > .markdown-alert-title {
+        color: var(--il-berry);
+    }
+}
+
+.markdown-alert-warning {
+    border-left-color: var(--il-harvest);
+
+    > .markdown-alert-title {
+        color: var(--il-harvest);
+    }
+}
+
+.markdown-alert-caution {
+    border-left-color: var(--il-altgeld);
+
+    > .markdown-alert-title {
+        color: var(--il-altgeld);
+    }
+}
+
+.component-demo__docs {
+    line-height: 1.5;
+    code:not(.shiki *) {
+        color: #7c3400;
+        background: #f6efed;
+        border-radius: 5px;
+        padding: 0 0.25rem;
+    }
+}
+
+.highlighted-code {
+    padding: 0;
+    margin: 0;
+}
+pre.shiki {
+    position: relative;
+    padding: 1rem 0;
+    background: transparent;
+    border-radius: 0.5rem;
+    border: 1px solid var(--il-storm-80);
+    font-size: 1rem;
+}
+
+pre.shiki code {
+    display: block;
+    padding: 0 1.5rem;
+    transition: color 0.5s;
 }
 </style>

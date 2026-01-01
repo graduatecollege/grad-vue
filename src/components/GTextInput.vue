@@ -1,10 +1,14 @@
 <script lang="ts" setup>
-import { ref, useAttrs, watch } from "vue";
+import { ref, useAttrs, useId, watch } from "vue";
 defineOptions({
     inheritAttrs: false,
 });
 
 type Props = {
+    /**
+     * Label
+     */
+    label?: string;
     /**
      * Placeholder text
      */
@@ -17,14 +21,22 @@ type Props = {
      * Error message
      */
     error?: string;
+    /**
+     * Instructions
+     */
+    instructions?: string;
 };
 
 const props = withDefaults(defineProps<Props>(), {
+    label: "",
+    instructions: "",
     placeholder: "",
     disabled: false,
     error: "",
 });
 const model = defineModel<string | null>({ type: String });
+
+const id = useId();
 
 const emit = defineEmits<{
     change: [
@@ -97,6 +109,10 @@ function onKeydown(e: KeyboardEvent) {
 
 <template>
     <div class="g-text-input-wrap" :class="{ 'g-text-input-has-error': props.error }">
+        <label v-if="props.label" :for="($attrs.id as string) || id" class="g-text-input-label">{{ props.label }}</label>
+        <div v-if="$slots.instructions || instructions" :id="'instructions-' + id" class="g-text-input-instructions">
+            <slot name="instructions">{{ instructions }}</slot>
+        </div>
         <input
             :value="model"
             :placeholder="props.placeholder"
@@ -107,9 +123,15 @@ function onKeydown(e: KeyboardEvent) {
             @keydown="onKeydown"
             type="text"
             class="g-text-input"
-            v-bind="$attrs"
+            v-bind="{
+                ...$attrs,
+                id: ($attrs.id as string) || id,
+                'aria-describedby': ($slots.instructions || instructions) ? 'instructions-' + id : undefined,
+                'aria-errormessage': props.error ? 'error-message-' + id : undefined
+            }"
             :aria-invalid="props.error ? 'true' : 'false'"
         />
+        <div v-if="props.error" class="error-message" :id="'error-message-' + id" role="alert">{{ props.error }}</div>
     </div>
 </template>
 
@@ -117,6 +139,15 @@ function onKeydown(e: KeyboardEvent) {
 .g-text-input-wrap {
     position: relative;
     display: flex;
+    flex-direction: column;
+}
+.g-text-input-label {
+    margin-bottom: 0.5em;
+    font-size: 1.25em;
+}
+.g-text-input-instructions {
+    margin: 0 0 0.75em 0.5em;
+    color: var(--g-surface-800);
 }
 .g-text-input {
     width: 100%;
@@ -126,6 +157,7 @@ function onKeydown(e: KeyboardEvent) {
     border-radius: 4px;
     background: var(--g-surface-0);
     color: var(--g-surface-950);
+    font-family: var(--il-font-sans);
 }
 .g-text-input-has-error {
     .g-text-input {
@@ -138,16 +170,8 @@ function onKeydown(e: KeyboardEvent) {
     color: #aaa;
 }
 .error-message {
-    position: absolute;
-    top: 0;
-    left: 50%;
     background: var(--g-surface-0);
     color: var(--g-danger-600);
-    font-size: 0.875em;
-    transform: translateY(-100%) translateX(-50%);
-    padding: 0.25rem;
-    border-radius: 4px;
-    border: 2px solid var(--g-danger-600);
-    font-weight: bold;
+    padding: 0.25em 0.5em;
 }
 </style>

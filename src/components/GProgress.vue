@@ -1,7 +1,20 @@
 <script setup lang="ts">
+/**
+ * A component that can show progress from 1 to 100 or an indeterminate spinner.
+ * If a value is omitted, the progress will be indeterminate.
+ *
+ * If no `label` is specified, the default accessible label will be "Loading".
+ *
+ * If a value is provided, the element will have the ARIA role `progressbar`
+ * with the appropriate ARIA value attributes.
+ */
 import { computed } from "vue";
 
 type Props = {
+    /**
+     * Accessible label
+     */
+    label?: string;
     /**
      * Progress 1-100 or blank
      */
@@ -10,19 +23,20 @@ type Props = {
      * Progress circle size
      */
     size?: "tiny" | "small" | "medium" | "large";
-    /**
-     * Accessible label
-     */
-    ariaLabel?: string;
-}
+};
 
 const props = withDefaults(defineProps<Props>(), {
     size: "medium",
     value: undefined,
-    ariaLabel: "Loading",
+    label: "Loading",
 });
 
-const isDeterminate = computed(() => typeof props.value === "number" && props.value >= 1 && props.value <= 100);
+const isDeterminate = computed(
+    () =>
+        props.value &&
+        props.value >= 1 &&
+        props.value <= 100,
+);
 const radius = computed(() => {
     switch (props.size) {
         case "tiny":
@@ -37,7 +51,9 @@ const radius = computed(() => {
 });
 const stroke = 4;
 const circumference = computed(() => 2 * Math.PI * radius.value);
-const progress = computed(() => (isDeterminate.value ? (props.value! / 100) * circumference.value : 0));
+const progress = computed(() =>
+    isDeterminate.value ? (props.value! / 100) * circumference.value : 0,
+);
 
 const ariaProps = computed(() =>
     isDeterminate.value
@@ -46,9 +62,9 @@ const ariaProps = computed(() =>
               "aria-valuenow": props.value,
               "aria-valuemin": 1,
               "aria-valuemax": 100,
-              "aria-label": props.ariaLabel,
+              "aria-label": props.label,
           }
-        : { role: "status", "aria-label": props.ariaLabel },
+        : { "aria-label": props.label },
 );
 </script>
 
@@ -59,7 +75,10 @@ const ariaProps = computed(() =>
             :height="radius * 2 + stroke"
             :class="[
                 'g-progress__svg',
-                { 'g-progress--determinate': isDeterminate, 'g-progress--indeterminate': !isDeterminate },
+                {
+                    'g-progress--determinate': isDeterminate,
+                    'g-progress--indeterminate': !isDeterminate,
+                },
             ]"
             focusable="false"
             aria-hidden="true"
@@ -82,7 +101,7 @@ const ariaProps = computed(() =>
                 fill="none"
                 :stroke-dasharray="circumference"
                 :stroke-dashoffset="circumference - progress"
-                style="transform: rotate(-90deg); transform-origin: center;"
+                style="transform: rotate(-90deg); transform-origin: center"
             />
             <circle
                 v-else
@@ -135,10 +154,10 @@ const ariaProps = computed(() =>
 @keyframes g-progress-spin-blink {
     0%,
     100% {
-        opacity: 0
+        opacity: 0;
     }
     50% {
-        opacity: 1
+        opacity: 1;
     }
 }
 </style>

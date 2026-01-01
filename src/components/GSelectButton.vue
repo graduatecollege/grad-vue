@@ -8,7 +8,6 @@ interface OptionType {
 
 interface Props {
     options: Array<string | OptionType>;
-    modelValue: string | number;
     /**
      * Accessible label
      */
@@ -38,7 +37,8 @@ const props = withDefaults(defineProps<Props>(), {
     disabled: false,
 });
 
-const emit = defineEmits(["update:modelValue", "change"]);
+const emit = defineEmits(["change"]);
+const modelValue = defineModel<string | number>({default: () => ""});
 
 const baseId = useId();
 
@@ -65,8 +65,8 @@ const getBtnClasses = (selected: boolean) => [
 ];
 
 function onChange(val: string | number) {
-    if (!props.disabled && val !== props.modelValue) {
-        emit("update:modelValue", val);
+    if (!props.disabled && val !== modelValue.value) {
+        modelValue.value = val;
         emit("change", val);
     }
 }
@@ -86,13 +86,13 @@ function onChange(val: string | number) {
                     :id="`${baseId}-${option.value}`"
                     :name="props.name || baseId"
                     :value="option.value"
-                    :checked="option.value === props.modelValue"
+                    :checked="option.value === modelValue"
                     :disabled="props.disabled"
                     @change="onChange(option.value)"
                 />
                 <label
                     :for="`${baseId}-${option.value}`"
-                    :class="getBtnClasses(option.value === props.modelValue)"
+                    :class="getBtnClasses(option.value === modelValue)"
                 >
                     {{ option.label }}
                 </label>
@@ -107,6 +107,7 @@ function onChange(val: string | number) {
     margin: 0;
     padding: 0;
     min-width: 0;
+    border-radius: 4px;
 }
 
 .g-select-btn-legend {
@@ -118,15 +119,17 @@ function onChange(val: string | number) {
     color: var(--g-surface-900);
 }
 
-.g-select-btn-group:has(:focus-visible) {
-    outline: 2px solid var(--g-primary-500);
-    outline-offset: 1px;
-}
-
 .g-select-btn-row {
     display: flex;
     align-items: stretch;
     border-radius: var(--g-border-radius-m);
+}
+
+.g-select-btn-row:has(:focus-visible) {
+    outline: 2px solid var(--g-primary-500);
+    outline-offset: 2px;
+    background: var(--ilw-color--focus--background);
+    box-shadow: 0 0 0 2px var(--ilw-color--focus--background);
 }
 
 .g-select-btn-group--small {
@@ -163,6 +166,7 @@ function onChange(val: string | number) {
     font-weight: 700;
     padding: 0.5em;
     cursor: pointer;
+    outline: none;
     &:hover {
         text-decoration: underline;
     }

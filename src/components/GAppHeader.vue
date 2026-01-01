@@ -1,13 +1,31 @@
 <script setup lang="ts">
+/**
+ * This is a minimal header meant for web apps where a full Illinois
+ * brand header would be too large.
+ *
+ * **Slot** `left` allows replacing the link element in the top-left corner.
+ *
+ * **Slot** `title` is to the right of the logo.
+ *
+ * **Slot** `app-controls` is the remaining area to the right.
+ */
+
 type Props = {
     /**
      * Use the Illinois logo
      */
     illinois?: boolean;
+    /**
+     * Top-left corner text
+     *
+     * You can also customize this text with "left" slot.
+     */
+    brand?: string;
 };
 
 const props = withDefaults(defineProps<Props>(), {
     illinois: true,
+    brand: "GRAD",
 });
 </script>
 
@@ -22,9 +40,9 @@ const props = withDefaults(defineProps<Props>(), {
             <div class="g-app-header__background-gradient"></div>
         </div>
         <div class="g-app-header__brand">
-            <router-link to="/">
-                <em>GRAD</em>
-            </router-link>
+            <slot name="left">
+                <a class="g-app-header__brand-text" href="/">{{ brand }}</a>
+            </slot>
         </div>
         <div v-if="illinois" class="g-app-header__block-i-container">
             <svg
@@ -190,6 +208,13 @@ a.app-name {
 
     &:deep(a) {
         text-decoration: none;
+        padding: 10px 15px;
+        font-family: var(--il-font-montserrat);
+        letter-spacing: 0.98px;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 800;
+        color: var(--g-primary-300);
 
         &:hover {
             text-decoration: underline;
@@ -199,16 +224,6 @@ a.app-name {
         @media screen and (max-width: 740px) {
             display: none;
         }
-    }
-
-    &:deep(em) {
-        padding: 10px 15px;
-        font-family: Montserrat;
-        letter-spacing: 0.98px;
-        font-size: 14px;
-        font-style: normal;
-        font-weight: 800;
-        color: var(--g-primary-300);
     }
 }
 

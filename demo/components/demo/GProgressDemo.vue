@@ -1,13 +1,12 @@
 <script setup lang="ts">
+import ComponentSection from "../ComponentSection.vue";
 import ComponentDemo from "../ComponentDemo.vue";
 import DemoResult from "../DemoResult.vue";
 import { GProgress } from "@illinois-grad/grad-vue";
 </script>
 
 <template>
-    <section id="progress" class="demo-section">
-        <h2 class="demo-section__title">Progress</h2>
-
+    <ComponentSection title="Progress">
         <ComponentDemo
             name="Basic Progress"
             description="A progress indicator component."
@@ -36,10 +35,11 @@ import { GProgress } from "@illinois-grad/grad-vue";
                 }
             }"
         >
+            <template #docs></template>
             <template #default="{ props }">
                 <GProgress v-bind="props" />
                 <DemoResult label="Progress">{{ props.value }}%</DemoResult>
             </template>
         </ComponentDemo>
-    </section>
+    </ComponentSection>
 </template>
