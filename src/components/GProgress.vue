@@ -7,6 +7,12 @@
  *
  * If a value is provided, the element will have the ARIA role `progressbar`
  * with the appropriate ARIA value attributes.
+ *
+ * If no value is provided, the element will have the ARIA role `status`.
+ *
+ * > [!NOTE]
+ * > This element announces to assistive technologies, so make sure to
+ * > limit its use to cases where that's appropriate.
  */
 import { computed } from "vue";
 
@@ -64,7 +70,9 @@ const ariaProps = computed(() =>
               "aria-valuemax": 100,
               "aria-label": props.label,
           }
-        : { "aria-label": props.label },
+        : {
+    "role": "status",
+    "aria-label": props.label },
 );
 </script>
 

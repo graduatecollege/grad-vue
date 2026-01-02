@@ -31,6 +31,7 @@ async function createWrapper() {
                 { id: "two" },
                 { id: "one" },
             ],
+            label: "History",
         }
     });
     container.style.height = "300px";

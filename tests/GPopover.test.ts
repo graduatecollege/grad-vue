@@ -7,11 +7,10 @@ import { page } from "vitest/browser";
 function defaultWrapper() {
     return mnt(GPopover, {
         slots: {
-            trigger: (props: { onToggle: () => void }) =>
-                h("button", { onClick: props.onToggle }, "Open"),
-            content: () => "Popover content",
+            trigger: (props: { toggle: () => void }) =>
+                h("button", { onClick: props.toggle }, "Open"),
+            default: () => "Popover content",
         },
-        props: { label: "Additional information" },
     });
 }
 
@@ -52,11 +51,11 @@ describe("GPopover", () => {
 
             const wrapper = mnt(GPopover, {
                 slots: {
-                    trigger: (props: { onToggle: () => void }) =>
-                        h("button", { onClick: props.onToggle }, "Open"),
-                    content: () => "<h2>Popover content</h2><p style='margin-top: 250px'>Popover content</p>",
+                    trigger: (props: { toggle: () => void }) =>
+                        h("button", { onClick: props.toggle }, "Open"),
+                    content: () =>
+                        "<h2>Popover content</h2><p style='margin-top: 250px'>Popover content</p>",
                 },
-                props: { label: "Additional information" },
             });
             await wrapper.vm.$nextTick();
             await page.getByRole("button", { name: "Open" }).click();
