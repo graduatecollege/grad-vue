@@ -1,4 +1,13 @@
 <script setup lang="ts">
+/**
+ * This component is just a radio button group with special styling.
+ *
+ * Use the `options` prop to provide a list of choices. Each option can
+ * be a string or an object with `label` and `value` properties.
+ *
+ * In addition to `v-model`, a `change` event is emitted when the
+ * option changes from user interaction.
+ */
 import { computed, useId } from "vue";
 
 interface OptionType {
@@ -17,10 +26,6 @@ interface Props {
      */
     size?: "small" | "medium" | "large";
     /**
-     * Color theme
-     */
-    theme?: "primary" | "secondary" | "accent" | "danger";
-    /**
      * Name
      */
     name?: string;
@@ -32,13 +37,12 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
     size: "medium",
-    theme: "primary",
     name: undefined,
     disabled: false,
 });
 
 const emit = defineEmits(["change"]);
-const modelValue = defineModel<string | number>({default: () => ""});
+const model = defineModel<string | number>({default: () => ""});
 
 const baseId = useId();
 
@@ -59,14 +63,13 @@ const groupClasses = computed(() => [
 
 const getBtnClasses = (selected: boolean) => [
     "g-select-btn",
-    `g-select-btn--${props.theme}`,
     selected ? "g-select-btn--selected" : "",
     { "g-select-btn--disabled": props.disabled },
 ];
 
 function onChange(val: string | number) {
-    if (!props.disabled && val !== modelValue.value) {
-        modelValue.value = val;
+    if (!props.disabled && val !== model.value) {
+        model.value = val;
         emit("change", val);
     }
 }
@@ -86,13 +89,13 @@ function onChange(val: string | number) {
                     :id="`${baseId}-${option.value}`"
                     :name="props.name || baseId"
                     :value="option.value"
-                    :checked="option.value === modelValue"
+                    :checked="option.value === model"
                     :disabled="props.disabled"
                     @change="onChange(option.value)"
                 />
                 <label
                     :for="`${baseId}-${option.value}`"
-                    :class="getBtnClasses(option.value === modelValue)"
+                    :class="getBtnClasses(option.value === model)"
                 >
                     {{ option.label }}
                 </label>

@@ -137,7 +137,7 @@ const classes = computed(() => [
     --ilw-color--blue--control-accent: var(--il-altgeld);
     --ilw-color--blue--heading-link-hover: var(--il-altgeld);
 
-    .fa {
+    .fa, svg {
         margin-right: 0.75em;
     }
 }

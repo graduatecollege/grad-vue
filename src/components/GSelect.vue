@@ -1,4 +1,15 @@
 <script setup lang="ts">
+/**
+ * By default, this component behaves like a normal select element with
+ * custom styling.
+ *
+ * The component can be marked `searchable` to enable search functionality.
+ * This turns it into a text input that filters the options. Filtering is
+ * done with a simple lower-case string search.
+ *
+ * The `options` prop can be an array of strings or objects with `label`
+ * and `value` properties.
+ */
 import { computed, nextTick, onBeforeUnmount, ref, useId, watch } from "vue";
 import { useOverlayStack } from "../compose/useOverlayStack.ts";
 
@@ -8,7 +19,7 @@ interface OptionType {
 }
 
 interface Props {
-    modelValue: string | number | undefined | null;
+    // List of options to choose from
     options: Array<string | OptionType>;
     /**
      * Accessible label
@@ -18,6 +29,12 @@ interface Props {
      * Hide the label visually
      */
     hiddenLabel?: boolean;
+    /**
+     * Placeholder
+     *
+     * Only used if the component is searchable.
+     */
+    placeholder?: string;
     /**
      * Disabled
      */
@@ -41,7 +58,8 @@ const props = withDefaults(defineProps<Props>(), {
     name: undefined,
     searchable: false,
 });
-const emit = defineEmits(["update:modelValue", "change"]);
+const emit = defineEmits(["change"]);
+const model = defineModel<string | number | null>();
 
 const baseId = useId();
 const comboRef = ref<HTMLElement | null>(null);
@@ -74,13 +92,11 @@ const filteredOptions = computed(() => {
 });
 
 const selectedIndex = computed(() => {
-    return filteredOptions.value.findIndex(
-        (opt) => opt.value === props.modelValue,
-    );
+    return filteredOptions.value.findIndex((opt) => opt.value === model.value);
 });
 
 watch(
-    () => props.modelValue,
+    () => model.value,
     (val) => {
         const idx = filteredOptions.value.findIndex((opt) => opt.value === val);
         if (idx !== -1) {
@@ -107,7 +123,7 @@ function openMenu() {
         searchQuery.value = "";
         // If a value is selected, highlight it in filtered list
         const idx = filteredOptions.value.findIndex(
-            (opt) => opt.value === props.modelValue,
+            (opt) => opt.value === model.value,
         );
         activeIndex.value = idx !== -1 ? idx : 0;
         nextTick(() => {
@@ -145,7 +161,7 @@ function onComboInput(e: Event) {
     searchQuery.value = (e.target as HTMLInputElement).value;
     // Always highlight the first filtered option, or selected if present
     const idx = filteredOptions.value.findIndex(
-        (opt) => opt.value === props.modelValue,
+        (opt) => opt.value === model.value,
     );
     activeIndex.value = idx !== -1 ? idx : 0;
 }
@@ -173,8 +189,8 @@ function onComboBlur(e: FocusEvent) {
 
 function selectOption(idx: number) {
     const opt = filteredOptions.value[idx];
-    if (opt && opt.value !== props.modelValue) {
-        emit("update:modelValue", opt.value);
+    if (opt && opt.value !== model.value) {
+        model.value = opt.value;
         emit("change", opt.value);
     }
     closeMenu();
@@ -272,15 +288,15 @@ function scrollOptionIntoView() {
 const showClearButton = computed(() => {
     return (
         props.clearButton &&
-        props.modelValue !== null &&
-        props.modelValue !== undefined &&
+        model.value !== null &&
+        model.value !== undefined &&
         !props.disabled
     );
 });
 
 function clearValue() {
     if (!props.disabled) {
-        emit("update:modelValue", null);
+        model.value = null;
         emit("change", null);
         if (props.searchable) {
             searchQuery.value = "";
@@ -323,7 +339,7 @@ onBeforeUnmount(() => {
                           ? normalizedOptions[selectedIndex].label
                           : ''
                 "
-                :placeholder="open ? '' : props.label"
+                :placeholder="open ? '' : placeholder"
                 :disabled="props.disabled"
                 @focus="onComboFocus"
                 @input="onComboInput"
@@ -459,19 +475,17 @@ onBeforeUnmount(() => {
                     class="g-select-combo-option g-select-option"
                     :class="{
                         'g-select-option-current': idx === activeIndex,
-                        'ilw-theme-blue': option.value === modelValue,
+                        'ilw-theme-blue': option.value === model,
                     }"
                     role="option"
-                    :aria-selected="
-                        option.value === modelValue ? 'true' : 'false'
-                    "
+                    :aria-selected="option.value === model ? 'true' : 'false'"
                     @mousedown="onOptionMouseDown"
                     @click="onOptionClick(idx)"
                 >
                     <slot
                         name="option"
                         :option="option"
-                        :selected="option.value === modelValue"
+                        :selected="option.value === model"
                         :index="idx"
                     >
                         {{ option.label }}

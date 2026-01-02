@@ -20,6 +20,7 @@ import GTextInputDemo from "~/components/demo/GTextInputDemo.vue";
 import GClipboardDemo from "~/components/demo/GClipboardDemo.vue";
 import GHistoryScrollerDemo from "~/components/demo/GHistoryScrollerDemo.vue";
 import GThreeWayToggleDemo from "~/components/demo/GThreeWayToggleDemo.vue";
+import GTableDemo from "~/components/demo/GTableDemo.vue";
 import { onMounted } from "vue";
 import { useTemplateRef } from "#imports";
 
@@ -45,6 +46,7 @@ const demoComponents = [
     { label: "Select Button", component: GSelectButtonDemo },
     { label: "Sidebar", component: GSidebarDemo },
     { label: "Sidebar Menu", component: GSidebarMenuDemo },
+    { label: "Table", component: GTableDemo },
     { label: "Text Input", component: GTextInputDemo },
     { label: "Three Way Toggle", component: GThreeWayToggleDemo },
 ];
@@ -58,7 +60,7 @@ onMounted(() => {
 
 <template>
     <div class="app">
-        <GSidebar class="sidebar">
+        <GSidebar class="sidebar" top-offset="0px">
             <GSidebarMenu
                 class="sidebar-menu"
                 title="Components"
@@ -79,7 +81,7 @@ onMounted(() => {
                         <img src="/grad-vue.svg" alt="grad-vue" width="350" />
                     </h1>
                     <p class="demo-page__description">
-                        Vue.js 3 component library.
+                        Vue.js 3 / Nuxt 4 component library.
                     </p>
                     <p class="demo-page__description">
                         <a href="https://github.com/graduatecollege/grad-vue">

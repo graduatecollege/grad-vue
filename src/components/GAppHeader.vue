@@ -24,7 +24,7 @@ type Props = {
 };
 
 const props = withDefaults(defineProps<Props>(), {
-    illinois: true,
+    illinois: false,
     brand: "GRAD",
 });
 </script>

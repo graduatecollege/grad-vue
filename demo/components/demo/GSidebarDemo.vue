@@ -30,10 +30,22 @@ import { GSidebar } from "@illinois-grad/grad-vue";
                         'light',
                         'dark'
                     ]
+                },
+                width: {
+                    type: 'string',
+                    label: 'Width',
+                    default: '300px',
+                    instructions: 'Width of the sidebar'
                 }
             }"
         >
-            <template #docs></template>
+            <template #docs><p>A simple sidebar that&#39;s fixed to the left side of the viewport.</p>
+<p>This includes the CSS for the <code>fixed</code> position and sizing, so the element
+should be fairly high in the DOM tree.</p>
+<p>If neither <code>top-offset</code> nor <code>top-offset-var</code> are defined, the sidebar will be
+offset by <code>var(--g-toolbar-height)</code>. If there is no toolbar, just pass
+<code>0</code> as the <code>top-offset</code>.</p>
+</template>
             <template #default="{ props }">
                 <GSidebar v-bind="props" class="sidebar-demo">
                     <div class="sidebar-content">
@@ -55,7 +67,8 @@ import { GSidebar } from "@illinois-grad/grad-vue";
 }
 .sidebar-demo {
     width: 300px;
-    min-height: 360px;
+    height: 450px;
+    position: static;
     overflow: hidden;
     color: #fff;
 }

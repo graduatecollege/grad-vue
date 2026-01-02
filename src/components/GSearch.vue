@@ -105,7 +105,7 @@ type Props = {
     loading?: boolean;
 };
 
-const modelValue = defineModel({ default: () => "" });
+const modelValue = defineModel<string | null>({ default: () => "" });
 
 const props = withDefaults(defineProps<Props>(), {
     placeholder: "Search...",

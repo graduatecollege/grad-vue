@@ -17,7 +17,6 @@ const selectOptions = ref([
 <template>
     <ComponentSection title="Select">
         <ComponentDemo
-            name="Basic Select"
             description="A dropdown select component with customizable options."
             component="GSelect"
             :props-config="{
@@ -29,6 +28,11 @@ const selectOptions = ref([
                 hiddenLabel: {
                     type: 'boolean',
                     label: 'Hide the label visually'
+                },
+                placeholder: {
+                    type: 'string',
+                    label: 'Placeholder',
+                    instructions: 'Only used if the component is searchable.'
                 },
                 disabled: {
                     type: 'boolean',
@@ -51,7 +55,14 @@ const selectOptions = ref([
                 }
             }"
         >
-            <template #docs></template>
+            <template #docs><p>By default, this component behaves like a normal select element with
+custom styling.</p>
+<p>The component can be marked <code>searchable</code> to enable search functionality.
+This turns it into a text input that filters the options. Filtering is
+done with a simple lower-case string search.</p>
+<p>The <code>options</code> prop can be an array of strings or objects with <code>label</code>
+and <code>value</code> properties.</p>
+</template>
             <template #default="{ props }">
                 <GSelect
                     v-bind="props"
@@ -62,20 +73,6 @@ const selectOptions = ref([
                 />
                 <DemoResult label="Selected">{{ selectedValue }}</DemoResult>
             </template>
-        </ComponentDemo>
-
-        <ComponentDemo
-            name="Searchable Select"
-            description="Select with search functionality to filter options."
-        >
-            <GSelect
-                :model-value="searchableValue"
-                @update:model-value="searchableValue = $event"
-                :options="selectOptions"
-                label="Searchable select"
-                searchable
-            />
-            <DemoResult label="Selected">{{ searchableValue }}</DemoResult>
         </ComponentDemo>
     </ComponentSection>
 </template>

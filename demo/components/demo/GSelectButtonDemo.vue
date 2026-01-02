@@ -16,7 +16,6 @@ const selectButtonOptions = ref([
 <template>
     <ComponentSection title="Select Button">
         <ComponentDemo
-            name="Basic Select Button"
             description="A button-style select component for choosing between options."
             component="GSelectButton"
             :props-config="{
@@ -35,17 +34,6 @@ const selectButtonOptions = ref([
                         'large'
                     ]
                 },
-                theme: {
-                    type: 'select',
-                    label: 'Color theme',
-                    default: 'primary',
-                    options: [
-                        'primary',
-                        'secondary',
-                        'accent',
-                        'danger'
-                    ]
-                },
                 name: {
                     type: 'string',
                     label: 'Name',
@@ -58,11 +46,17 @@ const selectButtonOptions = ref([
                 }
             }"
         >
-            <template #docs></template>
+            <template #docs><p>This component is just a radio button group with special styling.</p>
+<p>Use the <code>options</code> prop to provide a list of choices. Each option can
+be a string or an object with <code>label</code> and <code>value</code> properties.</p>
+<p>In addition to <code>v-model</code>, a <code>change</code> event is emitted when the
+option changes from user interaction.</p>
+</template>
             <template #default="{ props }">
                 <GSelectButton
                     v-model="selectButtonValue"
                     v-bind="props"
+                    :label="props.label"
                     :options="selectButtonOptions"
                 />
                 <DemoResult label="Selected">{{
