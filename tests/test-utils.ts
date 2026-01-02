@@ -1,9 +1,8 @@
 import { mount, RouterLinkStub, VueWrapper } from "@vue/test-utils";
 import axe from "axe-core";
-import { Component, createApp, h, reactive } from "vue";
+import { Component, createApp, h, reactive, Ref, watch } from "vue";
 import { Locator, page } from "vitest/browser";
-import GradVue from "../src/grad-vue";
-import VGtooltip from "../src/directives/v-gtooltip";
+import { mounts } from "./setup";
 
 /**
  * Run accessibility tests on a component using axe-core
@@ -16,7 +15,7 @@ export async function testAccessibility(
     component: Component | HTMLElement,
     props?: Record<string, any>,
     slots?: Record<string, any>,
-    teleport?: boolean
+    teleport?: boolean,
 ): Promise<void> {
     let el: HTMLElement;
     let wrapper: VueWrapper | null = null;
@@ -52,12 +51,12 @@ export async function testAccessibility(
         });
 
         throw new Error(
-            `Accessibility violations found:\n\n${violationMessages.join("\n\n")}`
+            `Accessibility violations found:\n\n${violationMessages.join("\n\n")}`,
         );
     }
 
     if (wrapper) {
-        wrapper.unmount();
+        //
     }
 }
 
@@ -70,7 +69,8 @@ export function mnt(
         props?: Record<string, any>;
         slots?: Record<string, any>;
         teleport?: boolean;
-    }
+        model?: Ref<any>;
+    },
 ) {
     const id = Math.random().toString(36).substring(2, 9);
     const container = document.createElement("div");
@@ -85,6 +85,22 @@ export function mnt(
         props: options?.props || {},
     });
 
+    function setProps(newProps: Record<string, any>) {
+        Object.assign(state.props, newProps);
+    }
+
+    const model = options?.model;
+
+    if (model) {
+        state.props["modelValue"] = model;
+        state.props["onUpdate:modelValue"] = (value: any) => {
+            model.value = value;
+        };
+        watch(model, (value) => {
+            setProps({ modelValue: value });
+        });
+    }
+
     const app = createApp({
         render() {
             return h(component, state.props, options?.slots);
@@ -96,10 +112,21 @@ export function mnt(
     let instance: Locator;
 
     if (options?.teleport) {
-        instance = page.elementLocator(document.body.querySelector("#modal-root")!.children[0] as HTMLElement);
+        instance = page.elementLocator(
+            document.body.querySelector("#modal-root")!
+                .children[0] as HTMLElement,
+        );
     } else {
         instance = page.elementLocator(container.children[0] as HTMLElement);
     }
+
+    const unmount = () => {
+        app.unmount();
+        container.remove();
+        modalRoot.remove();
+    }
+
+    mounts.push(unmount);
 
     return {
         app,
@@ -107,13 +134,6 @@ export function mnt(
         container,
         instance,
         state,
-        setProps(newProps: Record<string, any>) {
-            Object.assign(state.props, newProps);
-        },
-        unmount() {
-            app.unmount();
-            container.remove();
-            modalRoot.remove();
-        },
+        setProps,
     };
 }

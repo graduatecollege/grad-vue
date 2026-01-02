@@ -11,27 +11,25 @@ describe("GSidebarMenu", () => {
 
     describe("Functional Tests", () => {
         it("renders with basic props", async () => {
-
             const wrapper = mnt(GSidebarMenu, {
                 props: {
                     title: "Sidebar Menu",
-                    items: menuItems
-                }
+                    items: menuItems,
+                },
             });
 
             await expect.element(wrapper.instance).toBeInTheDocument();
-            wrapper.unmount();
         });
     });
 
     describe("Accessibility Tests", () => {
-        it("passes accessibility tests with menu items", async () => {
+        it("with menu items", async () => {
             await testAccessibility(GSidebarMenu, {
                 title: "Sidebar Menu",
                 items: menuItems,
             });
         });
-        it("passes accessibility tests with an active item", async () => {
+        it("with an active item", async () => {
             await testAccessibility(GSidebarMenu, {
                 title: "Sidebar Menu",
                 items: menuItems,
@@ -40,17 +38,18 @@ describe("GSidebarMenu", () => {
             });
         });
         it("activeId should add aria-current", async () => {
-            const wrapper = mnt(GSidebarMenu, {
+            mnt(GSidebarMenu, {
                 props: {
                     title: "Sidebar Menu",
                     items: menuItems,
                     spy: true,
-                    modelValue: "about"
+                    modelValue: "about",
                 },
             });
 
-            await expect.element(page.getByRole("link", { name: "About" })).toHaveAttribute("aria-current", "location");
-            wrapper.unmount();
+            await expect
+                .element(page.getByRole("link", { name: "About" }))
+                .toHaveAttribute("aria-current", "location");
         });
     });
 });

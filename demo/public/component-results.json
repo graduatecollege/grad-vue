@@ -1,7 +1,7 @@
 {
-  "totalComponents": 13,
-  "totalTests": 95,
-  "passedTests": 95,
+  "totalComponents": 14,
+  "totalTests": 107,
+  "passedTests": 107,
   "failedTests": 0,
   "skippedTests": 0,
   "components": {
@@ -42,7 +42,7 @@
           ]
         },
         {
-          "title": "passes accessibility tests with default props",
+          "title": "with default props",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
@@ -80,14 +80,14 @@
           ]
         },
         {
-          "title": "passes accessibility tests with title",
+          "title": "with title",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
           ]
         },
         {
-          "title": "passes accessibility tests with navigation slot",
+          "title": "with navigation slot",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
@@ -132,7 +132,7 @@
           ]
         },
         {
-          "title": "passes accessibility tests with default props",
+          "title": "with default props",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
@@ -355,28 +355,28 @@
           ]
         },
         {
-          "title": "passes accessibility tests with different sizes",
+          "title": "with different sizes",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
           ]
         },
         {
-          "title": "passes accessibility tests with different themes",
+          "title": "with different themes",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
           ]
         },
         {
-          "title": "passes accessibility tests with outlined variant",
+          "title": "with outlined variant",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
           ]
         },
         {
-          "title": "passes accessibility tests with text variant",
+          "title": "with text variant",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
@@ -393,14 +393,14 @@
       "status": "passed",
       "tests": [
         {
-          "title": "passes accessibility tests with basic content",
+          "title": "with basic content",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
           ]
         },
         {
-          "title": "passes accessibility tests with focus",
+          "title": "with focus",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
@@ -445,7 +445,7 @@
           ]
         },
         {
-          "title": "passes accessibility tests with default content",
+          "title": "with default content",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
@@ -483,7 +483,7 @@
           ]
         },
         {
-          "title": "passes accessibility tests when open",
+          "title": "when open",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
@@ -493,42 +493,35 @@
     },
     "GProgress": {
       "component": "GProgress",
-      "total": 5,
-      "passed": 5,
+      "total": 4,
+      "passed": 4,
       "failed": 0,
       "skipped": 0,
       "status": "passed",
       "tests": [
         {
-          "title": "renders with default props",
-          "status": "passed",
-          "ancestors": [
-            "Functional Tests"
-          ]
-        },
-        {
-          "title": "passes accessibility tests with indeterminate state",
+          "title": "with indeterminate state",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
           ]
         },
         {
-          "title": "passes accessibility tests with determinate value",
+          "title": "with determinate value",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
           ]
         },
         {
-          "title": "passes accessibility tests with different sizes",
+          "title": "with different sizes",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
           ]
         },
         {
-          "title": "passes accessibility tests with custom aria-label",
+          "title": "with custom aria-label",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
@@ -601,28 +594,28 @@
           ]
         },
         {
-          "title": "passes accessibility tests with basic props",
+          "title": "with basic props",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
           ]
         },
         {
-          "title": "passes accessibility tests with input",
+          "title": "with input",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
           ]
         },
         {
-          "title": "passes accessibility tests with 0 results",
+          "title": "with 0 results",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
           ]
         },
         {
-          "title": "passes accessibility tests with 2 results",
+          "title": "with 2 results",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
@@ -646,28 +639,28 @@
           ]
         },
         {
-          "title": "passes accessibility tests with basic props",
+          "title": "with basic props",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
           ]
         },
         {
-          "title": "passes accessibility tests with selected value",
+          "title": "with selected value",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
           ]
         },
         {
-          "title": "passes accessibility tests with object options",
+          "title": "with object options",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
           ]
         },
         {
-          "title": "passes accessibility tests with searchable enabled",
+          "title": "with searchable enabled",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
@@ -712,14 +705,14 @@
           ]
         },
         {
-          "title": "passes accessibility tests with basic props",
+          "title": "with basic props",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
           ]
         },
         {
-          "title": "passes accessibility tests with selected value",
+          "title": "with selected value",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
@@ -736,7 +729,7 @@
       "status": "passed",
       "tests": [
         {
-          "title": "passes accessibility tests with content",
+          "title": "with content",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
@@ -760,14 +753,14 @@
           ]
         },
         {
-          "title": "passes accessibility tests with menu items",
+          "title": "with menu items",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
           ]
         },
         {
-          "title": "passes accessibility tests with an active item",
+          "title": "with an active item",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
@@ -805,42 +798,143 @@
           ]
         },
         {
-          "title": "passes accessibility tests with basic props",
+          "title": "with basic props",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
           ]
         },
         {
-          "title": "passes accessibility tests with aria-label",
+          "title": "with aria-label",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
           ]
         },
         {
-          "title": "passes accessibility tests with error state",
+          "title": "with error state",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
           ]
         },
         {
-          "title": "passes accessibility tests with label",
+          "title": "with label",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
           ]
         },
         {
-          "title": "passes accessibility tests with label and instructions",
+          "title": "with label and instructions",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
           ]
         },
         {
-          "title": "passes accessibility tests with label and instructions and error state",
+          "title": "with label and instructions and error state",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        }
+      ]
+    },
+    "GThreeWayToggle": {
+      "component": "GThreeWayToggle",
+      "total": 13,
+      "passed": 13,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed",
+      "tests": [
+        {
+          "title": "Arrow right should select 'yes'",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "Arrow left should select 'no'",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "Arrow right and then left should go back to no value",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "Arrow left and then right should go back to no value",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "Clicking on the right half should select 'yes'",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "Clicking on the left half should select 'no'",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "Clicking twice on the right half should go back to no value",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "Clicking twice on the left half should go back to no value",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "with default content",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "with an error value set",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "when disabled",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "should have an accessible error message when set",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "should have an accessible description when set",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"

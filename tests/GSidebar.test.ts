@@ -4,7 +4,7 @@ import { testAccessibility } from "./test-utils";
 
 describe("GSidebar", () => {
     describe("Accessibility Tests", () => {
-        it("passes accessibility tests with content", async () => {
+        it("with content", async () => {
             await testAccessibility(
                 GSidebar,
                 { label: "Navigation" },

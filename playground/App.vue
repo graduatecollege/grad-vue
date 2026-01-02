@@ -57,20 +57,19 @@ function selected(item: SearchResult) {
 }
 
 const historyEntries = ref([
-    {id: "twelve"},
-    {id: "eleven"},
-    {id: "ten"},
-    {id: "nine"},
-    {id: "eight"},
-    {id: "seven"},
-    {id: "six"},
-    {id: "five"},
-    {id: "four"},
-    {id: "three"},
-    {id: "two"},
-    {id: "one"},
-])
-
+    { id: "twelve" },
+    { id: "eleven" },
+    { id: "ten" },
+    { id: "nine" },
+    { id: "eight" },
+    { id: "seven" },
+    { id: "six" },
+    { id: "five" },
+    { id: "four" },
+    { id: "three" },
+    { id: "two" },
+    { id: "one" },
+]);
 </script>
 
 <template>
@@ -90,9 +89,16 @@ const historyEntries = ref([
                         { label: 'Select', href: '#select' },
                         { label: 'Popover', href: '#popover' },
                         { label: 'Alert Dialog', href: '#alert-dialog' },
-                                            { label: 'Clipboard', href: '#clipboard' },
-                        { label: 'History Scroller', href: '#history-scroller' },
-]"
+                        { label: 'Clipboard', href: '#clipboard' },
+                        {
+                            label: 'History Scroller',
+                            href: '#history-scroller',
+                        },
+                        {
+                            label: 'Three Way Toggle',
+                            href: '#three-way-toggle',
+                        },
+                    ]"
                     v-model="activeId"
                 />
             </GSidebar>
@@ -106,7 +112,11 @@ const historyEntries = ref([
 
                 <section id="select-buttons">
                     <h2>Select Buttons</h2>
-                    <GSelectButton v-model="select" label="Select" :options="['foo', 'bar', 'baz']" />
+                    <GSelectButton
+                        v-model="select"
+                        label="Select"
+                        :options="['foo', 'bar', 'baz']"
+                    />
                 </section>
 
                 <section id="search" ref="search">
@@ -122,8 +132,16 @@ const historyEntries = ref([
 
                 <section id="text-input" ref="text">
                     <h2>Text Input</h2>
-                    <GTextInput label="Text Input" placeholder="Type here..." error="It's bad" />
-                    <GTextInput label="Text Input" placeholder="Type here..." instructions="This is very instructive!">
+                    <GTextInput
+                        label="Text Input"
+                        placeholder="Type here..."
+                        error="It's bad"
+                    />
+                    <GTextInput
+                        label="Text Input"
+                        placeholder="Type here..."
+                        instructions="This is very instructive!"
+                    >
                     </GTextInput>
                     <div style="height: 500px"></div>
                 </section>
@@ -192,14 +210,23 @@ const historyEntries = ref([
                 </section>
                 <section id="history-scroller">
                     <h2>History Scroller</h2>
-                    <GHistoryScroller :entries="historyEntries" class="history-scroller">
+                    <GHistoryScroller
+                        :entries="historyEntries"
+                        class="history-scroller"
+                    >
                         <template #default="{ entry }">
                             <div class="history-entry">
                                 This is history for: {{ entry.id }}
                             </div>
                         </template>
-
                     </GHistoryScroller>
+                </section>
+                <section id="three-way-toggle" style="max-width: 200px">
+                    <h2>Three Way Toggle</h2>
+                    <GThreeWayToggle
+                        label="Three Way Toggle"
+                        :modelValue="null"
+                    />
                 </section>
             </main>
         </div>

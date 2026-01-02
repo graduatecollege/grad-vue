@@ -38,13 +38,13 @@ that toggles the popover&#39;s open state.</p>
 
 </template>
             <template #default="{ props }">
-                <GPopover v-bind="props" :label="props.label">
+                <GPopover v-bind="props">
                     <template #trigger="{ toggle }">
                         <GButton @click="toggle">Toggle Popover</GButton>
                     </template>
                     <div>
                         <p>This is popover content!</p>
-                        <GPopover :label="props.label">
+                        <GPopover>
                             <template #trigger="{ toggle }">
                                 <GButton @click="toggle">
                                     Can Popovers have Popovers?
@@ -52,7 +52,7 @@ that toggles the popover&#39;s open state.</p>
                             </template>
                             <div>
                                 <p>This is popover content 2!</p>
-                                <GPopover :label="props.label">
+                                <GPopover>
                                     <template #trigger="{ toggle }">
                                         <GButton @click="toggle">
                                             Can Popovers' Popovers have

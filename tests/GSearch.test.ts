@@ -6,7 +6,7 @@ import { userEvent } from "vitest/browser";
 describe("GSearch", () => {
     describe("Functional Tests", () => {
         it("renders with default props", () => {
-            const { container, unmount } = mnt(GSearch, {
+            const { container } = mnt(GSearch, {
                 props: {
                     modelValue: "",
                     results: [],
@@ -14,15 +14,13 @@ describe("GSearch", () => {
             });
 
             expect(container.querySelector("input")).toBeTruthy();
-            unmount();
         });
 
         it("with auto enabled, submit event should be fired with typing, after debounce", async () => {
             vi.useFakeTimers();
             const callback = vi.fn();
-            const { container, app, unmount } = mnt(GSearch, {
+            const { container } = mnt(GSearch, {
                 props: {
-                    modelValue: "",
                     results: [],
                     auto: true,
                     onSubmit: callback,
@@ -40,13 +38,12 @@ describe("GSearch", () => {
             expect(callback).toHaveBeenCalled();
 
             vi.useRealTimers();
-            unmount();
         });
 
         it("with auto enabled, typing and waiting for debounce, and then typing again, should submit again", async () => {
             vi.useFakeTimers();
             const callback = vi.fn();
-            const { container, app, setProps, unmount } = mnt(GSearch, {
+            const { container, app, setProps } = mnt(GSearch, {
                 props: {
                     modelValue: "",
                     results: [],
@@ -71,13 +68,12 @@ describe("GSearch", () => {
             expect(callback).toHaveBeenCalledWith("testtest2ing");
 
             vi.useRealTimers();
-            unmount();
         });
 
         it("with auto disabled, should not submit on typing", async () => {
             const callback = vi.fn();
             vi.useFakeTimers();
-            const { container, app, unmount } = mnt(GSearch, {
+            const { container } = mnt(GSearch, {
                 props: {
                     modelValue: "",
                     results: [],
@@ -94,12 +90,11 @@ describe("GSearch", () => {
             expect(callback).not.toHaveBeenCalled();
 
             vi.useRealTimers();
-            unmount();
         });
 
         it("with auto disabled, should submit on enter after typing", async () => {
             const callback = vi.fn();
-            const { container, app, unmount, vm } = mnt(GSearch, {
+            const { container, app, vm } = mnt(GSearch, {
                 props: {
                     modelValue: "",
                     results: [],
@@ -113,12 +108,10 @@ describe("GSearch", () => {
             await vm.$nextTick();
 
             expect(callback).toHaveBeenCalledWith("test");
-
-            unmount();
         });
 
         it("with options open, arrow down should move to next result", async () => {
-            const { container, vm, unmount, instance } = mnt(GSearch, {
+            const { container, vm, instance } = mnt(GSearch, {
                 props: {
                     modelValue: "",
                     results: [
@@ -147,12 +140,10 @@ describe("GSearch", () => {
                 "aria-selected",
                 "true",
             );
-
-            unmount();
         });
 
         it("with options open, arrow up should move back to previous result", async () => {
-            const { container, vm, unmount, instance } = mnt(GSearch, {
+            const { container, vm, instance } = mnt(GSearch, {
                 props: {
                     modelValue: "",
                     results: [
@@ -178,12 +169,11 @@ describe("GSearch", () => {
                 "aria-selected",
                 "true",
             );
-            unmount();
         });
 
         it("with options open, enter should select result", async () => {
             const callback = vi.fn();
-            const { container, vm, unmount, instance } = mnt(GSearch, {
+            const { container, vm, instance } = mnt(GSearch, {
                 props: {
                     modelValue: "",
                     results: [
@@ -191,53 +181,51 @@ describe("GSearch", () => {
                         { id: "2", title: "Option 2" },
                         { id: "3", title: "Option 3" },
                     ],
-                    onSelect: callback
-                }
-            })
+                    onSelect: callback,
+                },
+            });
             const input = container.querySelector("input")!;
             await userEvent.type(input, "opt{Enter}");
             await vm.$nextTick();
             await userEvent.type(input, "{ArrowDown}{ArrowDown}{Enter}");
-            expect(callback).toHaveBeenCalledWith({ id: "2", title: "Option 2" });
-            unmount();
-        })
+            expect(callback).toHaveBeenCalledWith({
+                id: "2",
+                title: "Option 2",
+            });
+        });
     });
 
     describe("Accessibility Tests", () => {
-        it("passes accessibility tests with basic props", async () => {
+        it("with basic props", async () => {
             await testAccessibility(GSearch, {
                 modelValue: "",
                 results: [],
             });
         });
 
-        it("passes accessibility tests with input", async () => {
+        it("with input", async () => {
             await testAccessibility(GSearch, {
                 modelValue: "Option 1",
-                results: []
+                results: [],
             });
         });
 
-        it("passes accessibility tests with 0 results", async () => {
-            const {container, vm, unmount} = mnt(GSearch, {
+        it("with 0 results", async () => {
+            const { container, vm } = mnt(GSearch, {
                 props: {
                     modelValue: "",
-                    results: []
-                }
+                    results: [],
+                },
             });
 
             await userEvent.type(container.querySelector("input")!, "Opt");
             await vm.$nextTick();
             await userEvent.type(container.querySelector("input")!, "{Enter}");
 
-            await testAccessibility(
-                container
-            );
-
-            unmount();
+            await testAccessibility(container);
         });
-        it("passes accessibility tests with 2 results", async () => {
-            const { container, vm, unmount } = mnt(GSearch, {
+        it("with 2 results", async () => {
+            const { container, vm } = mnt(GSearch, {
                 props: {
                     modelValue: "",
                     results: [
@@ -251,11 +239,7 @@ describe("GSearch", () => {
             await vm.$nextTick();
             await userEvent.type(container.querySelector("input")!, "{Enter}");
 
-            await testAccessibility(
-                container
-            );
-
-            unmount();
+            await testAccessibility(container);
         });
     });
 });

@@ -19,6 +19,7 @@ import GSidebarMenuDemo from "~/components/demo/GSidebarMenuDemo.vue";
 import GTextInputDemo from "~/components/demo/GTextInputDemo.vue";
 import GClipboardDemo from "~/components/demo/GClipboardDemo.vue";
 import GHistoryScrollerDemo from "~/components/demo/GHistoryScrollerDemo.vue";
+import GThreeWayToggleDemo from "~/components/demo/GThreeWayToggleDemo.vue";
 import { onMounted } from "vue";
 import { useTemplateRef } from "#imports";
 
@@ -36,6 +37,7 @@ const demoComponents = [
     { label: "App Header", component: GAppHeaderDemo },
     { label: "Button", component: GButtonDemo },
     { label: "Clipboard", component: GClipboardDemo },
+    { label: "History Scroller", component: GHistoryScrollerDemo },
     { label: "Popover", component: GPopoverDemo },
     { label: "Progress", component: GProgressDemo },
     { label: "Search", component: GSearchDemo },
@@ -44,7 +46,7 @@ const demoComponents = [
     { label: "Sidebar", component: GSidebarDemo },
     { label: "Sidebar Menu", component: GSidebarMenuDemo },
     { label: "Text Input", component: GTextInputDemo },
-    { label: "History Scroller", component: GHistoryScrollerDemo },
+    { label: "Three Way Toggle", component: GThreeWayToggleDemo },
 ];
 
 const demo = useTemplateRef("demo");

@@ -16,7 +16,7 @@ describe("GButton", () => {
             await expect.element(wrapper.instance).toHaveClass("g-btn");
             await expect.element(wrapper.instance).toHaveClass("g-btn--medium");
             await expect.element(wrapper.instance).toHaveClass("g-btn--primary");
-            wrapper.unmount();
+            
         });
 
         it("emits click event when clicked", async () => {
@@ -28,7 +28,7 @@ describe("GButton", () => {
 
             await userEvent.click(wrapper.instance);
             expect(onClick).toHaveBeenCalled();
-            wrapper.unmount();
+            
         });
 
         it("applies size classes correctly", async () => {
@@ -41,7 +41,7 @@ describe("GButton", () => {
                 });
 
                 await expect.element(wrapper.instance).toHaveClass(`g-btn--${size}`);
-                wrapper.unmount();
+                
             }
         });
 
@@ -55,13 +55,13 @@ describe("GButton", () => {
                 });
 
                 await expect.element(wrapper.instance).toHaveClass(`g-btn--${theme}`);
-                wrapper.unmount();
+                
             }
         });
     });
 
     describe("Accessibility Tests", () => {
-        it("passes accessibility tests with default props", async () => {
+        it("with default props", async () => {
             await testAccessibility(GButton, {}, { default: () => "Click me" });
         });
 
@@ -80,7 +80,7 @@ describe("GButton", () => {
             });
         });
 
-        it("passes accessibility tests with different sizes", async () => {
+        it("with different sizes", async () => {
             const sizes = ["small", "medium", "large"] as const;
 
             for (const size of sizes) {
@@ -88,7 +88,7 @@ describe("GButton", () => {
             }
         });
 
-        it("passes accessibility tests with different themes", async () => {
+        it("with different themes", async () => {
             const themes = ["primary", "secondary", "accent", "danger"] as const;
 
             for (const theme of themes) {
@@ -96,11 +96,11 @@ describe("GButton", () => {
             }
         });
 
-        it("passes accessibility tests with outlined variant", async () => {
+        it("with outlined variant", async () => {
             await testAccessibility(GButton, { outlined: true }, { default: () => "Button" });
         });
 
-        it("passes accessibility tests with text variant", async () => {
+        it("with text variant", async () => {
             await testAccessibility(GButton, { text: true }, { default: () => "Button" });
         });
     });

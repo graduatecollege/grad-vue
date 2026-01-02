@@ -9,7 +9,6 @@ describe("GAlertDialog", () => {
             const wrapper = mnt(GAlertDialog, { teleport: true });
 
             await expect.element(wrapper.instance).toBeInTheDocument();
-            wrapper.unmount();
         });
         it("renders with custom label", async () => {
             const wrapper = mnt(GAlertDialog, {
@@ -21,13 +20,12 @@ describe("GAlertDialog", () => {
             await expect
                 .element(page.getByRole("heading", { name: "Hello Alert" }))
                 .toBeInTheDocument();
-            wrapper.unmount();
         });
         it("is visible when opened in a scrolled container", async (ctx) => {
             await page.viewport(420, 500);
 
             // Mount the GAlertDialog
-            const { container, unmount, vm } = mnt(GAlertDialog, {
+            const { container, vm } = mnt(GAlertDialog, {
                 teleport: true,
             });
 
@@ -45,11 +43,10 @@ describe("GAlertDialog", () => {
             await expect
                 .element(page.getByRole("alertdialog"))
                 .toBeInViewport();
-            unmount();
         });
         it("escape should cancel the dialog", async () => {
             const onCancel = vi.fn();
-            const { container, unmount, vm } = mnt(GAlertDialog, {
+            const { container, vm } = mnt(GAlertDialog, {
                 props: {
                     onCancel,
                 },
@@ -60,13 +57,11 @@ describe("GAlertDialog", () => {
             await vm.$nextTick();
 
             expect(onCancel).toHaveBeenCalled();
-
-            unmount();
         });
     });
 
     describe("Accessibility Tests", () => {
-        it("passes accessibility tests with default props", async () => {
+        it("with default props", async () => {
             const wrapper = mnt(GAlertDialog, {
                 teleport: true,
             });
@@ -76,8 +71,6 @@ describe("GAlertDialog", () => {
                 {},
                 { default: () => "Alert message" },
             );
-
-            wrapper.unmount();
         });
 
         it("label should match accessible name", async () => {
@@ -88,7 +81,6 @@ describe("GAlertDialog", () => {
             await expect
                 .element(page.getByRole("alertdialog"))
                 .toHaveAccessibleName("Confirmation");
-            wrapper.unmount();
         });
 
         it("description should match content", async () => {
@@ -99,7 +91,6 @@ describe("GAlertDialog", () => {
             await expect
                 .element(page.getByRole("alertdialog"))
                 .toHaveAccessibleDescription("Are you sure?");
-            wrapper.unmount();
         });
     });
 });

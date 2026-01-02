@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import GPopover from "../src/components/GPopover.vue";
 import { mnt, testAccessibility } from "./test-utils";
 import { h } from "vue";
@@ -17,10 +17,9 @@ function defaultWrapper() {
 describe("GPopover", () => {
     describe("Functional Tests", () => {
         it("renders with required props", async () => {
-            const { unmount, instance } = defaultWrapper();
+            const { instance } = defaultWrapper();
 
             await expect.element(instance).toBeVisible();
-            unmount();
         });
 
         it("remains in viewport when on the bottom", async (ctx) => {
@@ -38,7 +37,6 @@ describe("GPopover", () => {
                 ratio: 1,
             });
 
-            wrapper.unmount();
             content.remove();
         });
 
@@ -61,15 +59,16 @@ describe("GPopover", () => {
             await page.getByRole("button", { name: "Open" }).click();
             await wrapper.vm.$nextTick();
 
-            await expect.element(page.getByRole("dialog")).toBeInViewport({ratio: 1});
+            await expect
+                .element(page.getByRole("dialog"))
+                .toBeInViewport({ ratio: 1 });
 
-            wrapper.unmount();
             content.remove();
         });
     });
 
     describe("Accessibility Tests", () => {
-        it("passes accessibility tests when open", async () => {
+        it("when open", async () => {
             const wrapper = defaultWrapper();
 
             await page.getByRole("button", { name: "Open" }).click();
@@ -84,7 +83,6 @@ describe("GPopover", () => {
                     default: "Popover content",
                 },
             );
-            wrapper.unmount();
         });
     });
 });
