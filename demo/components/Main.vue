@@ -166,7 +166,6 @@ onMounted(() => {
 .demo-section__title {
     margin: 0 0 1.5rem 0;
     padding-bottom: 0.5rem;
-    border-bottom: 2px solid var(--il-storm-80);
     font-size: 1.875rem;
     color: var(--il-blue);
 }

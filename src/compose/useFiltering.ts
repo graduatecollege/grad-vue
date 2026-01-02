@@ -31,7 +31,6 @@ export function useFiltering<T extends Record<string, any>>(
     const values = ref<T>({} as T);
 
     const isFiltered = computed(() => {
-        console.log("isFiltered")
         return Object.values(values.value).some(
             (filter) => (filter !== undefined && filter !== null) && (!Array.isArray(filter) || filter.length > 0),
         );
@@ -44,7 +43,6 @@ export function useFiltering<T extends Record<string, any>>(
     };
 
     const filteredColumns = computed(() => {
-        console.log("filteredColumns")
         const result: Record<string, boolean> = {};
         for (const key of Object.keys(filters)) {
             const filterValue = values.value[key];

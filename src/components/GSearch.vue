@@ -206,7 +206,6 @@ function selectResult(result: T | null) {
 }
 
 const isLoading = computed(() => {
-    console.log("Checking loading state", props.loading);
     return !!props.loading;
 });
 
