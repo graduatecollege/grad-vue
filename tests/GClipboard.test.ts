@@ -1,33 +1,30 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import GClipboard from "../src/components/GClipboard.vue";
 import { mnt, testAccessibility } from "./test-utils";
 import { page, userEvent } from "vitest/browser";
 
 describe("GClipboard", () => {
     describe("Accessibility Tests", () => {
-        it("passes accessibility tests with basic content", async () => {
+        it("with basic content", async () => {
             await testAccessibility(GClipboard, {
                 label: "Clipboard",
                 text: "Example text",
             });
         });
-        it("passes accessibility tests with focus", async () => {
-            const { container, instance, unmount, vm } = mnt(GClipboard, {
+        it("with focus", async () => {
+            const { container } = mnt(GClipboard, {
                 props: { label: "Clipboard", text: "Example text" },
             });
 
             await userEvent.keyboard("{Tab}");
 
             // CSS animation can cause issue with axe-core's ability to detect color contrast
-            await new Promise(resolve => setTimeout(resolve, 150));
+            await new Promise((resolve) => setTimeout(resolve, 150));
 
             await testAccessibility(container);
-
-
-            unmount();
         });
         it("should have aria description", async () => {
-            const { container, instance, unmount, vm } = mnt(GClipboard, {
+            mnt(GClipboard, {
                 props: { label: "Clipboard", text: "Example text" },
             });
 
@@ -36,11 +33,9 @@ describe("GClipboard", () => {
             await expect
                 .element(page.getByLabelText("Copy"))
                 .toHaveAccessibleDescription("Copy to clipboard");
-
-            unmount();
         });
         it("after click should update aria description", async () => {
-            const { container, instance, unmount, vm } = mnt(GClipboard, {
+            const { vm } = mnt(GClipboard, {
                 props: { label: "Clipboard", text: "Example text" },
             });
 
@@ -53,7 +48,6 @@ describe("GClipboard", () => {
             await expect(
                 page.getByLabelText("Copy"),
             ).toHaveAccessibleDescription("Copied");
-            unmount();
         });
     });
 });

@@ -159,7 +159,9 @@ async function updateDemo(componentName: string, propsConfig: Record<string, any
     let newContent = content.replace(/:props-config="\{[\s\S]*?\}"/, `:props-config="${indentedConfig}"`);
     
     if (docs) {
-        const html = (await marked.parse(docs)).replace(/{/g, "&lcub;");
+        const html = (await marked.parse(docs.replace(/&lt;/g, "<")))
+            .replace(/{/g, "&lcub;");
+
         newContent = newContent.replace(
             /<template #docs\s*>.*?<\/template>/s,
             `<template #docs>${html}</template>`,

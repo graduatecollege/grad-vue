@@ -5,13 +5,12 @@ import { mnt, testAccessibility } from "./test-utils";
 describe("GAppHeader", () => {
     describe("Functional Tests", () => {
         it("renders with default props", () => {
-            const { unmount } = mnt(GAppHeader, {});
-            unmount();
+            mnt(GAppHeader, {});
         });
     });
 
     describe("Accessibility Tests", () => {
-        it("passes accessibility tests with title", async () => {
+        it("with title", async () => {
             await testAccessibility(
                 GAppHeader,
                 {},
@@ -19,7 +18,7 @@ describe("GAppHeader", () => {
             );
         });
 
-        it("passes accessibility tests with navigation slot", async () => {
+        it("with navigation slot", async () => {
             await testAccessibility(
                 GAppHeader,
                 {},

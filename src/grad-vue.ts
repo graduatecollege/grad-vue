@@ -12,6 +12,7 @@ import GSidebar from "./components/GSidebar.vue";
 import GSidebarMenu from "./components/GSidebarMenu.vue";
 import GClipboard from "./components/GClipboard.vue";
 import GHistoryScroller from "./components/GHistoryScroller.vue";
+import GThreeWayToggle from "./components/GThreeWayToggle.vue";
 
 import "./css/main.css";
 import VGtooltip from "./directives/v-gtooltip.ts";
@@ -31,6 +32,7 @@ export {
     GSidebarMenu,
     GClipboard,
     GHistoryScroller,
+    GThreeWayToggle,
 };
 
 // Export a plugin for installing all components
@@ -50,6 +52,7 @@ export default {
         app.component("GSidebarMenu", GSidebarMenu);
         app.component("GClipboard", GClipboard);
         app.component("GHistoryScroller", GHistoryScroller);
+        app.component("GThreeWayToggle", GThreeWayToggle);
     },
 };
 

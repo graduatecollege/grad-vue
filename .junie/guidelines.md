@@ -4,6 +4,8 @@ This is a collection of Vue.js components for the Graduate College.
 
 Accessibility is the first priority.
 
+**Note** that this is being developed in WSL, so use linux commands.
+
 ## Code conventions
 
 - Use 4 spaces for indentation.

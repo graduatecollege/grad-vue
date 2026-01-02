@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mount } from "@vue/test-utils";
 import GSelect from "../src/components/GSelect.vue";
 import { testAccessibility } from "./test-utils";
@@ -21,7 +21,7 @@ describe("GSelect", () => {
     });
 
     describe("Accessibility Tests", () => {
-        it("passes accessibility tests with basic props", async () => {
+        it("with basic props", async () => {
             await testAccessibility(GSelect, {
                 label: "Select option",
                 options,
@@ -29,7 +29,7 @@ describe("GSelect", () => {
             });
         });
 
-        it("passes accessibility tests with selected value", async () => {
+        it("with selected value", async () => {
             await testAccessibility(GSelect, {
                 label: "Select option",
                 options,
@@ -37,7 +37,7 @@ describe("GSelect", () => {
             });
         });
 
-        it("passes accessibility tests with object options", async () => {
+        it("with object options", async () => {
             const objectOptions = [
                 { label: "First", value: 1 },
                 { label: "Second", value: 2 },
@@ -50,7 +50,7 @@ describe("GSelect", () => {
             });
         });
 
-        it("passes accessibility tests with searchable enabled", async () => {
+        it("with searchable enabled", async () => {
             await testAccessibility(GSelect, {
                 label: "Select option",
                 options,

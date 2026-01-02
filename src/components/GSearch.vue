@@ -11,6 +11,69 @@
 /**
  * A combobox-style search that shows a list of results as an auto
  * complete dropdown.
+ *
+ * The component doesn't perform any real searching. It emits events
+ * that can be used to trigger searches, and then the results are
+ * passed back to the component.
+ *
+ * **Events**:
+ *
+ * - `submit` event is emitted when a search should be performed.
+ * - `select` event is submitted when a user makes a selection
+ *   in the dropdown.
+ *
+ * > [!NOTE]
+ * > The `v-model` value should *not* be used to trigger a search,
+ * > but it can be used to get the current user input.
+ *
+ * **Props**:
+ *
+ * - `results` will be rendered in the dropdown. There are two options:
+ *   - Pass an array of objects that extend `{ id: string | number; title: string; }`.
+ *   - Pass an array of `GSearchGroup<T>` objects, where the `items` property extends the above type.
+ *     In this case the results are grouped.
+ * - `auto` makes search submit on user input. Defaults to `true`.
+ *   if `false`, submission happens on Enter or clicking the search button.
+ * - `loading` shows a loading indicator. Use if the search may take longer.
+ *
+ * **Slot**: `option` customizes how an option is rendered.
+ * It receives the current item as `option`.
+ *
+ * **Slot**: `group` customizes the group label for each group.
+ *
+ * Here is a minimal implementation:
+ *
+ * ```vue
+ * <script setup lang="ts">
+ * interface SearchResult {
+ *     id: string;
+ *     title: string;
+ * }
+ *
+ * const searchData = ref<SearchResult[]>([
+ *     { id: "1", title: "The Quick Fox" },
+ *     { id: "2", title: "The Lazy Dog" },
+ *     { id: "3", title: "The Brown Bear" },
+ * ]);
+ * const searchResults = ref<SearchResult[]>([]);
+ *
+ * function submit(query: string) {
+ *     searchResults.value = searchData.value.filter((result) =>
+ *         result.title.toLowerCase().includes(query.toLowerCase()),
+ *     );
+ * }
+ * function selected(item: SearchResult) {
+ *     console.log("Selected:", item);
+ * }
+ * &lt;/script>
+ * <template>
+ *     <GSearch
+ *         :results="searchResults"
+ *         @submit="submit"
+ *         @select="selected">
+ *     </GSearch>
+ * </template>
+ * ```
  */
 import { computed, nextTick, ref, useId, watch } from "vue";
 import { useDebounceFn, useFocusWithin } from "@vueuse/core";
@@ -36,15 +99,18 @@ type Props = {
      * Automatic search
      */
     auto?: boolean;
-    // Show search loading indicator
+    /**
+     * Show search loading indicator
+     */
     loading?: boolean;
 };
 
-const modelValue = defineModel({default: () => ""});
+const modelValue = defineModel({ default: () => "" });
 
 const props = withDefaults(defineProps<Props>(), {
     placeholder: "Search...",
     label: "Search",
+    auto: true
 });
 const emit = defineEmits(["select", "submit"]);
 
@@ -140,7 +206,8 @@ function selectResult(result: T | null) {
 }
 
 const isLoading = computed(() => {
-    return !!props?.loading;
+    console.log("Checking loading state", props.loading);
+    return !!props.loading;
 });
 
 const expanded = computed(() => {
@@ -163,7 +230,6 @@ watch(
     },
 );
 const id = useId();
-
 </script>
 
 <template>
@@ -210,10 +276,7 @@ const id = useId();
                 </svg>
             </button>
         </form>
-        <div
-            v-if="expanded"
-            class="g-search-dropdown"
-        >
+        <div v-if="expanded" class="g-search-dropdown">
             <div aria-live="polite" class="g-search-result-count">
                 <template v-if="!isLoading">
                     {{ resultCount }} result{{
@@ -227,61 +290,65 @@ const id = useId();
                 ref="listboxRef"
                 aria-label="Search results"
             >
-            <template v-if="resultCount > 0 && 'items' in props.results[0]">
-                <template
-                    v-for="(group, gIdx) in props.results as GSearchGroup<T>[]"
-                    :key="group.type"
-                >
-                    <div
-                        class="g-search-group"
-                        role="group"
-                        :aria-label="group.label"
+                <template v-if="resultCount > 0 && 'items' in props.results[0]">
+                    <template
+                        v-for="(
+                            group, gIdx
+                        ) in props.results as GSearchGroup<T>[]"
+                        :key="group.type"
                     >
-                        <slot name="group" :group="group">
-                            <div class="g-search-group-label">
-                                {{ group.label }}
-                            </div>
-                        </slot>
                         <div
-                            v-for="(item, idx) in group.items"
-                            :key="item.id"
-                            :id="'g-search-option-' + item.id"
-                            class="g-search-option"
-                            :class="{
-                                'g-search-option-active':
-                                    flatResults[activeIndex] &&
-                                    flatResults[activeIndex].id === item.id,
-                            }"
-                            role="option"
-                            @mousedown.prevent="selectResult(item)"
-                            :aria-selected="
-                                flatResults[activeIndex] &&
-                                flatResults[activeIndex].id === item.id
-                            "
+                            class="g-search-group"
+                            role="group"
+                            :aria-label="group.label"
                         >
-                            <slot name="option" :option="item">
-                                {{ item.title }}
+                            <slot name="group" :group="group">
+                                <div class="g-search-group-label">
+                                    {{ group.label }}
+                                </div>
                             </slot>
+                            <div
+                                v-for="(item, idx) in group.items"
+                                :key="item.id"
+                                :id="'g-search-option-' + item.id"
+                                class="g-search-option"
+                                :class="{
+                                    'g-search-option-active':
+                                        flatResults[activeIndex] &&
+                                        flatResults[activeIndex].id === item.id,
+                                }"
+                                role="option"
+                                @mousedown.prevent="selectResult(item)"
+                                :aria-selected="
+                                    flatResults[activeIndex] &&
+                                    flatResults[activeIndex].id === item.id
+                                "
+                            >
+                                <slot name="option" :option="item">
+                                    {{ item.title }}
+                                </slot>
+                            </div>
                         </div>
+                    </template>
+                </template>
+                <template v-else-if="resultCount > 0">
+                    <div
+                        v-for="(item, idx) in flatResults"
+                        :key="item.id"
+                        :id="'g-search-option-' + item.id"
+                        class="g-search-option"
+                        :class="{
+                            'g-search-option-active': activeIndex === idx,
+                        }"
+                        role="option"
+                        @mousedown.prevent="selectResult(item)"
+                        :aria-selected="activeIndex === idx"
+                    >
+                        <slot name="option" :option="item">
+                            {{ item.title }}
+                        </slot>
                     </div>
                 </template>
-            </template>
-            <template v-else-if="resultCount > 0">
-                <div
-                    v-for="(item, idx) in flatResults"
-                    :key="item.id"
-                    :id="'g-search-option-' + item.id"
-                    class="g-search-option"
-                    :class="{ 'g-search-option-active': activeIndex === idx }"
-                    role="option"
-                    @mousedown.prevent="selectResult(item)"
-                    :aria-selected="activeIndex === idx"
-                >
-                    <slot name="option" :option="item">
-                        {{ item.title }}
-                    </slot>
-                </div>
-            </template>
             </div>
         </div>
     </div>
