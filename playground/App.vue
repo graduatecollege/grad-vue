@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, useTemplateRef } from "vue";
+import { computed, h, onMounted, ref, useTemplateRef } from "vue";
 import { useActiveLinkContent } from "../src/compose/useActiveLink";
 import GAlertDialog from "../src/components/GAlertDialog.vue";
 import GButton from "../src/components/GButton.vue";
@@ -7,6 +7,11 @@ import GSelect from "../src/components/GSelect.vue";
 import GSearch from "../src/components/GSearch.vue";
 import GHistoryScroller from "../src/components/GHistoryScroller.vue";
 import GSelectButton from "../src/components/GSelectButton.vue";
+import GSidebar from "../src/components/GSidebar.vue";
+import GTable from "../src/components/GTable.vue";
+import { TableColumn } from "../src/components/table/TableColumn";
+import { useFiltering } from "../src/compose/useFiltering";
+import GTablePagination from "../src/components/table/GTablePagination.vue";
 
 const buttons = useTemplateRef("buttons");
 const text = useTemplateRef("text");
@@ -70,6 +75,192 @@ const historyEntries = ref([
     { id: "two" },
     { id: "one" },
 ]);
+
+interface TableEntry {
+    code: string;
+    name: string;
+    abbr: string;
+    collegeInName: boolean;
+}
+
+const columns = computed<TableColumn<TableEntry>[]>(() => {
+    return [
+        {
+            key: "code",
+            label: "Code",
+            sortable: true,
+        },
+        {
+            key: "name",
+            label: "Name",
+            sortable: true,
+        },
+        {
+            key: "abbr",
+            label: "Abbreviation",
+            sortable: true,
+        },
+        {
+            key: "collegeInName",
+            label: "'College' in Name",
+            sortable: true,
+            display: (row) => h("span", row.collegeInName ? "Yes" : "No"),
+            filter: {
+                type: "select",
+                options: [
+                    { label: "Yes", value: "yes" },
+                    { label: "No", value: "no" },
+                ],
+                placeholder: "Any",
+            },
+        },
+    ];
+});
+
+const tableData = ref<TableEntry[]>([
+    {
+        code: "LT",
+        name: "Carle Illinois College of Medicine",
+        abbr: "COM",
+        collegeInName: true,
+    },
+    {
+        code: "KL",
+        name: "College of Agricultural, Consumer and Environmental Sciences (ACES)",
+        abbr: "ACES",
+        collegeInName: true,
+    },
+    {
+        code: "KY",
+        name: "College of Applied Health Sciences",
+        abbr: "AHS",
+        collegeInName: true,
+    },
+    {
+        code: "KN",
+        name: "College of Education",
+        abbr: "EDUC",
+        collegeInName: true,
+    },
+    {
+        code: "KR",
+        name: "College of Fine and Applied Arts",
+        abbr: "FAA",
+        collegeInName: true,
+    },
+    {
+        code: "KU",
+        name: "College of Law",
+        abbr: "LAW",
+        collegeInName: true,
+    },
+    {
+        code: "KV",
+        name: "College of Liberal Arts and Sciences",
+        abbr: "LAS",
+        collegeInName: true,
+    },
+    {
+        code: "KT",
+        name: "College of Media",
+        abbr: "Media",
+        collegeInName: true,
+    },
+    {
+        code: "LC",
+        name: "College of Veterinary Medicine",
+        abbr: "V MED",
+        collegeInName: true,
+    },
+    {
+        code: "KW",
+        name: "Division of Exploratory Studies",
+        abbr: "DES",
+        collegeInName: false,
+    },
+    {
+        code: "KM",
+        name: "Gies College of Business",
+        abbr: "BUS",
+        collegeInName: true,
+    },
+    {
+        code: "KS",
+        name: "Graduate College",
+        abbr: "GRAD",
+        collegeInName: true,
+    },
+    {
+        code: "KP",
+        name: "Grainger College of Engineering",
+        abbr: "ENGR",
+        collegeInName: true,
+    },
+    {
+        code: "LP",
+        name: "School of Information Sciences",
+        abbr: "SIS",
+        collegeInName: false,
+    },
+    {
+        code: "LG",
+        name: "School of Labor and Employment Relations",
+        abbr: "LER",
+        collegeInName: false,
+    },
+    {
+        code: "LL",
+        name: "School of Social Work",
+        abbr: "SOC W",
+        collegeInName: false,
+    },
+]);
+
+const filtering = useFiltering({
+    code: undefined,
+    name: undefined,
+    abbr: undefined,
+    collegeInName: undefined,
+});
+
+const { filters, isFiltered, clearFilters } = filtering;
+
+const sortField = ref<string | undefined>(undefined);
+const sortOrder = ref<1 | -1 | undefined>(undefined);
+const start = ref(0);
+const pageSize = ref(5);
+
+const filteredData = computed(() => {
+    let data = [...tableData.value];
+    for (let [key, val] of Object.entries(filters.value)) {
+        if (val) {
+            data = data.filter((item) =>
+                val === "yes"
+                    ? item[key as keyof typeof item]
+                    : !item[key as keyof typeof item],
+            );
+        }
+    }
+    return data;
+});
+
+const computedData = computed(() => {
+    let data = [...filteredData.value]
+    if (sortField.value) {
+        data.sort((a: any, b: any) => {
+            const aVal: any = a[sortField.value!];
+            const bVal: any = b[sortField.value!];
+            const sortVal = (aVal?.toString() ?? "").localeCompare(
+                bVal?.toString() ?? "",
+            );
+            return sortOrder.value === 1 ? sortVal : sortVal * -1;
+        });
+    }
+
+    data = data.slice(start.value, start.value + pageSize.value);
+
+    return data;
+});
 </script>
 
 <template>
@@ -77,7 +268,11 @@ const historyEntries = ref([
         <GAppHeader title="grad-vue playground" illinois />
 
         <div class="wrap">
-            <GSidebar class="sidebar" theme="light">
+            <GSidebar
+                class="sidebar"
+                theme="light"
+                top-offset-var="--g-toolbar-height"
+            >
                 <GSidebarMenu
                     class="sidebar-menu"
                     title="Components"
@@ -87,6 +282,7 @@ const historyEntries = ref([
                         { label: 'Search', href: '#search' },
                         { label: 'Text Input', href: '#text-input' },
                         { label: 'Select', href: '#select' },
+                        { label: 'Select Buttons', href: '#select-buttons' },
                         { label: 'Popover', href: '#popover' },
                         { label: 'Alert Dialog', href: '#alert-dialog' },
                         { label: 'Clipboard', href: '#clipboard' },
@@ -98,25 +294,38 @@ const historyEntries = ref([
                             label: 'Three Way Toggle',
                             href: '#three-way-toggle',
                         },
-                    ]"
+]"
                     v-model="activeId"
                 />
             </GSidebar>
             <main class="main" ref="main">
+                <section id="table">
+                    <h2>Table</h2>
+                    <GTable
+                        label="Colleges"
+                        :data="computedData"
+                        :columns="columns"
+                        :filtering="filtering"
+                        :filter="filters"
+                        :result-count="filteredData.length"
+                        v-model:sort-field="sortField"
+                        v-model:sort-order="sortOrder"
+                    >
+                        <template #pagination>
+                            <GTablePagination
+                                v-model:start="start"
+                                v-model:page-size="pageSize"
+                                :total="filteredData.length"
+                                :page-sizes="[5, 10, 50]"
+                            />
+                        </template>
+                    </GTable>
+                </section>
                 <section id="buttons" ref="buttons">
                     <h2>Buttons</h2>
                     <GButton>Default</GButton>
                     <GButton variant="primary">Primary</GButton>
                     <div style="height: 500px"></div>
-                </section>
-
-                <section id="select-buttons">
-                    <h2>Select Buttons</h2>
-                    <GSelectButton
-                        v-model="select"
-                        label="Select"
-                        :options="['foo', 'bar', 'baz']"
-                    />
                 </section>
 
                 <section id="search" ref="search">
@@ -162,6 +371,14 @@ const historyEntries = ref([
                     />
                 </section>
 
+                <section id="select-buttons">
+                    <h2>Select Buttons</h2>
+                    <GSelectButton
+                        v-model="select"
+                        label="Select"
+                        :options="['foo', 'bar', 'baz']"
+                    />
+                </section>
                 <section id="popover" ref="popover">
                     <h2>Popover</h2>
                     <GPopover label="Popover Demo">
@@ -238,15 +455,6 @@ const historyEntries = ref([
 .wrap {
     padding-left: 300px;
 }
-
-.sidebar {
-    position: fixed;
-    left: 0;
-    top: var(--g-toolbar-height);
-    bottom: 0;
-    width: 300px;
-}
-
 .main {
     padding: 2rem;
 }
@@ -260,10 +468,6 @@ h2 {
 }
 section > *:not(h2) {
     margin-right: 0.5rem;
-}
-
-.sidebar-menu {
-    margin-top: 3rem;
 }
 
 .history-scroller {

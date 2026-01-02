@@ -11,8 +11,7 @@ const textValue = ref("");
 <template>
     <ComponentSection title="Text Input">
         <ComponentDemo
-            name="Basic Text Input"
-            description="A text input component with label and validation support."
+            description="A text input component."
             component="GTextInput"
             :props-config="{
                 label: {
@@ -42,7 +41,11 @@ const textValue = ref("");
                 }
             }"
         >
-            <template #docs></template>
+            <template #docs><p>A text input with styling for a label, instructions, and an error message.</p>
+<p>If <code>label</code> is omitted, an accessible label must be provided some other way.
+All non-prop attributes are passed through to the input element, including
+<code>id</code>.</p>
+</template>
             <template #default="{ props }">
                 <GTextInput
                     v-model="textValue"

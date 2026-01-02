@@ -57,7 +57,6 @@ async function scrollToBottom({ focusLast = false } = {}) {
             const items = contentRef.value.querySelectorAll(".g-history-entry");
             if (items.length > 0) {
                 const last = items[items.length - 1] as HTMLElement;
-                console.log("focusing", last, last.tabIndex);
                 await nextTick();
                 last.focus();
             }

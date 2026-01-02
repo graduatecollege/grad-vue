@@ -105,7 +105,7 @@ type Props = {
     loading?: boolean;
 };
 
-const modelValue = defineModel({ default: () => "" });
+const modelValue = defineModel<string | null>({ default: () => "" });
 
 const props = withDefaults(defineProps<Props>(), {
     placeholder: "Search...",
@@ -206,7 +206,6 @@ function selectResult(result: T | null) {
 }
 
 const isLoading = computed(() => {
-    console.log("Checking loading state", props.loading);
     return !!props.loading;
 });
 

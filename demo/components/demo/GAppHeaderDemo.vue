@@ -13,7 +13,7 @@ import { GAppHeader, GButton } from "@illinois-grad/grad-vue";
                 illinois: {
                     type: 'boolean',
                     label: 'Use the Illinois logo',
-                    default: true
+                    default: false
                 },
                 brand: {
                     type: 'string',

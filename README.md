@@ -79,15 +79,31 @@ import { GButton } from '@illinois-grad/grad-vue'
 ### Bootstrapping a New Component
 
 ```bash
-# Create a new component scaffold (plus test, demo, exports, and playground wiring)
 npm run component:new -- GMyNewComponent
-
-# Preview changes without writing files
-npm run component:new -- GMyNewComponent --dry-run
-
-# Overwrite files if they already exist
-npm run component:new -- GMyNewComponent --force
 ```
+
+This script creates a new component in the `src/components` directory and adds it to the `playground/`, `demo/`,
+and the package exports.
+
+### Demo Props And Documentation
+
+The `props-config` and `docs` in each component's demo are generated automatically from the component's source:
+
+```bash
+npm run sync-props
+```
+
+Some notes on this process:
+
+- The `docs` section is generated from a jsdoc immediately after the opening `<script setup` tag. It supports markdown formatting.
+- The `props-config` section is generated from the `Props` interface or type in the component script, with default
+  values from the `withDefaults` function call.
+- The `Props` interface can have a `// Demo: <value>` comment to override the default value for the prop in the demo.
+- Props without a jsdoc will not be included in the demo.
+
+> [!TIP]
+> The markdown docs at the top of the component file cannot have a `</script>` because of how Vue.js parses the file.
+> Instead, use `&lt;/script>` in the docs.
 
 ### Running Tests
 

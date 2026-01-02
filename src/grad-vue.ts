@@ -13,6 +13,9 @@ import GSidebarMenu from "./components/GSidebarMenu.vue";
 import GClipboard from "./components/GClipboard.vue";
 import GHistoryScroller from "./components/GHistoryScroller.vue";
 import GThreeWayToggle from "./components/GThreeWayToggle.vue";
+import GTable from "./components/GTable.vue";
+import GTablePagination from "./components/table/GTablePagination.vue";
+import GTableBody from "./components/table/GTableBody.vue";
 
 import "./css/main.css";
 import VGtooltip from "./directives/v-gtooltip.ts";
@@ -33,6 +36,7 @@ export {
     GClipboard,
     GHistoryScroller,
     GThreeWayToggle,
+    GTable,
 };
 
 // Export a plugin for installing all components
@@ -53,6 +57,9 @@ export default {
         app.component("GClipboard", GClipboard);
         app.component("GHistoryScroller", GHistoryScroller);
         app.component("GThreeWayToggle", GThreeWayToggle);
+        app.component("GTable", GTable);
+        app.component("GTableBody", GTableBody);
+        app.component("GTablePagination", GTablePagination);
     },
 };
 
@@ -65,3 +72,5 @@ export {
 } from "./compose/useOverlayStack";
 
 export { useActiveLinkContent } from "./compose/useActiveLink";
+export { useFiltering } from "./compose/useFiltering";
+export type { SelectColumnFilter, MultiSelectColumnFilter, TableColumnFilter, ToggleColumnFilter, TableColumn } from "./components/table/TableColumn";

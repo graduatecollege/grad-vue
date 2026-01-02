@@ -59,7 +59,7 @@ function parseProps(content: string) {
     const props: Record<string, any> = {};
 
     // Match component documentation
-    const docMatch = content.match(/<script[^>]*>\s*\/\*\*\s*\*\s*([\s\S]*?)\s*\*\//);
+    const docMatch = content.match(/<script.*>\s+\/\*\*\s*\*\s*([\s\S]*?)\s*\*\//s);
     const componentDocs = docMatch ? docMatch[1].replace(/^\s*\* ?/gm, '').trim() : null;
 
     // Match interface or type Props
@@ -159,6 +159,10 @@ async function updateDemo(componentName: string, propsConfig: Record<string, any
     let newContent = content.replace(/:props-config="\{[\s\S]*?\}"/, `:props-config="${indentedConfig}"`);
     
     if (docs) {
+        // Some characters cause problems with the way we're inserting this into the demo.
+        // First, &lt; is replaced with < because the doc can't have a </script> due to how
+        // Vue.js parses the file, so it must be "&lt;/script>"
+        // Secondly, open curly braces are replaced with &lcub; to avoid Vue.js parsing issues.
         const html = (await marked.parse(docs.replace(/&lt;/g, "<")))
             .replace(/{/g, "&lcub;");
 

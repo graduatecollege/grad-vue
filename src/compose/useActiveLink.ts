@@ -44,9 +44,11 @@ export function useActiveLinkContent(
 
             for (const entry of entries) {
                 // Use intersection ratio as visibility score
+                // Round up to 2 decimal places since it can sometimes be 0.99x
+                // when jumping to it with anchor links.
                 visibility.set(
                     entry.target,
-                    entry.isIntersecting ? entry.intersectionRatio : 0,
+                    entry.isIntersecting ? Math.ceil(100 * entry.intersectionRatio)/100 : 0,
                 );
                 if (
                     entry.target === lastElement &&
