@@ -3,6 +3,7 @@ import {
     GSidebar,
     GSidebarMenu,
     useActiveLinkContent,
+    useOverlayStackState,
 } from "@illinois-grad/grad-vue";
 import { useActiveLinkStore } from "~/stores/test.store";
 import { storeToRefs } from "pinia";
@@ -21,6 +22,7 @@ import GClipboardDemo from "~/components/demo/GClipboardDemo.vue";
 import GHistoryScrollerDemo from "~/components/demo/GHistoryScrollerDemo.vue";
 import GThreeWayToggleDemo from "~/components/demo/GThreeWayToggleDemo.vue";
 import GTableDemo from "~/components/demo/GTableDemo.vue";
+import GModalDemo from "~/components/demo/GModalDemo.vue";
 import { onMounted } from "vue";
 import { useTemplateRef } from "#imports";
 
@@ -39,6 +41,7 @@ const demoComponents = [
     { label: "Button", component: GButtonDemo },
     { label: "Clipboard", component: GClipboardDemo },
     { label: "History Scroller", component: GHistoryScrollerDemo },
+    { label: "Modal", component: GModalDemo },
     { label: "Popover", component: GPopoverDemo },
     { label: "Progress", component: GProgressDemo },
     { label: "Search", component: GSearchDemo },
@@ -52,6 +55,8 @@ const demoComponents = [
 ];
 
 const demo = useTemplateRef("demo");
+
+const { hasScrollLock } = useOverlayStackState();
 
 onMounted(() => {
     useActiveLinkContent(demo as any, 0, activeId);
@@ -119,6 +124,7 @@ onMounted(() => {
                 </div>
             </div>
         </main>
+        <GOverlay />
     </div>
 </template>
 
@@ -234,10 +240,10 @@ onMounted(() => {
 }
 
 .markdown-alert-warning {
-    border-left-color: var(--il-harvest);
+    border-left-color: #956c18;
 
     > .markdown-alert-title {
-        color: var(--il-harvest);
+        color: #956c18;
     }
 }
 

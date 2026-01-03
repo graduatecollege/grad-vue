@@ -58,6 +58,7 @@ option changes from user interaction.</p>
                     v-bind="props"
                     :label="props.label"
                     :options="selectButtonOptions"
+                    style="max-width: 300px;"
                 />
                 <DemoResult label="Selected">{{
                     selectButtonValue
