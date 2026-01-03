@@ -1,7 +1,7 @@
 {
-  "totalComponents": 14,
-  "totalTests": 107,
-  "passedTests": 107,
+  "totalComponents": 15,
+  "totalTests": 121,
+  "passedTests": 121,
   "failedTests": 0,
   "skippedTests": 0,
   "components": {
@@ -42,7 +42,7 @@
           ]
         },
         {
-          "title": "with default props",
+          "title": "with basic props",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
@@ -768,6 +768,114 @@
         },
         {
           "title": "activeId should add aria-current",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        }
+      ]
+    },
+    "GTable": {
+      "component": "GTable",
+      "total": 14,
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed",
+      "tests": [
+        {
+          "title": "shows first page by default",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "shows second page after clicking next page",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "shows third page after clicking last page",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "shows second page after clicking last page and previous page",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "shows first page after clicking last page and previous page twice",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "shows all results after changing page size to 10",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "sorts rows by code in ascending order after clicking on code column header",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "sorts rows by code in descending order after clicking on code column header twice",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "removes sorting after clicking on code column header thrice",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "filters rows by 'No' in college in name column",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "shows correct number of results after filtering",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "clear filters removes all filters",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with default content",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with a different table configuration",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"

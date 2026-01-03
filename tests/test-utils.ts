@@ -131,7 +131,7 @@ export function mnt(
     return {
         app,
         vm,
-        container,
+        container: page.elementLocator(container),
         instance,
         state,
         setProps,

@@ -67,6 +67,7 @@ const listboxRef = ref<HTMLElement | null>(null);
 const open = ref(false);
 const activeIndex = ref(0);
 const ignoreBlur = ref(false);
+const ignoreFocus = ref(false);
 const { push, pop, isTop } = useOverlayStack();
 
 const normalizedOptions = computed(() => {
@@ -148,6 +149,10 @@ function onComboFocus(e: FocusEvent) {
         return;
     }
     if (props.searchable) {
+        if (ignoreFocus.value) {
+            ignoreFocus.value = false;
+            return;
+        }
         openMenu();
     }
 }
@@ -193,6 +198,7 @@ function selectOption(idx: number) {
         model.value = opt.value;
         emit("change", opt.value);
     }
+    ignoreFocus.value = true;
     closeMenu();
 }
 

@@ -74,7 +74,7 @@ describe("GPopover", () => {
             await page.getByRole("button", { name: "Open" }).click();
 
             await testAccessibility(
-                wrapper.container,
+                wrapper.container.element(),
                 {
                     label: "Additional information",
                 },

@@ -14,10 +14,11 @@ describe("GSelectButton", () => {
                     options,
                 },
             });
+            const containerElement = container.element();
 
-            expect(container.textContent).toContain("Choose option");
+            expect(containerElement.textContent).toContain("Choose option");
             options.forEach((opt) => {
-                expect(container.textContent).toContain(opt);
+                expect(containerElement.textContent).toContain(opt);
             });
         });
 

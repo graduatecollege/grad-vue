@@ -4,7 +4,7 @@ This is a collection of Vue.js components for the Graduate College.
 
 Accessibility is the first priority.
 
-**Note** that this is being developed in WSL, so use linux commands.
+**Note** use linux commands and paths in the terminal.
 
 ## Code conventions
 
