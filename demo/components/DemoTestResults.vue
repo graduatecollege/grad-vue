@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { GButton, GPopover } from "@illinois-grad/grad-vue";
+import { ref } from "vue";
+import { GButton, GModal } from "@illinois-grad/grad-vue";
 import type {
     ComponentResult,
     ComponentTestResult,
@@ -11,6 +12,8 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+
+const isModalOpen = ref(false);
 
 const isTestSkipped = (status: ComponentTestResult["status"]) => {
     return status === "skipped" || status === "pending" || status === "todo";
@@ -48,19 +51,21 @@ const isTestSkipped = (status: ComponentTestResult["status"]) => {
                     ({{ componentResult.skipped }} skipped)
                 </span>
             </span>
-            <GPopover>
-                <template #trigger="{ toggle }">
-                    <GButton
-                        size="small"
-                        theme="secondary"
-                        outlined
-                        @click="toggle"
-                    >
-                        {{ componentName }} Test Details
-                    </GButton>
-                </template>
+            <GButton
+                size="small"
+                theme="secondary"
+                outlined
+                @click="isModalOpen = true"
+            >
+                {{ componentName }} Test Details
+            </GButton>
+            <GModal
+                v-if="isModalOpen"
+                :label="componentName + ' Test Details'"
+                size="large"
+                @close="isModalOpen = false"
+            >
                 <div class="test__details">
-                    <h2>{{ componentName }} Test Details</h2>
                     <ul class="test__list">
                         <li
                             v-for="(test, index) in componentResult.tests"
@@ -106,7 +111,7 @@ const isTestSkipped = (status: ComponentTestResult["status"]) => {
                         </li>
                     </ul>
                 </div>
-            </GPopover>
+            </GModal>
         </div>
     </div>
 </template>
@@ -166,15 +171,13 @@ const isTestSkipped = (status: ComponentTestResult["status"]) => {
 }
 
 .test__details {
-    max-height: 400px;
-    overflow-y: auto;
-    min-width: 400px;
+    width: 100%;
 }
 
 .test__list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 0.75rem;
     margin: 0;
     padding: 0;
     list-style: none;
