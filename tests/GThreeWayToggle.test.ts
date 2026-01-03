@@ -177,7 +177,7 @@ describe("GThreeWayToggle", () => {
             const descElement = window.document.createElement("p");
             descElement.setAttribute("id", "description");
             descElement.textContent = "This is a description";
-            container.appendChild(descElement);
+            container.element().appendChild(descElement);
 
             await expect
                 .element(instance.getByRole("radiogroup"))

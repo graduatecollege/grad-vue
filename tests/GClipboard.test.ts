@@ -21,7 +21,7 @@ describe("GClipboard", () => {
             // CSS animation can cause issue with axe-core's ability to detect color contrast
             await new Promise((resolve) => setTimeout(resolve, 150));
 
-            await testAccessibility(container);
+            await testAccessibility(container.element());
         });
         it("should have aria description", async () => {
             mnt(GClipboard, {

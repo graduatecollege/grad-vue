@@ -34,7 +34,7 @@ async function createWrapper() {
             label: "History",
         },
     });
-    container.style.height = "300px";
+    container.element().style.height = "300px";
     instance.element().style.height = "300px";
 
     return { setProps, vm, app, instance, container };
@@ -74,7 +74,7 @@ describe("GHistoryScroller", () => {
         it("with default content", async () => {
             const { container } = await createWrapper();
 
-            await testAccessibility(container);
+            await testAccessibility(container.element());
         });
     });
 });

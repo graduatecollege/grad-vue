@@ -28,15 +28,17 @@ describe("GAlertDialog", () => {
             const { container, vm } = mnt(GAlertDialog, {
                 teleport: true,
             });
+            const containerElement = container.element();
 
-            container.style.height = "400px";
-            container.style.overflow = "scroll";
+
+            containerElement.style.height = "400px";
+            containerElement.style.overflow = "scroll";
 
             const content = document.createElement("div");
             content.style.height = "1500px";
-            container.prepend(content);
+            containerElement.prepend(content);
 
-            container.scrollTop = 600;
+            containerElement.scrollTop = 600;
 
             await vm.$nextTick();
 
@@ -46,7 +48,7 @@ describe("GAlertDialog", () => {
         });
         it("escape should cancel the dialog", async () => {
             const onCancel = vi.fn();
-            const { container, vm } = mnt(GAlertDialog, {
+            const { vm } = mnt(GAlertDialog, {
                 props: {
                     onCancel,
                 },
@@ -61,13 +63,13 @@ describe("GAlertDialog", () => {
     });
 
     describe("Accessibility Tests", () => {
-        it("with default props", async () => {
+        it("with basic props", async () => {
             const wrapper = mnt(GAlertDialog, {
                 teleport: true,
             });
 
             await testAccessibility(
-                wrapper.container,
+                wrapper.container.element(),
                 {},
                 { default: () => "Alert message" },
             );

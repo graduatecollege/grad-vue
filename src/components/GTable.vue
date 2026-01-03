@@ -1,8 +1,4 @@
-<script
-    setup
-    lang="ts"
-    generic="T extends Record<string, any>, C extends TableColumn<T>"
->
+<script setup lang="ts" generic="T extends Record<string, any>">
 /**
  * A data table component with support for grouping, sorting, filtering, and pagination.
  *
@@ -45,7 +41,7 @@ type Props = {
      */
     label: string; // Demo: Colleges
     data: T[];
-    columns: C[];
+    columns: TableColumn<T>[];
     resultCount?: number;
     groupBy?: string;
     filtering: UseFilteringReturn;
@@ -64,7 +60,7 @@ const emit = defineEmits<{
     (e: "row-click", link: string): void;
 }>();
 
-function onSort(col: C) {
+function onSort(col: TableColumn<T>) {
     if (!col.sortable) {
         return;
     }

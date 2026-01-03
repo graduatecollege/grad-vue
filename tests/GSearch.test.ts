@@ -13,7 +13,7 @@ describe("GSearch", () => {
                 },
             });
 
-            expect(container.querySelector("input")).toBeTruthy();
+            expect(container.element().querySelector("input")).toBeTruthy();
         });
 
         it("with auto enabled, submit event should be fired with typing, after debounce", async () => {
@@ -27,7 +27,7 @@ describe("GSearch", () => {
                 },
             });
 
-            const input = container.querySelector("input")!;
+            const input = container.element().querySelector("input")!;
             await userEvent.type(input, "test");
 
             // Should not have submitted immediately
@@ -52,7 +52,7 @@ describe("GSearch", () => {
                 },
             });
 
-            const input = container.querySelector("input")!;
+            const input = container.element().querySelector("input")!;
 
             // First type
             await userEvent.type(input, "test");
@@ -82,7 +82,7 @@ describe("GSearch", () => {
                 },
             });
 
-            const input = container.querySelector("input")!;
+            const input = container.element().querySelector("input")!;
             await userEvent.type(input, "test");
 
             await vi.advanceTimersByTimeAsync(1000);
@@ -103,7 +103,7 @@ describe("GSearch", () => {
                 },
             });
 
-            const input = container.querySelector("input")!;
+            const input = container.element().querySelector("input")!;
             await userEvent.type(input, "test{Enter}");
             await vm.$nextTick();
 
@@ -122,7 +122,7 @@ describe("GSearch", () => {
                 },
             });
 
-            const input = container.querySelector("input")!;
+            const input = container.element().querySelector("input")!;
 
             // Open dropdown
 
@@ -154,7 +154,7 @@ describe("GSearch", () => {
                 },
             });
 
-            const input = container.querySelector("input")!;
+            const input = container.element().querySelector("input")!;
 
             // Open dropdown
 
@@ -184,7 +184,7 @@ describe("GSearch", () => {
                     onSelect: callback,
                 },
             });
-            const input = container.querySelector("input")!;
+            const input = container.element().querySelector("input")!;
             await userEvent.type(input, "opt{Enter}");
             await vm.$nextTick();
             await userEvent.type(input, "{ArrowDown}{ArrowDown}{Enter}");
@@ -217,12 +217,19 @@ describe("GSearch", () => {
                     results: [],
                 },
             });
+            const containerElement = container.element();
 
-            await userEvent.type(container.querySelector("input")!, "Opt");
+            await userEvent.type(
+                containerElement.querySelector("input")!,
+                "Opt",
+            );
             await vm.$nextTick();
-            await userEvent.type(container.querySelector("input")!, "{Enter}");
+            await userEvent.type(
+                containerElement.querySelector("input")!,
+                "{Enter}",
+            );
 
-            await testAccessibility(container);
+            await testAccessibility(containerElement);
         });
         it("with 2 results", async () => {
             const { container, vm } = mnt(GSearch, {
@@ -234,12 +241,19 @@ describe("GSearch", () => {
                     ],
                 },
             });
+            const containerElement = container.element();
 
-            await userEvent.type(container.querySelector("input")!, "Opt");
+            await userEvent.type(
+                containerElement.querySelector("input")!,
+                "Opt",
+            );
             await vm.$nextTick();
-            await userEvent.type(container.querySelector("input")!, "{Enter}");
+            await userEvent.type(
+                containerElement.querySelector("input")!,
+                "{Enter}",
+            );
 
-            await testAccessibility(container);
+            await testAccessibility(containerElement);
         });
     });
 });
