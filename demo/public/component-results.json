@@ -1,7 +1,7 @@
 {
-  "totalComponents": 15,
-  "totalTests": 121,
-  "passedTests": 121,
+  "totalComponents": 16,
+  "totalTests": 135,
+  "passedTests": 135,
   "failedTests": 0,
   "skippedTests": 0,
   "components": {
@@ -446,6 +446,114 @@
         },
         {
           "title": "with default content",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        }
+      ]
+    },
+    "GModal": {
+      "component": "GModal",
+      "total": 14,
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed",
+      "tests": [
+        {
+          "title": "renders with basic props",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "renders with custom label",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "close event is emitted when clicking close button",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "escape should close the modal",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "locks body scrolling when open",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "unlocks body scrolling when unmounted",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "open dialog should focus the heading",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "adding a popover focus attribute should focus that element",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "applies small size class",
+          "status": "passed",
+          "ancestors": [
+            "Size Tests"
+          ]
+        },
+        {
+          "title": "applies medium size class",
+          "status": "passed",
+          "ancestors": [
+            "Size Tests"
+          ]
+        },
+        {
+          "title": "applies large size class",
+          "status": "passed",
+          "ancestors": [
+            "Size Tests"
+          ]
+        },
+        {
+          "title": "applies full size class",
+          "status": "passed",
+          "ancestors": [
+            "Size Tests"
+          ]
+        },
+        {
+          "title": "with basic props",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "label should match accessible name",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"

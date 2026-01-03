@@ -11,13 +11,13 @@ export function useOverlayFocus(element: Ref<HTMLElement | null>, isTop: Ref<boo
             if (unpausing.value) {
                 return false;
             }
-            const h2 = element.value?.querySelector("h2");
-            if (h2) {
-                return h2 as HTMLElement;
-            }
             const focus = element.value?.querySelector("[popover-focus]");
             if (focus) {
                 return focus as HTMLElement;
+            }
+            const h2 = element.value?.querySelector("h2");
+            if (h2) {
+                return h2 as HTMLElement;
             }
             const selected = element.value?.querySelector("[aria-selected='true']");
             if (selected) {

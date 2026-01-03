@@ -54,11 +54,28 @@
         border-width: 0 6px 6px 6px;
         border-color: transparent transparent #222 transparent;
     }
+
+
+    .g-fade-enter-active,
+    .g-fade-leave-active {
+        transition: opacity 0.2s ease;
+    }
+
+    .g-fade-enter-from,
+    .g-fade-leave-to {
+        opacity: 0;
+    }
 }
 
 @layer override {
+
     @media (prefers-reduced-motion: reduce) {
         .v-gtooltip {
+            transition: none;
+        }
+
+        .g-fade-enter-active,
+        .g-fade-leave-active {
             transition: none;
         }
     }

@@ -12,6 +12,9 @@ import GTable from "../src/components/GTable.vue";
 import { TableColumn } from "../src/components/table/TableColumn";
 import { useFiltering } from "../src/compose/useFiltering";
 import GTablePagination from "../src/components/table/GTablePagination.vue";
+import GModal from "../src/components/GModal.vue";
+import { useOverlayStack, useOverlayStackState } from "../src/grad-vue";
+import GOverlay from "../src/components/GOverlay.vue";
 
 const buttons = useTemplateRef("buttons");
 const text = useTemplateRef("text");
@@ -261,6 +264,9 @@ const computedData = computed(() => {
 
     return data;
 });
+
+const showModal = ref(false);
+
 </script>
 
 <template>
@@ -294,6 +300,7 @@ const computedData = computed(() => {
                             label: 'Three Way Toggle',
                             href: '#three-way-toggle',
                         },
+                        { label: 'Modal', href: '#modal' },
 ]"
                     v-model="activeId"
                 />
@@ -445,10 +452,17 @@ const computedData = computed(() => {
                         :modelValue="null"
                     />
                 </section>
+                <section id="modal">
+                    <h2>Modal</h2>
+                    <GButton @click="showModal = true">Open Modal</GButton>
+                    <GModal v-if="showModal" label="Modal Fun Time" size="large" @close="showModal = false">
+                        <p>Example content</p>
+                    </GModal>
+                </section>
             </main>
         </div>
     </div>
-    <div id="modal-root"></div>
+    <GOverlay />
 </template>
 
 <style scoped>

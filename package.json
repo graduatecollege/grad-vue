@@ -30,8 +30,8 @@
         "build": "vite build && vue-tsc --emitDeclarationOnly",
         "watch": "vue-tsc --watch & vite build --watch",
         "preview": "vite preview",
-        "test": "vitest",
-        "test:ui": "vitest --ui",
+        "test": "vitest run --browser.headless",
+        "test:ui": "vitest",
         "test:run": "vitest run --browser.headless && node --experimental-strip-types scripts/transform-test-results.ts",
         "component:new": "node --experimental-strip-types scripts/bootstrap-component.ts",
         "sync-props": "node --experimental-strip-types scripts/sync-props-config.ts"

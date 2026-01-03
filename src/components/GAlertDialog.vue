@@ -48,7 +48,7 @@ const emit = defineEmits(["cancel", "confirm"]);
 const dialog = ref<HTMLElement | null>(null);
 const open = ref(true);
 
-const { id, pop, push, isTop, zIndex } = useOverlayStack(true);
+const { id, pop, push, isTop, zIndex } = useOverlayStack(true, true);
 
 const { deactivate, activate } = useOverlayFocus(dialog, isTop);
 
@@ -71,29 +71,31 @@ onBeforeMount(() => {
 
 <template>
     <Teleport to="#modal-root">
-        <div
-            :id="'alertdialog-' + id"
-            class="g-alertdialog"
-            role="alertdialog"
-            aria-modal="true"
-            :aria-labelledby="'alertdialog-label-' + id"
-            :aria-describedby="'alertdialog-description-' + id"
-            ref="dialog"
-            :style="{ zIndex }"
-        >
-            <div class="g-alertdialog-inner">
-                <h2 :id="'alertdialog-label-' + id" class="g-alertdialog-label">
-                    {{ props.label }}
-                </h2>
-                <div :id="'alertdialog-description-' + id" class="g-alertdialog-content">
-                    <slot />
-                </div>
-                <div class="g-alertdialog-actions">
-                    <GButton outlined @click="emit('cancel')">Cancel</GButton>
-                    <GButton :theme="props.buttonColor" @click="emit('confirm')">{{ props.buttonText }}</GButton>
+        <Transition name="g-fade" appear>
+            <div
+                :id="'alertdialog-' + id"
+                class="g-alertdialog"
+                role="alertdialog"
+                aria-modal="true"
+                :aria-labelledby="'alertdialog-label-' + id"
+                :aria-describedby="'alertdialog-description-' + id"
+                ref="dialog"
+                :style="{ zIndex }"
+            >
+                <div class="g-alertdialog-inner">
+                    <h2 :id="'alertdialog-label-' + id" class="g-alertdialog-label">
+                        {{ props.label }}
+                    </h2>
+                    <div :id="'alertdialog-description-' + id" class="g-alertdialog-content">
+                        <slot />
+                    </div>
+                    <div class="g-alertdialog-actions">
+                        <GButton outlined @click="emit('cancel')">Cancel</GButton>
+                        <GButton :theme="props.buttonColor" @click="emit('confirm')">{{ props.buttonText }}</GButton>
+                    </div>
                 </div>
             </div>
-        </div>
+        </Transition>
     </Teleport>
 </template>
 
@@ -106,6 +108,8 @@ onBeforeMount(() => {
     max-width: 400px;
     min-width: 300px;
     height: auto;
+    max-height: 90vh;
+    overflow-y: auto;
     background: var(--g-surface-50);
     border-top: 8px solid var(--g-accent-500);
     padding: 2rem;
@@ -127,5 +131,15 @@ onBeforeMount(() => {
     display: flex;
     justify-content: flex-end;
     gap: 1rem;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
 }
 </style>

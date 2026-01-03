@@ -16,9 +16,11 @@ import GThreeWayToggle from "./components/GThreeWayToggle.vue";
 import GTable from "./components/GTable.vue";
 import GTablePagination from "./components/table/GTablePagination.vue";
 import GTableBody from "./components/table/GTableBody.vue";
+import GModal from "./components/GModal.vue";
 
 import "./css/main.css";
 import VGtooltip from "./directives/v-gtooltip.ts";
+import GOverlay from "./components/GOverlay.vue";
 
 // Export individual components
 export {
@@ -37,6 +39,8 @@ export {
     GHistoryScroller,
     GThreeWayToggle,
     GTable,
+    GModal,
+    GOverlay,
 };
 
 // Export a plugin for installing all components
@@ -60,6 +64,8 @@ export default {
         app.component("GTable", GTable);
         app.component("GTableBody", GTableBody);
         app.component("GTablePagination", GTablePagination);
+        app.component("GModal", GModal);
+        app.component("GOverlay", GOverlay);
     },
 };
 
