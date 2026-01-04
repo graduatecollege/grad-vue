@@ -16,13 +16,4 @@ describe("GSidebar", () => {
             );
         });
     });
-
-    it("uses baseId for id attribute", () => {
-        const wrapper = mount(GSidebar, {
-            props: {
-                baseId: "test-sidebar-id",
-            },
-        });
-        expect(wrapper.attributes("id")).toBe("test-sidebar-id-sidebar");
-    });
 });

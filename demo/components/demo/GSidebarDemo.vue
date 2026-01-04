@@ -7,7 +7,6 @@ import { GSidebar } from "@illinois-grad/grad-vue";
 <template>
     <ComponentSection title="Sidebar">
         <ComponentDemo
-            name="Basic Sidebar"
             description="A container component intended for persistent side navigation."
             component="GSidebar"
             padding="0"
@@ -36,17 +35,6 @@ import { GSidebar } from "@illinois-grad/grad-vue";
                     label: 'Width',
                     default: '300px',
                     instructions: 'Width of the sidebar'
-                },
-                breakpoint: {
-                    type: 'string',
-                    label: 'Breakpoint',
-                    default: '',
-                    instructions: 'Responsive breakpoint (e.g., (max-width: 1024px))'
-                },
-                open: {
-                    type: 'boolean',
-                    label: 'Open',
-                    default: false
                 }
             }"
         >
@@ -56,6 +44,9 @@ should be fairly high in the DOM tree.</p>
 <p>If neither <code>top-offset</code> nor <code>top-offset-var</code> are defined, the sidebar will be
 offset by <code>var(--g-toolbar-height)</code>. If there is no toolbar, just pass
 <code>0</code> as the <code>top-offset</code>.</p>
+<p>The sidebar can be made collapsible by providing the <code>sidebar</code> injected
+object from <code>useSidebar</code>. See the <a href="#use-sidebar">Hamburger Menu Documentation</a>
+for details.</p>
 </template>
             <template #default="{ props }">
                 <div style="display: flex; gap: 1rem; flex-direction: column;">

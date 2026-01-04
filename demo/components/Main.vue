@@ -41,6 +41,7 @@ const demoComponents = [
     { label: "App Header", component: GAppHeaderDemo },
     { label: "Button", component: GButtonDemo },
     { label: "Clipboard", component: GClipboardDemo },
+    { label: "Hamburger Menu", component: GHamburgerMenuDemo },
     { label: "History Scroller", component: GHistoryScrollerDemo },
     { label: "Modal", component: GModalDemo },
     { label: "Popover", component: GPopoverDemo },
@@ -53,7 +54,6 @@ const demoComponents = [
     { label: "Table", component: GTableDemo },
     { label: "Text Input", component: GTextInputDemo },
     { label: "Three Way Toggle", component: GThreeWayToggleDemo },
-    { label: "Hamburger Menu", component: GHamburgerMenuDemo },
 ];
 
 const demo = useTemplateRef("demo");
@@ -132,7 +132,8 @@ onMounted(() => {
                             Tabler Icons
                             <a href="https://tabler.io/license"
                                 >https://tabler.io/license</a
-                            > MIT
+                            >
+                            MIT
                         </li>
                     </ul>
                 </div>

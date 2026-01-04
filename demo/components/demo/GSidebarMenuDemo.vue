@@ -12,13 +12,11 @@ const demoItems = [
     { label: "Help", href: "#sidebar-menu-demo-more" },
 ];
 
-const demoActiveId = ref(demoItems[0].href);
 </script>
 
 <template>
     <ComponentSection title="Sidebar Menu">
         <ComponentDemo
-            name="Basic Sidebar Menu"
             description="A sidebar navigation menu with accessible in-page link focus management."
             component="GSidebarMenu"
             padding="0"
@@ -109,7 +107,6 @@ in-page navigation, and the matching menu item&#39;s <code>href</code> should be
                     <GSidebarMenu
                         v-bind="props"
                         :items="demoItems"
-                        v-model="demoActiveId"
                     />
                 </div>
             </template>

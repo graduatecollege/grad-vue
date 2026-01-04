@@ -8,6 +8,10 @@
  * If neither `top-offset` nor `top-offset-var` are defined, the sidebar will be
  * offset by `var(--g-toolbar-height)`. If there is no toolbar, just pass
  * `0` as the `top-offset`.
+ *
+ * The sidebar can be made collapsible by providing the `sidebar` injected
+ * object from `useSidebar`. See the [Hamburger Menu Documentation](#use-sidebar)
+ * for details.
  */
 import {
     computed,

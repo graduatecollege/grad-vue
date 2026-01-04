@@ -25,7 +25,7 @@ brand header would be too large.</p>
 <p><strong>Slot</strong> <code>app-controls</code> is the remaining area to the right.</p>
 </template>
             <template #default="{ props }">
-                <GAppHeader v-bind="props">
+                <GAppHeader v-bind="props" class="app-header-demo">
                     <template #title>
                         <span class="header-title">Portal</span>
                     </template>
@@ -41,6 +41,10 @@ brand header would be too large.</p>
 </template>
 
 <style scoped>
+.g-app-header {
+    position: sticky !important;
+}
+
 .header-title {
     font-size: 1.25rem;
     font-weight: 600;
