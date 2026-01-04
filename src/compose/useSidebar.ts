@@ -32,21 +32,18 @@ export function useSidebar(
         }, 5);
     }
     function onDocumentFocus(e: FocusEvent) {
-        console.log("focus?")
         if (!isCollapsible.value || !open.value) {
             return;
         }
         const target = e.target as HTMLElement;
         const sidebarEl = document.getElementById(`${id}-sidebar`);
         const hamburgerEl = document.getElementById(`${id}-hamburger`);
-        console.log("focus", sidebarEl, hamburgerEl, target);
         if (!sidebarEl) {
             return;
         }
         if (sidebarEl.contains(target) || hamburgerEl?.contains(target)) {
             return;
         }
-        console.log("focus closing");
         // Very slight delay means if they click the menu button to close it,
         // it won't re-open
         setTimeout(() => {
