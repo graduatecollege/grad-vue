@@ -51,8 +51,9 @@ describe("GPopover", () => {
                 slots: {
                     trigger: (props: { toggle: () => void }) =>
                         h("button", { onClick: props.toggle }, "Open"),
-                    content: () =>
-                        "<h2>Popover content</h2><p style='margin-top: 250px'>Popover content</p>",
+                    default: () => h("div", { style: { height: "400px" } }, [
+                        "Popover content",
+                    ]),
                 },
             });
             await wrapper.vm.$nextTick();

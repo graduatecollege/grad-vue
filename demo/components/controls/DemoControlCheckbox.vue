@@ -1,11 +1,14 @@
 <script setup lang="ts">
+import { useId } from "vue";
+
 defineProps<{
-    id: string;
     label: string;
     instructions?: string;
 }>();
 
 const modelValue = defineModel<boolean>();
+
+const id = useId();
 </script>
 
 <template>

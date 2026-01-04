@@ -53,7 +53,8 @@ const open = defineModel<boolean>({ default: false });
 const triggerRef = useTemplateRef<HTMLElement | null>("triggerRef");
 const popoverRef = useTemplateRef<HTMLElement | null>("popoverRef");
 
-const { push, pop, isTop, zIndex } = useOverlayStack();
+const id = useId();
+const { push, pop, isTop, zIndex } = useOverlayStack(id);
 const { activate, deactivate } = useOverlayFocus(popoverRef, isTop);
 useOverlayEscape([popoverRef, triggerRef], isTop, open, hide, pop);
 
@@ -145,61 +146,62 @@ onBeforeUnmount(() => {
     }
 });
 
-const id = useId();
 </script>
 
 <template>
-    <div ref="triggerRef" class="g-popover-trigger" :id="`${id}-trigger`">
-        <slot name="trigger" :toggle="toggle"></slot>
-    </div>
-    <transition name="g-popover-expand" appear>
-        <div
-            v-if="open"
-            ref="popoverRef"
-            :class="{
-                'g-popover': true,
-                'g-popover-above': popoverAbove,
-                'g-popover-below': !popoverAbove,
-                'g-popover-minimal': minimal,
-            }"
-            role="dialog"
-            aria-modal="true"
-            :aria-labelledby="`${id}-trigger`"
-            :style="{
-                top: popoverPosition.top + 'px',
-                left: popoverPosition.left + 'px',
-                zIndex,
-            }"
-        >
-            <div
-                v-if="!popoverOverlay && !minimal"
-                class="g-popover-arrow"
-                :class="{ 'g-popover-arrow-above': popoverAbove }"
-                :style="arrowPosition"
-                aria-hidden="true"
-            ></div>
-            <slot></slot>
-            <button
-                v-if="!minimal"
-                class="g-popover-close"
-                type="button"
-                aria-label="Close popover"
-                @click="hide"
-            >
-                <svg
-                    class="g-popover-close-icon"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 51.26 51.26"
-                    aria-hidden="true"
-                >
-                    <path
-                        fill="currentColor"
-                        d="m37.84 32.94-7.63-7.63 7.63-7.63a3.24 3.24 0 0 0-4.58-4.58l-7.63 7.63L18 13.1a3.24 3.24 0 0 0-4.58 4.58L21 25.31l-7.62 7.63A3.24 3.24 0 1 0 18 37.52l7.63-7.63 7.63 7.63a3.24 3.24 0 0 0 4.58-4.58Z"
-                    />
-                </svg>
-            </button>
+    <div class="g-popover-wrap">
+        <div ref="triggerRef" class="g-popover-trigger" :id="`${id}-trigger`">
+            <slot name="trigger" :toggle="toggle"></slot>
         </div>
-    </transition>
+        <transition name="g-popover-expand" appear>
+            <div
+                v-if="open"
+                ref="popoverRef"
+                :class="{
+                    'g-popover': true,
+                    'g-popover-above': popoverAbove,
+                    'g-popover-below': !popoverAbove,
+                    'g-popover-minimal': minimal,
+                }"
+                role="dialog"
+                aria-modal="true"
+                :aria-labelledby="`${id}-trigger`"
+                :style="{
+                    top: popoverPosition.top + 'px',
+                    left: popoverPosition.left + 'px',
+                    zIndex,
+                }"
+            >
+                <div
+                    v-if="!popoverOverlay && !minimal"
+                    class="g-popover-arrow"
+                    :class="{ 'g-popover-arrow-above': popoverAbove }"
+                    :style="arrowPosition"
+                    aria-hidden="true"
+                ></div>
+                <slot></slot>
+                <button
+                    v-if="!minimal"
+                    class="g-popover-close"
+                    type="button"
+                    aria-label="Close popover"
+                    @click="hide"
+                >
+                    <svg
+                        class="g-popover-close-icon"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 51.26 51.26"
+                        aria-hidden="true"
+                    >
+                        <path
+                            fill="currentColor"
+                            d="m37.84 32.94-7.63-7.63 7.63-7.63a3.24 3.24 0 0 0-4.58-4.58l-7.63 7.63L18 13.1a3.24 3.24 0 0 0-4.58 4.58L21 25.31l-7.62 7.63A3.24 3.24 0 1 0 18 37.52l7.63-7.63 7.63 7.63a3.24 3.24 0 0 0 4.58-4.58Z"
+                        />
+                    </svg>
+                </button>
+            </div>
+        </transition>
+    </div>
 </template>
 
 <style>

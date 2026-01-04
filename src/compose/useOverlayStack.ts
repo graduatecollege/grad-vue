@@ -4,7 +4,6 @@ export type OverlayStack = {
     push: () => void;
     pop: () => void;
     isTop: Ref<boolean>;
-    id: string;
     zIndex: Ref<number>;
 }
 
@@ -50,7 +49,7 @@ function setupStackState() {
     return { stack, modalStack, scrollLockStack, updateBodyScrollLock };
 }
 
-export function useOverlayStack(modal = false, lockScroll = false): OverlayStack {
+export function useOverlayStack(id: string, modal = false, lockScroll = false): OverlayStack {
     if (!document) {
         return {} as any;
     }
@@ -58,7 +57,6 @@ export function useOverlayStack(modal = false, lockScroll = false): OverlayStack
     const { stack, modalStack, scrollLockStack, updateBodyScrollLock } =
         setupStackState();
 
-    const id = useId();
     const stackRef = modal ? modalStack : stack;
     function push() {
         stackRef.value.push(id);
@@ -94,7 +92,7 @@ export function useOverlayStack(modal = false, lockScroll = false): OverlayStack
 
     onBeforeUnmount(pop);
 
-    return { push, pop, isTop, id, zIndex };
+    return { push, pop, isTop, zIndex };
 }
 
 export type OverlayStackState = {

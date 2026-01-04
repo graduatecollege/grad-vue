@@ -35,7 +35,7 @@
  * > when `document` is defined. That makes it only load in the client.
  */
 
-import { onBeforeMount, onMounted, ref, useTemplateRef } from "vue";
+import { onBeforeMount, onMounted, ref, useId, useTemplateRef } from "vue";
 import { useOverlayStack } from "../compose/useOverlayStack.ts";
 import { useOverlayFocus } from "../compose/useOverlayFocus.ts";
 import { useOverlayEscape } from "../compose/useOverlayEscape.ts";
@@ -70,7 +70,8 @@ const emit = defineEmits(["close"]);
 const dialog = useTemplateRef("dialog");
 const open = ref(true);
 
-const { id, pop, push, isTop, zIndex } = useOverlayStack(true, true);
+const id = useId();
+const { pop, push, isTop, zIndex } = useOverlayStack(id,true, true);
 
 const { deactivate, activate } = useOverlayFocus(dialog, isTop);
 
@@ -138,7 +139,10 @@ onBeforeMount(() => {
                             </svg>
                         </button>
                     </div>
-                    <div :id="'modal-description-' + id" class="g-modal-content">
+                    <div
+                        :id="'modal-description-' + id"
+                        class="g-modal-content"
+                    >
                         <slot />
                     </div>
                 </div>
@@ -214,5 +218,4 @@ onBeforeMount(() => {
         color: var(--ilw-color--focus--text);
     }
 }
-
 </style>

@@ -16,7 +16,7 @@
  * the ARIA description of the alert.
  */
 
-import { onBeforeMount, onMounted, ref } from "vue";
+import { onBeforeMount, onMounted, ref, useId } from "vue";
 import { useOverlayStack } from "../compose/useOverlayStack.ts";
 import { useOverlayFocus } from "../compose/useOverlayFocus.ts";
 import { useOverlayEscape } from "../compose/useOverlayEscape.ts";
@@ -40,7 +40,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
     label: "Confirmation",
     buttonText: "Continue",
-    buttonColor: "primary"
+    buttonColor: "primary",
 });
 
 const emit = defineEmits(["cancel", "confirm"]);
@@ -48,7 +48,8 @@ const emit = defineEmits(["cancel", "confirm"]);
 const dialog = ref<HTMLElement | null>(null);
 const open = ref(true);
 
-const { id, pop, push, isTop, zIndex } = useOverlayStack(true, true);
+const id = useId();
+const { pop, push, isTop, zIndex } = useOverlayStack(id, true, true);
 
 const { deactivate, activate } = useOverlayFocus(dialog, isTop);
 
@@ -83,15 +84,27 @@ onBeforeMount(() => {
                 :style="{ zIndex }"
             >
                 <div class="g-alertdialog-inner">
-                    <h2 :id="'alertdialog-label-' + id" class="g-alertdialog-label">
+                    <h2
+                        :id="'alertdialog-label-' + id"
+                        class="g-alertdialog-label"
+                    >
                         {{ props.label }}
                     </h2>
-                    <div :id="'alertdialog-description-' + id" class="g-alertdialog-content">
+                    <div
+                        :id="'alertdialog-description-' + id"
+                        class="g-alertdialog-content"
+                    >
                         <slot />
                     </div>
                     <div class="g-alertdialog-actions">
-                        <GButton outlined @click="emit('cancel')">Cancel</GButton>
-                        <GButton :theme="props.buttonColor" @click="emit('confirm')">{{ props.buttonText }}</GButton>
+                        <GButton outlined @click="emit('cancel')"
+                            >Cancel</GButton
+                        >
+                        <GButton
+                            :theme="props.buttonColor"
+                            @click="emit('confirm')"
+                            >{{ props.buttonText }}</GButton
+                        >
                     </div>
                 </div>
             </div>
@@ -113,7 +126,9 @@ onBeforeMount(() => {
     background: var(--g-surface-50);
     border-top: 8px solid var(--g-accent-500);
     padding: 2rem;
-    box-shadow: 0 0 2px rgba(0, 0, 0, 0.4), 0 10px 20px rgba(0, 0, 0, 0.1);
+    box-shadow:
+        0 0 2px rgba(0, 0, 0, 0.4),
+        0 10px 20px rgba(0, 0, 0, 0.1);
 }
 .g-alertdialog-label {
     font-family: var(--il-font-heading);
