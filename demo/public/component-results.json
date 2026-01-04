@@ -1,7 +1,7 @@
 {
-  "totalComponents": 16,
-  "totalTests": 135,
-  "passedTests": 135,
+  "totalComponents": 17,
+  "totalTests": 148,
+  "passedTests": 148,
   "failedTests": 0,
   "skippedTests": 0,
   "components": {
@@ -415,6 +415,107 @@
         },
         {
           "title": "after click should update aria description",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        }
+      ]
+    },
+    "GHamburgerMenu": {
+      "component": "GHamburgerMenu",
+      "total": 13,
+      "passed": 13,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed",
+      "tests": [
+        {
+          "title": "Large viewport doesn't collapse the sidebar",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "Large viewport hides hamburger menu button",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "Small viewport collapses sidebar",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "Small viewport shows hamburger menu button",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "Clicking hamburger menu shows the sidebar",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "Pressing escape after clicking closes the sidebar",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "Clicking anywhere outside of the sidebar closes the sidebar",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "Focusing and activating the hamburger menu shows the sidebar",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "Focusing, activating and then tabbing moves focus into the sidebar",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "Pressing escape with focus in the sidebar closes it",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "Pressing escape with focus in the sidebar moves focus to hamburger menu button",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "Moving focus past the end of the content in the sidebar closes the sidebar",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with open sidebar",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"

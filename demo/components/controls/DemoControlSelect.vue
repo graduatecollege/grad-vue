@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import { useId } from "vue";
+
 defineProps<{
-    id: string;
     label: string;
     options: any[];
     instructions?: string;
@@ -8,6 +9,7 @@ defineProps<{
 
 const modelValue = defineModel<string>();
 
+const id = useId();
 </script>
 
 <template>
@@ -21,11 +23,7 @@ const modelValue = defineModel<string>();
             class="select-control"
             :aria-describedby="instructions ? `${id}-instructions` : undefined"
         >
-            <option
-                v-for="option in options"
-                :key="option"
-                :value="option"
-            >
+            <option v-for="option in options" :key="option" :value="option">
                 {{ option }}
             </option>
         </select>

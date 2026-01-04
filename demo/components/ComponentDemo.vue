@@ -66,10 +66,6 @@ const componentResult = computed<ComponentResult | null>(() => {
     return testResults.value.components[props.component] || null;
 });
 
-const demoId = useId();
-
-const inner = useTemplateRef("inner");
-const slotContent = computed(() => inner.value?.innerHTML);
 </script>
 
 <template>
@@ -113,7 +109,6 @@ const slotContent = computed(() => inner.value?.innerHTML);
                     >
                         <DemoControlCheckbox
                             v-if="config.type === 'boolean'"
-                            :id="`${demoId}-prop-${key}`"
                             v-model="(dynamicProps as any)[key]"
                             :label="config.label || key"
                             :instructions="config.instructions"
@@ -121,7 +116,6 @@ const slotContent = computed(() => inner.value?.innerHTML);
 
                         <DemoControlText
                             v-else-if="config.type === 'string'"
-                            :id="`${demoId}-prop-${key}`"
                             v-model="(dynamicProps as any)[key]"
                             :label="config.label || key"
                             :instructions="config.instructions"
@@ -129,7 +123,6 @@ const slotContent = computed(() => inner.value?.innerHTML);
 
                         <DemoControlNumber
                             v-else-if="config.type === 'number'"
-                            :id="`${demoId}-prop-${key}`"
                             v-model="(dynamicProps as any)[key]"
                             :label="config.label || key"
                             :instructions="config.instructions"
@@ -137,7 +130,6 @@ const slotContent = computed(() => inner.value?.innerHTML);
 
                         <DemoControlSelect
                             v-else-if="config.type === 'select'"
-                            :id="`${demoId}-prop-${key}`"
                             v-model="(dynamicProps as any)[key]"
                             :label="config.label || key"
                             :options="config.options || []"

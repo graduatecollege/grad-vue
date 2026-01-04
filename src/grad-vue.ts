@@ -17,6 +17,7 @@ import GTable from "./components/GTable.vue";
 import GTablePagination from "./components/table/GTablePagination.vue";
 import GTableBody from "./components/table/GTableBody.vue";
 import GModal from "./components/GModal.vue";
+import GHamburgerMenu from "./components/GHamburgerMenu.vue";
 
 import "./css/main.css";
 import VGtooltip from "./directives/v-gtooltip.ts";
@@ -41,6 +42,7 @@ export {
     GTable,
     GModal,
     GOverlay,
+    GHamburgerMenu,
 };
 
 // Export a plugin for installing all components
@@ -66,6 +68,7 @@ export default {
         app.component("GTablePagination", GTablePagination);
         app.component("GModal", GModal);
         app.component("GOverlay", GOverlay);
+        app.component("GHamburgerMenu", GHamburgerMenu);
     },
 };
 
@@ -78,5 +81,6 @@ export {
 } from "./compose/useOverlayStack";
 
 export { useActiveLinkContent } from "./compose/useActiveLink";
+export { useSidebar } from "./compose/useSidebar";
 export { useFiltering } from "./compose/useFiltering";
 export type { SelectColumnFilter, MultiSelectColumnFilter, TableColumnFilter, ToggleColumnFilter, TableColumn } from "./components/table/TableColumn";

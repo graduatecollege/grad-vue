@@ -137,8 +137,12 @@ a.app-name {
 .g-app-header {
     box-sizing: border-box;
     background-color: var(--g-surface-100);
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
+    /*noinspection CssUnresolvedCustomProperty*/
+    padding-right: var(--g-scrollbar-width, 0px);
     display: flex;
     align-items: center;
     z-index: 2;

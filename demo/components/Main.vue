@@ -4,6 +4,7 @@ import {
     GSidebarMenu,
     useActiveLinkContent,
     useOverlayStackState,
+    useSidebar,
 } from "@illinois-grad/grad-vue";
 import { useActiveLinkStore } from "~/stores/test.store";
 import { storeToRefs } from "pinia";
@@ -23,8 +24,12 @@ import GHistoryScrollerDemo from "~/components/demo/GHistoryScrollerDemo.vue";
 import GThreeWayToggleDemo from "~/components/demo/GThreeWayToggleDemo.vue";
 import GTableDemo from "~/components/demo/GTableDemo.vue";
 import GModalDemo from "~/components/demo/GModalDemo.vue";
-import { onMounted } from "vue";
+import GHamburgerMenuDemo from "~/components/demo/GHamburgerMenuDemo.vue";
+import { onMounted, provide } from "vue";
 import { useTemplateRef } from "#imports";
+
+const sidebar = useSidebar();
+provide("sidebar", sidebar);
 
 const { activeId } = storeToRefs(useActiveLinkStore());
 
@@ -40,6 +45,7 @@ const demoComponents = [
     { label: "App Header", component: GAppHeaderDemo },
     { label: "Button", component: GButtonDemo },
     { label: "Clipboard", component: GClipboardDemo },
+    { label: "Hamburger Menu", component: GHamburgerMenuDemo },
     { label: "History Scroller", component: GHistoryScrollerDemo },
     { label: "Modal", component: GModalDemo },
     { label: "Popover", component: GPopoverDemo },
@@ -62,7 +68,12 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="app">
+    <div class="app" :class="{
+        'sidebar-collapsible': sidebar?.isCollapsible?.value
+    }">
+        <div class="sidebar-toggle">
+            <GHamburgerMenu />
+        </div>
         <GSidebar class="sidebar" top-offset="0px">
             <GSidebarMenu
                 class="sidebar-menu"
@@ -130,7 +141,8 @@ onMounted(() => {
                             Tabler Icons
                             <a href="https://tabler.io/license"
                                 >https://tabler.io/license</a
-                            > MIT
+                            >
+                            MIT
                         </li>
                     </ul>
                 </div>
@@ -153,10 +165,22 @@ onMounted(() => {
     margin-left: 300px;
 }
 
+.app.sidebar-collapsible {
+    margin-left: 0;
+}
+
+.sidebar-toggle {
+    position: fixed;
+    /*noinspection CssUnresolvedCustomProperty*/
+    right: calc(20px + var(--g-scrollbar-width, 0px));
+    top: 20px;
+    z-index: 100;
+}
+
 .app-main {
     padding: 2rem;
     max-width: 1400px;
-    margin: 0 auto;
+    margin: var(--g-toolbar-height) auto 0;
 }
 
 .demo-page {

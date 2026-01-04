@@ -68,7 +68,7 @@ const open = ref(false);
 const activeIndex = ref(0);
 const ignoreBlur = ref(false);
 const ignoreFocus = ref(false);
-const { push, pop, isTop } = useOverlayStack();
+const { push, pop, isTop } = useOverlayStack(baseId);
 
 const normalizedOptions = computed(() => {
     return props.options.map((opt) => {

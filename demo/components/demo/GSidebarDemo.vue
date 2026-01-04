@@ -7,7 +7,6 @@ import { GSidebar } from "@illinois-grad/grad-vue";
 <template>
     <ComponentSection title="Sidebar">
         <ComponentDemo
-            name="Basic Sidebar"
             description="A container component intended for persistent side navigation."
             component="GSidebar"
             padding="0"
@@ -45,13 +44,23 @@ should be fairly high in the DOM tree.</p>
 <p>If neither <code>top-offset</code> nor <code>top-offset-var</code> are defined, the sidebar will be
 offset by <code>var(--g-toolbar-height)</code>. If there is no toolbar, just pass
 <code>0</code> as the <code>top-offset</code>.</p>
+<p>The sidebar can be made collapsible by providing the <code>sidebar</code> injected
+object from <code>useSidebar</code>. See the <a href="#use-sidebar">Hamburger Menu Documentation</a>
+for details.</p>
 </template>
             <template #default="{ props }">
-                <GSidebar v-bind="props" class="sidebar-demo">
-                    <div class="sidebar-content">
-                        <h3 class="sidebar-title">Sample Heading</h3>
+                <div style="display: flex; gap: 1rem; flex-direction: column;">
+                    <div v-if="props.breakpoint">
+                        <button @click="props.open = !props.open">Toggle Sidebar (Simulated)</button>
+                        <p>Breakpoint active: {{ props.breakpoint }}. Resize window or use button if matched.</p>
                     </div>
-                </GSidebar>
+                    <GSidebar v-bind="props" v-model:open="props.open" class="sidebar-demo">
+                        <div class="sidebar-content">
+                            <h3 class="sidebar-title">Sample Heading</h3>
+                            <button v-if="props.breakpoint" @click="props.open = false">Close</button>
+                        </div>
+                    </GSidebar>
+                </div>
             </template>
         </ComponentDemo>
     </ComponentSection>
