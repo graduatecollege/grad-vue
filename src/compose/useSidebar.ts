@@ -54,19 +54,21 @@ export function useSidebar(
         }, 5);
     }
 
-    watch(
-        isCollapsible,
-        (val) => {
-            if (val) {
-                document.addEventListener("mousedown", onDocumentClick);
-                document.addEventListener("focusin", onDocumentFocus);
-            } else {
-                document.removeEventListener("mousedown", onDocumentClick);
-                document.removeEventListener("focusin", onDocumentFocus);
-            }
-        },
-        { immediate: true },
-    );
+    if (document) {
+        watch(
+            isCollapsible,
+            (val) => {
+                if (val) {
+                    document.addEventListener("mousedown", onDocumentClick);
+                    document.addEventListener("focusin", onDocumentFocus);
+                } else {
+                    document.removeEventListener("mousedown", onDocumentClick);
+                    document.removeEventListener("focusin", onDocumentFocus);
+                }
+            },
+            { immediate: true },
+        );
+    }
 
     onBeforeUnmount(() => {
         document.removeEventListener("mousedown", onDocumentClick);

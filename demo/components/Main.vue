@@ -4,6 +4,7 @@ import {
     GSidebarMenu,
     useActiveLinkContent,
     useOverlayStackState,
+    useSidebar,
 } from "@illinois-grad/grad-vue";
 import { useActiveLinkStore } from "~/stores/test.store";
 import { storeToRefs } from "pinia";
@@ -24,8 +25,11 @@ import GThreeWayToggleDemo from "~/components/demo/GThreeWayToggleDemo.vue";
 import GTableDemo from "~/components/demo/GTableDemo.vue";
 import GModalDemo from "~/components/demo/GModalDemo.vue";
 import GHamburgerMenuDemo from "~/components/demo/GHamburgerMenuDemo.vue";
-import { onMounted } from "vue";
+import { onMounted, provide } from "vue";
 import { useTemplateRef } from "#imports";
+
+const sidebar = useSidebar();
+provide("sidebar", sidebar);
 
 const { activeId } = storeToRefs(useActiveLinkStore());
 
@@ -64,7 +68,12 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="app">
+    <div class="app" :class="{
+        'sidebar-collapsible': sidebar?.isCollapsible?.value
+    }">
+        <div class="sidebar-toggle">
+            <GHamburgerMenu />
+        </div>
         <GSidebar class="sidebar" top-offset="0px">
             <GSidebarMenu
                 class="sidebar-menu"
@@ -154,6 +163,18 @@ onMounted(() => {
 .app {
     min-height: 100vh;
     margin-left: 300px;
+}
+
+.app.sidebar-collapsible {
+    margin-left: 0;
+}
+
+.sidebar-toggle {
+    position: fixed;
+    /*noinspection CssUnresolvedCustomProperty*/
+    right: calc(20px + var(--g-scrollbar-width, 0px));
+    top: 20px;
+    z-index: 100;
 }
 
 .app-main {
