@@ -56,8 +56,6 @@ const demoComponents = [
 
 const demo = useTemplateRef("demo");
 
-const { hasScrollLock } = useOverlayStackState();
-
 onMounted(() => {
     useActiveLinkContent(demo as any, 0, activeId);
 });
@@ -114,6 +112,27 @@ onMounted(() => {
                             >GitHub repository</a
                         >.
                     </p>
+                    <p>
+                        MIT License <br />
+                        Copyright &copy; 2025 University of Illinois Board of
+                        Trustees
+                    </p>
+                    <p>Other copyrights and licenses in embedded content:</p>
+                    <ul>
+                        <li>
+                            FontAwesome Free icons
+                            <a href="https://fontawesome.com/license/free"
+                                >https://fontawesome.com/license/free</a
+                            >
+                            Creative Commons BY 4.0
+                        </li>
+                        <li>
+                            Tabler Icons
+                            <a href="https://tabler.io/license"
+                                >https://tabler.io/license</a
+                            > MIT
+                        </li>
+                    </ul>
                 </div>
                 <div class="demo" ref="demo">
                     <component
@@ -150,6 +169,11 @@ onMounted(() => {
     font-size: 1.25rem;
 
     p {
+        font-size: 1.125rem;
+        line-height: 1.666;
+    }
+
+    ul {
         font-size: 1.125rem;
         line-height: 1.666;
     }

@@ -119,12 +119,13 @@ watch(
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 640 640"
+                        viewBox="0 0 51.26 51.26"
                         height="1em"
+                        aria-hidden="true"
                     >
                         <path
                             fill="currentColor"
-                            d="M73 39.1C63.6 29.7 48.4 29.7 39.1 39.1C29.8 48.5 29.7 63.7 39 73.1L567 601.1C576.4 610.5 591.6 610.5 600.9 601.1C610.2 591.7 610.3 576.5 600.9 567.2L399.9 366.2L399.9 346L567.2 178.7C572.8 173.1 575.9 165.6 575.9 157.7C575.9 141.3 562.6 128 546.2 128L161.8 128L73 39.1zM209.8 176L502 176L359 319L355.9 322.1L209.8 176zM240 345.9L240 345.9L240 448C240 454.4 242.5 460.5 247 465L349.4 567.3C355 572.9 362.5 576 370.4 576C386.8 576 400.1 562.7 400.1 546.3L400.1 501.8L352.1 453.8L352.1 502L288.1 438L288.1 389.8L240.1 341.8L240.1 345.9z"
+                            d="m37.84 32.94-7.63-7.63 7.63-7.63a3.24 3.24 0 0 0-4.58-4.58l-7.63 7.63L18 13.1a3.24 3.24 0 0 0-4.58 4.58L21 25.31l-7.62 7.63A3.24 3.24 0 1 0 18 37.52l7.63-7.63 7.63 7.63a3.24 3.24 0 0 0 4.58-4.58Z"
                         />
                     </svg>
                     <span class="clear-filters-text"> Clear Filters </span>
@@ -182,6 +183,7 @@ watch(
                                             transform: `rotate(${sortOrder === 1 ? 0 : 180}deg)`,
                                         }"
                                     >
+                                        <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
                                         <path
                                             fill="currentColor"
                                             d="M300.3 199.2C312.9 188.9 331.4 189.7 343.1 201.4L471.1 329.4C480.3 338.6 483 352.3 478 364.3C473 376.3 461.4 384 448.5 384L192.5 384C179.6 384 167.9 376.2 162.9 364.2C157.9 352.2 160.7 338.5 169.9 329.4L297.9 201.4L300.3 199.2z"
@@ -196,32 +198,28 @@ watch(
                                 <template #trigger="{ toggle }">
                                     <button
                                         @click.stop="toggle"
-                                        aria-label="Filter column"
-                                        class="filter-btn p-button p-button-text"
+                                        :aria-label="
+                                            filteredColumns[col.key]
+                                                ? 'Column Filtered'
+                                                : 'Filter Column'
+                                        "
+                                        class="filter-btn"
+                                        :class="{
+                                            'g-active':
+                                                filteredColumns[col.key],
+                                        }"
                                         type="button"
                                     >
                                         <svg
-                                            v-if="filteredColumns[col.key]"
                                             xmlns="http://www.w3.org/2000/svg"
                                             viewBox="0 0 640 640"
                                             height="1.5em"
                                             aria-hidden="true"
                                         >
+                                            <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
                                             <path
                                                 fill="currentColor"
                                                 d="M96 128C83.1 128 71.4 135.8 66.4 147.8C61.4 159.8 64.2 173.5 73.4 182.6L256 365.3L256 480C256 488.5 259.4 496.6 265.4 502.6L329.4 566.6C338.6 575.8 352.3 578.5 364.3 573.5C376.3 568.5 384 556.9 384 544L384 365.3L566.6 182.7C575.8 173.5 578.5 159.8 573.5 147.8C568.5 135.8 556.9 128 544 128L96 128z"
-                                            />
-                                        </svg>
-                                        <svg
-                                            v-else
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 640 640"
-                                            height="1.5em"
-                                            aria-hidden="true"
-                                        >
-                                            <path
-                                                fill="currentColor"
-                                                d="M64 157.7C64 141.3 77.3 128 93.7 128L546.4 128C562.8 128 576.1 141.3 576.1 157.7C576.1 165.6 573 173.1 567.4 178.7L400 345.9L400 546.3C400 562.7 386.7 576 370.3 576C362.4 576 354.9 572.9 349.3 567.3L247 465C242.5 460.5 240 454.4 240 448L240 345.9L72.7 178.6C67.1 173.1 64 165.5 64 157.7zM137.9 176L281 319C285.5 323.5 288 329.6 288 336L288 438.1L352 502.1L352 336C352 329.6 354.5 323.5 359 319L502 176L137.9 176z"
                                             />
                                         </svg>
                                     </button>
@@ -384,6 +382,14 @@ button.column-head:hover {
         background: var(--ilw-color--focus--background);
         color: var(--ilw-color--focus--text);
     }
+
+    &.g-active {
+        border: 2px solid var(--ilw-color--link-hover);
+    }
+}
+
+.clear-filters-text {
+    white-space: nowrap;
 }
 
 @media screen and (max-width: 600px) {
@@ -409,6 +415,7 @@ button.column-head:hover {
 
     .result-count {
         font-size: 1rem;
+        line-height: 1.2;
     }
 }
 

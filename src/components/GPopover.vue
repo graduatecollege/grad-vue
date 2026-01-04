@@ -181,7 +181,7 @@ const id = useId();
             <slot></slot>
             <button
                 v-if="!minimal"
-                class="p-button p-button-text g-popover-close"
+                class="g-popover-close"
                 type="button"
                 aria-label="Close popover"
                 @click="hide"

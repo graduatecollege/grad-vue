@@ -11,14 +11,11 @@
  */
 
 type Props = {
-    /**
-     * Use the Illinois logo
-     */
     illinois?: boolean;
     /**
      * Top-left corner text
      *
-     * You can also customize this text with "left" slot.
+     * You can customize this text element with the "left" slot.
      */
     brand?: string;
 };
@@ -52,6 +49,7 @@ const props = withDefaults(defineProps<Props>(), {
                 viewBox="0 0 55 79"
                 xmlns="http://www.w3.org/2000/svg"
             >
+                <!-- NO LICENSE GRANTED for this logo, must have the right to use it -->
                 <title>Block I logo</title>
                 <path
                     class="g-app-header__block-i-outline"

@@ -7,19 +7,14 @@ import { GAppHeader, GButton } from "@illinois-grad/grad-vue";
 <template>
     <ComponentSection title="App Header">
         <ComponentDemo
-            description="An application header component with Block I branding and Illinois styling."
+            description="An application header component."
             component="GAppHeader"
             :props-config="{
-                illinois: {
-                    type: 'boolean',
-                    label: 'Use the Illinois logo',
-                    default: false
-                },
                 brand: {
                     type: 'string',
                     label: 'Top-left corner text',
                     default: 'GRAD',
-                    instructions: 'You can also customize this text with \'left\' slot.'
+                    instructions: 'You can customize this text element with the \'left\' slot.'
                 }
             }"
         >

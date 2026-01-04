@@ -58,15 +58,20 @@ function onPageSizeChange(e: Event) {
             <svg
                 role="img"
                 aria-label="First Page"
+                height="2em"
                 xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 640 640"
-                height="1.5em"
+                width="2em"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
             >
-                <!--!Font Awesome Pro v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2026 Fonticons, Inc.-->
-                <path
-                    fill="currentColor"
-                    d="M105.4 297.4C92.9 309.9 92.9 330.2 105.4 342.7L297.4 534.7C309.9 547.2 330.2 547.2 342.7 534.7C355.2 522.2 355.2 501.9 342.7 489.4L173.3 320L342.6 150.6C355.1 138.1 355.1 117.8 342.6 105.3C330.1 92.8 309.8 92.8 297.3 105.3L105.3 297.3zM489.4 105.4L297.4 297.4C284.9 309.9 284.9 330.2 297.4 342.7L489.4 534.7C501.9 547.2 522.2 547.2 534.7 534.7C547.2 522.2 547.2 501.9 534.7 489.4L365.3 320L534.6 150.6C547.1 138.1 547.1 117.8 534.6 105.3C522.1 92.8 501.8 92.8 489.3 105.3z"
-                />
+                <!-- MIT License https://github.com/tabler/tabler-icons -->
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M11 7l-5 5l5 5" />
+                <path d="M17 7l-5 5l5 5" />
             </svg>
         </button>
         <button
@@ -75,17 +80,21 @@ function onPageSizeChange(e: Event) {
             @click="goToPage(currentPage - 1)"
         >
             <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 640 640"
                 role="img"
                 aria-label="Previous Page"
-                height="1.5em"
+                xmlns="http://www.w3.org/2000/svg"
+                width="2em"
+                height="2em"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
             >
-                <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
-                <path
-                    fill="currentColor"
-                    d="M169.4 297.4C156.9 309.9 156.9 330.2 169.4 342.7L361.4 534.7C373.9 547.2 394.2 547.2 406.7 534.7C419.2 522.2 419.2 501.9 406.7 489.4L237.3 320L406.6 150.6C419.1 138.1 419.1 117.8 406.6 105.3C394.1 92.8 373.8 92.8 361.3 105.3L169.3 297.3z"
-                />
+                <!-- MIT License https://github.com/tabler/tabler-icons -->
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M15 6l-6 6l6 6" />
             </svg>
         </button>
         <span class="page-range"> {{ startDisplay }} to {{ end }} </span>
@@ -95,17 +104,21 @@ function onPageSizeChange(e: Event) {
             @click="goToPage(currentPage + 1)"
         >
             <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 640 640"
                 role="img"
                 aria-label="Next Page"
-                height="1.5em"
+                xmlns="http://www.w3.org/2000/svg"
+                width="2em"
+                height="2em"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
             >
-                <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
-                <path
-                    fill="currentColor"
-                    d="M471.1 297.4C483.6 309.9 483.6 330.2 471.1 342.7L279.1 534.7C266.6 547.2 246.3 547.2 233.8 534.7C221.3 522.2 221.3 501.9 233.8 489.4L403.2 320L233.9 150.6C221.4 138.1 221.4 117.8 233.9 105.3C246.4 92.8 266.7 92.8 279.2 105.3L471.2 297.3z"
-                />
+                <!-- MIT License https://github.com/tabler/tabler-icons -->
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M9 6l6 6l-6 6" />
             </svg>
         </button>
         <button
@@ -114,17 +127,22 @@ function onPageSizeChange(e: Event) {
             @click="goToPage(totalPages)"
         >
             <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 640 640"
                 role="img"
                 aria-label="Last Page"
-                height="1.5em"
+                xmlns="http://www.w3.org/2000/svg"
+                width="2em"
+                height="2em"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
             >
-                <!--!Font Awesome Pro v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2026 Fonticons, Inc.-->
-                <path
-                    fill="currentColor"
-                    d="M534.6 342.6C547.1 330.1 547.1 309.8 534.6 297.3L342.6 105.3C330.1 92.8 309.8 92.8 297.3 105.3C284.8 117.8 284.8 138.1 297.3 150.6L466.7 320L297.4 489.4C284.9 501.9 284.9 522.2 297.4 534.7C309.9 547.2 330.2 547.2 342.7 534.7L534.7 342.7zM150.6 534.6L342.6 342.6C355.1 330.1 355.1 309.8 342.6 297.3L150.6 105.3C138.1 92.8 117.8 92.8 105.3 105.3C92.8 117.8 92.8 138.1 105.3 150.6L274.7 320L105.4 489.4C92.9 501.9 92.9 522.2 105.4 534.7C117.9 547.2 138.2 547.2 150.7 534.7z"
-                />
+                <!-- MIT License https://github.com/tabler/tabler-icons -->
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M7 7l5 5l-5 5" />
+                <path d="M13 7l5 5l-5 5" />
             </svg>
         </button>
         <select
@@ -149,14 +167,14 @@ function onPageSizeChange(e: Event) {
 .g-pagination {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.1rem;
     font-size: 1rem;
 
     .g-pagination-button {
         background: transparent;
         border: none;
         color: var(--g-surface-900);
-        padding: 0.2rem 0.7rem;
+        padding: 0.2rem 0.4rem;
         border-radius: 4px;
         cursor: pointer;
 
@@ -178,12 +196,13 @@ function onPageSizeChange(e: Event) {
     color: var(--g-surface-600);
 }
 .g-pagination .page-range {
-    min-width: 4rem;
+    min-width: 3rem;
     text-align: center;
 }
 
 .g-pagination .page-size-select {
     margin-left: 1rem;
+    margin-right: 0.5rem;
     padding: 0.2em 0.5em 0.2em 0.5em;
     border-radius: 0.2em;
     border: 2px solid var(--g-primary-500);
@@ -199,6 +218,10 @@ function onPageSizeChange(e: Event) {
     background: var(--ilw-color--focus--background);
     color: var(--ilw-color--focus--text);
 }
+.page-size-label {
+    line-height: 1.2;
+}
+
 @media (prefers-reduced-motion: reduce) {
     .g-pagination .page-size-select {
         transition: none;
