@@ -34,9 +34,11 @@ function setupStackState() {
                             document.documentElement.clientWidth;
                         document.body.classList.add("g-scroll-lock");
                         document.body.style.paddingRight = `${scrollbarWidth}px`;
+                        document.body.style.setProperty('--g-scrollbar-width', `${scrollbarWidth}px`);
                     } else {
                         document.body.style.paddingRight = `0`;
                         document.body.classList.remove("g-scroll-lock");
+                        document.body.style.removeProperty('--g-scrollbar-width');
                     }
                 }
             },

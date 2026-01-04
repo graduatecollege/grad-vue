@@ -1,4 +1,5 @@
-import { describe, it } from "vitest";
+import { describe, it, expect } from "vitest";
+import { mount } from "@vue/test-utils";
 import GSidebar from "../src/components/GSidebar.vue";
 import { testAccessibility } from "./test-utils";
 
@@ -14,5 +15,14 @@ describe("GSidebar", () => {
                 },
             );
         });
+    });
+
+    it("uses baseId for id attribute", () => {
+        const wrapper = mount(GSidebar, {
+            props: {
+                baseId: "test-sidebar-id",
+            },
+        });
+        expect(wrapper.attributes("id")).toBe("test-sidebar-id-sidebar");
     });
 });

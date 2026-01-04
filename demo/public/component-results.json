@@ -1,7 +1,7 @@
 {
-  "totalComponents": 16,
-  "totalTests": 135,
-  "passedTests": 135,
+  "totalComponents": 17,
+  "totalTests": 138,
+  "passedTests": 138,
   "failedTests": 0,
   "skippedTests": 0,
   "components": {
@@ -422,6 +422,28 @@
         }
       ]
     },
+    "GHamburgerMenu": {
+      "component": "GHamburgerMenu",
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed",
+      "tests": [
+        {
+          "title": "passes accessibility tests with default content",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "uses baseId for aria attributes",
+          "status": "passed",
+          "ancestors": []
+        }
+      ]
+    },
     "GHistoryScroller": {
       "component": "GHistoryScroller",
       "total": 3,
@@ -830,8 +852,8 @@
     },
     "GSidebar": {
       "component": "GSidebar",
-      "total": 1,
-      "passed": 1,
+      "total": 2,
+      "passed": 2,
       "failed": 0,
       "skipped": 0,
       "status": "passed",
@@ -842,6 +864,11 @@
           "ancestors": [
             "Accessibility Tests"
           ]
+        },
+        {
+          "title": "uses baseId for id attribute",
+          "status": "passed",
+          "ancestors": []
         }
       ]
     },

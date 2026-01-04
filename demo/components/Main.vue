@@ -23,6 +23,7 @@ import GHistoryScrollerDemo from "~/components/demo/GHistoryScrollerDemo.vue";
 import GThreeWayToggleDemo from "~/components/demo/GThreeWayToggleDemo.vue";
 import GTableDemo from "~/components/demo/GTableDemo.vue";
 import GModalDemo from "~/components/demo/GModalDemo.vue";
+import GHamburgerMenuDemo from "~/components/demo/GHamburgerMenuDemo.vue";
 import { onMounted } from "vue";
 import { useTemplateRef } from "#imports";
 
@@ -52,6 +53,7 @@ const demoComponents = [
     { label: "Table", component: GTableDemo },
     { label: "Text Input", component: GTextInputDemo },
     { label: "Three Way Toggle", component: GThreeWayToggleDemo },
+    { label: "Hamburger Menu", component: GHamburgerMenuDemo },
 ];
 
 const demo = useTemplateRef("demo");
@@ -156,7 +158,7 @@ onMounted(() => {
 .app-main {
     padding: 2rem;
     max-width: 1400px;
-    margin: 0 auto;
+    margin: var(--g-toolbar-height) auto 0;
 }
 
 .demo-page {

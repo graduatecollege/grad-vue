@@ -9,7 +9,17 @@
  * offset by `var(--g-toolbar-height)`. If there is no toolbar, just pass
  * `0` as the `top-offset`.
  */
-import { computed } from "vue";
+import {
+    computed,
+    inject,
+    nextTick,
+    onBeforeUnmount,
+    onMounted, useId,
+    useTemplateRef,
+    watch,
+} from "vue";
+import { onClickOutside, useMediaQuery } from "@vueuse/core";
+import { useSidebar } from "../compose/useSidebar.ts";
 
 interface Props {
     /**
@@ -45,6 +55,8 @@ const props = withDefaults(defineProps<Props>(), {
     topOffsetVar: "",
 });
 
+const sidebar = inject<ReturnType<typeof useSidebar>>("sidebar");
+
 const bgImage = computed(() => {
     if (props.backgroundImage) {
         return props.backgroundImage;
@@ -71,18 +83,42 @@ const topOff = computed(() => {
     }
     return props.topOffset ? props.topOffset : "var(--g-toolbar-height)";
 });
+
+const fallbackId = useId();
+
+function handleEscapeKey(event: KeyboardEvent) {
+    if (event.key === "Escape") {
+        if (sidebar?.isCollapsible?.value && sidebar?.open?.value) {
+            sidebar.open.value = false;
+            document.getElementById(`${sidebar.id}-hamburger`)?.focus();
+        }
+    }
+}
+
 </script>
 
 <template>
     <div
+        ref="sidebar-ref"
+        :id="`${sidebar?.id ?? fallbackId}-sidebar`"
         class="g-sidebar"
-        :class="`g-sidebar__${theme}`"
+        :class="[
+            `g-sidebar__${theme}`,
+            {
+                'g-sidebar--collapsible': sidebar?.isCollapsible?.value,
+                'g-sidebar--closed':
+                    !sidebar?.open?.value && sidebar?.isCollapsible?.value,
+                'g-sidebar--open': sidebar?.open?.value && sidebar?.isCollapsible?.value,
+            },
+        ]"
         :style="{
             backgroundImage: bgImage,
             backgroundColor: bgColor,
             '--g-sidebar-top-offset': topOff,
-            width: width ?? '300px',
+            '--g-sidebar-width': width ?? '300px',
+            width: 'var(--g-sidebar-width)',
         }"
+        @keydown="handleEscapeKey"
     >
         <slot></slot>
     </div>
@@ -95,8 +131,36 @@ const topOff = computed(() => {
     background-position: top;
     position: fixed;
     left: 0;
+    /*noinspection CssUnresolvedCustomProperty*/
     top: var(--g-sidebar-top-offset);
+    /*noinspection CssUnresolvedCustomProperty*/
     height: calc(100vh - var(--g-sidebar-top-offset));
+    /*noinspection CssUnresolvedCustomProperty*/
     width: var(--g-sidebar-width, 300px);
+}
+.g-sidebar--open {
+    transition: opacity 0.1s ease-out;
+    opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .g-sidebar--open {
+        transition: none;
+    }
+}
+
+.g-sidebar--closed {
+    display: none;
+}
+.g-sidebar--collapsible {
+    height: 100vh;
+    top: 0;
+    z-index: 198;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1), 0 0 10px rgba(0, 0, 0, 0.1);
+}
+@starting-style {
+    .g-sidebar {
+        opacity: 0;
+    }
 }
 </style>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, h, onMounted, ref, useTemplateRef } from "vue";
+import { computed, h, onMounted, provide, ref, useTemplateRef } from "vue";
 import { useActiveLinkContent } from "../src/compose/useActiveLink";
+import { useSidebar } from "../src/compose/useSidebar";
 import GAlertDialog from "../src/components/GAlertDialog.vue";
 import GButton from "../src/components/GButton.vue";
 import GSelect from "../src/components/GSelect.vue";
@@ -15,10 +16,11 @@ import GTablePagination from "../src/components/table/GTablePagination.vue";
 import GModal from "../src/components/GModal.vue";
 import { useOverlayStack, useOverlayStackState } from "../src/grad-vue";
 import GOverlay from "../src/components/GOverlay.vue";
+import GHamburgerMenu from "../src/components/GHamburgerMenu.vue";
 
-const buttons = useTemplateRef("buttons");
-const text = useTemplateRef("text");
-const popover = useTemplateRef("popover");
+const sidebar = useSidebar();
+
+provide("sidebar", sidebar);
 
 const activeId = ref<string>("");
 const alertOpen = ref(false);
@@ -248,7 +250,7 @@ const filteredData = computed(() => {
 });
 
 const computedData = computed(() => {
-    let data = [...filteredData.value]
+    let data = [...filteredData.value];
     if (sortField.value) {
         data.sort((a: any, b: any) => {
             const aVal: any = a[sortField.value!];
@@ -266,20 +268,30 @@ const computedData = computed(() => {
 });
 
 const showModal = ref(false);
-
 </script>
 
 <template>
     <div class="playground">
-        <GAppHeader title="grad-vue playground" illinois />
+        <GAppHeader title="grad-vue playground" illinois>
+            <template #app-controls>
+                <GHamburgerMenu  />
+            </template>
+        </GAppHeader>
 
-        <div class="wrap">
+        <div
+            class="wrap"
+            :class="{
+                'sidebar-open': sidebar.open.value,
+                'sidebar-collapsible': sidebar.isCollapsible.value,
+            }"
+        >
             <GSidebar
                 class="sidebar"
                 theme="light"
                 top-offset-var="--g-toolbar-height"
             >
                 <GSidebarMenu
+                    label="Component List"
                     class="sidebar-menu"
                     title="Components"
                     theme="light"
@@ -301,7 +313,7 @@ const showModal = ref(false);
                             href: '#three-way-toggle',
                         },
                         { label: 'Modal', href: '#modal' },
-]"
+                    ]"
                     v-model="activeId"
                 />
             </GSidebar>
@@ -455,7 +467,12 @@ const showModal = ref(false);
                 <section id="modal">
                     <h2>Modal</h2>
                     <GButton @click="showModal = true">Open Modal</GButton>
-                    <GModal v-if="showModal" label="Modal Fun Time" size="large" @close="showModal = false">
+                    <GModal
+                        v-if="showModal"
+                        label="Modal Fun Time"
+                        size="large"
+                        @close="showModal = false"
+                    >
                         <p>Example content</p>
                     </GModal>
                 </section>
@@ -467,8 +484,12 @@ const showModal = ref(false);
 
 <style scoped>
 .wrap {
+    margin-top: var(--g-toolbar-height);
+}
+.wrap:not(.sidebar-collapsible) {
     padding-left: 300px;
 }
+
 .main {
     padding: 2rem;
 }

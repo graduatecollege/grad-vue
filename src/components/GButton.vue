@@ -66,6 +66,7 @@ const classes = computed(() => [
         "g-btn--text": props.text,
         "ilw-theme-blue": props.theme === "primary",
         "ilw-theme-orange": props.theme === "accent",
+        "g-btn-has-text": props.text,
     },
 ]);
 </script>
@@ -137,8 +138,11 @@ const classes = computed(() => [
     --ilw-color--blue--control-accent: var(--il-altgeld);
     --ilw-color--blue--heading-link-hover: var(--il-altgeld);
 
-    .fa, svg {
-        margin-right: 0.75em;
+    &.g-btn-has-text {
+        .fa,
+        svg {
+            margin-right: 0.75em;
+        }
     }
 }
 

@@ -36,6 +36,17 @@ import { GSidebar } from "@illinois-grad/grad-vue";
                     label: 'Width',
                     default: '300px',
                     instructions: 'Width of the sidebar'
+                },
+                breakpoint: {
+                    type: 'string',
+                    label: 'Breakpoint',
+                    default: '',
+                    instructions: 'Responsive breakpoint (e.g., (max-width: 1024px))'
+                },
+                open: {
+                    type: 'boolean',
+                    label: 'Open',
+                    default: false
                 }
             }"
         >
@@ -47,11 +58,18 @@ offset by <code>var(--g-toolbar-height)</code>. If there is no toolbar, just pas
 <code>0</code> as the <code>top-offset</code>.</p>
 </template>
             <template #default="{ props }">
-                <GSidebar v-bind="props" class="sidebar-demo">
-                    <div class="sidebar-content">
-                        <h3 class="sidebar-title">Sample Heading</h3>
+                <div style="display: flex; gap: 1rem; flex-direction: column;">
+                    <div v-if="props.breakpoint">
+                        <button @click="props.open = !props.open">Toggle Sidebar (Simulated)</button>
+                        <p>Breakpoint active: {{ props.breakpoint }}. Resize window or use button if matched.</p>
                     </div>
-                </GSidebar>
+                    <GSidebar v-bind="props" v-model:open="props.open" class="sidebar-demo">
+                        <div class="sidebar-content">
+                            <h3 class="sidebar-title">Sample Heading</h3>
+                            <button v-if="props.breakpoint" @click="props.open = false">Close</button>
+                        </div>
+                    </GSidebar>
+                </div>
             </template>
         </ComponentDemo>
     </ComponentSection>
