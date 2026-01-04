@@ -29,7 +29,7 @@
  */
 import GTableBody from "./table/GTableBody.vue";
 import GPopover from "./GPopover.vue";
-import { TableColumn } from "./table/TableColumn.ts";
+import type { TableColumn } from "./table/TableColumn.ts";
 import { onMounted, VNode, watch } from "vue";
 import GSelect from "./GSelect.vue";
 import { UseFilteringReturn } from "../compose/useFiltering.ts";
@@ -239,8 +239,8 @@ watch(
                                     "
                                     class="g-multi-select"
                                 >
-                                    <legend class="sr-only">
-                                        Filter options
+                                    <legend class="g-multi-select-legend">
+                                        Include values
                                     </legend>
                                     <div
                                         v-for="opt in col.filter.options"
@@ -452,6 +452,13 @@ button.column-head:hover {
         font-size: 1.125rem;
         flex: 1;
     }
+}
+
+.g-multi-select-legend {
+    margin: 0;
+    padding: 0;
+    font-size: 1rem;
+    line-height: 1.2;
 }
 
 .clear-filters-wrap,

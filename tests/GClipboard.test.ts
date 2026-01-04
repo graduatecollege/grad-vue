@@ -42,10 +42,7 @@ describe("GClipboard", () => {
             await page.getByLabelText("Copy").click();
             await vm.$nextTick();
 
-            // This doesn't use expect.element because Playwright seems to
-            // make the button lose focus and thus it resets the text after.
-            // Without .element the check is immediate, whereas .element waits for a match.
-            await expect(
+            await expect.element(
                 page.getByLabelText("Copy"),
             ).toHaveAccessibleDescription("Copied");
         });

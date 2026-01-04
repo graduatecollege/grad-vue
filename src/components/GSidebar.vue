@@ -13,16 +13,7 @@
  * object from `useSidebar`. See the [Hamburger Menu Documentation](#use-sidebar)
  * for details.
  */
-import {
-    computed,
-    inject,
-    nextTick,
-    onBeforeUnmount,
-    onMounted, useId,
-    useTemplateRef,
-    watch,
-} from "vue";
-import { onClickOutside, useMediaQuery } from "@vueuse/core";
+import { computed, inject, useId } from "vue";
 import { useSidebar } from "../compose/useSidebar.ts";
 
 interface Props {
@@ -59,7 +50,12 @@ const props = withDefaults(defineProps<Props>(), {
     topOffsetVar: "",
 });
 
-const sidebar = inject<ReturnType<typeof useSidebar>>("sidebar");
+const sidebar = inject<ReturnType<typeof useSidebar>>(
+    "sidebar",
+    // This isn't required, so the default value just avoids compiler warnings
+    () => undefined as any,
+    true,
+);
 
 const bgImage = computed(() => {
     if (props.backgroundImage) {
@@ -98,7 +94,6 @@ function handleEscapeKey(event: KeyboardEvent) {
         }
     }
 }
-
 </script>
 
 <template>
@@ -112,7 +107,8 @@ function handleEscapeKey(event: KeyboardEvent) {
                 'g-sidebar--collapsible': sidebar?.isCollapsible?.value,
                 'g-sidebar--closed':
                     !sidebar?.open?.value && sidebar?.isCollapsible?.value,
-                'g-sidebar--open': sidebar?.open?.value && sidebar?.isCollapsible?.value,
+                'g-sidebar--open':
+                    sidebar?.open?.value && sidebar?.isCollapsible?.value,
             },
         ]"
         :style="{
@@ -160,7 +156,9 @@ function handleEscapeKey(event: KeyboardEvent) {
     height: 100vh;
     top: 0;
     z-index: 198;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1), 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow:
+        0 2px 10px rgba(0, 0, 0, 0.1),
+        0 0 10px rgba(0, 0, 0, 0.1);
 }
 @starting-style {
     .g-sidebar {
