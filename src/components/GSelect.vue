@@ -51,12 +51,17 @@ interface Props {
      * Show clear button
      */
     clearButton?: boolean;
+    /**
+     * Compact
+     */
+    compact?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
     disabled: false,
     name: undefined,
     searchable: false,
+    compact: false,
 });
 const emit = defineEmits(["change"]);
 const model = defineModel<string | number | null>();
@@ -200,6 +205,10 @@ function selectOption(idx: number) {
     }
     ignoreFocus.value = true;
     closeMenu();
+    // We want to ignore the focus just briefly so it doesn't re-open
+    setTimeout(() => {
+        ignoreFocus.value = false;
+    }, 100);
 }
 
 function onComboClick() {
@@ -318,7 +327,7 @@ onBeforeUnmount(() => {
 <template>
     <div
         class="g-select-root g-select-combo"
-        :class="{ 'g-select-open': open }"
+        :class="{ 'g-select-open': open, 'g-select-compact': compact }"
     >
         <div
             v-if="!hiddenLabel"
@@ -575,8 +584,10 @@ onBeforeUnmount(() => {
 
 .g-select-combo-menu {
     background-color: var(--g-surface-0);
-    border: 1px solid var(--g-surface-200);
+    border: 2px solid var(--g-surface-700);
     border-radius: 0 0 var(--g-border-radius-m) var(--g-border-radius-m);
+    box-sizing: border-box;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.2), 0 1px 0 1px rgba(0, 0, 0, 0.18);
     max-height: 50vh;
     overflow-y: auto;
     left: 0;
@@ -607,7 +618,12 @@ onBeforeUnmount(() => {
 }
 
 .g-select-option-current {
-    border-color: var(--g-accent-700);
+    background: var(--g-primary-500);
+    color: var(--g-primary-text);
+
+    &:hover {
+        color: var(--g-primary-text);
+    }
 }
 
 .g-select-search-input {
@@ -621,6 +637,21 @@ onBeforeUnmount(() => {
 
     &.g-select-clearable {
         padding-right: 3rem; /* Space for clear button */
+    }
+}
+
+.g-select-compact {
+    .g-select-control {
+        font-size: 1rem;
+        min-height: 1.25em;
+    }
+    .g-select-search-input {
+        font-size: 1rem;
+        padding: 0.3rem 0.75rem 0.3rem 0.75rem;
+    }
+    .g-select-combo-option {
+        font-size: 1rem;
+        padding: 6px 8px 8px;
     }
 }
 

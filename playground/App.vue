@@ -388,6 +388,7 @@ const showModal = ref(false);
                         clear-button
                         :options="['foo', 'bar', 'baz']"
                         searchable
+                        compact
                     />
                 </section>
 
