@@ -79,6 +79,7 @@ onMounted(() => {
                 class="sidebar-menu"
                 title="Components"
                 theme="dark"
+                compact
                 :items="
                     demoComponents.map((comp) => ({
                         label: comp.label,
@@ -230,10 +231,6 @@ onMounted(() => {
     position: fixed;
     top: 0;
     left: 0;
-}
-
-.sidebar-menu {
-    margin-top: 2rem;
 }
 
 .markdown-alert {

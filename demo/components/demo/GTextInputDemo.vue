@@ -17,7 +17,7 @@ const textValue = ref("");
                 label: {
                     type: 'string',
                     label: 'Label',
-                    default: ''
+                    default: 'Example Label'
                 },
                 placeholder: {
                     type: 'string',
@@ -50,7 +50,7 @@ All non-prop attributes are passed through to the input element, including
                 <GTextInput
                     v-model="textValue"
                     v-bind="props"
-                    label="Example Label"
+                    :label="props.label"
                 />
                 <DemoResult>{{ textValue }}</DemoResult>
             </template>

@@ -16,7 +16,7 @@ type Props = {
     /**
      * Label
      */
-    label?: string;
+    label?: string; // Demo: Example Label
     /**
      * Placeholder text
      */
@@ -36,7 +36,7 @@ type Props = {
 };
 
 const props = withDefaults(defineProps<Props>(), {
-    label: "",
+    label: undefined,
     instructions: "",
     placeholder: "",
     disabled: false,
