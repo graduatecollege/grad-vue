@@ -11,7 +11,6 @@ const demoItems = [
     { label: "About", href: "#sidebar-menu-demo-more" },
     { label: "Help", href: "#sidebar-menu-demo-more" },
 ];
-
 </script>
 
 <template>
@@ -34,9 +33,19 @@ const demoItems = [
                         'light',
                         'dark'
                     ]
+                },
+                compact: {
+                    type: 'boolean',
+                    label: 'Use compact layout',
+                    default: false
                 }
             }"
         >
+            <template #default="{ props }">
+                <div style="max-width: 300px;">
+                    <GSidebarMenu v-bind="props" :items="demoItems" style="min-height: 400px;" />
+                </div>
+            </template>
             <template #docs><p>A sidebar menu component for use with <code>GSidebar</code>. Displays a title and
 a list of links.</p>
 <p>This component also supports showing active links for in-page navigation.</p>
@@ -102,14 +111,6 @@ in-page navigation, and the matching menu item&#39;s <code>href</code> should be
 </figure>
 
 </template>
-            <template #default="{ props }">
-                <div style="max-width: 300px">
-                    <GSidebarMenu
-                        v-bind="props"
-                        :items="demoItems"
-                    />
-                </div>
-            </template>
         </ComponentDemo>
     </ComponentSection>
 </template>

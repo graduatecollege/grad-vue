@@ -27,12 +27,16 @@ export interface ToggleColumnFilter {
     description?: string;
 }
 
-export interface TableColumn<T> {
-    key: string;
+export interface TableColumn<T extends TableRow, K = keyof T> {
+    key: K;
     label: string;
     sortable?: boolean;
     filter?: TableColumnFilter;
     display?: (row: T) => string | VNode;
     tdClass?: string | ((row: T) => string);
     trClass?: string | ((row: T) => string);
+}
+
+export interface TableRow extends Record<string, any> {
+    key: string;
 }

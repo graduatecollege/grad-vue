@@ -1,11 +1,11 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { defineComponent, h, provide } from "vue";
 import { page, userEvent } from "vitest/browser";
 
 import GHamburgerMenu from "../src/components/GHamburgerMenu.vue";
 import GSidebar from "../src/components/GSidebar.vue";
 import { useSidebar } from "../src/compose/useSidebar";
-import { mnt, testAccessibility } from "./test-utils";
+import { mnt, testAccessibility, tabTo } from "./test-utils";
 
 async function tick(vm: any) {
     await vm.$nextTick();
@@ -109,9 +109,7 @@ describe("GHamburgerMenu", () => {
             await page.viewport(600, 800);
             const { container } = mountFixture();
 
-            const hamburger = container.getByRole("button", {
-                name: "Main Navigation",
-            });
+            const hamburger = container.getByLabelText("Main Navigation");
             await expect.element(hamburger).toBeVisible();
         });
 
@@ -119,7 +117,7 @@ describe("GHamburgerMenu", () => {
             await page.viewport(600, 800);
             const { vm, container } = mountFixture();
 
-            await container.getByRole("button", { name: "Main Navigation" }).click();
+            await container.getByLabelText("Main Navigation").click();
             await tick(vm);
 
             await expect.element(container.getByText("First link")).toBeVisible();
@@ -129,7 +127,7 @@ describe("GHamburgerMenu", () => {
             await page.viewport(600, 800);
             const { vm, container } = mountFixture();
 
-            await container.getByRole("button", { name: "Main Navigation" }).click();
+            await container.getByLabelText("Main Navigation").click();
             await tick(vm);
 
             await userEvent.keyboard("{Escape}");
@@ -142,7 +140,7 @@ describe("GHamburgerMenu", () => {
             await page.viewport(600, 800);
             const { vm, container } = mountFixture();
 
-            await container.getByRole("button", { name: "Main Navigation" }).click();
+            await container.getByLabelText("Main Navigation").click();
             await tick(vm);
 
             await container.getByRole("button", { name: "Outside" }).click();
@@ -155,11 +153,9 @@ describe("GHamburgerMenu", () => {
             await page.viewport(600, 800);
             const { vm, container } = mountFixture();
 
-            const hamburger = container.getByRole("button", {
-                name: "Main Navigation",
-            });
-            hamburger.element().focus();
+            await tabTo("Main Navigation");
             await userEvent.keyboard("{Enter}");
+            await tick(vm);
             await expect.element(container.getByText("First link")).toBeVisible();
         });
 
@@ -167,10 +163,7 @@ describe("GHamburgerMenu", () => {
             await page.viewport(600, 800);
             const { vm, container } = mountFixture();
 
-            const hamburger = container.getByRole("button", {
-                name: "Main Navigation",
-            });
-            hamburger.element().focus();
+            await tabTo("Main Navigation");
             await userEvent.keyboard("{Enter}");
             await userEvent.keyboard("{Tab}");
             await expect
@@ -182,10 +175,9 @@ describe("GHamburgerMenu", () => {
             await page.viewport(600, 800);
             const { vm, container } = mountFixture();
 
-            await container.getByRole("button", { name: "Main Navigation" }).click();
+            await container.getByLabelText("Main Navigation").click();
 
-            const firstLink = container.getByRole("link", { name: "First link" });
-            firstLink.element().focus();
+            await tabTo("First link");
 
             await userEvent.keyboard("{Escape}");
             await tick(vm);
@@ -197,17 +189,17 @@ describe("GHamburgerMenu", () => {
             await page.viewport(600, 800);
             const { vm, container } = mountFixture();
 
-            await container.getByRole("button", { name: "Main Navigation" }).click();
+            await container.getByLabelText("Main Navigation").click();
             await tick(vm);
 
-            const firstLink = container.getByRole("link", { name: "First link" });
-            firstLink.element().focus();
+            await tabTo("First link");
+
             await userEvent.keyboard("{Escape}");
             await tick(vm);
 
             await expect
                 .element(
-                    container.getByRole("button", { name: "Main Navigation" }),
+                    container.getByLabelText("Main Navigation"),
                 )
                 .toHaveFocus();
         });
@@ -216,13 +208,10 @@ describe("GHamburgerMenu", () => {
             await page.viewport(600, 800);
             const { vm, container } = mountFixture();
 
-            const hamburger = container.getByRole("button", {
-                name: "Main Navigation",
-            });
-            hamburger.element().focus();
+            await tabTo("Main Navigation");
             await userEvent.keyboard("{Enter}");
 
-            await userEvent.keyboard("{Tab}{Tab}{Tab}{Tab}");
+            await tabTo("Outside");
             await tick(vm);
 
             await expect
@@ -239,7 +228,7 @@ describe("GHamburgerMenu", () => {
             await page.viewport(600, 800);
             const { vm, container } = mountFixture();
 
-            await container.getByRole("button", { name: "Main Navigation" }).click();
+            await container.getByLabelText("Main Navigation").click();
             await tick(vm);
 
             await testAccessibility(

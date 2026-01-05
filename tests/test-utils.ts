@@ -1,8 +1,9 @@
 import { mount, RouterLinkStub, VueWrapper } from "@vue/test-utils";
 import axe from "axe-core";
 import { Component, createApp, h, reactive, Ref, watch } from "vue";
-import { Locator, page } from "vitest/browser";
+import { Locator, page, userEvent } from "vitest/browser";
 import { mounts } from "./setup";
+import { describe, expect, it, vi } from "vitest";
 
 /**
  * Run accessibility tests on a component using axe-core
@@ -124,7 +125,7 @@ export function mnt(
         app.unmount();
         container.remove();
         modalRoot.remove();
-    }
+    };
 
     mounts.push(unmount);
 
@@ -136,4 +137,29 @@ export function mnt(
         state,
         setProps,
     };
+}
+
+export async function tabTo(text: string) {
+    await vi.waitUntil(
+        async () => {
+            const el = document.activeElement;
+            if (!el) {
+                return false;
+            }
+            let textContent = el.textContent;
+            if (el.ariaLabel) {
+                textContent = el.ariaLabel;
+            }
+            if (el.ariaLabelledByElements?.length) {
+                textContent = el.ariaLabelledByElements[0].textContent;
+            }
+            if (textContent === text) {
+                return true;
+            }
+            await userEvent.keyboard("{Tab}");
+        },
+        {
+            interval: 1,
+        },
+    );
 }

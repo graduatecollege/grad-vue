@@ -82,7 +82,7 @@ const historyEntries = ref([
 ]);
 
 interface TableEntry {
-    code: string;
+    key: string;
     name: string;
     abbr: string;
     collegeInName: boolean;
@@ -91,7 +91,7 @@ interface TableEntry {
 const columns = computed<TableColumn<TableEntry>[]>(() => {
     return [
         {
-            key: "code",
+            key: "key",
             label: "Code",
             sortable: true,
         },
@@ -124,97 +124,97 @@ const columns = computed<TableColumn<TableEntry>[]>(() => {
 
 const tableData = ref<TableEntry[]>([
     {
-        code: "LT",
+        key: "LT",
         name: "Carle Illinois College of Medicine",
         abbr: "COM",
         collegeInName: true,
     },
     {
-        code: "KL",
+        key: "KL",
         name: "College of Agricultural, Consumer and Environmental Sciences (ACES)",
         abbr: "ACES",
         collegeInName: true,
     },
     {
-        code: "KY",
+        key: "KY",
         name: "College of Applied Health Sciences",
         abbr: "AHS",
         collegeInName: true,
     },
     {
-        code: "KN",
+        key: "KN",
         name: "College of Education",
         abbr: "EDUC",
         collegeInName: true,
     },
     {
-        code: "KR",
+        key: "KR",
         name: "College of Fine and Applied Arts",
         abbr: "FAA",
         collegeInName: true,
     },
     {
-        code: "KU",
+        key: "KU",
         name: "College of Law",
         abbr: "LAW",
         collegeInName: true,
     },
     {
-        code: "KV",
+        key: "KV",
         name: "College of Liberal Arts and Sciences",
         abbr: "LAS",
         collegeInName: true,
     },
     {
-        code: "KT",
+        key: "KT",
         name: "College of Media",
         abbr: "Media",
         collegeInName: true,
     },
     {
-        code: "LC",
+        key: "LC",
         name: "College of Veterinary Medicine",
         abbr: "V MED",
         collegeInName: true,
     },
     {
-        code: "KW",
+        key: "KW",
         name: "Division of Exploratory Studies",
         abbr: "DES",
         collegeInName: false,
     },
     {
-        code: "KM",
+        key: "KM",
         name: "Gies College of Business",
         abbr: "BUS",
         collegeInName: true,
     },
     {
-        code: "KS",
+        key: "KS",
         name: "Graduate College",
         abbr: "GRAD",
         collegeInName: true,
     },
     {
-        code: "KP",
+        key: "KP",
         name: "Grainger College of Engineering",
         abbr: "ENGR",
         collegeInName: true,
     },
     {
-        code: "LP",
+        key: "LP",
         name: "School of Information Sciences",
         abbr: "SIS",
         collegeInName: false,
     },
     {
-        code: "LG",
+        key: "LG",
         name: "School of Labor and Employment Relations",
         abbr: "LER",
         collegeInName: false,
     },
     {
-        code: "LL",
+        key: "LL",
         name: "School of Social Work",
         abbr: "SOC W",
         collegeInName: false,
@@ -222,15 +222,15 @@ const tableData = ref<TableEntry[]>([
 ]);
 
 const filtering = useFiltering({
-    code: undefined,
-    name: undefined,
-    abbr: undefined,
-    collegeInName: undefined,
+    key: "",
+    name: "",
+    abbr: "",
+    collegeInName: false,
 });
 
 const { filters, isFiltered, clearFilters } = filtering;
 
-const sortField = ref<string | undefined>(undefined);
+const sortField = ref<keyof TableEntry | undefined>(undefined);
 const sortOrder = ref<1 | -1 | undefined>(undefined);
 const start = ref(0);
 const pageSize = ref(5);
@@ -327,6 +327,7 @@ const showModal = ref(false);
                         :filtering="filtering"
                         :filter="filters"
                         :result-count="filteredData.length"
+                        :start-index="start"
                         v-model:sort-field="sortField"
                         v-model:sort-order="sortOrder"
                     >
