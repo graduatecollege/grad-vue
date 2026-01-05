@@ -11,7 +11,9 @@ export function useSidebar(
 ) {
     const id = useId();
     const open = ref(false);
-    const isCollapsible: Ref<boolean> = useMediaQuery(breakpoint);
+    const isCollapsible: Ref<boolean> = useMediaQuery(breakpoint, {
+        ssrWidth: 1000
+    });
 
     function onDocumentClick(e: MouseEvent) {
         if (!isCollapsible.value || !open.value) {

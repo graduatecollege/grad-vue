@@ -1,12 +1,15 @@
-import { computed, defineComponent, h, ref, VNode } from "vue";
+import { computed, ComputedRef, defineComponent, h, ref, VNode } from "vue";
 import GTable from "../../src/components/GTable.vue";
 import GTablePagination from "../../src/components/table/GTablePagination.vue";
-import type { TableColumn } from "../../src/components/table/TableColumn";
+import type {
+    TableColumn,
+    TableRow,
+} from "../../src/components/table/TableColumn";
 import { useFiltering } from "../../src/compose/useFiltering";
 
-export type CreateGTableFixtureOptions<T extends Record<string, any>> = {
+export type CreateGTableFixtureOptions<T extends TableRow, C extends TableColumn<T>> = {
     label?: string;
-    columns: TableColumn<T>[] | (() => TableColumn<T>[]);
+    columns: C[] | (() => C[]);
     data: T[];
 
     /**
@@ -17,11 +20,11 @@ export type CreateGTableFixtureOptions<T extends Record<string, any>> = {
     filterKeys?: string[];
     filterData?: (data: T[], filter: Record<string, any>) => T[];
 
-    initialSortField?: string;
+    initialSortField?: keyof T;
     initialSortOrder?: 1 | -1;
     sortData?: (
         data: T[],
-        sortField: string | undefined,
+        sortField: keyof T | undefined,
         sortOrder: 1 | -1 | undefined,
     ) => T[];
 
@@ -31,7 +34,7 @@ export type CreateGTableFixtureOptions<T extends Record<string, any>> = {
     pageSizes?: number[];
 
     resultCount?: (filteredData: T[]) => number;
-    groupBy?: string;
+    groupBy?: keyof T;
     groupRender?: (groupValue: any, row: T) => VNode;
     rowClickable?: boolean;
     rowClass?: (row: T) => string | string[] | undefined;
@@ -70,17 +73,17 @@ function buildInitialFilter(options: {
     };
 }
 
-export function createGTableFixture<T extends Record<string, any>>(
-    options: CreateGTableFixtureOptions<T>,
+export function createGTableFixture<T extends TableRow, C extends TableColumn<T>>(
+    options: CreateGTableFixtureOptions<T, C>,
 ) {
-    const sortField = ref<string | undefined>(options.initialSortField);
+    const sortField = ref<keyof T | undefined>(options.initialSortField);
     const sortOrder = ref<1 | -1 | undefined>(options.initialSortOrder);
     const start = ref(options.initialStart ?? 0);
     const pageSize = ref(options.initialPageSize ?? 5);
     const initialFilter = buildInitialFilter({
         initialFilter: options.initialFilter,
         filterKeys: options.filterKeys,
-    });
+    }) as T;
 
     const filtering = useFiltering(initialFilter);
     const { filters } = filtering;
@@ -89,10 +92,10 @@ export function createGTableFixture<T extends Record<string, any>>(
     const GTableFixture = defineComponent({
         name: "GTableFixture",
         setup() {
-            const columnsComputed = computed<TableColumn<T>[]>(() => {
-                return typeof options.columns === "function"
+            const columnsComputed = computed(() => {
+                return (typeof options.columns === "function"
                     ? options.columns()
-                    : options.columns;
+                    : options.columns) as C[];
             });
 
             const tableData = ref<T[]>([...options.data]);
@@ -127,11 +130,10 @@ export function createGTableFixture<T extends Record<string, any>>(
             });
             return () =>
                 h(
-                    GTable,
+                    GTable<T, C>,
                     {
                         label: options.label || "Table",
                         data: visibleData.value,
-                        // @ts-ignore It can't figure out the types match
                         columns: columnsComputed.value,
                         filtering,
                         filter: filters.value,
@@ -140,7 +142,7 @@ export function createGTableFixture<T extends Record<string, any>>(
                         },
                         resultCount: resultCount.value,
                         sortField: sortField.value,
-                        "onUpdate:sortField": (value: string | undefined) => {
+                        "onUpdate:sortField": (value: keyof T | undefined) => {
                             sortField.value = value;
                         },
                         sortOrder: sortOrder.value,
@@ -148,11 +150,10 @@ export function createGTableFixture<T extends Record<string, any>>(
                             sortOrder.value = value;
                         },
                         groupBy: options.groupBy,
-                        // @ts-ignore It can't figure out the types match
                         groupRender: options.groupRender,
                         rowClickable: options.rowClickable,
-                        // @ts-ignore It can't figure out the types match
                         rowClass: options.rowClass,
+                        startIndex: start.value
                     },
                     {
                         pagination:

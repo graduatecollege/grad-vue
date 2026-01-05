@@ -4,10 +4,10 @@ export interface UseFilteringReturn<T extends Record<string, any> = Record<strin
     filters: Ref<T>;
     isFiltered: Ref<boolean>;
     clearFilters: () => void;
-    filteredColumns: Ref<Record<string, boolean>>;
+    filteredColumns: Ref<Record<keyof T, boolean>>;
 }
 
-export function filtersToQueryParams<T extends Record<string, any>>(filters: T): Record<string, string | string[]> {
+export function filtersToQueryParams<T extends Record<string, any>>(filters: T): Record<keyof T, string | string[]> {
     const query: Record<string, string | string[]> = {};
     Object.keys(filters).forEach((key) => {
         const value = filters[key];
@@ -21,7 +21,7 @@ export function filtersToQueryParams<T extends Record<string, any>>(filters: T):
             }
         }
     });
-    return query;
+    return query as Record<keyof T, string | string[]>;
 }
 
 export function useFiltering<T extends Record<string, any>>(
@@ -48,7 +48,7 @@ export function useFiltering<T extends Record<string, any>>(
             const filterValue = values.value[key];
             result[key] = filterValue !== undefined && filterValue !== null && (!Array.isArray(filterValue) || filterValue.length > 0);
         }
-        return result;
+        return result as Record<keyof T, boolean>;
     });
 
     return {

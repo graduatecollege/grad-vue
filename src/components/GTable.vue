@@ -1,4 +1,4 @@
-<script setup lang="ts" generic="T extends Record<string, any>">
+<script setup lang="ts" generic="T extends TableRow, C extends TableColumn<T>">
 /**
  * A data table component with support for grouping, sorting, filtering, and pagination.
  *
@@ -29,7 +29,7 @@
  */
 import GTableBody from "./table/GTableBody.vue";
 import GPopover from "./GPopover.vue";
-import type { TableColumn } from "./table/TableColumn.ts";
+import { TableColumn, TableRow } from "./table/TableColumn.ts";
 import { onMounted, VNode, watch } from "vue";
 import GSelect from "./GSelect.vue";
 import { UseFilteringReturn } from "../compose/useFiltering.ts";
@@ -41,18 +41,19 @@ type Props = {
      */
     label: string; // Demo: Colleges
     data: T[];
-    columns: TableColumn<T>[];
+    columns: C[];
     resultCount?: number;
-    groupBy?: string;
-    filtering: UseFilteringReturn;
+    groupBy?: keyof T;
+    filtering: UseFilteringReturn<T>;
     groupRender?: (groupValue: any, row: T) => VNode;
     rowClickable?: boolean;
     rowClass?: (row: T) => string | string[] | undefined;
+    startIndex: number;
 };
 
-const sortField = defineModel<string>("sortField");
+const sortField = defineModel<keyof T>("sortField");
 const sortOrder = defineModel<1 | -1>("sortOrder");
-const filter = defineModel<Record<string, any>>("filter", { required: true });
+const filter = defineModel<Record<keyof T, any>>("filter", { required: true });
 
 const props = withDefaults(defineProps<Props>(), {});
 
@@ -138,9 +139,13 @@ watch(
                 >{{ props.resultCount || data.length }} results</span
             >
         </div>
-        <table class="table" :aria-label="label">
+        <table
+            class="table"
+            :aria-label="label"
+            :aria-rowcount="props.resultCount || data.length"
+        >
             <thead class="table-head">
-                <tr>
+                <tr aria-rowindex="1">
                     <th
                         v-for="col in columns"
                         :key="col.key"
@@ -156,6 +161,7 @@ watch(
                             { sorted: sortField === col.key },
                             { filtered: filteredColumns[col.key] },
                         ]"
+                        scope="col"
                     >
                         <div class="th-inner">
                             <button
@@ -249,12 +255,12 @@ watch(
                                         <input
                                             type="checkbox"
                                             v-model="filter[col.key]"
-                                            :id="`filter-${col.key}-${opt.value}`"
+                                            :id="`filter-${String(col.key)}-${opt.value}`"
                                             :value="opt.value"
                                             name="filter-multiselect"
                                         />
                                         <label
-                                            :for="`filter-${col.key}-${opt.value}`"
+                                            :for="`filter-${String(col.key)}-${opt.value}`"
                                             >{{ opt.label }}</label
                                         >
                                     </div>
@@ -276,13 +282,15 @@ watch(
                     </th>
                 </tr>
             </thead>
+            <!-- @vue-generic {T, C} -->
             <GTableBody
                 :data="data"
                 :columns="columns"
                 :group-by="groupBy"
                 :group-render="groupRender"
                 :row-clickable="props.rowClickable"
-                :row-class="props.rowClass"
+                :row-class="props.rowClass as any"
+                :start-index="startIndex"
                 @row-click="emit('row-click', $event)"
             />
         </table>

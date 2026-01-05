@@ -1,31 +1,34 @@
-<script setup lang="ts" generic="T extends Record<string, any>, C extends TableColumn<T>">
+<script setup lang="ts" generic="T extends TableRow, C extends TableColumn<T>">
 import { toRefs, type VNode } from "vue";
-import { TableColumn } from "./TableColumn.ts";
+import { TableColumn, TableRow } from "./TableColumn.ts";
 
-const props = defineProps<{
+type Props = {
     data: T[];
-    groupBy?: string;
+    groupBy?: keyof T;
     columns: C[];
     groupRender?: (groupValue: any, row: T) => VNode;
     rowClickable?: boolean;
     rowClass?: (row: T) => string | string[] | undefined;
-}>();
+    startIndex: number;
+};
 
-const { data, groupBy, columns, groupRender, rowClickable, rowClass } = toRefs(props);
+const props = defineProps<Props>();
 
 const emit = defineEmits<{
     (e: "row-click", link: string): void;
 }>();
 
 function handleRowClick(event: MouseEvent) {
-    if (!rowClickable.value) {
+    if (!props.rowClickable) {
         return; // Do nothing if rows are not clickable
     }
     // Only trigger if not clicking on a link or button directly
     if ((event.target as HTMLElement).closest("a,button,[tabindex]")) {
         return;
     }
-    const row = (event.target as HTMLElement).closest("tr") as HTMLTableRowElement;
+    const row = (event.target as HTMLElement).closest(
+        "tr",
+    ) as HTMLTableRowElement;
     if (row) {
         const firstLink = row.querySelector("a[href]");
         const link = firstLink?.getAttribute("href");
@@ -39,8 +42,11 @@ function handleRowClick(event: MouseEvent) {
 <template>
     <tbody class="efficient-table-body">
         <template v-if="groupBy">
-            <template v-for="(row, idx) in data" :key="row.uniqueHash">
-                <tr v-if="idx === 0 || row[groupBy] !== data[idx - 1][groupBy]">
+            <template v-for="(row, idx) in data" :key="row.key">
+                <tr
+                    v-if="idx === 0 || row[groupBy] !== data[idx - 1][groupBy]"
+                    :aria-rowindex="startIndex + idx + 2"
+                >
                     <td :colspan="columns.length" class="table-group-row">
                         <template v-if="groupRender">
                             <component :is="groupRender(row[groupBy], row)" />
@@ -53,13 +59,23 @@ function handleRowClick(event: MouseEvent) {
                 <tr
                     :class="[
                         'efficient-table-row',
-                        { 'row-striped': idx % 2 === 1, 'row-clickable': rowClickable },
-                        rowClass ? rowClass(row) : undefined
+                        {
+                            'row-striped': idx % 2 === 1,
+                            'row-clickable': rowClickable,
+                        },
+                        rowClass ? rowClass(row) : undefined,
                     ]"
+                    :aria-rowindex="startIndex + idx + 2"
                     @click="handleRowClick"
                 >
-                    <td v-for="col in columns" :key="col.key"
-                        :class="typeof col.tdClass === 'function' ? col.tdClass(row) : col.tdClass"
+                    <td
+                        v-for="col in columns"
+                        :key="col.key"
+                        :class="
+                            typeof col.tdClass === 'function'
+                                ? col.tdClass(row)
+                                : col.tdClass
+                        "
                     >
                         <component v-if="col.display" :is="col.display(row)" />
                         <template v-else>{{ row[col.key] }}</template>
@@ -70,16 +86,26 @@ function handleRowClick(event: MouseEvent) {
         <template v-else>
             <tr
                 v-for="(row, idx) in data"
-                :key="row.uniqueHash"
+                :key="row.key"
                 :class="[
                     'efficient-table-row',
-                    { 'row-striped': idx % 2 === 1, 'row-clickable': rowClickable },
-                    rowClass ? rowClass(row) : undefined
+                    {
+                        'row-striped': idx % 2 === 1,
+                        'row-clickable': rowClickable,
+                    },
+                    rowClass ? rowClass(row) : undefined,
                 ]"
+                :aria-rowindex="startIndex + idx + 2"
                 @click="handleRowClick"
             >
-                <td v-for="col in columns" :key="col.key"
-                    :class="typeof col.tdClass === 'function' ? col.tdClass(row) : col.tdClass"
+                <td
+                    v-for="col in columns"
+                    :key="col.key"
+                    :class="
+                        typeof col.tdClass === 'function'
+                            ? col.tdClass(row)
+                            : col.tdClass
+                    "
                 >
                     <component v-if="col.display" :is="col.display(row)" />
                     <template v-else>{{ row[col.key] }}</template>
