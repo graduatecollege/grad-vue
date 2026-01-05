@@ -73,6 +73,7 @@ import {
     getCurrentInstance,
     nextTick,
     onMounted,
+    useId,
     useTemplateRef,
     watch,
 } from "vue";
@@ -107,7 +108,7 @@ const props = withDefaults(defineProps<Props>(), {
     offset: 70,
     spy: true,
     theme: "light",
-    compact: false
+    compact: false,
 });
 
 const activeId = defineModel<string | null>({ default: null, type: String });
@@ -167,15 +168,23 @@ function onLinkClick(e: MouseEvent, item: MenuItem) {
 
     history.replaceState(null, "", item.href);
 }
+
+const id = useId();
 </script>
 
 <template>
     <nav
         class="g-sidebar-menu"
-        :class="[`g-sidebar-menu__${props.theme}`, { 'g-sidebar-menu--compact': props.compact }]"
-        :aria-label="title || 'Sidebar navigation'"
+        :class="[
+            `g-sidebar-menu__${props.theme}`,
+            { 'g-sidebar-menu--compact': props.compact },
+        ]"
+        v-bind="{
+            'aria-labelledby': title ? id : undefined,
+            'aria-label': title ? undefined : 'Sidebar Menu',
+        }"
     >
-        <h2 v-if="title" class="g-sidebar-menu__title">{{ title }}</h2>
+        <h2 v-if="title" :id="id" class="g-sidebar-menu__title">{{ title }}</h2>
         <div class="g-sidebar-menu__divider"></div>
         <div class="g-sidebar-menu__content" ref="content">
             <ul class="g-sidebar-menu__list">
