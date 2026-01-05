@@ -73,7 +73,7 @@ function buildInitialFilter(options: {
     };
 }
 
-export function createGTableFixture<T extends TableRow, C extends TableColumn<T>>(
+export function createGTableFixture<T extends TableRow, C extends TableColumn<T> = TableColumn<T>>(
     options: CreateGTableFixtureOptions<T, C>,
 ) {
     const sortField = ref<keyof T | undefined>(options.initialSortField);

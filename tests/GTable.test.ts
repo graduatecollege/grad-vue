@@ -6,7 +6,7 @@ import { mnt, testAccessibility } from "./test-utils";
 import { Locator, page } from "vitest/browser";
 
 interface TableEntry {
-    code: string;
+    key: string;
     name: string;
     abbr: string;
     collegeInName: boolean;
@@ -14,7 +14,7 @@ interface TableEntry {
 
 const columns: TableColumn<TableEntry>[] = [
     {
-        key: "code",
+        key: "key",
         label: "Code",
         sortable: true,
     },
@@ -46,49 +46,49 @@ const columns: TableColumn<TableEntry>[] = [
 
 const tableData: TableEntry[] = [
     {
-        code: "LT",
+        key: "LT",
         name: "Carle Illinois College of Medicine",
         abbr: "COM",
         collegeInName: true,
     },
     {
-        code: "KL",
+        key: "KL",
         name: "College of Agricultural, Consumer and Environmental Sciences (ACES)",
         abbr: "ACES",
         collegeInName: true,
     },
     {
-        code: "KY",
+        key: "KY",
         name: "College of Applied Health Sciences",
         abbr: "AHS",
         collegeInName: true,
     },
     {
-        code: "KN",
+        key: "KN",
         name: "College of Education",
         abbr: "EDUC",
         collegeInName: true,
     },
     {
-        code: "KM",
+        key: "KM",
         name: "College of Fine and Applied Arts",
         abbr: "FAA",
         collegeInName: true,
     },
     {
-        code: "KO",
+        key: "KO",
         name: "Gies College of Business",
         abbr: "GIES",
         collegeInName: true,
     },
     {
-        code: "KV",
+        key: "KV",
         name: "College of Liberal Arts and Sciences",
         abbr: "LAS",
         collegeInName: true,
     },
     {
-        code: "LL",
+        key: "LL",
         name: "School of Social Work",
         abbr: "SOCW",
         collegeInName: false,
@@ -96,7 +96,7 @@ const tableData: TableEntry[] = [
 ];
 
 const defaultFilter = {
-    code: undefined,
+    key: undefined,
     name: undefined,
     abbr: undefined,
     collegeInName: undefined,
@@ -294,19 +294,19 @@ describe("GTable", () => {
 
         it("passes accessibility tests with a different table configuration", async () => {
             interface SimpleRow {
-                id: string;
+                key: string;
                 value: string;
             }
 
             const { GTableFixture } = createGTableFixture<SimpleRow>({
                 label: "Simple",
                 columns: [
-                    { key: "id", label: "ID" },
+                    { key: "key", label: "ID" },
                     { key: "value", label: "Value" },
                 ],
                 data: [
-                    { id: "1", value: "One" },
-                    { id: "2", value: "Two" },
+                    { key: "1", value: "One" },
+                    { key: "2", value: "Two" },
                 ],
                 paginate: false,
             });

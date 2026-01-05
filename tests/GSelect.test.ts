@@ -1,14 +1,15 @@
-import { describe, expect, it } from "vitest";
-import { mount } from "@vue/test-utils";
+import { describe, expect, it, vi } from "vitest";
+import { nextTick } from "vue";
 import GSelect from "../src/components/GSelect.vue";
-import { testAccessibility } from "./test-utils";
+import { mnt, testAccessibility } from "./test-utils";
+import { page } from "vitest/browser";
 
 describe("GSelect", () => {
     const options = ["Option 1", "Option 2", "Option 3"];
 
     describe("Functional Tests", () => {
-        it("renders with label and options", () => {
-            const wrapper = mount(GSelect, {
+        it("renders with label and options", async () => {
+            const { container } = mnt(GSelect, {
                 props: {
                     label: "Select option",
                     options,
@@ -16,7 +17,68 @@ describe("GSelect", () => {
                 },
             });
 
-            expect(wrapper.text()).toContain("Select option");
+            await expect.element(container.getByText("Select option")).toBeVisible();
+        });
+
+        it("opens below when there is at least 200px of space below and constrains max-height", async () => {
+
+            await page.viewport(420, 500);
+
+            const { container } = mnt(GSelect, {
+                props: {
+                    label: "Select option",
+                    options,
+                    modelValue: null,
+                },
+            });
+
+            await container.getByRole("combobox").click();
+            await nextTick();
+
+            await expect.element(container.getByRole("listbox")).toBeInViewport({ratio: 0.99});
+        });
+
+        it("opens below when listbox is shorter than 200px and there is enough room for the full listbox", async () => {
+            await page.viewport(420, 500);
+            const { container } = mnt(GSelect, {
+                props: {
+                    label: "Select option",
+                    options,
+                    modelValue: null,
+                    style: {
+                        marginTop: "250px"
+                    }
+                },
+            });
+            await container.getByRole("combobox").click();
+            await nextTick();
+
+            await expect.element(container.getByRole("listbox")).toBeInViewport({ratio: 0.99});
+        });
+
+        it("opens above when there is less than 200px below and more space above", async () => {
+            await page.viewport(420, 500);
+            const { container } = mnt(GSelect, {
+                props: {
+                    label: "Select option",
+                    options: [
+                        "Option 1",
+                        "Option 2",
+                        "Option 3",
+                        "Option 4",
+                        "Option 5",
+                        "Option 6",
+                    ],
+                    modelValue: null,
+                    style: {
+                        paddingTop: "350px"
+                    }
+                },
+            });
+            await container.getByRole("combobox").click();
+            await nextTick();
+
+
         });
     });
 

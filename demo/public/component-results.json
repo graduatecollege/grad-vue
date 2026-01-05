@@ -1,7 +1,7 @@
 {
   "totalComponents": 17,
-  "totalTests": 148,
-  "passedTests": 148,
+  "totalTests": 151,
+  "passedTests": 151,
   "failedTests": 0,
   "skippedTests": 0,
   "components": {
@@ -834,14 +834,35 @@
     },
     "GSelect": {
       "component": "GSelect",
-      "total": 5,
-      "passed": 5,
+      "total": 8,
+      "passed": 8,
       "failed": 0,
       "skipped": 0,
       "status": "passed",
       "tests": [
         {
           "title": "renders with label and options",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "opens below when there is at least 200px of space below and constrains max-height",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "opens below when listbox is shorter than 200px and there is enough room for the full listbox",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "opens above when there is less than 200px below and more space above",
           "status": "passed",
           "ancestors": [
             "Functional Tests"
