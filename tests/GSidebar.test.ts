@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
 import GSidebar from "../src/components/GSidebar.vue";
 import { testAccessibility } from "./test-utils";
+import { h } from "vue";
 
 describe("GSidebar", () => {
     describe("Accessibility Tests", () => {
@@ -11,7 +12,11 @@ describe("GSidebar", () => {
                 { label: "Navigation" },
                 {
                     default:
-                        "<div class='g-dark-content'><h2>Sidebar content</h2><p>Paragraph in sidebar <a href='#'>With Link</a></p></div>",
+                        () => h("div", { class: "g-dark-content" }, [
+                            h("h2", {}, "Sidebar content"),
+                            h("p", {}, "Paragraph in sidebar "),
+                            h("a", { href: "#" }, "With Link"),
+                        ]),
                 },
             );
         });

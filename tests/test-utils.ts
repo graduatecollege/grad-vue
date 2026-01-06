@@ -1,12 +1,12 @@
-import { mount, RouterLinkStub, VueWrapper } from "@vue/test-utils";
 import axe from "axe-core";
 import { Component, createApp, h, reactive, Ref, watch } from "vue";
 import { Locator, page, userEvent } from "vitest/browser";
 import { mounts } from "./setup";
-import { describe, expect, it, vi } from "vitest";
+import { vi } from "vitest";
 
 /**
  * Run accessibility tests on a component using axe-core
+ *
  * @param component The Vue component or HTMLElement to test
  * @param props Optional props to pass to the component
  * @param slots Optional slots to pass to the component
@@ -19,22 +19,16 @@ export async function testAccessibility(
     teleport?: boolean,
 ): Promise<void> {
     let el: HTMLElement;
-    let wrapper: VueWrapper | null = null;
+    let wrapper: ReturnType<typeof mnt> | null = null;
     if (component instanceof HTMLElement) {
         el = component;
     } else {
-        wrapper = mount(component, {
+        wrapper = mnt(component, {
             props,
             slots,
-            attachTo: document.body,
-            global: {
-                stubs: {
-                    RouterLink: RouterLinkStub,
-                    teleport: teleport ?? false,
-                },
-            },
+            teleport,
         });
-        el = wrapper.element;
+        el = wrapper.container.element() as HTMLElement;
     }
 
     const results = await axe.run(el);
@@ -62,7 +56,14 @@ export async function testAccessibility(
 }
 
 /**
- * Pure Vue app creation and mounting without @vue/test-utils
+ * Mount a Vue component into Playwright.
+ *
+ * @param component - The Vue component to mount.
+ * @param options - Mounting options.
+ * @param options.props - Props to pass to the component.
+ * @param options.slots - Slots to pass to the component. These should be calls to `h` render functions.
+ * @param options.teleport - Whether the component under testing is teleporting its content.
+ * @param options.model - Model ref for the component.
  */
 export function mnt(
     component: Component,
@@ -139,6 +140,12 @@ export function mnt(
     };
 }
 
+/**
+ * Tabs through elements until the currently active element matches the specified text.
+ *
+ * @param {string} text - The text to match against the active element's visible content, aria-label, or aria-labelledby.
+ * @return {Promise<void>} A promise that resolves when an element with the specified text becomes active.
+ */
 export async function tabTo(text: string) {
     await vi.waitUntil(
         async () => {
