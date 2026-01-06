@@ -399,7 +399,15 @@ function componentTemplate(componentName: string): string {
     const baseClass = `g-${pascalToKebab(componentName)}`;
 
     return `<script setup lang=\"ts\">
+/**
+ * Documentation for the component that will be used in the demo website.
+ * 
+ * This can use **markdown** and \`code blocks\`.
+ */
 interface Props {
+   /**
+    * Accessible label 
+    */
     label?: string;
 }
 

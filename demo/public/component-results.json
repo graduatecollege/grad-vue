@@ -1,7 +1,7 @@
 {
-  "totalComponents": 17,
-  "totalTests": 151,
-  "passedTests": 151,
+  "totalComponents": 18,
+  "totalTests": 154,
+  "passedTests": 154,
   "failedTests": 0,
   "skippedTests": 0,
   "components": {
@@ -415,6 +415,37 @@
         },
         {
           "title": "after click should update aria description",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        }
+      ]
+    },
+    "GDetailList": {
+      "component": "GDetailList",
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed",
+      "tests": [
+        {
+          "title": "renders labels and values",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests (grid)",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests (vertical)",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
