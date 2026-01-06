@@ -52,6 +52,11 @@ const selectOptions = ref([
                 clearButton: {
                     type: 'boolean',
                     label: 'Show clear button'
+                },
+                compact: {
+                    type: 'boolean',
+                    label: 'Compact',
+                    default: false
                 }
             }"
         >

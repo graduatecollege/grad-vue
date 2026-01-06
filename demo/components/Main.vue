@@ -25,6 +25,7 @@ import GThreeWayToggleDemo from "~/components/demo/GThreeWayToggleDemo.vue";
 import GTableDemo from "~/components/demo/GTableDemo.vue";
 import GModalDemo from "~/components/demo/GModalDemo.vue";
 import GHamburgerMenuDemo from "~/components/demo/GHamburgerMenuDemo.vue";
+import GDetailListDemo from "~/components/demo/GDetailListDemo.vue";
 import { onMounted, provide } from "vue";
 import { useTemplateRef } from "#imports";
 
@@ -45,6 +46,7 @@ const demoComponents = [
     { label: "App Header", component: GAppHeaderDemo },
     { label: "Button", component: GButtonDemo },
     { label: "Clipboard", component: GClipboardDemo },
+    { label: "Detail List", component: GDetailListDemo },
     { label: "Hamburger Menu", component: GHamburgerMenuDemo },
     { label: "History Scroller", component: GHistoryScrollerDemo },
     { label: "Modal", component: GModalDemo },
@@ -68,9 +70,12 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="app" :class="{
-        'sidebar-collapsible': sidebar?.isCollapsible?.value
-    }">
+    <div
+        class="app"
+        :class="{
+            'sidebar-collapsible': sidebar?.isCollapsible?.value,
+        }"
+    >
         <div class="sidebar-toggle">
             <GHamburgerMenu />
         </div>

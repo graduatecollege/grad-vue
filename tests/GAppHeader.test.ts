@@ -14,7 +14,7 @@ describe("GAppHeader", () => {
             await testAccessibility(
                 GAppHeader,
                 {},
-                { default: "Application Title" },
+                { default: () => "Application Title" },
             );
         });
 
@@ -23,8 +23,8 @@ describe("GAppHeader", () => {
                 GAppHeader,
                 {},
                 {
-                    default: "App",
-                    navigation: "<nav><a href='/'>Home</a></nav>",
+                    default: () => "App",
+                    navigation: () => "<nav><a href='/'>Home</a></nav>",
                 },
             );
         });

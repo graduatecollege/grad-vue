@@ -17,6 +17,8 @@ import GModal from "../src/components/GModal.vue";
 import { useOverlayStack, useOverlayStackState } from "../src/grad-vue";
 import GOverlay from "../src/components/GOverlay.vue";
 import GHamburgerMenu from "../src/components/GHamburgerMenu.vue";
+import GDetailListItem from "../src/components/detail-list/GDetailListItem.vue";
+import GDetailList from "../src/components/GDetailList.vue";
 
 const sidebar = useSidebar();
 
@@ -313,7 +315,8 @@ const showModal = ref(false);
                             href: '#three-way-toggle',
                         },
                         { label: 'Modal', href: '#modal' },
-                    ]"
+                                            { label: 'Detail List', href: '#detail-list' },
+]"
                     v-model="activeId"
                 />
             </GSidebar>
@@ -477,6 +480,23 @@ const showModal = ref(false);
                     >
                         <p>Example content</p>
                     </GModal>
+                </section>
+                <section id="detail-list">
+                    <h2>Detail List</h2>
+                    <GDetailList label="Detail List">
+                        <GDetailListItem label="Major">Engineering</GDetailListItem>
+                        <GDetailListItem label="Minor">Computer Science</GDetailListItem>
+                        <GDetailListItem label="GPA">3.8</GDetailListItem>
+                        <GDetailListItem label="Honors">Yes</GDetailListItem>
+                        <GDetailListItem label="Activities">None</GDetailListItem>
+                    </GDetailList>
+                    <GDetailList label="Detail List" variant="vertical">
+                        <GDetailListItem label="Major">Engineering</GDetailListItem>
+                        <GDetailListItem label="Minor">Computer Science</GDetailListItem>
+                        <GDetailListItem label="GPA">3.8</GDetailListItem>
+                        <GDetailListItem label="Honors">Yes</GDetailListItem>
+                        <GDetailListItem label="Activities">None</GDetailListItem>
+                    </GDetailList>
                 </section>
             </main>
         </div>

@@ -18,6 +18,8 @@ import GTablePagination from "./components/table/GTablePagination.vue";
 import GTableBody from "./components/table/GTableBody.vue";
 import GModal from "./components/GModal.vue";
 import GHamburgerMenu from "./components/GHamburgerMenu.vue";
+import GDetailList from "./components/GDetailList.vue";
+import GDetailListItem from "./components/detail-list/GDetailListItem.vue";
 
 import "./css/main.css";
 import VGtooltip from "./directives/v-gtooltip.ts";
@@ -43,6 +45,8 @@ export {
     GModal,
     GOverlay,
     GHamburgerMenu,
+    GDetailList,
+    GDetailListItem,
 };
 
 // Export a plugin for installing all components
@@ -69,6 +73,8 @@ export default {
         app.component("GModal", GModal);
         app.component("GOverlay", GOverlay);
         app.component("GHamburgerMenu", GHamburgerMenu);
+        app.component("GDetailList", GDetailList);
+        app.component("GDetailListItem", GDetailListItem);
     },
 };
 
