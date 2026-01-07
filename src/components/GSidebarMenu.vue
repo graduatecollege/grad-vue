@@ -233,7 +233,6 @@ const id = useId();
     color: var(--g-surface-0);
     display: flex;
     flex-direction: column;
-    max-height: 100%;
 }
 .g-sidebar-menu__title {
     margin: 2rem 2rem 0.5rem;
@@ -251,7 +250,6 @@ const id = useId();
 }
 .g-sidebar-menu__content {
     margin: 0 0 0;
-    overflow-y: auto;
 }
 .g-sidebar-menu__list {
     list-style: none;

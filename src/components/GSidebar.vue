@@ -133,10 +133,10 @@ function handleEscapeKey(event: KeyboardEvent) {
     left: 0;
     /*noinspection CssUnresolvedCustomProperty*/
     top: var(--g-sidebar-top-offset);
-    /*noinspection CssUnresolvedCustomProperty*/
-    height: calc(100vh - var(--g-sidebar-top-offset));
+    bottom: 0;
     /*noinspection CssUnresolvedCustomProperty*/
     width: var(--g-sidebar-width, 300px);
+    overflow-y: auto;
 }
 .g-sidebar--open {
     transition: opacity 0.1s ease-out;
