@@ -444,7 +444,7 @@ onBeforeUnmount(() => {
                     type="text"
                     name="comboInput"
                     class="g-select-search-input"
-                    :class="{ 'g-select-clearable': showClearButton }"
+                    :class="{ 'g-select-clearable': clearButton }"
                     :value="
                         open
                             ? searchQuery
@@ -512,6 +512,7 @@ onBeforeUnmount(() => {
                 ref="comboRef"
                 :id="baseId"
                 class="g-select-combo-button g-select-control"
+                :class="{ 'g-select-clearable': clearButton }"
                 role="combobox"
                 :aria-controls="baseId + '-listbox'"
                 :aria-expanded="open ? 'true' : 'false'"
@@ -629,12 +630,13 @@ onBeforeUnmount(() => {
 <style scoped>
 .g-select-root {
     position: relative;
+    font-size: 1rem;
 }
 
 .g-select-label {
     font-weight: 700;
     color: var(--g-surface-900);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.5em;
 }
 
 .g-select-input-wrap {
@@ -642,18 +644,14 @@ onBeforeUnmount(() => {
 }
 
 .g-select-control {
-    font-size: 1.125rem;
     line-height: 1.5;
     cursor: pointer;
     background: var(--g-surface-0);
     color: var(--g-surface-900);
     border: 2px solid var(--g-primary-500);
     border-radius: var(--g-border-radius-m);
-    min-width: 120px;
     text-align: left;
     position: relative;
-    min-height: 1.5em;
-    box-sizing: content-box;
 
     &:focus-visible {
         background: var(--g-info-200);
@@ -673,14 +671,13 @@ onBeforeUnmount(() => {
 }
 
 .g-select-combo-button {
-    padding: 0.42rem 1.5rem 0.42rem 1rem;
 }
 
 .g-select-caret {
     position: absolute;
-    right: 0.5rem;
-    line-height: 1.5rem;
-    top: calc(50% - 0.55rem);
+    right: 0.5em;
+    line-height: 1.5em;
+    top: calc(50% - 0.55em);
     color: var(--g-accent-700);
     pointer-events: none;
 
@@ -718,8 +715,7 @@ onBeforeUnmount(() => {
 }
 
 .g-select-combo-option {
-    padding: 10px 12px 12px;
-    font-size: 1.125rem;
+    padding: 0.5em 0.5em;
     cursor: pointer;
     background: var(--g-surface-0);
     color: var(--g-surface-900);
@@ -742,36 +738,44 @@ onBeforeUnmount(() => {
 }
 
 .g-select-search-input {
-    width: 100%;
-    height: 100%;
     box-sizing: border-box;
-    font-size: 1.125rem;
+    display: block;
     font-family: var(--il-font-sans);
-    padding: 0.5rem 1rem 0.5rem 1rem;
     border: none;
+    box-sizing: border-box;
+    text-overflow: ellipsis;
+    font-size: 1em;
 
     &.g-select-clearable {
-        padding-right: 3rem; /* Space for clear button */
+        padding-right: 3.5em; /* Space for clear button */
     }
 }
 
+.g-select-search-input,
+.g-select-combo-button {
+    padding: 0.25em 2em 0.25em 0.75em;
+    line-height: 1.875em;
+    box-sizing: border-box;
+}
+.g-select-combo-button {
+    /* Padding + line height + padding + border */
+    min-height: calc(0.25em + 1.875em + 0.25em + 4px);
+    min-width: 8rem;
+}
+
 .g-select-compact {
-    .g-select-control {
-        font-size: 1rem;
-        min-height: 1.25em;
-    }
-    .g-select-search-input {
-        font-size: 1rem;
-        padding: 0.3rem 0.75rem 0.3rem 0.75rem;
-    }
-    .g-select-combo-option {
-        font-size: 1rem;
-        padding: 6px 8px 8px;
+    font-size: 0.875rem;
+}
+
+.g-select-search-input,
+.g-select-combo-button {
+    &.g-select-clearable {
+        padding-right: 3em; /* Space for clear button */
     }
 }
 
 .g-select-no-results {
-    padding: 10px 12px;
+    padding: 0.25em 1em;
     text-align: center;
     color: var(--g-surface-900);
     font-style: italic;
@@ -779,14 +783,14 @@ onBeforeUnmount(() => {
 
 .g-select-clear-btn {
     position: absolute;
-    right: 1.25rem;
-    top: calc(50% - 1.15rem);
+    right: 1.25em;
+    top: calc(50% - 1.15em);
     background: none;
     border: none;
     color: var(--g-accent-700);
-    font-size: 1.125rem;
+    font-size: 1.25em;
     cursor: pointer;
-    padding: 0.55rem 0.55rem 0.4rem;
+    padding: 0.6em 0.3em 0.4em;
     line-height: 1;
 
     &:hover {

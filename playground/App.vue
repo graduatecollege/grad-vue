@@ -276,7 +276,7 @@ const showModal = ref(false);
     <div class="playground">
         <GAppHeader title="grad-vue playground" illinois>
             <template #app-controls>
-                <GHamburgerMenu  />
+                <GHamburgerMenu />
             </template>
         </GAppHeader>
 
@@ -315,8 +315,8 @@ const showModal = ref(false);
                             href: '#three-way-toggle',
                         },
                         { label: 'Modal', href: '#modal' },
-                                            { label: 'Detail List', href: '#detail-list' },
-]"
+                        { label: 'Detail List', href: '#detail-list' },
+                    ]"
                     v-model="activeId"
                 />
             </GSidebar>
@@ -379,20 +379,23 @@ const showModal = ref(false);
                 </section>
                 <section id="select" style="max-width: 400px">
                     <h2>Select</h2>
-                    <GSelect
-                        v-model="selectValue"
-                        label="Select"
-                        clear-button
-                        :options="['foo', 'bar', 'baz']"
-                    />
-                    <GSelect
-                        v-model="selectValue"
-                        label="Select 2"
-                        clear-button
-                        :options="['foo', 'bar', 'baz']"
-                        searchable
-                        compact
-                    />
+                    <div style="display: flex">
+                        <GSelect
+                            v-model="selectValue"
+                            label="Select"
+                            clear-button
+                            :options="['foo', 'bar', 'baz']"
+                            compact
+                        />
+                        <GSelect
+                            v-model="selectValue"
+                            label="Select 2"
+                            clear-button
+                            :options="['foo', 'bar', 'baz']"
+                            searchable
+                            compact
+                        />
+                    </div>
                 </section>
 
                 <section id="select-buttons">
@@ -484,18 +487,30 @@ const showModal = ref(false);
                 <section id="detail-list">
                     <h2>Detail List</h2>
                     <GDetailList label="Detail List">
-                        <GDetailListItem label="Major">Engineering</GDetailListItem>
-                        <GDetailListItem label="Minor">Computer Science</GDetailListItem>
+                        <GDetailListItem label="Major"
+                            >Engineering</GDetailListItem
+                        >
+                        <GDetailListItem label="Minor"
+                            >Computer Science</GDetailListItem
+                        >
                         <GDetailListItem label="GPA">3.8</GDetailListItem>
                         <GDetailListItem label="Honors">Yes</GDetailListItem>
-                        <GDetailListItem label="Activities">None</GDetailListItem>
+                        <GDetailListItem label="Activities"
+                            >None</GDetailListItem
+                        >
                     </GDetailList>
                     <GDetailList label="Detail List" variant="vertical">
-                        <GDetailListItem label="Major">Engineering</GDetailListItem>
-                        <GDetailListItem label="Minor">Computer Science</GDetailListItem>
+                        <GDetailListItem label="Major"
+                            >Engineering</GDetailListItem
+                        >
+                        <GDetailListItem label="Minor"
+                            >Computer Science</GDetailListItem
+                        >
                         <GDetailListItem label="GPA">3.8</GDetailListItem>
                         <GDetailListItem label="Honors">Yes</GDetailListItem>
-                        <GDetailListItem label="Activities">None</GDetailListItem>
+                        <GDetailListItem label="Activities"
+                            >None</GDetailListItem
+                        >
                     </GDetailList>
                 </section>
             </main>
