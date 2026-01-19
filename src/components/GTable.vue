@@ -53,7 +53,7 @@ type Props = {
 
 const sortField = defineModel<keyof T>("sortField");
 const sortOrder = defineModel<1 | -1>("sortOrder");
-const filter = defineModel<Record<keyof T, any>>("filter", { required: true });
+const filter = defineModel<Partial<Record<keyof T, any>>>("filter", { required: true });
 
 const props = withDefaults(defineProps<Props>(), {});
 

@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 import App from './App.vue'
-import GradVue from '../src/grad-vue'
+import GradVue from '../src/plugin'
 
 // Use library styles directly from src during dev for fast iteration
 import '../src/css/main.css'

@@ -1,4 +1,4 @@
-import type { DirectiveBinding } from "vue";
+import type { Directive, DirectiveBinding } from "vue";
 import { ref, watchEffect } from "vue";
 import { calculatePopoverPosition } from "../compose/popoverPosition.ts";
 
@@ -55,7 +55,9 @@ function hideTooltip(tooltip: HTMLElement) {
     tooltip.style.opacity = "0";
 }
 
-const VGtooltip = {
+export type VGtooltipDirective = Directive<HTMLElement, string>;
+
+const VGtooltip: VGtooltipDirective = {
     mounted(el: HTMLElement, binding: DirectiveBinding) {
         const tooltip = ref<HTMLElement | null>(null);
         const isHovered = ref(false);
