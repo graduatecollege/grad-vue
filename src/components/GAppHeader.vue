@@ -65,7 +65,6 @@ const props = withDefaults(defineProps<Props>(), {
         <div class="g-app-header__title">
             <slot name="title"></slot>
         </div>
-        <div id="header-title"></div>
         <div class="g-app-header__app-controls-wrap">
             <slot name="app-controls" class="g-app-header__app-controls"></slot>
         </div>
