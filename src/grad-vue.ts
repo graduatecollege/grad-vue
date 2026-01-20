@@ -1,4 +1,3 @@
-
 import GButton from "./components/GButton.vue";
 import GTextInput from "./components/GTextInput.vue";
 import GPopover from "./components/GPopover.vue";
@@ -64,4 +63,14 @@ export {
 export { useActiveLinkContent } from "./compose/useActiveLink";
 export { useSidebar } from "./compose/useSidebar";
 export { useFiltering, filtersToQueryParams } from "./compose/useFiltering";
-export type { SelectColumnFilter, MultiSelectColumnFilter, TableColumnFilter, ToggleColumnFilter, TableColumn } from "./components/table/TableColumn";
+export type {
+    FilteringOptions,
+    UseFilteringReturn,
+} from "./compose/useFiltering";
+export type {
+    SelectColumnFilter,
+    MultiSelectColumnFilter,
+    TableColumnFilter,
+    ToggleColumnFilter,
+    TableColumn,
+} from "./components/table/TableColumn";

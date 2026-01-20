@@ -46,7 +46,7 @@ export function useFiltering<T extends Record<string, any>>(
 
     if (syncWith) {
         if (syncWith.value) {
-            const queryParams = unref(syncWith);
+            const queryParams = toValue(syncWith);
             Object.keys(filters).forEach((key) => {
                 if (queryParams[key] !== undefined) {
                     // Handle arrays as a comma-separated string
@@ -65,7 +65,7 @@ export function useFiltering<T extends Record<string, any>>(
         }
 
         watch(
-            () => values,
+            () => values.value,
             (newValues) => {
                 syncWith.value = filtersToQueryParams(newValues);
             },
