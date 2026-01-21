@@ -78,6 +78,7 @@ export function useFiltering<T extends Record<string, any>>(
             (filter) =>
                 filter !== undefined &&
                 filter !== null &&
+                filter !== false &&
                 (!Array.isArray(filter) || filter.length > 0),
         );
     });
