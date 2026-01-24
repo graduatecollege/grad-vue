@@ -18,6 +18,9 @@
         ".": {
             "import": "./dist/grad-vue.js"
         },
+        "./plugin": {
+            "import": "./dist/plugin.js"
+        },
         "./grad-vue.css": {
             "import": "./dist/grad-vue.css"
         }

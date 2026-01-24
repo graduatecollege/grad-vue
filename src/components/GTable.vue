@@ -30,7 +30,7 @@
 import GTableBody from "./table/GTableBody.vue";
 import GPopover from "./GPopover.vue";
 import { TableColumn, TableRow } from "./table/TableColumn.ts";
-import { onMounted, VNode, watch } from "vue";
+import { onMounted, useId, VNode, watch } from "vue";
 import GSelect from "./GSelect.vue";
 import { UseFilteringReturn } from "../compose/useFiltering.ts";
 import GButton from "./GButton.vue";
@@ -53,7 +53,9 @@ type Props = {
 
 const sortField = defineModel<keyof T>("sortField");
 const sortOrder = defineModel<1 | -1>("sortOrder");
-const filter = defineModel<Record<keyof T, any>>("filter", { required: true });
+const filter = defineModel<Partial<Record<keyof T, any>>>("filter", {
+    required: true,
+});
 
 const props = withDefaults(defineProps<Props>(), {});
 
@@ -105,6 +107,8 @@ watch(
     },
     { immediate: true },
 );
+
+const id = useId();
 </script>
 
 <template>
@@ -239,6 +243,31 @@ watch(
                                     searchable
                                     clear-button
                                 />
+                                <div v-else-if="col.filter.type === 'toggle'">
+                                    <div class="g-filter-toggle">
+                                        <input
+                                            type="checkbox"
+                                            v-model="filter[col.key]"
+                                            :id="`${id}-filter-${String(col.key)}`"
+                                            :aria-describedby="
+                                                col.filter.description
+                                                    ? `${id}-filter-description-${String(col.key)}`
+                                                    : undefined
+                                            "
+                                        />
+                                        <label
+                                            :for="`${id}-filter-${String(col.key)}`"
+                                            >{{ col.filter.label }}</label
+                                        >
+                                        <span
+                                            class="g-filter-description"
+                                            v-if="col.filter.description"
+                                            :id="`${id}-filter-description-${String(col.key)}`"
+                                        >
+                                            {{ col.filter.description }}
+                                        </span>
+                                    </div>
+                                </div>
                                 <fieldset
                                     v-else-if="
                                         col.filter.type === 'multi-select'
@@ -433,13 +462,19 @@ button.column-head:hover {
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.2rem;
+    gap: 0.5rem;
 
     .clear-multiselect-btn {
         margin-top: 0.5rem;
     }
 
-    :deep(div) {
+    legend {
+        font-size: 1.125rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+
+    div {
         display: flex;
         align-items: center;
         gap: 0.5rem;
@@ -449,14 +484,14 @@ button.column-head:hover {
         }
     }
 
-    :deep(input) {
+    input {
         width: 24px;
         height: 24px;
         accent-color: var(--g-primary-500);
         display: block;
     }
 
-    :deep(label) {
+    label {
         font-size: 1.125rem;
         flex: 1;
     }
@@ -467,6 +502,31 @@ button.column-head:hover {
     padding: 0;
     font-size: 1rem;
     line-height: 1.2;
+}
+
+.g-filter-toggle {
+    display: grid;
+    grid-template-areas:
+        "label input"
+        "description description";
+
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 0.5rem;
+
+    input {
+        width: 24px;
+        height: 24px;
+    }
+
+    label {
+        font-size: 1.125rem;
+        font-weight: bold;
+    }
+
+    .g-filter-description {
+        grid-area: description;
+    }
 }
 
 .clear-filters-wrap,

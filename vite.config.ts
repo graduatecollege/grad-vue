@@ -9,13 +9,20 @@ export default defineConfig({
     build: {
         sourcemap: true,
         lib: {
-            entry: resolve(__dirname, "src/grad-vue.ts"),
+            entry: [resolve(__dirname, "src/grad-vue.ts"), resolve(__dirname, "src/plugin.ts")],
             formats: ["es"],
-            fileName: "grad-vue",
+            fileName(format, name) {
+                return name + '.js';
+            },
             name: "grad-vue",
         },
         rollupOptions: {
-            external: ["vue", "@vueuse/core", "@vueuse/integrations", "focus-trap"],
+            external: [
+                "vue",
+                "@vueuse/core",
+                "@vueuse/integrations",
+                "focus-trap",
+            ],
         },
     },
 });

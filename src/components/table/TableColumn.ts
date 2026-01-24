@@ -20,10 +20,6 @@ export interface MultiSelectColumnFilter {
 export interface ToggleColumnFilter {
     type: 'toggle';
     label: string;
-    trueLabel?: string;
-    falseLabel?: string;
-    trueValue: any;
-    falseValue: any;
     description?: string;
 }
 

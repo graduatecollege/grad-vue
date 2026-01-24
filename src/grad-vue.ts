@@ -1,4 +1,3 @@
-import type { App } from "vue";
 import GButton from "./components/GButton.vue";
 import GTextInput from "./components/GTextInput.vue";
 import GPopover from "./components/GPopover.vue";
@@ -20,10 +19,11 @@ import GModal from "./components/GModal.vue";
 import GHamburgerMenu from "./components/GHamburgerMenu.vue";
 import GDetailList from "./components/GDetailList.vue";
 import GDetailListItem from "./components/detail-list/GDetailListItem.vue";
+export type { VGtooltipDirective } from "./directives/v-gtooltip.ts";
+import GOverlay from "./components/GOverlay.vue";
 
 import "./css/main.css";
 import VGtooltip from "./directives/v-gtooltip.ts";
-import GOverlay from "./components/GOverlay.vue";
 
 // Export individual components
 export {
@@ -42,40 +42,14 @@ export {
     GHistoryScroller,
     GThreeWayToggle,
     GTable,
+    GTableBody,
+    GTablePagination,
     GModal,
+    VGtooltip,
     GOverlay,
     GHamburgerMenu,
     GDetailList,
     GDetailListItem,
-};
-
-// Export a plugin for installing all components
-export default {
-    install(app: App) {
-        app.directive("gtooltip", VGtooltip)
-        app.component("GAppHeader", GAppHeader);
-        app.component("GButton", GButton);
-        app.component("GTextInput", GTextInput);
-        app.component("GPopover", GPopover);
-        app.component("GSelectButton", GSelectButton);
-        app.component("GProgress", GProgress);
-        app.component("GAlertDialog", GAlertDialog);
-        app.component("GSelect", GSelect);
-        app.component("GSearch", GSearch);
-        app.component("GSidebar", GSidebar);
-        app.component("GSidebarMenu", GSidebarMenu);
-        app.component("GClipboard", GClipboard);
-        app.component("GHistoryScroller", GHistoryScroller);
-        app.component("GThreeWayToggle", GThreeWayToggle);
-        app.component("GTable", GTable);
-        app.component("GTableBody", GTableBody);
-        app.component("GTablePagination", GTablePagination);
-        app.component("GModal", GModal);
-        app.component("GOverlay", GOverlay);
-        app.component("GHamburgerMenu", GHamburgerMenu);
-        app.component("GDetailList", GDetailList);
-        app.component("GDetailListItem", GDetailListItem);
-    },
 };
 
 export { calculatePopoverPosition } from "./compose/popoverPosition";
@@ -88,5 +62,15 @@ export {
 
 export { useActiveLinkContent } from "./compose/useActiveLink";
 export { useSidebar } from "./compose/useSidebar";
-export { useFiltering } from "./compose/useFiltering";
-export type { SelectColumnFilter, MultiSelectColumnFilter, TableColumnFilter, ToggleColumnFilter, TableColumn } from "./components/table/TableColumn";
+export { useFiltering, filtersToQueryParams } from "./compose/useFiltering";
+export type {
+    FilteringOptions,
+    UseFilteringReturn,
+} from "./compose/useFiltering";
+export type {
+    SelectColumnFilter,
+    MultiSelectColumnFilter,
+    TableColumnFilter,
+    ToggleColumnFilter,
+    TableColumn,
+} from "./components/table/TableColumn";

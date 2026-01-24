@@ -59,6 +59,7 @@ const handleTooltipHide = () => {
             class="g-clipboard-text-button"
         >
             <svg
+                class="g-clipboard-svg"
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 640 640"
                 height="1.125rem"
@@ -84,6 +85,10 @@ const handleTooltipHide = () => {
     border-radius: 4px;
     padding: 0.4rem;
     font-size: 14px;
+
+    .g-clipboard-svg {
+        display: block;
+    }
 
     &:hover {
         color: var(--g-primary-500);
