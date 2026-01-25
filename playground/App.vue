@@ -240,7 +240,7 @@ const selectedRows = ref<string[]>([]);
 
 const bulkActions = [
     { id: "delete", label: "Delete", theme: "danger" as const },
-    { id: "export", label: "Export", theme: "primary" as const },
+    { id: "export", label: "Export" },
     { id: "archive", label: "Archive", theme: "secondary" as const },
 ];
 

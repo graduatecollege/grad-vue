@@ -360,7 +360,7 @@ describe("GTable", () => {
             });
             await firstRowCheckbox.click();
 
-            const toolbar = container.getByRole("toolbar");
+            const toolbar = container.getByRole("list");
             await expect.element(toolbar).toBeVisible();
             await expect.element(container.getByText("1 row selected")).toBeVisible();
             await expect.element(container.getByRole("button", { name: "Delete" })).toBeVisible();

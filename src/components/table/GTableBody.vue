@@ -1,6 +1,7 @@
 <script setup lang="ts" generic="T extends TableRow, C extends TableColumn<T>">
 import { toRefs, type VNode } from "vue";
 import { TableColumn, TableRow } from "./TableColumn.ts";
+import { HTMLInputElement } from "happy-dom";
 
 type Props = {
     data: T[];
@@ -21,8 +22,8 @@ const emit = defineEmits<{
     (e: "toggle-row", rowKey: string): void;
 }>();
 
-function handleRowClick(event: MouseEvent) {
-    if (!props.rowClickable) {
+function handleRowClick(event: MouseEvent, rowKey: string) {
+    if (!props.rowClickable && !props.bulkSelectionEnabled) {
         return; // Do nothing if rows are not clickable
     }
     // Only trigger if not clicking on a link or button directly
@@ -33,10 +34,19 @@ function handleRowClick(event: MouseEvent) {
         "tr",
     ) as HTMLTableRowElement;
     if (row) {
-        const firstLink = row.querySelector("a[href]");
-        const link = firstLink?.getAttribute("href");
-        if (link) {
-            emit("row-click", link);
+        if (props.bulkSelectionEnabled) {
+            let checkbox = row.querySelector(
+                "input[type=checkbox]",
+            ) as HTMLInputElement | null;
+            if (checkbox) {
+                checkbox.click();
+            }
+        } else if (props.rowClickable) {
+            const firstLink = row.querySelector("a[href]");
+            const link = firstLink?.getAttribute("href");
+            if (link) {
+                emit("row-click", link);
+            }
         }
     }
 }
@@ -76,12 +86,13 @@ function handleCheckboxChange(rowKey: string) {
                         'efficient-table-row',
                         {
                             'row-striped': idx % 2 === 1,
-                            'row-clickable': rowClickable,
+                            'row-clickable':
+                                rowClickable || bulkSelectionEnabled,
                         },
                         rowClass ? rowClass(row) : undefined,
                     ]"
                     :aria-rowindex="startIndex + idx + 2"
-                    @click="handleRowClick"
+                    @click="handleRowClick($event, row.key)"
                 >
                     <td
                         v-if="bulkSelectionEnabled"
@@ -93,7 +104,7 @@ function handleCheckboxChange(rowKey: string) {
                             :checked="isRowSelected(row.key)"
                             @change="handleCheckboxChange(row.key)"
                             :aria-label="`Select row ${row.key}`"
-                            class="bulk-select-checkbox"
+                            class="g-bulk-select-checkbox"
                         />
                     </td>
                     <td
@@ -119,24 +130,20 @@ function handleCheckboxChange(rowKey: string) {
                     'efficient-table-row',
                     {
                         'row-striped': idx % 2 === 1,
-                        'row-clickable': rowClickable,
+                        'row-clickable': rowClickable || bulkSelectionEnabled,
                     },
                     rowClass ? rowClass(row) : undefined,
                 ]"
                 :aria-rowindex="startIndex + idx + 2"
-                @click="handleRowClick"
+                @click="handleRowClick($event, row.key)"
             >
-                <td
-                    v-if="bulkSelectionEnabled"
-                    class="td-checkbox"
-                    @click.stop
-                >
+                <td v-if="bulkSelectionEnabled" class="td-checkbox" @click.stop>
                     <input
                         type="checkbox"
                         :checked="isRowSelected(row.key)"
                         @change="handleCheckboxChange(row.key)"
                         :aria-label="`Select row ${row.key}`"
-                        class="bulk-select-checkbox"
+                        class="g-bulk-select-checkbox"
                     />
                 </td>
                 <td
@@ -182,7 +189,7 @@ function handleCheckboxChange(rowKey: string) {
         padding: 0.4rem;
     }
 
-    .bulk-select-checkbox {
+    .g-bulk-select-checkbox {
         width: 20px;
         height: 20px;
         cursor: pointer;
