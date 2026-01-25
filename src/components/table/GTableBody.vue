@@ -127,6 +127,19 @@ function handleCheckboxChange(rowKey: string) {
                 @click="handleRowClick"
             >
                 <td
+                    v-if="bulkSelectionEnabled"
+                    class="td-checkbox"
+                    @click.stop
+                >
+                    <input
+                        type="checkbox"
+                        :checked="isRowSelected(row.key)"
+                        @change="handleCheckboxChange(row.key)"
+                        :aria-label="`Select row ${row.key}`"
+                        class="bulk-select-checkbox"
+                    />
+                </td>
+                <td
                     v-for="col in columns"
                     :key="col.key"
                     :class="
