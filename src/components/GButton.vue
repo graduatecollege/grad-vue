@@ -64,8 +64,8 @@ const classes = computed(() => [
     {
         "g-btn--outlined": props.outlined,
         "g-btn--text": props.text,
-        "ilw-theme-blue": props.theme === "primary",
-        "ilw-theme-orange": props.theme === "accent",
+        "g-btn--primary": props.theme === "primary",
+        "g-btn--accent": props.theme === "accent",
         "g-btn-has-text": props.text,
     },
 ]);
@@ -128,15 +128,20 @@ const classes = computed(() => [
     }
 }
 
+.g-btn--primary {
+    --ilw-color--background: var(--g-primary-500);
+    --ilw-color--heading: var(--g-primary-text);
+}
+.g-btn--accent {
+    --ilw-color--background: var(--g-accent-500);
+    --ilw-color--heading: var(--g-surface-0);
+}
+
 .g-btn--small {
     font-size: 0.875rem;
     padding: 0.4em 0.75em 0.25em;
 
-    --ilw-color--orange--background: var(--il-altgeld);
-    --ilw-color--orange--control: var(--il-altgeld);
-    --ilw-color--blue--link-hover: var(--il-altgeld);
-    --ilw-color--blue--control-accent: var(--il-altgeld);
-    --ilw-color--blue--heading-link-hover: var(--il-altgeld);
+    --g-accent-500: var(--il-altgeld);
 
     &.g-btn-has-text {
         .fa,

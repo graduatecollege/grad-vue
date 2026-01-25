@@ -6,6 +6,7 @@ import type {
     TableRow,
 } from "../../src/components/table/TableColumn";
 import { useFiltering } from "../../src/compose/useFiltering";
+import type { BulkAction } from "../../src/components/GTable.vue";
 
 export type CreateGTableFixtureOptions<T extends TableRow, C extends TableColumn<T>> = {
     label?: string;
@@ -38,6 +39,8 @@ export type CreateGTableFixtureOptions<T extends TableRow, C extends TableColumn
     groupRender?: (groupValue: any, row: T) => VNode;
     rowClickable?: boolean;
     rowClass?: (row: T) => string | string[] | undefined;
+    bulkSelectionEnabled?: boolean;
+    bulkActions?: BulkAction[];
 };
 
 function defaultSortData<T extends Record<string, any>>(
@@ -80,6 +83,7 @@ export function createGTableFixture<T extends TableRow, C extends TableColumn<T>
     const sortOrder = ref<1 | -1 | undefined>(options.initialSortOrder);
     const start = ref(options.initialStart ?? 0);
     const pageSize = ref(options.initialPageSize ?? 5);
+    const selectedRows = ref<string[]>([]);
     const initialFilter = buildInitialFilter({
         initialFilter: options.initialFilter,
         filterKeys: options.filterKeys,
@@ -153,7 +157,13 @@ export function createGTableFixture<T extends TableRow, C extends TableColumn<T>
                         groupRender: options.groupRender,
                         rowClickable: options.rowClickable,
                         rowClass: options.rowClass,
-                        startIndex: start.value
+                        startIndex: start.value,
+                        bulkSelectionEnabled: options.bulkSelectionEnabled,
+                        bulkActions: options.bulkActions,
+                        selectedRows: selectedRows.value,
+                        "onUpdate:selectedRows": (value: string[]) => {
+                            selectedRows.value = value;
+                        },
                     },
                     {
                         pagination:
@@ -190,5 +200,6 @@ export function createGTableFixture<T extends TableRow, C extends TableColumn<T>
         start,
         pageSize,
         filters,
+        selectedRows,
     };
 }

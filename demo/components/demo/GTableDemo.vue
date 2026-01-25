@@ -5,6 +5,7 @@ import type { TableColumn } from "@illinois-grad/grad-vue";
 import { useFiltering } from "@illinois-grad/grad-vue";
 
 interface TableEntry {
+    key: string;
     code: string;
     name: string;
     collegeInName: boolean;
@@ -41,81 +42,97 @@ const columns = computed<TableColumn<TableEntry>[]>(() => {
 
 const tableData = ref<TableEntry[]>([
     {
+        key: "LT",
         code: "LT",
         name: "Carle Illinois College of Medicine",
         collegeInName: true,
     },
     {
+        key: "KL",
         code: "KL",
         name: "College of Agricultural, Consumer and Environmental Sciences (ACES)",
         collegeInName: true,
     },
     {
+        key: "KY",
         code: "KY",
         name: "College of Applied Health Sciences",
         collegeInName: true,
     },
     {
+        key: "KN",
         code: "KN",
         name: "College of Education",
         collegeInName: true,
     },
     {
+        key: "KR",
         code: "KR",
         name: "College of Fine and Applied Arts",
         collegeInName: true,
     },
     {
+        key: "KU",
         code: "KU",
         name: "College of Law",
         collegeInName: true,
     },
     {
+        key: "KV",
         code: "KV",
         name: "College of Liberal Arts and Sciences",
         collegeInName: true,
     },
     {
+        key: "KT",
         code: "KT",
         name: "College of Media",
         collegeInName: true,
     },
     {
+        key: "LC",
         code: "LC",
         name: "College of Veterinary Medicine",
         collegeInName: true,
     },
     {
+        key: "KW",
         code: "KW",
         name: "Division of Exploratory Studies",
         collegeInName: false,
     },
     {
+        key: "KM",
         code: "KM",
         name: "Gies College of Business",
         collegeInName: true,
     },
     {
+        key: "KS",
         code: "KS",
         name: "Graduate College",
         collegeInName: true,
     },
     {
+        key: "KP",
         code: "KP",
         name: "Grainger College of Engineering",
         collegeInName: true,
     },
     {
+        key: "LP",
         code: "LP",
         name: "School of Information Sciences",
         collegeInName: false,
     },
     {
+        key: "LG",
         code: "LG",
         name: "School of Labor and Employment Relations",
         collegeInName: false,
     },
     {
+        key: "LL",
         code: "LL",
         name: "School of Social Work",
         collegeInName: false,
@@ -131,10 +148,23 @@ const filtering = useFiltering({
 
 const { filters, isFiltered, clearFilters } = filtering;
 
-const sortField = ref<string | undefined>(undefined);
+const sortField = ref<keyof TableEntry | undefined>(undefined);
 const sortOrder = ref<1 | -1 | undefined>(undefined);
 const start = ref(0);
 const pageSize = ref(5);
+const selectedRows = ref<string[]>([]);
+
+const bulkActions = [
+    { id: "delete", label: "Delete", theme: "danger" as const },
+    { id: "export", label: "Export" },
+    { id: "archive", label: "Archive", theme: "secondary" as const },
+];
+
+function handleBulkAction(actionId: string, selectedKeys: string[]) {
+    console.log(`Bulk action "${actionId}" on rows:`, selectedKeys);
+    // In a real app, you would perform the action here
+    alert(`Action "${actionId}" performed on ${selectedKeys.length} row(s)`);
+}
 
 const filteredData = computed(() => {
     let data = [...tableData.value];
@@ -179,36 +209,84 @@ const computedData = computed(() => {
                 label: {
                     type: 'string',
                     label: 'Accessible label',
-                    default: 'Colleges'
-                }
+                    default: 'Colleges',
+                },
+                bulkSelectionEnabled: {
+                    type: 'boolean',
+                    label: 'Enable bulk selection',
+                    default: false,
+                },
             }"
         >
-            <template #docs><p>A data table component with support for grouping, sorting, filtering, and pagination.</p>
-<p>A heavy focus has been on performance. The table body doesn&#39;t use any
-Vue components, it&#39;s pure render functions. We&#39;ve used it with
-4000 rows and 14 columns loaded without issues.</p>
-<p>This is a bit complicated to use, so an example has been omitted here.
-Instead, look at the source for this demo: <a href="https://github.com/graduatecollege/grad-vue/blob/main/demo/components/demo/GTableDemo.vue">GTable Demo Source</a>.</p>
-<p>Here are some of the key points.</p>
-<p>Table content is provided with:</p>
-<ul>
-<li><code>columns</code> configuration using the <code>TableColumn</code> type.<ul>
-<li>At minimum the configuration must include <code>key</code> for which field of the data
-objects to use, and <code>label</code> for the column header.</li>
-<li><code>sortable: true</code> makes the column sortable.</li>
-<li><code>filter</code> can be used to provide a <code>TableColumnFilter</code> configuration.</li>
-<li><code>display</code> accepts a custom render function for the column data.</li>
-<li><code>trClass</code> and <code>tdClass</code> can be used to provide custom classes for table rows and cells.</li>
-</ul>
-</li>
-<li><code>data</code> array with objects containing fields for the columns.</li>
-</ul>
-<p>Rows can be made clickable with <code>row-clickable</code>. In this case, one of the
-cells must contain a link. Clicking a row will emit a <code>row-click</code> event
-with the link <code>href</code> from the first link in the row.</p>
-<p>Grouping can be enabled by passing a column key to <code>groupBy</code>.</p>
-</template>
+            <template #docs
+                ><p>
+                    A data table component with support for grouping, sorting,
+                    filtering, and pagination.
+                </p>
+                <p>
+                    A heavy focus has been on performance. The table body
+                    doesn&#39;t use any Vue components, it&#39;s pure render
+                    functions. We&#39;ve used it with 4000 rows and 14 columns
+                    loaded without issues.
+                </p>
+                <p>
+                    This is a bit complicated to use, so an example has been
+                    omitted here. Instead, look at the source for this demo:
+                    <a
+                        href="https://github.com/graduatecollege/grad-vue/blob/main/demo/components/demo/GTableDemo.vue"
+                        >GTable Demo Source</a
+                    >.
+                </p>
+                <p>Here are some of the key points.</p>
+                <p>Table content is provided with:</p>
+                <ul>
+                    <li>
+                        <code>columns</code> configuration using the
+                        <code>TableColumn</code> type.
+                        <ul>
+                            <li>
+                                At minimum the configuration must include
+                                <code>key</code> for which field of the data
+                                objects to use, and <code>label</code> for the
+                                column header.
+                            </li>
+                            <li>
+                                <code>sortable: true</code> makes the column
+                                sortable.
+                            </li>
+                            <li>
+                                <code>filter</code> can be used to provide a
+                                <code>TableColumnFilter</code> configuration.
+                            </li>
+                            <li>
+                                <code>display</code> accepts a custom render
+                                function for the column data.
+                            </li>
+                            <li>
+                                <code>trClass</code> and
+                                <code>tdClass</code> can be used to provide
+                                custom classes for table rows and cells.
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <code>data</code> array with objects containing fields
+                        for the columns.
+                    </li>
+                </ul>
+                <p>
+                    Rows can be made clickable with <code>row-clickable</code>.
+                    In this case, one of the cells must contain a link. Clicking
+                    a row will emit a <code>row-click</code> event with the link
+                    <code>href</code> from the first link in the row.
+                </p>
+                <p>
+                    Grouping can be enabled by passing a column key to
+                    <code>groupBy</code>.
+                </p>
+            </template>
             <template #default="{ props }">
+                <!-- @vue-generic {TableEntry, TableColumn<TableEntry>} -->
                 <GTable
                     :label="props.label"
                     :data="computedData"
@@ -216,8 +294,13 @@ with the link <code>href</code> from the first link in the row.</p>
                     :filtering="filtering"
                     :filter="filters"
                     :result-count="filteredData.length"
+                    :bulk-selection-enabled="props.bulkSelectionEnabled"
+                    :bulk-actions="bulkActions"
+                    :start-index="start"
                     v-model:sort-field="sortField"
                     v-model:sort-order="sortOrder"
+                    v-model:selected-rows="selectedRows"
+                    @bulk-action="handleBulkAction"
                 >
                     <template #pagination>
                         <GTablePagination

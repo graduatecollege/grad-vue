@@ -236,6 +236,18 @@ const sortField = ref<keyof TableEntry | undefined>(undefined);
 const sortOrder = ref<1 | -1 | undefined>(undefined);
 const start = ref(0);
 const pageSize = ref(5);
+const selectedRows = ref<string[]>([]);
+
+const bulkActions = [
+    { id: "delete", label: "Delete", theme: "danger" as const },
+    { id: "export", label: "Export" },
+    { id: "archive", label: "Archive", theme: "secondary" as const },
+];
+
+function handleBulkAction(actionId: string, selectedKeys: string[]) {
+    console.log(`Bulk action "${actionId}" on rows:`, selectedKeys);
+    alert(`Action "${actionId}" performed on ${selectedKeys.length} row(s)`);
+}
 
 const filteredData = computed(() => {
     let data = [...tableData.value];
@@ -331,8 +343,12 @@ const showModal = ref(false);
                         :filter="filters"
                         :result-count="filteredData.length"
                         :start-index="start"
+                        :bulk-selection-enabled="true"
+                        :bulk-actions="bulkActions"
                         v-model:sort-field="sortField"
                         v-model:sort-order="sortOrder"
+                        v-model:selected-rows="selectedRows"
+                        @bulk-action="handleBulkAction"
                     >
                         <template #pagination>
                             <GTablePagination

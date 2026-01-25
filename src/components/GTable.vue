@@ -30,10 +30,33 @@
 import GTableBody from "./table/GTableBody.vue";
 import GPopover from "./GPopover.vue";
 import { TableColumn, TableRow } from "./table/TableColumn.ts";
-import { onMounted, useId, VNode, watch } from "vue";
+import {
+    computed,
+    onMounted,
+    ref,
+    useId,
+    useTemplateRef,
+    VNode,
+    watch,
+} from "vue";
 import GSelect from "./GSelect.vue";
 import { UseFilteringReturn } from "../compose/useFiltering.ts";
 import GButton from "./GButton.vue";
+
+export interface BulkAction {
+    /**
+     * Action identifier
+     */
+    id: string;
+    /**
+     * Action label
+     */
+    label: string;
+    /**
+     * Action theme/color
+     */
+    theme?: "primary" | "secondary" | "accent" | "danger";
+}
 
 type Props = {
     /**
@@ -49,6 +72,14 @@ type Props = {
     rowClickable?: boolean;
     rowClass?: (row: T) => string | string[] | undefined;
     startIndex: number;
+    /**
+     * Enable bulk selection with checkboxes
+     */
+    bulkSelectionEnabled?: boolean;
+    /**
+     * Array of actions to show in the sticky toolbar when rows are selected
+     */
+    bulkActions?: BulkAction[];
 };
 
 const sortField = defineModel<keyof T>("sortField");
@@ -56,11 +87,18 @@ const sortOrder = defineModel<1 | -1>("sortOrder");
 const filter = defineModel<Partial<Record<keyof T, any>>>("filter", {
     required: true,
 });
+const selectedRows = defineModel<string[]>("selectedRows", {
+    default: () => [],
+});
 
-const props = withDefaults(defineProps<Props>(), {});
+const props = withDefaults(defineProps<Props>(), {
+    bulkSelectionEnabled: false,
+    bulkActions: () => [],
+});
 
 const emit = defineEmits<{
     (e: "row-click", link: string): void;
+    (e: "bulk-action", actionId: string, selectedKeys: string[]): void;
 }>();
 
 function onSort(col: TableColumn<T>) {
@@ -82,7 +120,65 @@ function onSort(col: TableColumn<T>) {
 
 const { filters, filteredColumns, isFiltered, clearFilters } = props.filtering;
 
+// Bulk selection logic
+const allRowKeys = computed(() => props.data.map((row) => row.key));
+const selectedRowsOnPage = computed(() => {
+    return selectedRows.value.filter((key) => allRowKeys.value.includes(key));
+});
+const allSelected = computed(() => {
+    if (!props.bulkSelectionEnabled || props.data.length === 0) {
+        return false;
+    }
+    return selectedRowsOnPage.value.length === allRowKeys.value.length;
+});
+const someSelected = computed(() => {
+    if (!props.bulkSelectionEnabled || props.data.length === 0) {
+        return false;
+    }
+    return (
+        selectedRowsOnPage.value.length > 0 &&
+        selectedRowsOnPage.value.length < allRowKeys.value.length
+    );
+});
+
+function toggleAllRows() {
+    if (allSelected.value) {
+        // Deselect all rows on current page
+        selectedRows.value = selectedRows.value.filter(
+            (key) => !allRowKeys.value.includes(key),
+        );
+    } else {
+        // Select all rows on current page
+        const newSelected = new Set(selectedRows.value);
+        allRowKeys.value.forEach((key) => newSelected.add(key));
+        selectedRows.value = Array.from(newSelected);
+    }
+}
+
+function toggleRow(rowKey: string) {
+    if (selectedRows.value.includes(rowKey)) {
+        selectedRows.value = selectedRows.value.filter((key) => key !== rowKey);
+    } else {
+        selectedRows.value = [...selectedRows.value, rowKey];
+    }
+}
+
+function clickRow(link: string) {
+    emit("row-click", link);
+}
+
+function handleBulkAction(actionId: string) {
+    emit("bulk-action", actionId, selectedRows.value);
+}
+
+const id = useId();
+
 onMounted(() => {
+    if (props.rowClickable && props.bulkSelectionEnabled) {
+        console.warn(
+            "GTable: rowClickable and bulkSelectionEnabled cannot be used together. rowClickable will be ignored.",
+        );
+    }
     for (const col of props.columns) {
         if (col.filter && col.filter.type === "multi-select") {
             if (!Array.isArray(filter.value[col.key])) {
@@ -107,14 +203,12 @@ watch(
     },
     { immediate: true },
 );
-
-const id = useId();
 </script>
 
 <template>
-    <div class="table-outer-wrap">
-        <div class="table-controls">
-            <div class="clear-filters-wrap">
+    <div class="g-table-outer-wrap">
+        <div class="g-table-controls">
+            <div class="g-clear-filters-wrap">
                 <GButton
                     v-if="isFiltered"
                     outlined
@@ -133,23 +227,41 @@ const id = useId();
                             d="m37.84 32.94-7.63-7.63 7.63-7.63a3.24 3.24 0 0 0-4.58-4.58l-7.63 7.63L18 13.1a3.24 3.24 0 0 0-4.58 4.58L21 25.31l-7.62 7.63A3.24 3.24 0 1 0 18 37.52l7.63-7.63 7.63 7.63a3.24 3.24 0 0 0 4.58-4.58Z"
                         />
                     </svg>
-                    <span class="clear-filters-text"> Clear Filters </span>
+                    <span class="g-clear-filters-text"> Clear Filters </span>
                 </GButton>
             </div>
             <div class="pagination">
                 <slot name="pagination"></slot>
             </div>
-            <span class="result-count"
+            <span class="g-result-count"
                 >{{ props.resultCount || data.length }} results</span
             >
         </div>
         <table
-            class="table"
+            class="g-table"
             :aria-label="label"
             :aria-rowcount="props.resultCount || data.length"
         >
-            <thead class="table-head">
+            <thead class="g-table-head">
                 <tr aria-rowindex="1">
+                    <th
+                        v-if="bulkSelectionEnabled"
+                        scope="col"
+                        class="g-th g-th-checkbox"
+                    >
+                        <input
+                            type="checkbox"
+                            :checked="allSelected"
+                            :indeterminate="someSelected"
+                            @change="toggleAllRows"
+                            :aria-label="
+                                allSelected
+                                    ? 'Deselect all rows'
+                                    : 'Select all rows'
+                            "
+                            class="g-bulk-select-checkbox"
+                        />
+                    </th>
                     <th
                         v-for="col in columns"
                         :key="col.key"
@@ -161,7 +273,7 @@ const id = useId();
                                 : 'none'
                         "
                         :class="[
-                            'th',
+                            'g-th',
                             { sorted: sortField === col.key },
                             { filtered: filteredColumns[col.key] },
                         ]"
@@ -171,7 +283,7 @@ const id = useId();
                             <button
                                 v-if="col.sortable"
                                 type="button"
-                                class="column-head"
+                                class="g-column-head"
                                 @click="onSort(col)"
                             >
                                 {{ col.label }}
@@ -201,7 +313,7 @@ const id = useId();
                                     </svg>
                                 </span>
                             </button>
-                            <span v-else class="column-head">{{
+                            <span v-else class="g-column-head">{{
                                 col.label
                             }}</span>
                             <GPopover v-if="col.filter">
@@ -213,7 +325,7 @@ const id = useId();
                                                 ? 'Column Filtered'
                                                 : 'Filter Column'
                                         "
-                                        class="filter-btn"
+                                        class="g-filter-btn"
                                         :class="{
                                             'g-active':
                                                 filteredColumns[col.key],
@@ -238,7 +350,7 @@ const id = useId();
                                     v-if="col.filter.type === 'select'"
                                     v-model="filter[col.key]"
                                     :options="col.filter.options"
-                                    class="filter-select"
+                                    class="g-filter-select"
                                     label="Filter select"
                                     searchable
                                     clear-button
@@ -317,20 +429,47 @@ const id = useId();
                 :columns="columns"
                 :group-by="groupBy"
                 :group-render="groupRender"
-                :row-clickable="props.rowClickable"
-                :row-class="props.rowClass as any"
+                :row-clickable="rowClickable"
+                :row-class="rowClass as any"
                 :start-index="startIndex"
-                @row-click="emit('row-click', $event)"
+                :bulk-selection-enabled="bulkSelectionEnabled"
+                :selected-rows="selectedRows"
+                @row-click="clickRow"
+                @toggle-row="toggleRow"
             />
         </table>
+        <div
+            v-if="bulkSelectionEnabled && selectedRows.length > 0"
+            class="g-bulk-actions-toolbar"
+        >
+            <span class="g-selected-count"
+                >{{ selectedRows.length }} row{{
+                    selectedRows.length === 1 ? "" : "s"
+                }}
+                selected</span
+            >
+            <ul class="g-bulk-actions">
+                <li v-for="action in bulkActions" :key="action.id">
+                    <GButton
+                        :theme="action.theme || 'accent'"
+                        @click="handleBulkAction(action.id)"
+                        size="small"
+                    >
+                        {{ action.label }} {{ selectedRows.length }} row{{
+                            selectedRows.length === 1 ? "" : "s"
+                        }}
+                    </GButton>
+                </li>
+            </ul>
+        </div>
     </div>
 </template>
 
 <style scoped>
-.table-outer-wrap {
+.g-table-outer-wrap {
 }
 
-.table-controls {
+.g-table-controls {
     height: 40px;
     position: sticky;
     display: flex;
@@ -339,13 +478,13 @@ const id = useId();
     padding: 2px 6px;
 }
 
-.table-head {
+.g-table-head {
     background: var(--g-surface-0);
     position: sticky;
     top: 40px;
 }
 
-.th {
+.g-th {
     text-align: left;
     padding: 0.5rem 0.2rem;
     border: 0;
@@ -356,7 +495,7 @@ const id = useId();
     }
 
     &.filtered {
-        .filter-btn {
+        .g-filter-btn {
             color: var(--ilw-color--link-hover);
         }
     }
@@ -366,7 +505,7 @@ const id = useId();
     }
 }
 
-.column-head {
+.g-column-head {
     color: currentColor;
     position: relative;
     height: 2rem;
@@ -385,21 +524,21 @@ const id = useId();
     }
 }
 
-button.column-head {
+button.g-column-head {
     cursor: pointer;
 }
 
-button.column-head:hover {
+button.g-column-head:hover {
     text-decoration: underline;
     color: var(--ilw-color--link-hover);
 }
 
-.table {
+.g-table {
     border-spacing: 0;
     min-width: 100%;
 }
 
-.filter-btn {
+.g-filter-btn {
     border: none;
     background: transparent;
     border-radius: 50%;
@@ -425,12 +564,12 @@ button.column-head:hover {
     }
 }
 
-.clear-filters-text {
+.g-clear-filters-text {
     white-space: nowrap;
 }
 
 @media screen and (max-width: 600px) {
-    .clear-filters-text {
+    .g-clear-filters-text {
         opacity: 0;
         width: 1px;
         height: 1px;
@@ -438,11 +577,11 @@ button.column-head:hover {
     }
 }
 
-.filter-select {
+.g-filter-select {
     min-width: 200px;
 }
 
-.table-controls {
+.g-table-controls {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -450,7 +589,7 @@ button.column-head:hover {
     padding: 0.2rem 1rem;
     background: var(--g-surface-150);
 
-    .result-count {
+    .g-result-count {
         font-size: 1rem;
         line-height: 1.2;
     }
@@ -529,7 +668,59 @@ button.column-head:hover {
     }
 }
 
-.clear-filters-wrap,
-.result-count {
+.g-clear-filters-wrap,
+.g-result-count {
+}
+
+/* Bulk selection styles */
+.g-th-checkbox {
+    width: 50px;
+    text-align: center;
+}
+
+.g-bulk-select-checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--g-primary-500);
+}
+
+.g-bulk-actions-toolbar {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--g-primary-500);
+    color: var(--g-primary-text);
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 1;
+
+    ul {
+        display: flex;
+        gap: 1rem;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    li {
+        margin: 0;
+    }
+}
+
+.g-selected-count {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.g-bulk-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
 }
 </style>
