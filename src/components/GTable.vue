@@ -30,10 +30,25 @@
 import GTableBody from "./table/GTableBody.vue";
 import GPopover from "./GPopover.vue";
 import { TableColumn, TableRow } from "./table/TableColumn.ts";
-import { onMounted, useId, VNode, watch } from "vue";
+import { computed, onMounted, useId, VNode, watch } from "vue";
 import GSelect from "./GSelect.vue";
 import { UseFilteringReturn } from "../compose/useFiltering.ts";
 import GButton from "./GButton.vue";
+
+export interface BulkAction {
+    /**
+     * Action identifier
+     */
+    id: string;
+    /**
+     * Action label
+     */
+    label: string;
+    /**
+     * Action theme/color
+     */
+    theme?: "primary" | "secondary" | "accent" | "danger";
+}
 
 type Props = {
     /**
@@ -49,6 +64,14 @@ type Props = {
     rowClickable?: boolean;
     rowClass?: (row: T) => string | string[] | undefined;
     startIndex: number;
+    /**
+     * Enable bulk selection with checkboxes
+     */
+    bulkSelectionEnabled?: boolean;
+    /**
+     * Array of actions to show in the sticky toolbar when rows are selected
+     */
+    bulkActions?: BulkAction[];
 };
 
 const sortField = defineModel<keyof T>("sortField");
@@ -56,11 +79,18 @@ const sortOrder = defineModel<1 | -1>("sortOrder");
 const filter = defineModel<Partial<Record<keyof T, any>>>("filter", {
     required: true,
 });
+const selectedRows = defineModel<string[]>("selectedRows", {
+    default: () => [],
+});
 
-const props = withDefaults(defineProps<Props>(), {});
+const props = withDefaults(defineProps<Props>(), {
+    bulkSelectionEnabled: false,
+    bulkActions: () => [],
+});
 
 const emit = defineEmits<{
     (e: "row-click", link: string): void;
+    (e: "bulk-action", actionId: string, selectedKeys: string[]): void;
 }>();
 
 function onSort(col: TableColumn<T>) {
@@ -81,6 +111,52 @@ function onSort(col: TableColumn<T>) {
 }
 
 const { filters, filteredColumns, isFiltered, clearFilters } = props.filtering;
+
+// Bulk selection logic
+const allRowKeys = computed(() => props.data.map((row) => row.key));
+const allSelected = computed(() => {
+    if (!props.bulkSelectionEnabled || props.data.length === 0) {
+        return false;
+    }
+    return allRowKeys.value.every((key) => selectedRows.value.includes(key));
+});
+const someSelected = computed(() => {
+    if (!props.bulkSelectionEnabled || props.data.length === 0) {
+        return false;
+    }
+    return (
+        selectedRows.value.some((key) => allRowKeys.value.includes(key)) &&
+        !allSelected.value
+    );
+});
+
+function toggleAllRows() {
+    if (allSelected.value) {
+        // Deselect all rows on current page
+        selectedRows.value = selectedRows.value.filter(
+            (key) => !allRowKeys.value.includes(key),
+        );
+    } else {
+        // Select all rows on current page
+        const newSelected = new Set(selectedRows.value);
+        allRowKeys.value.forEach((key) => newSelected.add(key));
+        selectedRows.value = Array.from(newSelected);
+    }
+}
+
+function toggleRow(rowKey: string) {
+    if (selectedRows.value.includes(rowKey)) {
+        selectedRows.value = selectedRows.value.filter((key) => key !== rowKey);
+    } else {
+        selectedRows.value = [...selectedRows.value, rowKey];
+    }
+}
+
+function handleBulkAction(actionId: string) {
+    emit("bulk-action", actionId, selectedRows.value);
+}
+
+const id = useId();
 
 onMounted(() => {
     for (const col of props.columns) {
@@ -107,8 +183,6 @@ watch(
     },
     { immediate: true },
 );
-
-const id = useId();
 </script>
 
 <template>
@@ -150,6 +224,24 @@ const id = useId();
         >
             <thead class="table-head">
                 <tr aria-rowindex="1">
+                    <th
+                        v-if="bulkSelectionEnabled"
+                        scope="col"
+                        class="th th-checkbox"
+                    >
+                        <input
+                            type="checkbox"
+                            :checked="allSelected"
+                            :indeterminate="someSelected"
+                            @change="toggleAllRows"
+                            :aria-label="
+                                allSelected
+                                    ? 'Deselect all rows'
+                                    : 'Select all rows'
+                            "
+                            class="bulk-select-checkbox"
+                        />
+                    </th>
                     <th
                         v-for="col in columns"
                         :key="col.key"
@@ -320,9 +412,36 @@ const id = useId();
                 :row-clickable="props.rowClickable"
                 :row-class="props.rowClass as any"
                 :start-index="startIndex"
+                :bulk-selection-enabled="bulkSelectionEnabled"
+                :selected-rows="selectedRows"
                 @row-click="emit('row-click', $event)"
+                @toggle-row="toggleRow"
             />
         </table>
+        <!-- Sticky Actions Toolbar -->
+        <div
+            v-if="bulkSelectionEnabled && selectedRows.length > 0"
+            class="bulk-actions-toolbar"
+            role="toolbar"
+            :aria-label="`Actions for ${selectedRows.length} selected row${selectedRows.length === 1 ? '' : 's'}`"
+        >
+            <span class="selected-count"
+                >{{ selectedRows.length }} row{{
+                    selectedRows.length === 1 ? "" : "s"
+                }}
+                selected</span
+            >
+            <div class="bulk-actions">
+                <GButton
+                    v-for="action in bulkActions"
+                    :key="action.id"
+                    :theme="action.theme || 'primary'"
+                    @click="handleBulkAction(action.id)"
+                >
+                    {{ action.label }}
+                </GButton>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -531,5 +650,45 @@ button.column-head:hover {
 
 .clear-filters-wrap,
 .result-count {
+}
+
+/* Bulk selection styles */
+.th-checkbox {
+    width: 50px;
+    text-align: center;
+}
+
+.bulk-select-checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--g-primary-500);
+}
+
+.bulk-actions-toolbar {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--g-primary-500);
+    color: var(--g-primary-text);
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+}
+
+.selected-count {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.bulk-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
 }
 </style>

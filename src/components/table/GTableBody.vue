@@ -10,12 +10,15 @@ type Props = {
     rowClickable?: boolean;
     rowClass?: (row: T) => string | string[] | undefined;
     startIndex: number;
+    bulkSelectionEnabled?: boolean;
+    selectedRows?: string[];
 };
 
 const props = defineProps<Props>();
 
 const emit = defineEmits<{
     (e: "row-click", link: string): void;
+    (e: "toggle-row", rowKey: string): void;
 }>();
 
 function handleRowClick(event: MouseEvent) {
@@ -23,7 +26,7 @@ function handleRowClick(event: MouseEvent) {
         return; // Do nothing if rows are not clickable
     }
     // Only trigger if not clicking on a link or button directly
-    if ((event.target as HTMLElement).closest("a,button,[tabindex]")) {
+    if ((event.target as HTMLElement).closest("a,button,[tabindex],input")) {
         return;
     }
     const row = (event.target as HTMLElement).closest(
@@ -37,6 +40,14 @@ function handleRowClick(event: MouseEvent) {
         }
     }
 }
+
+function isRowSelected(rowKey: string): boolean {
+    return props.selectedRows?.includes(rowKey) ?? false;
+}
+
+function handleCheckboxChange(rowKey: string) {
+    emit("toggle-row", rowKey);
+}
 </script>
 
 <template>
@@ -47,6 +58,10 @@ function handleRowClick(event: MouseEvent) {
                     v-if="idx === 0 || row[groupBy] !== data[idx - 1][groupBy]"
                     :aria-rowindex="startIndex + idx + 2"
                 >
+                    <td
+                        v-if="bulkSelectionEnabled"
+                        class="table-group-checkbox"
+                    ></td>
                     <td :colspan="columns.length" class="table-group-row">
                         <template v-if="groupRender">
                             <component :is="groupRender(row[groupBy], row)" />
@@ -68,6 +83,19 @@ function handleRowClick(event: MouseEvent) {
                     :aria-rowindex="startIndex + idx + 2"
                     @click="handleRowClick"
                 >
+                    <td
+                        v-if="bulkSelectionEnabled"
+                        class="td-checkbox"
+                        @click.stop
+                    >
+                        <input
+                            type="checkbox"
+                            :checked="isRowSelected(row.key)"
+                            @change="handleCheckboxChange(row.key)"
+                            :aria-label="`Select row ${row.key}`"
+                            class="bulk-select-checkbox"
+                        />
+                    </td>
                     <td
                         v-for="col in columns"
                         :key="col.key"
@@ -128,6 +156,24 @@ function handleRowClick(event: MouseEvent) {
         padding: 1rem;
         font-size: 1.25rem;
         border-bottom: 1px solid var(--g-accent-500);
+    }
+
+    .table-group-checkbox {
+        width: 50px;
+        background: var(--g-surface-0);
+    }
+
+    .td-checkbox {
+        width: 50px;
+        text-align: center;
+        padding: 0.4rem;
+    }
+
+    .bulk-select-checkbox {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        accent-color: var(--g-primary-500);
     }
 }
 

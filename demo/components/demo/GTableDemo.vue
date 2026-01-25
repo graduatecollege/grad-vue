@@ -5,6 +5,7 @@ import type { TableColumn } from "@illinois-grad/grad-vue";
 import { useFiltering } from "@illinois-grad/grad-vue";
 
 interface TableEntry {
+    key: string;
     code: string;
     name: string;
     collegeInName: boolean;
@@ -41,81 +42,97 @@ const columns = computed<TableColumn<TableEntry>[]>(() => {
 
 const tableData = ref<TableEntry[]>([
     {
+        key: "LT",
         code: "LT",
         name: "Carle Illinois College of Medicine",
         collegeInName: true,
     },
     {
+        key: "KL",
         code: "KL",
         name: "College of Agricultural, Consumer and Environmental Sciences (ACES)",
         collegeInName: true,
     },
     {
+        key: "KY",
         code: "KY",
         name: "College of Applied Health Sciences",
         collegeInName: true,
     },
     {
+        key: "KN",
         code: "KN",
         name: "College of Education",
         collegeInName: true,
     },
     {
+        key: "KR",
         code: "KR",
         name: "College of Fine and Applied Arts",
         collegeInName: true,
     },
     {
+        key: "KU",
         code: "KU",
         name: "College of Law",
         collegeInName: true,
     },
     {
+        key: "KV",
         code: "KV",
         name: "College of Liberal Arts and Sciences",
         collegeInName: true,
     },
     {
+        key: "KT",
         code: "KT",
         name: "College of Media",
         collegeInName: true,
     },
     {
+        key: "LC",
         code: "LC",
         name: "College of Veterinary Medicine",
         collegeInName: true,
     },
     {
+        key: "KW",
         code: "KW",
         name: "Division of Exploratory Studies",
         collegeInName: false,
     },
     {
+        key: "KM",
         code: "KM",
         name: "Gies College of Business",
         collegeInName: true,
     },
     {
+        key: "KS",
         code: "KS",
         name: "Graduate College",
         collegeInName: true,
     },
     {
+        key: "KP",
         code: "KP",
         name: "Grainger College of Engineering",
         collegeInName: true,
     },
     {
+        key: "LP",
         code: "LP",
         name: "School of Information Sciences",
         collegeInName: false,
     },
     {
+        key: "LG",
         code: "LG",
         name: "School of Labor and Employment Relations",
         collegeInName: false,
     },
     {
+        key: "LL",
         code: "LL",
         name: "School of Social Work",
         collegeInName: false,
@@ -135,6 +152,19 @@ const sortField = ref<string | undefined>(undefined);
 const sortOrder = ref<1 | -1 | undefined>(undefined);
 const start = ref(0);
 const pageSize = ref(5);
+const selectedRows = ref<string[]>([]);
+
+const bulkActions = [
+    { id: "delete", label: "Delete", theme: "danger" as const },
+    { id: "export", label: "Export", theme: "primary" as const },
+    { id: "archive", label: "Archive", theme: "secondary" as const },
+];
+
+function handleBulkAction(actionId: string, selectedKeys: string[]) {
+    console.log(`Bulk action "${actionId}" on rows:`, selectedKeys);
+    // In a real app, you would perform the action here
+    alert(`Action "${actionId}" performed on ${selectedKeys.length} row(s)`);
+}
 
 const filteredData = computed(() => {
     let data = [...tableData.value];
@@ -180,6 +210,11 @@ const computedData = computed(() => {
                     type: 'string',
                     label: 'Accessible label',
                     default: 'Colleges'
+                },
+                bulkSelectionEnabled: {
+                    type: 'boolean',
+                    label: 'Enable bulk selection',
+                    default: true
                 }
             }"
         >
@@ -216,8 +251,12 @@ with the link <code>href</code> from the first link in the row.</p>
                     :filtering="filtering"
                     :filter="filters"
                     :result-count="filteredData.length"
+                    :bulk-selection-enabled="props.bulkSelectionEnabled"
+                    :bulk-actions="bulkActions"
                     v-model:sort-field="sortField"
                     v-model:sort-order="sortOrder"
+                    v-model:selected-rows="selectedRows"
+                    @bulk-action="handleBulkAction"
                 >
                     <template #pagination>
                         <GTablePagination
