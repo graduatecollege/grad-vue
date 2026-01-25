@@ -19,7 +19,7 @@ const props = defineProps<Props>();
 
 const emit = defineEmits<{
     (e: "row-click", link: string): void;
-    (e: "toggle-row", rowKey: string): void;
+    (e: "toggle-row", rowKey: string, shiftKey: boolean): void;
 }>();
 
 function handleRowClick(event: MouseEvent, rowKey: string) {
@@ -39,7 +39,8 @@ function handleRowClick(event: MouseEvent, rowKey: string) {
                 "input[type=checkbox]",
             ) as HTMLInputElement | null;
             if (checkbox) {
-                checkbox.click();
+                // Trigger the checkbox change with shift key info
+                handleCheckboxChange(rowKey, event.shiftKey);
             }
         } else if (props.rowClickable) {
             const firstLink = row.querySelector("a[href]");
@@ -55,8 +56,8 @@ function isRowSelected(rowKey: string): boolean {
     return props.selectedRows?.includes(rowKey) ?? false;
 }
 
-function handleCheckboxChange(rowKey: string) {
-    emit("toggle-row", rowKey);
+function handleCheckboxChange(rowKey: string, shiftKey: boolean = false) {
+    emit("toggle-row", rowKey, shiftKey);
 }
 </script>
 
@@ -102,7 +103,7 @@ function handleCheckboxChange(rowKey: string) {
                         <input
                             type="checkbox"
                             :checked="isRowSelected(row.key)"
-                            @change="handleCheckboxChange(row.key)"
+                            @change="(e) => handleCheckboxChange(row.key, (e as MouseEvent).shiftKey)"
                             :aria-label="`Select row ${row.key}`"
                             class="g-bulk-select-checkbox"
                         />
