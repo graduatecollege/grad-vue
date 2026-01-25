@@ -141,6 +141,8 @@ const someSelected = computed(() => {
     );
 });
 
+const lastClickedRowKey = ref<string | null>(null);
+
 function toggleAllRows() {
     if (allSelected.value) {
         // Deselect all rows on current page
@@ -155,12 +157,33 @@ function toggleAllRows() {
     }
 }
 
-function toggleRow(rowKey: string) {
-    if (selectedRows.value.includes(rowKey)) {
-        selectedRows.value = selectedRows.value.filter((key) => key !== rowKey);
+function toggleRow(rowKey: string, shiftKey: boolean = false) {
+    if (shiftKey && lastClickedRowKey.value) {
+        // Handle shift-click range selection
+        const lastIndex = allRowKeys.value.indexOf(lastClickedRowKey.value);
+        const currentIndex = allRowKeys.value.indexOf(rowKey);
+        
+        if (lastIndex !== -1 && currentIndex !== -1) {
+            const start = Math.min(lastIndex, currentIndex);
+            const end = Math.max(lastIndex, currentIndex);
+            const rowsInRange = allRowKeys.value.slice(start, end + 1);
+            
+            // Select all rows in the range
+            const newSelected = new Set(selectedRows.value);
+            rowsInRange.forEach((key) => newSelected.add(key));
+            selectedRows.value = Array.from(newSelected);
+        }
     } else {
-        selectedRows.value = [...selectedRows.value, rowKey];
+        // Normal toggle behavior
+        if (selectedRows.value.includes(rowKey)) {
+            selectedRows.value = selectedRows.value.filter((key) => key !== rowKey);
+        } else {
+            selectedRows.value = [...selectedRows.value, rowKey];
+        }
     }
+    
+    // Update last clicked row
+    lastClickedRowKey.value = rowKey;
 }
 
 function clickRow(link: string) {

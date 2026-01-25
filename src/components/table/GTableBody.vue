@@ -19,8 +19,20 @@ const props = defineProps<Props>();
 
 const emit = defineEmits<{
     (e: "row-click", link: string): void;
-    (e: "toggle-row", rowKey: string): void;
+    (e: "toggle-row", rowKey: string, shiftKey: boolean): void;
 }>();
+
+function handleMouseDown(event: MouseEvent, rowKey: string) {
+    // Prevent text selection when shift-clicking for bulk selection
+    // Only if bulk selection is enabled and shift is held and we're not on an input
+    if (
+        props.bulkSelectionEnabled &&
+        event.shiftKey &&
+        !(event.target as HTMLElement).closest("a,button,[tabindex],input")
+    ) {
+        event.preventDefault();
+    }
+}
 
 function handleRowClick(event: MouseEvent, rowKey: string) {
     if (!props.rowClickable && !props.bulkSelectionEnabled) {
@@ -39,7 +51,8 @@ function handleRowClick(event: MouseEvent, rowKey: string) {
                 "input[type=checkbox]",
             ) as HTMLInputElement | null;
             if (checkbox) {
-                checkbox.click();
+                // Trigger the checkbox change with shift key info
+                handleCheckboxChange(rowKey, event.shiftKey);
             }
         } else if (props.rowClickable) {
             const firstLink = row.querySelector("a[href]");
@@ -55,8 +68,8 @@ function isRowSelected(rowKey: string): boolean {
     return props.selectedRows?.includes(rowKey) ?? false;
 }
 
-function handleCheckboxChange(rowKey: string) {
-    emit("toggle-row", rowKey);
+function handleCheckboxChange(rowKey: string, shiftKey: boolean = false) {
+    emit("toggle-row", rowKey, shiftKey);
 }
 </script>
 
@@ -92,6 +105,7 @@ function handleCheckboxChange(rowKey: string) {
                         rowClass ? rowClass(row) : undefined,
                     ]"
                     :aria-rowindex="startIndex + idx + 2"
+                    @mousedown="handleMouseDown($event, row.key)"
                     @click="handleRowClick($event, row.key)"
                 >
                     <td
@@ -102,7 +116,7 @@ function handleCheckboxChange(rowKey: string) {
                         <input
                             type="checkbox"
                             :checked="isRowSelected(row.key)"
-                            @change="handleCheckboxChange(row.key)"
+                            @click="(e) => handleCheckboxChange(row.key, e.shiftKey)"
                             :aria-label="`Select row ${row.key}`"
                             class="g-bulk-select-checkbox"
                         />
@@ -135,13 +149,14 @@ function handleCheckboxChange(rowKey: string) {
                     rowClass ? rowClass(row) : undefined,
                 ]"
                 :aria-rowindex="startIndex + idx + 2"
+                @mousedown="handleMouseDown($event, row.key)"
                 @click="handleRowClick($event, row.key)"
             >
                 <td v-if="bulkSelectionEnabled" class="td-checkbox" @click.stop>
                     <input
                         type="checkbox"
                         :checked="isRowSelected(row.key)"
-                        @change="handleCheckboxChange(row.key)"
+                        @click="(e) => handleCheckboxChange(row.key, e.shiftKey)"
                         :aria-label="`Select row ${row.key}`"
                         class="g-bulk-select-checkbox"
                     />
