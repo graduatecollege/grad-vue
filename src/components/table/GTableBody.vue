@@ -22,6 +22,18 @@ const emit = defineEmits<{
     (e: "toggle-row", rowKey: string, shiftKey: boolean): void;
 }>();
 
+function handleMouseDown(event: MouseEvent, rowKey: string) {
+    // Prevent text selection when shift-clicking for bulk selection
+    // Only if bulk selection is enabled and shift is held and we're not on an input
+    if (
+        props.bulkSelectionEnabled &&
+        event.shiftKey &&
+        !(event.target as HTMLElement).closest("a,button,[tabindex],input")
+    ) {
+        event.preventDefault();
+    }
+}
+
 function handleRowClick(event: MouseEvent, rowKey: string) {
     if (!props.rowClickable && !props.bulkSelectionEnabled) {
         return; // Do nothing if rows are not clickable
@@ -41,11 +53,6 @@ function handleRowClick(event: MouseEvent, rowKey: string) {
             if (checkbox) {
                 // Trigger the checkbox change with shift key info
                 handleCheckboxChange(rowKey, event.shiftKey);
-                
-                // Clear any text selection that occurred during shift-click
-                if (event.shiftKey && window.getSelection) {
-                    window.getSelection()?.removeAllRanges();
-                }
             }
         } else if (props.rowClickable) {
             const firstLink = row.querySelector("a[href]");
@@ -98,6 +105,7 @@ function handleCheckboxChange(rowKey: string, shiftKey: boolean = false) {
                         rowClass ? rowClass(row) : undefined,
                     ]"
                     :aria-rowindex="startIndex + idx + 2"
+                    @mousedown="handleMouseDown($event, row.key)"
                     @click="handleRowClick($event, row.key)"
                 >
                     <td
@@ -141,6 +149,7 @@ function handleCheckboxChange(rowKey: string, shiftKey: boolean = false) {
                     rowClass ? rowClass(row) : undefined,
                 ]"
                 :aria-rowindex="startIndex + idx + 2"
+                @mousedown="handleMouseDown($event, row.key)"
                 @click="handleRowClick($event, row.key)"
             >
                 <td v-if="bulkSelectionEnabled" class="td-checkbox" @click.stop>
