@@ -114,19 +114,22 @@ const { filters, filteredColumns, isFiltered, clearFilters } = props.filtering;
 
 // Bulk selection logic
 const allRowKeys = computed(() => props.data.map((row) => row.key));
+const selectedRowsOnPage = computed(() => {
+    return selectedRows.value.filter((key) => allRowKeys.value.includes(key));
+});
 const allSelected = computed(() => {
     if (!props.bulkSelectionEnabled || props.data.length === 0) {
         return false;
     }
-    return allRowKeys.value.every((key) => selectedRows.value.includes(key));
+    return selectedRowsOnPage.value.length === allRowKeys.value.length;
 });
 const someSelected = computed(() => {
     if (!props.bulkSelectionEnabled || props.data.length === 0) {
         return false;
     }
     return (
-        selectedRows.value.some((key) => allRowKeys.value.includes(key)) &&
-        !allSelected.value
+        selectedRowsOnPage.value.length > 0 &&
+        selectedRowsOnPage.value.length < allRowKeys.value.length
     );
 });
 
