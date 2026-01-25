@@ -172,6 +172,11 @@ function toggleRow(rowKey: string, shiftKey: boolean = false) {
             const newSelected = new Set(selectedRows.value);
             rowsInRange.forEach((key) => newSelected.add(key));
             selectedRows.value = Array.from(newSelected);
+            
+            // Clear any text selection that occurred during shift-click
+            if (window.getSelection) {
+                window.getSelection()?.removeAllRanges();
+            }
         }
     } else {
         // Normal toggle behavior

@@ -41,6 +41,11 @@ function handleRowClick(event: MouseEvent, rowKey: string) {
             if (checkbox) {
                 // Trigger the checkbox change with shift key info
                 handleCheckboxChange(rowKey, event.shiftKey);
+                
+                // Clear any text selection that occurred during shift-click
+                if (event.shiftKey && window.getSelection) {
+                    window.getSelection()?.removeAllRanges();
+                }
             }
         } else if (props.rowClickable) {
             const firstLink = row.querySelector("a[href]");
