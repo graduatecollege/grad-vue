@@ -126,9 +126,9 @@ It receives the current item as <code>option</code>.</p>
 <span class="line"><span style="color:#800000">&#x3C;/script></span></span>
 <span class="line"><span style="color:#800000">&#x3C;template></span></span>
 <span class="line"><span style="color:#800000">    &#x3C;GSearch</span></span>
-<span class="line"><span style="color:#000000">        :</span><span style="color:#E50000">results</span><span style="color:#000000">=</span><span style="color:#000000">"</span><span style="color:#001080">searchResults</span><span style="color:#000000">"</span></span>
-<span class="line"><span style="color:#000000">        @</span><span style="color:#E50000">submit</span><span style="color:#000000">=</span><span style="color:#000000">"</span><span style="color:#001080">submit</span><span style="color:#000000">"</span></span>
-<span class="line"><span style="color:#000000">        @</span><span style="color:#E50000">select</span><span style="color:#000000">=</span><span style="color:#000000">"</span><span style="color:#001080">selected</span><span style="color:#000000">"</span><span style="color:#800000">></span></span>
+<span class="line"><span style="color:#E50000">        :results</span><span style="color:#000000">=</span><span style="color:#0000FF">"searchResults"</span></span>
+<span class="line"><span style="color:#E50000">        @submit</span><span style="color:#000000">=</span><span style="color:#0000FF">"submit"</span></span>
+<span class="line"><span style="color:#E50000">        @select</span><span style="color:#000000">=</span><span style="color:#0000FF">"selected"</span><span style="color:#800000">></span></span>
 <span class="line"><span style="color:#800000">    &#x3C;/GSearch></span></span>
 <span class="line"><span style="color:#800000">&#x3C;/template></span></span></code></pre>
 </figure>

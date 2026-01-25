@@ -209,82 +209,40 @@ const computedData = computed(() => {
                 label: {
                     type: 'string',
                     label: 'Accessible label',
-                    default: 'Colleges',
+                    default: 'Colleges'
                 },
                 bulkSelectionEnabled: {
                     type: 'boolean',
-                    label: 'Enable bulk selection',
-                    default: false,
-                },
+                    label: 'Enable bulk selection with checkboxes',
+                    default: false
+                }
             }"
         >
-            <template #docs
-                ><p>
-                    A data table component with support for grouping, sorting,
-                    filtering, and pagination.
-                </p>
-                <p>
-                    A heavy focus has been on performance. The table body
-                    doesn&#39;t use any Vue components, it&#39;s pure render
-                    functions. We&#39;ve used it with 4000 rows and 14 columns
-                    loaded without issues.
-                </p>
-                <p>
-                    This is a bit complicated to use, so an example has been
-                    omitted here. Instead, look at the source for this demo:
-                    <a
-                        href="https://github.com/graduatecollege/grad-vue/blob/main/demo/components/demo/GTableDemo.vue"
-                        >GTable Demo Source</a
-                    >.
-                </p>
-                <p>Here are some of the key points.</p>
-                <p>Table content is provided with:</p>
-                <ul>
-                    <li>
-                        <code>columns</code> configuration using the
-                        <code>TableColumn</code> type.
-                        <ul>
-                            <li>
-                                At minimum the configuration must include
-                                <code>key</code> for which field of the data
-                                objects to use, and <code>label</code> for the
-                                column header.
-                            </li>
-                            <li>
-                                <code>sortable: true</code> makes the column
-                                sortable.
-                            </li>
-                            <li>
-                                <code>filter</code> can be used to provide a
-                                <code>TableColumnFilter</code> configuration.
-                            </li>
-                            <li>
-                                <code>display</code> accepts a custom render
-                                function for the column data.
-                            </li>
-                            <li>
-                                <code>trClass</code> and
-                                <code>tdClass</code> can be used to provide
-                                custom classes for table rows and cells.
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <code>data</code> array with objects containing fields
-                        for the columns.
-                    </li>
-                </ul>
-                <p>
-                    Rows can be made clickable with <code>row-clickable</code>.
-                    In this case, one of the cells must contain a link. Clicking
-                    a row will emit a <code>row-click</code> event with the link
-                    <code>href</code> from the first link in the row.
-                </p>
-                <p>
-                    Grouping can be enabled by passing a column key to
-                    <code>groupBy</code>.
-                </p>
-            </template>
+            <template #docs><p>A data table component with support for grouping, sorting, filtering, and pagination.</p>
+<p>A heavy focus has been on performance. The table body doesn&#39;t use any
+Vue components, it&#39;s pure render functions. We&#39;ve used it with
+4000 rows and 14 columns loaded without issues.</p>
+<p>This is a bit complicated to use, so an example has been omitted here.
+Instead, look at the source for this demo: <a href="https://github.com/graduatecollege/grad-vue/blob/main/demo/components/demo/GTableDemo.vue">GTable Demo Source</a>.</p>
+<p>Here are some of the key points.</p>
+<p>Table content is provided with:</p>
+<ul>
+<li><code>columns</code> configuration using the <code>TableColumn</code> type.<ul>
+<li>At minimum the configuration must include <code>key</code> for which field of the data
+objects to use, and <code>label</code> for the column header.</li>
+<li><code>sortable: true</code> makes the column sortable.</li>
+<li><code>filter</code> can be used to provide a <code>TableColumnFilter</code> configuration.</li>
+<li><code>display</code> accepts a custom render function for the column data.</li>
+<li><code>trClass</code> and <code>tdClass</code> can be used to provide custom classes for table rows and cells.</li>
+</ul>
+</li>
+<li><code>data</code> array with objects containing fields for the columns.</li>
+</ul>
+<p>Rows can be made clickable with <code>row-clickable</code>. In this case, one of the
+cells must contain a link. Clicking a row will emit a <code>row-click</code> event
+with the link <code>href</code> from the first link in the row.</p>
+<p>Grouping can be enabled by passing a column key to <code>groupBy</code>.</p>
+</template>
             <template #default="{ props }">
                 <!-- @vue-generic {TableEntry, TableColumn<TableEntry>} -->
                 <GTable

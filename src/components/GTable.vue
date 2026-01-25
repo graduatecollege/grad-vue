@@ -76,9 +76,7 @@ type Props = {
      * Enable bulk selection with checkboxes
      */
     bulkSelectionEnabled?: boolean;
-    /**
-     * Array of actions to show in the sticky toolbar when rows are selected
-     */
+    // Array of actions to show in the sticky toolbar when rows are selected
     bulkActions?: BulkAction[];
 };
 

@@ -50,7 +50,7 @@ the label as the <code>aria-label</code>.</p>
 <span class="line"><span style="color:#E50000">    class</span><span style="color:#000000">=</span><span style="color:#0000FF">"history-scroller"</span><span style="color:#800000">></span></span>
 <span class="line"><span style="color:#800000">    &#x3C;template</span><span style="color:#000000"> #</span><span style="color:#E50000">default</span><span style="color:#000000">=</span><span style="color:#000000">"</span><span style="color:#000000">&lcub; </span><span style="color:#001080">entry</span><span style="color:#000000"> }</span><span style="color:#000000">"</span><span style="color:#800000">></span></span>
 <span class="line"><span style="color:#800000">        &#x3C;div</span><span style="color:#E50000"> class</span><span style="color:#000000">=</span><span style="color:#0000FF">"history-entry"</span><span style="color:#800000">></span></span>
-<span class="line"><span style="color:#000000">            This is history for: &lcub;&lcub; </span><span style="color:#001080">entry</span><span style="color:#000000">.</span><span style="color:#001080">id</span><span style="color:#000000"> }}</span></span>
+<span class="line"><span style="color:#000000">            This is history for: &lcub;&lcub; entry.id }}</span></span>
 <span class="line"><span style="color:#800000">        &#x3C;/div></span></span>
 <span class="line"><span style="color:#800000">    &#x3C;/template></span></span>
 <span class="line"><span style="color:#800000">&#x3C;/</span><span style="color:#267F99">GHistoryScroller</span><span style="color:#800000">></span></span></code></pre>

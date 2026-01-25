@@ -90,11 +90,11 @@ in-page navigation, and the matching menu item&#39;s <code>href</code> should be
 <span class="line"><span style="color:#800000">&#x3C;template></span></span>
 <span class="line"><span style="color:#800000">  &#x3C;GSidebar></span></span>
 <span class="line"><span style="color:#800000">      &#x3C;GSidebarMenu</span></span>
-<span class="line"><span style="color:#000000">          :</span><span style="color:#E50000">items</span><span style="color:#000000">=</span><span style="color:#000000">"</span><span style="color:#000000">[</span></span>
-<span class="line"><span style="color:#000000">              &lcub; </span><span style="color:#001080">label:</span><span style="color:#A31515"> 'Buttons'</span><span style="color:#000000">, </span><span style="color:#001080">href:</span><span style="color:#A31515"> '#buttons'</span><span style="color:#000000"> },</span></span>
-<span class="line"><span style="color:#000000">              &lcub; </span><span style="color:#001080">label:</span><span style="color:#A31515"> 'More Buttons'</span><span style="color:#000000">, </span><span style="color:#001080">href:</span><span style="color:#A31515"> '#more-buttons'</span><span style="color:#000000"> }</span></span>
-<span class="line"><span style="color:#000000">          ]</span><span style="color:#000000">"</span></span>
-<span class="line"><span style="color:#E50000">          v-model</span><span style="color:#000000">=</span><span style="color:#000000">"</span><span style="color:#001080">activeId</span><span style="color:#000000">"</span></span>
+<span class="line"><span style="color:#E50000">          :items</span><span style="color:#000000">=</span><span style="color:#0000FF">"[</span></span>
+<span class="line"><span style="color:#0000FF">              &lcub; label: 'Buttons', href: '#buttons' },</span></span>
+<span class="line"><span style="color:#0000FF">              &lcub; label: 'More Buttons', href: '#more-buttons' }</span></span>
+<span class="line"><span style="color:#0000FF">          ]"</span></span>
+<span class="line"><span style="color:#E50000">          v-model</span><span style="color:#000000">=</span><span style="color:#0000FF">"activeId"</span></span>
 <span class="line"><span style="color:#800000">      /></span></span>
 <span class="line"><span style="color:#800000">  &#x3C;/GSidebar></span></span>
 <span class="line"><span style="color:#800000">  &#x3C;main</span><span style="color:#E50000"> class</span><span style="color:#000000">=</span><span style="color:#0000FF">"main"</span><span style="color:#E50000"> ref</span><span style="color:#000000">=</span><span style="color:#0000FF">"main"</span><span style="color:#800000">></span></span>
