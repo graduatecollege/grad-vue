@@ -286,6 +286,157 @@ describe("GTable", () => {
             expect(getColumn(container, 0)).toEqual(["LT", "KL", "KY"]);
         })
     });
+    describe("Bulk Selection Tests", () => {
+        it("shows checkboxes when bulk selection is enabled", async () => {
+            const { GTableFixture } = createGTableFixture<TableEntry>({
+                label: "Colleges",
+                columns,
+                data: tableData,
+                initialFilter: defaultFilter,
+                initialPageSize: 3,
+                pageSizes: [3, 10, 50],
+                filterData: (data, filter) => {
+                    let filtered = [...data];
+                    for (let [key, val] of Object.entries(filter)) {
+                        if (val) {
+                            filtered = filtered.filter((item) =>
+                                val === "yes"
+                                    ? (item as any)[key]
+                                    : !(item as any)[key],
+                            );
+                        }
+                    }
+                    return filtered;
+                },
+                bulkSelectionEnabled: true,
+                bulkActions: [
+                    { id: "delete", label: "Delete", theme: "danger" as const },
+                ],
+            });
+            const { container } = mnt(GTableFixture);
+
+            const selectAllCheckbox = container.getByRole("checkbox", {
+                name: "Select all rows",
+            });
+            await expect.element(selectAllCheckbox).toBeVisible();
+
+            const rowCheckboxes = container.element().querySelectorAll('input[type="checkbox"][aria-label^="Select row"]');
+            expect(rowCheckboxes.length).toBe(3); // 3 rows on first page
+        });
+
+        it("selects a row when checkbox is clicked", async () => {
+            const { GTableFixture, selectedRows } = createGTableFixture<TableEntry>({
+                label: "Colleges",
+                columns,
+                data: tableData,
+                initialFilter: defaultFilter,
+                initialPageSize: 3,
+                pageSizes: [3, 10, 50],
+                filterData: (data, filter) => {
+                    let filtered = [...data];
+                    for (let [key, val] of Object.entries(filter)) {
+                        if (val) {
+                            filtered = filtered.filter((item) =>
+                                val === "yes"
+                                    ? (item as any)[key]
+                                    : !(item as any)[key],
+                            );
+                        }
+                    }
+                    return filtered;
+                },
+                bulkSelectionEnabled: true,
+                bulkActions: [
+                    { id: "delete", label: "Delete", theme: "danger" as const },
+                ],
+            });
+            const { container } = mnt(GTableFixture);
+
+            const firstRowCheckbox = container.getByRole("checkbox", {
+                name: "Select row LT",
+            });
+            await firstRowCheckbox.click();
+
+            expect(selectedRows.value).toContain("LT");
+        });
+
+        it("shows sticky toolbar when rows are selected", async () => {
+            const { GTableFixture } = createGTableFixture<TableEntry>({
+                label: "Colleges",
+                columns,
+                data: tableData,
+                initialFilter: defaultFilter,
+                initialPageSize: 3,
+                pageSizes: [3, 10, 50],
+                filterData: (data, filter) => {
+                    let filtered = [...data];
+                    for (let [key, val] of Object.entries(filter)) {
+                        if (val) {
+                            filtered = filtered.filter((item) =>
+                                val === "yes"
+                                    ? (item as any)[key]
+                                    : !(item as any)[key],
+                            );
+                        }
+                    }
+                    return filtered;
+                },
+                bulkSelectionEnabled: true,
+                bulkActions: [
+                    { id: "delete", label: "Delete", theme: "danger" as const },
+                    { id: "export", label: "Export", theme: "primary" as const },
+                ],
+            });
+            const { container } = mnt(GTableFixture);
+
+            const firstRowCheckbox = container.getByRole("checkbox", {
+                name: "Select row LT",
+            });
+            await firstRowCheckbox.click();
+
+            const toolbar = container.getByRole("toolbar");
+            await expect.element(toolbar).toBeVisible();
+            await expect.element(container.getByText("1 row selected")).toBeVisible();
+            await expect.element(container.getByRole("button", { name: "Delete" })).toBeVisible();
+            await expect.element(container.getByRole("button", { name: "Export" })).toBeVisible();
+        });
+
+        it("selects all rows when select all checkbox is clicked", async () => {
+            const { GTableFixture, selectedRows } = createGTableFixture<TableEntry>({
+                label: "Colleges",
+                columns,
+                data: tableData,
+                initialFilter: defaultFilter,
+                initialPageSize: 3,
+                pageSizes: [3, 10, 50],
+                filterData: (data, filter) => {
+                    let filtered = [...data];
+                    for (let [key, val] of Object.entries(filter)) {
+                        if (val) {
+                            filtered = filtered.filter((item) =>
+                                val === "yes"
+                                    ? (item as any)[key]
+                                    : !(item as any)[key],
+                            );
+                        }
+                    }
+                    return filtered;
+                },
+                bulkSelectionEnabled: true,
+                bulkActions: [
+                    { id: "delete", label: "Delete", theme: "danger" as const },
+                ],
+            });
+            const { container } = mnt(GTableFixture);
+
+            const selectAllCheckbox = container.getByRole("checkbox", {
+                name: "Select all rows",
+            });
+            await selectAllCheckbox.click();
+
+            expect(selectedRows.value).toEqual(["LT", "KL", "KY"]);
+        });
+    });
     describe("Accessibility Tests", () => {
         it("passes accessibility tests with default content", async () => {
             const { GTableFixture } = createCollegesTableFixture();
