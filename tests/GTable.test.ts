@@ -102,6 +102,20 @@ const defaultFilter = {
     collegeInName: undefined,
 };
 
+function filterCollegesData(data: TableEntry[], filter: Record<string, any>) {
+    let filtered = [...data];
+    for (let [key, val] of Object.entries(filter)) {
+        if (val) {
+            filtered = filtered.filter((item) =>
+                val === "yes"
+                    ? (item as any)[key]
+                    : !(item as any)[key],
+            );
+        }
+    }
+    return filtered;
+}
+
 function createCollegesTableFixture() {
     return createGTableFixture<TableEntry>({
         label: "Colleges",
@@ -110,19 +124,7 @@ function createCollegesTableFixture() {
         initialFilter: defaultFilter,
         initialPageSize: 3,
         pageSizes: [3, 10, 50],
-        filterData: (data, filter) => {
-            let filtered = [...data];
-            for (let [key, val] of Object.entries(filter)) {
-                if (val) {
-                    filtered = filtered.filter((item) =>
-                        val === "yes"
-                            ? (item as any)[key]
-                            : !(item as any)[key],
-                    );
-                }
-            }
-            return filtered;
-        },
+        filterData: filterCollegesData,
     });
 }
 
@@ -295,19 +297,7 @@ describe("GTable", () => {
                 initialFilter: defaultFilter,
                 initialPageSize: 3,
                 pageSizes: [3, 10, 50],
-                filterData: (data, filter) => {
-                    let filtered = [...data];
-                    for (let [key, val] of Object.entries(filter)) {
-                        if (val) {
-                            filtered = filtered.filter((item) =>
-                                val === "yes"
-                                    ? (item as any)[key]
-                                    : !(item as any)[key],
-                            );
-                        }
-                    }
-                    return filtered;
-                },
+                filterData: filterCollegesData,
                 bulkSelectionEnabled: true,
                 bulkActions: [
                     { id: "delete", label: "Delete", theme: "danger" as const },
@@ -332,19 +322,7 @@ describe("GTable", () => {
                 initialFilter: defaultFilter,
                 initialPageSize: 3,
                 pageSizes: [3, 10, 50],
-                filterData: (data, filter) => {
-                    let filtered = [...data];
-                    for (let [key, val] of Object.entries(filter)) {
-                        if (val) {
-                            filtered = filtered.filter((item) =>
-                                val === "yes"
-                                    ? (item as any)[key]
-                                    : !(item as any)[key],
-                            );
-                        }
-                    }
-                    return filtered;
-                },
+                filterData: filterCollegesData,
                 bulkSelectionEnabled: true,
                 bulkActions: [
                     { id: "delete", label: "Delete", theme: "danger" as const },
@@ -368,19 +346,7 @@ describe("GTable", () => {
                 initialFilter: defaultFilter,
                 initialPageSize: 3,
                 pageSizes: [3, 10, 50],
-                filterData: (data, filter) => {
-                    let filtered = [...data];
-                    for (let [key, val] of Object.entries(filter)) {
-                        if (val) {
-                            filtered = filtered.filter((item) =>
-                                val === "yes"
-                                    ? (item as any)[key]
-                                    : !(item as any)[key],
-                            );
-                        }
-                    }
-                    return filtered;
-                },
+                filterData: filterCollegesData,
                 bulkSelectionEnabled: true,
                 bulkActions: [
                     { id: "delete", label: "Delete", theme: "danger" as const },
@@ -409,19 +375,7 @@ describe("GTable", () => {
                 initialFilter: defaultFilter,
                 initialPageSize: 3,
                 pageSizes: [3, 10, 50],
-                filterData: (data, filter) => {
-                    let filtered = [...data];
-                    for (let [key, val] of Object.entries(filter)) {
-                        if (val) {
-                            filtered = filtered.filter((item) =>
-                                val === "yes"
-                                    ? (item as any)[key]
-                                    : !(item as any)[key],
-                            );
-                        }
-                    }
-                    return filtered;
-                },
+                filterData: filterCollegesData,
                 bulkSelectionEnabled: true,
                 bulkActions: [
                     { id: "delete", label: "Delete", theme: "danger" as const },
