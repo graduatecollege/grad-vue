@@ -103,7 +103,7 @@ function handleCheckboxChange(rowKey: string, shiftKey: boolean = false) {
                         <input
                             type="checkbox"
                             :checked="isRowSelected(row.key)"
-                            @change="(e) => handleCheckboxChange(row.key, (e as MouseEvent).shiftKey)"
+                            @click="(e) => handleCheckboxChange(row.key, e.shiftKey)"
                             :aria-label="`Select row ${row.key}`"
                             class="g-bulk-select-checkbox"
                         />
@@ -142,7 +142,7 @@ function handleCheckboxChange(rowKey: string, shiftKey: boolean = false) {
                     <input
                         type="checkbox"
                         :checked="isRowSelected(row.key)"
-                        @change="handleCheckboxChange(row.key)"
+                        @click="(e) => handleCheckboxChange(row.key, e.shiftKey)"
                         :aria-label="`Select row ${row.key}`"
                         class="g-bulk-select-checkbox"
                     />

@@ -390,6 +390,113 @@ describe("GTable", () => {
 
             expect(selectedRows.value).toEqual(["LT", "KL", "KY"]);
         });
+
+        it("selects range of rows when using shift-click", async () => {
+            const { GTableFixture, selectedRows } = createGTableFixture<TableEntry>({
+                label: "Colleges",
+                columns,
+                data: tableData,
+                initialFilter: defaultFilter,
+                initialPageSize: 5, // Show 5 rows for better range testing
+                pageSizes: [5, 10, 50],
+                filterData: filterCollegesData,
+                bulkSelectionEnabled: true,
+                bulkActions: [
+                    { id: "delete", label: "Delete", theme: "danger" as const },
+                ],
+            });
+            const { container } = mnt(GTableFixture);
+
+            // First, select the first row (LT)
+            const firstRowCheckbox = container.getByRole("checkbox", {
+                name: "Select row LT",
+            });
+            await firstRowCheckbox.click();
+
+            expect(selectedRows.value).toEqual(["LT"]);
+
+            // Now shift-click the third row (KY) to select rows LT, KL, and KY
+            const thirdRowCheckbox = container.getByRole("checkbox", {
+                name: "Select row KY",
+            });
+            
+            // Simulate shift-click by clicking with shiftKey
+            await thirdRowCheckbox.click({ modifiers: ["Shift"] });
+
+            expect(selectedRows.value).toEqual(["LT", "KL", "KY"]);
+        });
+
+        it("selects range of rows in reverse order with shift-click", async () => {
+            const { GTableFixture, selectedRows } = createGTableFixture<TableEntry>({
+                label: "Colleges",
+                columns,
+                data: tableData,
+                initialFilter: defaultFilter,
+                initialPageSize: 5,
+                pageSizes: [5, 10, 50],
+                filterData: filterCollegesData,
+                bulkSelectionEnabled: true,
+                bulkActions: [
+                    { id: "delete", label: "Delete", theme: "danger" as const },
+                ],
+            });
+            const { container } = mnt(GTableFixture);
+
+            // First, select the fourth row (KN)
+            const fourthRowCheckbox = container.getByRole("checkbox", {
+                name: "Select row KN",
+            });
+            await fourthRowCheckbox.click();
+
+            expect(selectedRows.value).toEqual(["KN"]);
+
+            // Now shift-click the second row (KL) to select rows KL, KY, and KN
+            const secondRowCheckbox = container.getByRole("checkbox", {
+                name: "Select row KL",
+            });
+            await secondRowCheckbox.click({ modifiers: ["Shift"] });
+
+            expect(selectedRows.value).toEqual(["KN", "KL", "KY"]);
+        });
+
+        it("extends selection when shift-clicking after initial selection", async () => {
+            const { GTableFixture, selectedRows } = createGTableFixture<TableEntry>({
+                label: "Colleges",
+                columns,
+                data: tableData,
+                initialFilter: defaultFilter,
+                initialPageSize: 5,
+                pageSizes: [5, 10, 50],
+                filterData: filterCollegesData,
+                bulkSelectionEnabled: true,
+                bulkActions: [
+                    { id: "delete", label: "Delete", theme: "danger" as const },
+                ],
+            });
+            const { container } = mnt(GTableFixture);
+
+            // Select first row (LT)
+            const firstRowCheckbox = container.getByRole("checkbox", {
+                name: "Select row LT",
+            });
+            await firstRowCheckbox.click();
+
+            // Select third row (KY) without shift - this should toggle it on
+            const thirdRowCheckbox = container.getByRole("checkbox", {
+                name: "Select row KY",
+            });
+            await thirdRowCheckbox.click();
+
+            expect(selectedRows.value).toEqual(["LT", "KY"]);
+
+            // Now shift-click the fifth row (KM) to select KY, KN, and KM
+            const fifthRowCheckbox = container.getByRole("checkbox", {
+                name: "Select row KM",
+            });
+            await fifthRowCheckbox.click({ modifiers: ["Shift"] });
+
+            expect(selectedRows.value).toEqual(["LT", "KY", "KN", "KM"]);
+        });
     });
     describe("Accessibility Tests", () => {
         it("passes accessibility tests with default content", async () => {
