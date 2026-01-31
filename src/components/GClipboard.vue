@@ -21,6 +21,11 @@ interface Props {
      * Hide the visible text
      */
     hideText?: boolean;
+
+    /**
+     * Copy button label
+     */
+    copyLabel?: string;
 }
 
 const props = defineProps<Props>();
@@ -31,7 +36,7 @@ const { text, copy, copied, isSupported } = useClipboard({
     source: props.text,
 });
 
-const tooltip = ref<string>("Copy to clipboard");
+const tooltip = ref<string>(props.copyLabel ?? "Copy to clipboard");
 
 const handleCopy = () => {
     if (isSupported.value) {
@@ -42,7 +47,7 @@ const handleCopy = () => {
     }
 };
 const handleTooltipHide = () => {
-    tooltip.value = "Copy to clipboard";
+    tooltip.value = props.copyLabel ?? "Copy to clipboard";
 };
 </script>
 
@@ -63,6 +68,7 @@ const handleTooltipHide = () => {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 640 640"
                 height="1.125rem"
+                role="none presentation"
             >
                 <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
                 <path
@@ -76,7 +82,8 @@ const handleTooltipHide = () => {
 
 <style scoped>
 .g-clipboard-text-button {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
     margin-left: 0.5rem;
     cursor: pointer;
     color: var(--g-surface-0);
