@@ -740,6 +740,7 @@ onBeforeUnmount(() => {
 .g-select-search-input {
     box-sizing: border-box;
     display: block;
+    width: 100%;
     font-family: var(--il-font-sans);
     border: none;
     box-sizing: border-box;

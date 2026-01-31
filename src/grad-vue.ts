@@ -62,10 +62,11 @@ export {
 
 export { useActiveLinkContent } from "./compose/useActiveLink";
 export { useSidebar } from "./compose/useSidebar";
-export { useFiltering, filtersToQueryParams } from "./compose/useFiltering";
+export { useFiltering, filtersToQueryParams, filterOmitEmpty, filterAsQuery, asArray, emptyAsUndefined } from "./compose/useFiltering";
 export type {
     FilteringOptions,
     UseFilteringReturn,
+    FiltersForRecord,
 } from "./compose/useFiltering";
 export type {
     SelectColumnFilter,
