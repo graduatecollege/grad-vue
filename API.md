@@ -144,6 +144,11 @@ interface Props {
      * Hide the visible text
      */
     hideText?: boolean;
+
+    /**
+     * Copy button label
+     */
+    copyLabel?: string;
 }
 ```
 
@@ -810,7 +815,7 @@ interface Props {
     columns: C[];
     resultCount?: number;
     groupBy?: keyof T;
-    filtering: UseFilteringReturn<T>;
+    filtering: UseFilteringReturn<any>;
     groupRender?: (groupValue: any, row: T) => VNode;
     rowClickable?: boolean;
     rowClass?: (row: T) => string | string[] | undefined;

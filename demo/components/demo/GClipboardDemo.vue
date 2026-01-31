@@ -17,6 +17,10 @@ import ComponentDemo from "../ComponentDemo.vue";
                 hideText: {
                     type: 'boolean',
                     label: 'Hide the visible text'
+                },
+                copyLabel: {
+                    type: 'string',
+                    label: 'Copy button label'
                 }
             }"
         >

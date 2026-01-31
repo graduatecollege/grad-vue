@@ -89,9 +89,12 @@ export function createGTableFixture<T extends TableRow, C extends TableColumn<T>
         filterKeys: options.filterKeys,
     }) as T;
 
-    const filtering = useFiltering(initialFilter);
+    const filtering = useFiltering<T>(initialFilter);
     const { filters } = filtering;
-    filters.value = { ...initialFilter };
+    for (const key in initialFilter) {
+        // @ts-expect-error
+        filters[key] = initialFilter[key];
+    }
 
     const GTableFixture = defineComponent({
         name: "GTableFixture",
@@ -107,7 +110,7 @@ export function createGTableFixture<T extends TableRow, C extends TableColumn<T>
             const filteredData = computed(() => {
                 const data = [...tableData.value] as T[];
                 return options.filterData
-                    ? options.filterData(data, filters.value)
+                    ? options.filterData(data, filters)
                     : data;
             });
 
@@ -140,9 +143,13 @@ export function createGTableFixture<T extends TableRow, C extends TableColumn<T>
                         data: visibleData.value,
                         columns: columnsComputed.value,
                         filtering,
-                        filter: filters.value,
+                        // @ts-expect-error
+                        filter: filters,
                         "onUpdate:filter": (value: any) => {
-                            filters.value = value;
+                            for (const key in Object.keys(value)) {
+                                // @ts-ignore
+                                filters[key] = value[key];
+                            }
                         },
                         resultCount: resultCount.value,
                         sortField: sortField.value,

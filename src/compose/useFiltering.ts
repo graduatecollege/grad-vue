@@ -88,7 +88,6 @@ export function emptyAsUndefined<
 export function filterOmitEmpty<T extends object>(value: T): Partial<T> {
     return Object.fromEntries(
         Object.entries(value).filter(([k, v]) => {
-            console.log(k, v, !!(v && (!Array.isArray(v) || v.length > 0)));
             return  v && (!Array.isArray(v) || v.length > 0);
         }),
     ) as Partial<T>;
@@ -203,7 +202,6 @@ export function useFiltering<
         watch(
             values,
             (newValues) => {
-                console.log("watch newValues", newValues);
                 syncWith.value = filtersToQueryParams(newValues);
             },
             { deep: true },
@@ -232,8 +230,6 @@ export function useFiltering<
         }
         return result as Record<keyof T, boolean>;
     });
-
-    console.log("ref", values);
 
     return {
         filters: values as any,
