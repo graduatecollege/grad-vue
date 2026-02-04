@@ -215,9 +215,28 @@ async function updateGradVue(
     content = r2.content;
     changed = changed || r2.changed;
 
-    const r3 = insertOnceIntoInstall(content, componentName);
-    content = r3.content;
-    changed = changed || r3.changed;
+    if (changed && !options.dryRun) {
+        await writeFile(filePath, content, "utf-8");
+    }
+}
+
+async function updatePlugin(
+    root: string,
+    componentName: string,
+    options: Options,
+): Promise<void> {
+    const filePath = path.join(root, "src", "plugin.ts");
+    const original = await readFile(filePath, "utf-8");
+    let content = original;
+    let changed = false;
+
+    const r = insertOnceIntoInstall(content, componentName);
+    content = r.content;
+    changed = changed || r.changed;
+
+    const r2 = insertOnceBefore(content, "VGtooltip,", componentName + ",\n    ");
+    content = r2.content;
+    changed = changed || r2.changed;
 
     if (changed && !options.dryRun) {
         await writeFile(filePath, content, "utf-8");
@@ -534,6 +553,7 @@ async function main() {
     await writeFileSafe(demoFilePath, demoTemplate(componentName), options);
 
     await updateGradVue(root, componentName, options);
+    await updatePlugin(root, componentName, options);
     await updatePlayground(root, componentName, options);
     await updateDemoMain(root, componentName, options);
 

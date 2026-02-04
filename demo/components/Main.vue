@@ -26,6 +26,8 @@ import GTableDemo from "~/components/demo/GTableDemo.vue";
 import GModalDemo from "~/components/demo/GModalDemo.vue";
 import GHamburgerMenuDemo from "~/components/demo/GHamburgerMenuDemo.vue";
 import GDetailListDemo from "~/components/demo/GDetailListDemo.vue";
+import GTermSelectorDemo from "~/components/demo/GTermSelectorDemo.vue";
+
 import { onMounted, provide } from "vue";
 import { useTemplateRef } from "#imports";
 
@@ -58,6 +60,7 @@ const demoComponents = [
     { label: "Sidebar", component: GSidebarDemo },
     { label: "Sidebar Menu", component: GSidebarMenuDemo },
     { label: "Table", component: GTableDemo },
+    { label: "Term Selector", component: GTermSelectorDemo },
     { label: "Text Input", component: GTextInputDemo },
     { label: "Three Way Toggle", component: GThreeWayToggleDemo },
 ];

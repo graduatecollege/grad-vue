@@ -835,6 +835,40 @@ interface Props {
 
 ---
 
+## GTermSelector
+
+A button that shows the selected term. Clicking it opens a popover
+that allows jumping to a different term.
+
+### Props
+
+```typescript
+interface Props {
+    /**
+     * Title for the popover.
+     */
+    title?: string; // Demo: Period Selection
+
+    /**
+     * Label for year select.
+     */
+    yearLabel?: string; // Demo: Select Year
+
+    /**
+     * Label for period select.
+     */
+    periodLabel?: string; // Demo: Term
+
+    // list of possible term years
+    termYears?: string[];
+
+    // list of possible term names
+    termNames?: string[];
+}
+```
+
+---
+
 ## GTextInput
 
 A text input with styling for a label, instructions, and an error message.
