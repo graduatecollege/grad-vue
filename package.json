@@ -1,5 +1,5 @@
 {
-    "name": "@illinois-grad/grad-vue",
+    "name": "@graduatecollege/grad-vue",
     "version": "1.0.0",
     "description": "Shared Vue.js components for Graduate College apps.",
     "keywords": [
@@ -42,32 +42,32 @@
     "dependencies": {
         "@vueuse/core": "^14",
         "@vueuse/integrations": "^14",
-        "focus-trap": "^7",
+        "focus-trap": "^8",
         "vue": "^3.5"
     },
     "devDependencies": {
-        "@axe-core/playwright": "^4.11.0",
+        "@axe-core/playwright": "^4.11.1",
         "@types/node": "^24.10.3",
-        "@vitejs/plugin-vue": "^6.0.3",
+        "@vitejs/plugin-vue": "^6.0.4",
         "@vitest/browser": "^4.0.18",
         "@vitest/browser-playwright": "^4.0.18",
         "@vitest/ui": "^4.0.18",
         "axe-core": "^4.11.1",
-        "happy-dom": "^20.3.7",
+        "happy-dom": "^20.5.0",
         "jsdom": "^27.4.0",
         "pinia": "^3.0.4",
-        "playwright": "^1.58.0",
+        "playwright": "^1.58.1",
         "prettier": "^3.8.1",
         "typescript": "^5.9.3",
         "vite": "^7.3.1",
         "vite-plugin-dts": "^4.5.4",
-        "vite-plugin-vue-devtools": "^8.0.5",
+        "vite-plugin-vue-devtools": "^8.0.6",
         "vitest": "^4.0.18",
         "vitest-browser-vue": "^2.0.2",
-        "vue-tsc": "^3.2.3",
+        "vue-tsc": "^3.2.4",
         "marked": "^17.0.1",
         "marked-alert": "^2.1.2",
         "marked-shiki": "^1.2.1",
-        "shiki": "^3.21.0"
+        "shiki": "^3.22.0"
     }
 }

@@ -5,7 +5,7 @@ import {
     useActiveLinkContent,
     useOverlayStackState,
     useSidebar,
-} from "@illinois-grad/grad-vue";
+} from "@graduatecollege/grad-vue";
 import { useActiveLinkStore } from "~/stores/test.store";
 import { storeToRefs } from "pinia";
 import GAlertDialogDemo from "~/components/demo/GAlertDialogDemo.vue";
@@ -121,7 +121,7 @@ onMounted(() => {
 
                     <h3>Installation</h3>
                     <p>To install grad-vue, use npm:</p>
-                    <pre><code>npm install @illinois-grad/grad-vue</code></pre>
+                    <pre><code>npm install @graduatecollege/grad-vue</code></pre>
                     <h3>More Information</h3>
                     <p>
                         More details about the library can be found in the

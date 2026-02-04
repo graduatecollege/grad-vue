@@ -2,6 +2,8 @@
 
 Shared Vue.js components and composable functions for the Graduate College.
 
+**Package has moved in npm** to `@graduatecollege/grad-vue`.
+
 Features:
 
 - **Vue 3**: Built with Vue.js version 3 and the Composition API.
@@ -21,7 +23,7 @@ The demo site is located in the [`demo/`](./demo) directory and is built with Nu
 ## Installation
 
 ```bash
-npm install @illinois-grad/grad-vue
+npm install @graduatecollege/grad-vue
 ```
 
 ## Usage
@@ -30,7 +32,7 @@ npm install @illinois-grad/grad-vue
 
 ```javascript
 import { createApp } from 'vue'
-import GradVue from '@illinois-grad/grad-vue'
+import GradVue from '@graduatecollege/grad-vue'
 import App from './App.vue'
 
 const app = createApp(App)
@@ -42,8 +44,8 @@ app.use(GradVue)
 Add `grad-vue.ts` into your plugins folder:
 
 ```javascript
-import GradVue from '@illinois-grad/grad-vue';
-import '@illinois-grad/grad-vue/grad-vue.css';
+import GradVue from '@graduatecollege/grad-vue';
+import '@graduatecollege/grad-vue/grad-vue.css';
 
 export default defineNuxtPlugin(async (nuxt) => {
     nuxt.vueApp.use(GradVue);
@@ -53,7 +55,7 @@ export default defineNuxtPlugin(async (nuxt) => {
 ### Import Individual Components In Vue.js
 
 ```javascript
-import { GButton } from '@illinois-grad/grad-vue'
+import { GButton } from '@graduatecollege/grad-vue'
 
 export default {
   components: {
@@ -66,7 +68,7 @@ Or in a script setup:
 
 ```vue
 <script setup>
-import { GButton } from '@illinois-grad/grad-vue'
+import { GButton } from '@graduatecollege/grad-vue'
 </script>
 
 <template>

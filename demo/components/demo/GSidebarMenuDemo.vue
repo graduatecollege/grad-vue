@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import ComponentSection from "../ComponentSection.vue";
 import ComponentDemo from "../ComponentDemo.vue";
-import { GSidebarMenu } from "@illinois-grad/grad-vue";
+import { GSidebarMenu } from "@graduatecollege/grad-vue";
 
 const demoItems = [
     { label: "Overview", href: "#sidebar-menu-demo-overview" },
@@ -77,7 +77,7 @@ in-page navigation, and the matching menu item&#39;s <code>href</code> should be
 <figure class="highlighted-code">
 <pre class="shiki light-plus" style="background-color:#FFFFFF;color:#000000" tabindex="0"><code><span class="line"><span style="color:#800000">&#x3C;script</span><span style="color:#E50000"> setup</span><span style="color:#E50000"> lang</span><span style="color:#000000">=</span><span style="color:#0000FF">"ts"</span><span style="color:#800000">></span></span>
 <span class="line"><span style="color:#AF00DB">import</span><span style="color:#000000"> &lcub; </span><span style="color:#001080">computed</span><span style="color:#000000">, </span><span style="color:#001080">onMounted</span><span style="color:#000000">, </span><span style="color:#001080">ref</span><span style="color:#000000">, </span><span style="color:#001080">useTemplateRef</span><span style="color:#000000"> } </span><span style="color:#AF00DB">from</span><span style="color:#A31515"> "vue"</span><span style="color:#000000">;</span></span>
-<span class="line"><span style="color:#AF00DB">import</span><span style="color:#000000"> &lcub; </span><span style="color:#001080">useActiveLinkContent</span><span style="color:#000000"> } </span><span style="color:#AF00DB">from</span><span style="color:#A31515"> "@illinois-grad/grad-vue"</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#AF00DB">import</span><span style="color:#000000"> &lcub; </span><span style="color:#001080">useActiveLinkContent</span><span style="color:#000000"> } </span><span style="color:#AF00DB">from</span><span style="color:#A31515"> "@graduatecollege/grad-vue"</span><span style="color:#000000">;</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#0000FF">const</span><span style="color:#0070C1"> activeId</span><span style="color:#000000"> = </span><span style="color:#795E26">ref</span><span style="color:#000000">&#x3C;</span><span style="color:#267F99">string</span><span style="color:#000000">>(</span><span style="color:#A31515">""</span><span style="color:#000000">);</span></span>
 <span class="line"><span style="color:#0000FF">const</span><span style="color:#0070C1"> main</span><span style="color:#000000"> = </span><span style="color:#795E26">useTemplateRef</span><span style="color:#000000">(</span><span style="color:#A31515">"main"</span><span style="color:#000000">);</span></span>

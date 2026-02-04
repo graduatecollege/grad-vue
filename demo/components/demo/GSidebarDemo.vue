@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ComponentSection from "../ComponentSection.vue";
 import ComponentDemo from "../ComponentDemo.vue";
-import { GSidebar } from "@illinois-grad/grad-vue";
+import { GSidebar } from "@graduatecollege/grad-vue";
 </script>
 
 <template>

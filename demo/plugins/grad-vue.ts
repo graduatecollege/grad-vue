@@ -1,6 +1,6 @@
 import { defineNuxtPlugin } from "#imports";
-import GradVue from '@illinois-grad/grad-vue/plugin';
-import '@illinois-grad/grad-vue/grad-vue.css';
+import GradVue from '@graduatecollege/grad-vue/plugin';
+import '@graduatecollege/grad-vue/grad-vue.css';
 
 export default defineNuxtPlugin((nuxtApp) => {
     nuxtApp.vueApp.use(GradVue);

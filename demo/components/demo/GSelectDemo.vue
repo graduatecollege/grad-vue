@@ -3,7 +3,7 @@ import { ref } from "vue";
 import ComponentSection from "../ComponentSection.vue";
 import ComponentDemo from "../ComponentDemo.vue";
 import DemoResult from "../DemoResult.vue";
-import { GSelect } from "@illinois-grad/grad-vue";
+import { GSelect } from "@graduatecollege/grad-vue";
 
 const selectedValue = ref<string | number | undefined>(undefined);
 const searchableValue = ref<string | number | undefined>(undefined);
