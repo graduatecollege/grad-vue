@@ -21,6 +21,8 @@ import GDetailList from "./components/GDetailList.vue";
 import GDetailListItem from "./components/detail-list/GDetailListItem.vue";
 export type { VGtooltipDirective } from "./directives/v-gtooltip.ts";
 import GOverlay from "./components/GOverlay.vue";
+import GTermSelector from "./components/GTermSelector.vue";
+import GTermSelectorControl from "./components/term/GTermSelectorControl.vue";
 
 import "./css/main.css";
 import VGtooltip from "./directives/v-gtooltip.ts";
@@ -50,6 +52,8 @@ export {
     GHamburgerMenu,
     GDetailList,
     GDetailListItem,
+    GTermSelector,
+    GTermSelectorControl,
 };
 
 export { calculatePopoverPosition } from "./compose/popoverPosition";

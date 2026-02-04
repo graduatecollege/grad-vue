@@ -19,6 +19,7 @@ import GOverlay from "../src/components/GOverlay.vue";
 import GHamburgerMenu from "../src/components/GHamburgerMenu.vue";
 import GDetailListItem from "../src/components/detail-list/GDetailListItem.vue";
 import GDetailList from "../src/components/GDetailList.vue";
+import GTermSelector from "../src/components/GTermSelector.vue";
 
 const sidebar = useSidebar();
 
@@ -251,7 +252,7 @@ function handleBulkAction(actionId: string, selectedKeys: string[]) {
 
 const filteredData = computed(() => {
     let data = [...tableData.value];
-    for (let [key, val] of Object.entries(filters.value)) {
+    for (let [key, val] of Object.entries(filters)) {
         if (val) {
             data = data.filter((item) =>
                 val === "yes"
@@ -282,6 +283,10 @@ const computedData = computed(() => {
 });
 
 const showModal = ref(false);
+
+const term = ref({year: "2026", name: "Spring"});
+const termYears = ref(["2026", "2025", "2024"]);
+
 </script>
 
 <template>
@@ -310,6 +315,7 @@ const showModal = ref(false);
                     title="Components"
                     theme="light"
                     :items="[
+                                            { label: 'Term Selector', href: '#term-selector' },
                         { label: 'Buttons', href: '#buttons' },
                         { label: 'Search', href: '#search' },
                         { label: 'Text Input', href: '#text-input' },
@@ -328,11 +334,18 @@ const showModal = ref(false);
                         },
                         { label: 'Modal', href: '#modal' },
                         { label: 'Detail List', href: '#detail-list' },
-                    ]"
+]"
                     v-model="activeId"
                 />
             </GSidebar>
             <main class="main" ref="main">
+
+                <section id="term-selector">
+                    <h2>Term Selector</h2>
+                    <GTermSelector label="Term Selector" v-model="term" :term-years="termYears" >
+                        <p>Example content</p>
+                    </GTermSelector>
+                </section>
                 <section id="table">
                     <h2>Table</h2>
                     <GTable

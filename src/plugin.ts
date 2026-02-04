@@ -22,8 +22,10 @@ import {
     GTablePagination,
     GTextInput,
     GThreeWayToggle,
+    GTermSelector,
+    GTermSelectorControl,
     VGtooltip,
-    VGtooltipDirective
+    VGtooltipDirective,
 } from "./grad-vue.ts";
 
 // Export a plugin for installing all components
@@ -52,6 +54,8 @@ export default {
         app.component("GHamburgerMenu", GHamburgerMenu);
         app.component("GDetailList", GDetailList);
         app.component("GDetailListItem", GDetailListItem);
+        app.component("GTermSelector", GTermSelector);
+        app.component("GTermSelectorControl", GTermSelectorControl);
     },
 };
 
@@ -85,4 +89,3 @@ declare module "vue" {
         vGtooltip: VGtooltipDirective;
     }
 }
-
