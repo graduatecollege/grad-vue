@@ -168,7 +168,7 @@ function handleBulkAction(actionId: string, selectedKeys: string[]) {
 
 const filteredData = computed(() => {
     let data = [...tableData.value];
-    for (let [key, val] of Object.entries(filters.value)) {
+    for (let [key, val] of Object.entries(filters)) {
         if (val) {
             data = data.filter((item) =>
                 val === "yes"
