@@ -2,7 +2,7 @@
 import ComponentSection from "../ComponentSection.vue";
 import ComponentDemo from "../ComponentDemo.vue";
 import DemoResult from "../DemoResult.vue";
-import { GProgress } from "@graduatecollege/grad-vue";
+import { GProgress } from "@illinois-grad/grad-vue";
 </script>
 
 <template>

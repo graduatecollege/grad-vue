@@ -2,7 +2,7 @@
 
 Shared Vue.js components and composable functions for the Graduate College.
 
-**Package has moved in npm** to `@graduatecollege/grad-vue`.
+**Package has moved in npm** to `@illinois-grad/grad-vue`.
 
 Features:
 
@@ -23,7 +23,7 @@ The demo site is located in the [`demo/`](./demo) directory and is built with Nu
 ## Installation
 
 ```bash
-npm install @graduatecollege/grad-vue
+npm install @illinois-grad/grad-vue
 ```
 
 ## Usage
@@ -32,7 +32,7 @@ npm install @graduatecollege/grad-vue
 
 ```javascript
 import { createApp } from 'vue'
-import GradVue from '@graduatecollege/grad-vue'
+import GradVue from '@illinois-grad/grad-vue'
 import App from './App.vue'
 
 const app = createApp(App)
@@ -44,8 +44,8 @@ app.use(GradVue)
 Add `grad-vue.ts` into your plugins folder:
 
 ```javascript
-import GradVue from '@graduatecollege/grad-vue';
-import '@graduatecollege/grad-vue/grad-vue.css';
+import GradVue from '@illinois-grad/grad-vue';
+import '@illinois-grad/grad-vue/grad-vue.css';
 
 export default defineNuxtPlugin(async (nuxt) => {
     nuxt.vueApp.use(GradVue);
@@ -55,7 +55,7 @@ export default defineNuxtPlugin(async (nuxt) => {
 ### Import Individual Components In Vue.js
 
 ```javascript
-import { GButton } from '@graduatecollege/grad-vue'
+import { GButton } from '@illinois-grad/grad-vue'
 
 export default {
   components: {
@@ -68,7 +68,7 @@ Or in a script setup:
 
 ```vue
 <script setup>
-import { GButton } from '@graduatecollege/grad-vue'
+import { GButton } from '@illinois-grad/grad-vue'
 </script>
 
 <template>

@@ -3,7 +3,7 @@ import { ref } from "vue";
 import ComponentSection from "../ComponentSection.vue";
 import ComponentDemo from "../ComponentDemo.vue";
 import DemoResult from "../DemoResult.vue";
-import { GSelectButton } from "@graduatecollege/grad-vue";
+import { GSelectButton } from "@illinois-grad/grad-vue";
 
 const selectButtonValue = ref("option1");
 const selectButtonOptions = ref([

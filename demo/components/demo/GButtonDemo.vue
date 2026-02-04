@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import ComponentSection from "../ComponentSection.vue";
 import ComponentDemo from "../ComponentDemo.vue";
-import { GButton } from "@graduatecollege/grad-vue";
+import { GButton } from "@illinois-grad/grad-vue";
 
 const clickCount = ref(0);
 const handleClick = () => {

@@ -715,7 +715,7 @@ Here's a minimal example of a page using `useActiveLinkContent`:
 ```vue
 <script setup lang="ts">
 import { computed, onMounted, ref, useTemplateRef } from "vue";
-import { useActiveLinkContent } from "@graduatecollege/grad-vue";
+import { useActiveLinkContent } from "@illinois-grad/grad-vue";
 
 const activeId = ref<string>("");
 const main = useTemplateRef("main");

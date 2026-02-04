@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { GButton, GModal } from "@graduatecollege/grad-vue";
+import { GButton, GModal } from "@illinois-grad/grad-vue";
 import type {
     ComponentResult,
     ComponentTestResult,

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import ComponentDemo from "../ComponentDemo.vue";
 import { computed, h, ref } from "vue";
-import type { TableColumn } from "@graduatecollege/grad-vue";
-import { useFiltering } from "@graduatecollege/grad-vue";
+import type { TableColumn } from "@illinois-grad/grad-vue";
+import { useFiltering } from "@illinois-grad/grad-vue";
 
 interface TableEntry {
     key: string;

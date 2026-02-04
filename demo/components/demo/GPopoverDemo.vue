@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ComponentSection from "../ComponentSection.vue";
 import ComponentDemo from "../ComponentDemo.vue";
-import { GButton, GPopover } from "@graduatecollege/grad-vue";
+import { GButton, GPopover } from "@illinois-grad/grad-vue";
 </script>
 
 <template>

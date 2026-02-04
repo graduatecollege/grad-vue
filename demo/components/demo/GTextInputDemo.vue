@@ -3,7 +3,7 @@ import { ref } from "vue";
 import ComponentSection from "../ComponentSection.vue";
 import ComponentDemo from "../ComponentDemo.vue";
 import DemoResult from "../DemoResult.vue";
-import { GTextInput } from "@graduatecollege/grad-vue";
+import { GTextInput } from "@illinois-grad/grad-vue";
 
 const textValue = ref("");
 </script>
