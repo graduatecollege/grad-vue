@@ -10,7 +10,10 @@
     ],
     "author": "University of Illinois Graduate College",
     "license": "MIT",
-    "repository": "github:graduatecollege/grad-vue",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/graduatecollege/grad-vue.git"
+    },
     "type": "module",
     "main": "./dist/grad-vue.js",
     "module": "./dist/grad-vue.js",
