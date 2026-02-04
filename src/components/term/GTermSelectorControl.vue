@@ -8,11 +8,11 @@ interface Props {
     /**
      * List of possible term years. Defaults to ["2026"].
      */
-    termYears: string[];
+    termYears?: string[];
     /**
      * List of possible term names. Defaults to ["Spring", "Summer", "Fall"].
      */
-    termNames: string[];
+    termNames?: string[];
 
     /**
      * Label for year select. Defaults to "Select Year".
