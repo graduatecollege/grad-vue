@@ -19,6 +19,7 @@ import GSelectButtonDemo from "~/components/demo/GSelectButtonDemo.vue";
 import GSidebarDemo from "~/components/demo/GSidebarDemo.vue";
 import GSidebarMenuDemo from "~/components/demo/GSidebarMenuDemo.vue";
 import GTextInputDemo from "~/components/demo/GTextInputDemo.vue";
+import GAccountingStringInputDemo from "~/components/demo/GAccountingStringInputDemo.vue";
 import GClipboardDemo from "~/components/demo/GClipboardDemo.vue";
 import GHistoryScrollerDemo from "~/components/demo/GHistoryScrollerDemo.vue";
 import GThreeWayToggleDemo from "~/components/demo/GThreeWayToggleDemo.vue";
@@ -44,6 +45,7 @@ const slugify = (value: string) =>
         .replace(/(^-|-$)/g, "");
 
 const demoComponents = [
+    { label: "Accounting String Input", component: GAccountingStringInputDemo },
     { label: "Alert Dialog", component: GAlertDialogDemo },
     { label: "App Header", component: GAppHeaderDemo },
     { label: "Button", component: GButtonDemo },
