@@ -1,5 +1,6 @@
 import GButton from "./components/GButton.vue";
 import GTextInput from "./components/GTextInput.vue";
+import GAccountingStringInput from "./components/GAccountingStringInput.vue";
 import GPopover from "./components/GPopover.vue";
 import GSelectButton from "./components/GSelectButton.vue";
 import GProgress from "./components/GProgress.vue";
@@ -32,6 +33,7 @@ export {
     GAppHeader,
     GButton,
     GTextInput,
+    GAccountingStringInput,
     GPopover,
     GSelectButton,
     GProgress,

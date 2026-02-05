@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAccountingStringInput Test</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 1rem;
+            background: #f5f5f5;
+        }
+        .demo-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .output {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f0f0f0;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        h1, h2 {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>GAccountingStringInput Component Test</h1>
+    
+    <div id="app"></div>
+
+    <script type="module">
+        import { createApp, ref } from 'vue';
+        import GAccountingStringInput from '../src/components/GAccountingStringInput.vue';
+        import '../src/css/main.css';
+
+        const App = {
+            components: { GAccountingStringInput },
+            setup() {
+                const cfopValue = ref('');
+                const cfoapValue = ref('');
+                const autoValue = ref('');
+                const prefilledValue = ref('1234567890123456789');
+                
+                return {
+                    cfopValue,
+                    cfoapValue,
+                    autoValue,
+                    prefilledValue
+                };
+            },
+            template: `
+                <div>
+                    <div class="demo-section">
+                        <h2>CFOP Format Test</h2>
+                        <GAccountingStringInput
+                            v-model="cfopValue"
+                            label="CFOP (19 chars: 1-6-6-6)"
+                            placeholder="Enter CFOP"
+                            format="cfop"
+                            instructions="Try: 1234567890123456789 or 1-234567-890123-456789"
+                        />
+                        <div v-if="cfopValue" class="output">
+                            <strong>Model Value:</strong> {{ cfopValue }}
+                        </div>
+                    </div>
+
+                    <div class="demo-section">
+                        <h2>CFOAP Format Test</h2>
+                        <GAccountingStringInput
+                            v-model="cfoapValue"
+                            label="CFOAP (25 chars: 1-6-6-6-6)"
+                            placeholder="Enter CFOAP"
+                            format="cfoap"
+                            instructions="Try: 1234567890123456789012345 or 1-234567-890123-456789-012345"
+                        />
+                        <div v-if="cfoapValue" class="output">
+                            <strong>Model Value:</strong> {{ cfoapValue }}
+                        </div>
+                    </div>
+
+                    <div class="demo-section">
+                        <h2>Auto-detect Format Test</h2>
+                        <GAccountingStringInput
+                            v-model="autoValue"
+                            label="Auto-detect (CFOP or CFOAP)"
+                            placeholder="Enter accounting string"
+                            instructions="Paste either format - it will auto-detect based on length"
+                        />
+                        <div v-if="autoValue" class="output">
+                            <strong>Model Value:</strong> {{ autoValue }}<br>
+                            <strong>Detected:</strong> {{ autoValue.length <= 19 ? 'CFOP' : 'CFOAP' }}
+                        </div>
+                    </div>
+
+                    <div class="demo-section">
+                        <h2>Pre-filled Value Test</h2>
+                        <GAccountingStringInput
+                            v-model="prefilledValue"
+                            label="Pre-filled CFOP"
+                            instructions="This field is pre-filled with a CFOP value"
+                        />
+                        <div class="output">
+                            <strong>Model Value:</strong> {{ prefilledValue }}
+                        </div>
+                    </div>
+
+                    <div class="demo-section">
+                        <h2>Test Instructions</h2>
+                        <ul>
+                            <li>Try typing numbers without dashes - dashes should appear automatically</li>
+                            <li>Try typing with dashes - they should be handled correctly</li>
+                            <li>Try pasting with and without dashes</li>
+                            <li>Try editing in the middle of the string</li>
+                            <li>Try alphanumeric characters (e.g., 1A2B3C7890123456789)</li>
+                        </ul>
+                    </div>
+                </div>
+            `
+        };
+
+        createApp(App).mount('#app');
+    </script>
+</body>
+</html>
