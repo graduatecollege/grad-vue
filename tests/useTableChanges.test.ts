@@ -1,5 +1,6 @@
 import { describe, expect, it, beforeEach } from "vitest";
 import { useTableChanges } from "../src/compose/useTableChanges";
+import { TableColumn } from "../src/components/table/TableColumn";
 
 interface TestRow {
     key: string;
@@ -8,12 +9,36 @@ interface TestRow {
     category: string;
 }
 
+// Helper function to create a mock TableColumn
+function createColumn<T>(key: keyof T): TableColumn<any> {
+    return {
+        key: key as any,
+        label: String(key),
+    };
+}
+
+// Helper function to create a mock row
+function createRow(key: string, data: Partial<TestRow> = {}): TestRow {
+    return {
+        key,
+        name: "",
+        value: 0,
+        category: "",
+        ...data,
+    };
+}
+
 describe("useTableChanges", () => {
     describe("Basic Change Tracking", () => {
         it("should track a single change", () => {
             const tracker = useTableChanges<TestRow>();
             
-            tracker.trackChange("row1", "name", "New Name", "Old Name");
+            tracker.trackChange({
+                row: createRow("row1"),
+                column: createColumn<TestRow>("name"),
+                value: "New Name",
+                previousValue: "Old Name",
+            });
             
             expect(tracker.hasChanges()).toBe(true);
             expect(tracker.hasChange("row1", "name")).toBe(true);
@@ -23,8 +48,18 @@ describe("useTableChanges", () => {
         it("should track multiple changes in same row", () => {
             const tracker = useTableChanges<TestRow>();
             
-            tracker.trackChange("row1", "name", "New Name", "Old Name");
-            tracker.trackChange("row1", "value", 100, 50);
+            tracker.trackChange({
+                row: createRow("row1"),
+                column: createColumn<TestRow>("name"),
+                value: "New Name",
+                previousValue: "Old Name",
+            });
+            tracker.trackChange({
+                row: createRow("row1"),
+                column: createColumn<TestRow>("value"),
+                value: 100,
+                previousValue: 50,
+            });
             
             expect(tracker.changeCount()).toBe(2);
             expect(tracker.hasChange("row1", "name")).toBe(true);
@@ -34,8 +69,18 @@ describe("useTableChanges", () => {
         it("should track changes across multiple rows", () => {
             const tracker = useTableChanges<TestRow>();
             
-            tracker.trackChange("row1", "name", "Name 1", "Old 1");
-            tracker.trackChange("row2", "name", "Name 2", "Old 2");
+            tracker.trackChange({
+                row: createRow("row1"),
+                column: createColumn<TestRow>("name"),
+                value: "Name 1",
+                previousValue: "Old 1",
+            });
+            tracker.trackChange({
+                row: createRow("row2"),
+                column: createColumn<TestRow>("name"),
+                value: "Name 2",
+                previousValue: "Old 2",
+            });
             
             expect(tracker.changeCount()).toBe(2);
             expect(tracker.hasChange("row1", "name")).toBe(true);
@@ -45,11 +90,21 @@ describe("useTableChanges", () => {
         it("should remove change when value returns to original", () => {
             const tracker = useTableChanges<TestRow>();
             
-            tracker.trackChange("row1", "name", "New Name", "Old Name");
+            tracker.trackChange({
+                row: createRow("row1"),
+                column: createColumn<TestRow>("name"),
+                value: "New Name",
+                previousValue: "Old Name",
+            });
             expect(tracker.hasChange("row1", "name")).toBe(true);
             
             // Change back to original
-            tracker.trackChange("row1", "name", "Old Name", "Old Name");
+            tracker.trackChange({
+                row: createRow("row1"),
+                column: createColumn<TestRow>("name"),
+                value: "Old Name",
+                previousValue: "Old Name",
+            });
             expect(tracker.hasChange("row1", "name")).toBe(false);
             expect(tracker.hasChanges()).toBe(false);
         });
@@ -57,9 +112,24 @@ describe("useTableChanges", () => {
         it("should preserve original value through multiple edits", () => {
             const tracker = useTableChanges<TestRow>();
             
-            tracker.trackChange("row1", "value", 100, 50);
-            tracker.trackChange("row1", "value", 150, 100);
-            tracker.trackChange("row1", "value", 200, 150);
+            tracker.trackChange({
+                row: createRow("row1"),
+                column: createColumn<TestRow>("value"),
+                value: 100,
+                previousValue: 50,
+            });
+            tracker.trackChange({
+                row: createRow("row1"),
+                column: createColumn<TestRow>("value"),
+                value: 150,
+                previousValue: 100,
+            });
+            tracker.trackChange({
+                row: createRow("row1"),
+                column: createColumn<TestRow>("value"),
+                value: 200,
+                previousValue: 150,
+            });
             
             const changes = tracker.getChanges();
             expect(changes.length).toBe(1);
@@ -72,8 +142,18 @@ describe("useTableChanges", () => {
         it("should return all changes as array", () => {
             const tracker = useTableChanges<TestRow>();
             
-            tracker.trackChange("row1", "name", "New 1", "Old 1");
-            tracker.trackChange("row2", "value", 100, 50);
+            tracker.trackChange({
+                row: createRow("row1"),
+                column: createColumn<TestRow>("name"),
+                value: "New 1",
+                previousValue: "Old 1",
+            });
+            tracker.trackChange({
+                row: createRow("row2"),
+                column: createColumn<TestRow>("value"),
+                value: 100,
+                previousValue: 50,
+            });
             
             const changes = tracker.getChanges();
             expect(changes.length).toBe(2);
@@ -84,9 +164,24 @@ describe("useTableChanges", () => {
         it("should return changes organized by row", () => {
             const tracker = useTableChanges<TestRow>();
             
-            tracker.trackChange("row1", "name", "New Name", "Old Name");
-            tracker.trackChange("row1", "value", 100, 50);
-            tracker.trackChange("row2", "category", "electronics", "accessories");
+            tracker.trackChange({
+                row: createRow("row1"),
+                column: createColumn<TestRow>("name"),
+                value: "New Name",
+                previousValue: "Old Name",
+            });
+            tracker.trackChange({
+                row: createRow("row1"),
+                column: createColumn<TestRow>("value"),
+                value: 100,
+                previousValue: 50,
+            });
+            tracker.trackChange({
+                row: createRow("row2"),
+                column: createColumn<TestRow>("category"),
+                value: "electronics",
+                previousValue: "accessories",
+            });
             
             const changesByRow = tracker.getChangesByRow();
             
@@ -114,8 +209,18 @@ describe("useTableChanges", () => {
         it("should clear all changes", () => {
             const tracker = useTableChanges<TestRow>();
             
-            tracker.trackChange("row1", "name", "New 1", "Old 1");
-            tracker.trackChange("row2", "value", 100, 50);
+            tracker.trackChange({
+                row: createRow("row1"),
+                column: createColumn<TestRow>("name"),
+                value: "New 1",
+                previousValue: "Old 1",
+            });
+            tracker.trackChange({
+                row: createRow("row2"),
+                column: createColumn<TestRow>("value"),
+                value: 100,
+                previousValue: 50,
+            });
             
             expect(tracker.hasChanges()).toBe(true);
             
@@ -128,8 +233,18 @@ describe("useTableChanges", () => {
         it("should clear changes for specific row", () => {
             const tracker = useTableChanges<TestRow>();
             
-            tracker.trackChange("row1", "name", "New 1", "Old 1");
-            tracker.trackChange("row2", "value", 100, 50);
+            tracker.trackChange({
+                row: createRow("row1"),
+                column: createColumn<TestRow>("name"),
+                value: "New 1",
+                previousValue: "Old 1",
+            });
+            tracker.trackChange({
+                row: createRow("row2"),
+                column: createColumn<TestRow>("value"),
+                value: 100,
+                previousValue: 50,
+            });
             
             tracker.clearRowChanges("row1");
             
@@ -144,8 +259,18 @@ describe("useTableChanges", () => {
             const tracker = useTableChanges<TestRow>();
             
             // User made changes to row1
-            tracker.trackChange("row1", "name", "User Edit", "Original");
-            tracker.trackChange("row1", "value", 999, 100);
+            tracker.trackChange({
+                row: createRow("row1"),
+                column: createColumn<TestRow>("name"),
+                value: "User Edit",
+                previousValue: "Original",
+            });
+            tracker.trackChange({
+                row: createRow("row1"),
+                column: createColumn<TestRow>("value"),
+                value: 999,
+                previousValue: 100,
+            });
             
             // Fresh data from server (row1 value was updated by another user)
             const freshData: TestRow[] = [
@@ -168,7 +293,12 @@ describe("useTableChanges", () => {
         it("should not modify rows without changes", () => {
             const tracker = useTableChanges<TestRow>();
             
-            tracker.trackChange("row1", "name", "Changed", "Original");
+            tracker.trackChange({
+                row: createRow("row1"),
+                column: createColumn<TestRow>("name"),
+                value: "Changed",
+                previousValue: "Original",
+            });
             
             const freshData: TestRow[] = [
                 { key: "row1", name: "Original", value: 100, category: "A" },
@@ -198,7 +328,12 @@ describe("useTableChanges", () => {
         it("should handle undefined old value", () => {
             const tracker = useTableChanges<TestRow>();
             
-            tracker.trackChange("row1", "name", "New Value");
+            tracker.trackChange({
+                row: createRow("row1"),
+                column: createColumn<TestRow>("name"),
+                value: "New Value",
+                previousValue: undefined,
+            });
             
             expect(tracker.hasChange("row1", "name")).toBe(true);
             const changes = tracker.getChanges();
@@ -215,7 +350,12 @@ describe("useTableChanges", () => {
         it("should handle clearing non-existent row", () => {
             const tracker = useTableChanges<TestRow>();
             
-            tracker.trackChange("row1", "name", "Test", "Old");
+            tracker.trackChange({
+                row: createRow("row1"),
+                column: createColumn<TestRow>("name"),
+                value: "Test",
+                previousValue: "Old",
+            });
             tracker.clearRowChanges("row999");
             
             expect(tracker.hasChange("row1", "name")).toBe(true);
