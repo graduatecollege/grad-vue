@@ -13,9 +13,8 @@ const disabled = ref("1234567890123456789");
     <div class="demo-section">
         <h2>Accounting String Input (CFOP/CFOAP)</h2>
         <p>
-            An input for CFOP or CFOAP accounting strings. The input accepts
-            values with or without dashes and displays them formatted with gray
-            dashes.
+            An input for CFOP or CFOAP accounting strings. Enter values with or without dashes.
+            The component shows helpful status messages and accepts undo/redo.
         </p>
 
         <div class="demo-group">
@@ -24,12 +23,12 @@ const disabled = ref("1234567890123456789");
             <GAccountingStringInput
                 v-model="cfopValue"
                 label="CFOP Accounting String"
-                placeholder="Enter CFOP"
+                placeholder="Enter CFOP with or without dashes"
                 format="cfop"
-                instructions="Enter 19 alphanumeric characters (e.g., 1-234567-890123-456789)"
+                instructions="Enter 19 alphanumeric characters. You can include dashes for readability."
             />
             <div v-if="cfopValue" class="demo-output">
-                <strong>Model value (without dashes):</strong> {{ cfopValue }}
+                <strong>Model value (dashes stripped):</strong> {{ cfopValue }}
             </div>
         </div>
 
@@ -39,38 +38,38 @@ const disabled = ref("1234567890123456789");
             <GAccountingStringInput
                 v-model="cfoapValue"
                 label="CFOAP Accounting String"
-                placeholder="Enter CFOAP"
+                placeholder="Enter CFOAP with or without dashes"
                 format="cfoap"
-                instructions="Enter 25 alphanumeric characters (e.g., 1-234567-890123-456789-012345)"
+                instructions="Enter 25 alphanumeric characters. You can include dashes for readability."
             />
             <div v-if="cfoapValue" class="demo-output">
-                <strong>Model value (without dashes):</strong> {{ cfoapValue }}
+                <strong>Model value (dashes stripped):</strong> {{ cfoapValue }}
             </div>
         </div>
 
         <div class="demo-group">
             <h3>Auto-detect Format</h3>
-            <p>Automatically detects CFOP or CFOAP based on length</p>
+            <p>Automatically detects CFOP or CFOAP based on length and shows status messages</p>
             <GAccountingStringInput
                 v-model="autoValue"
                 label="Accounting String"
                 placeholder="Enter CFOP or CFOAP"
-                instructions="Type or paste with or without dashes. Format is auto-detected."
+                instructions="Type or paste with or without dashes. Status messages show progress."
             />
             <div v-if="autoValue" class="demo-output">
-                <strong>Model value (without dashes):</strong> {{ autoValue }}
+                <strong>Model value (dashes stripped):</strong> {{ autoValue }}
                 <br />
-                <strong>Detected format:</strong>
-                {{ autoValue.length <= 19 ? "CFOP" : "CFOAP" }}
+                <strong>Length:</strong> {{ autoValue.length }} characters
             </div>
         </div>
 
         <div class="demo-group">
-            <h3>With Error</h3>
+            <h3>With Server Error</h3>
+            <p>Error messages appear below the input for server-side validation</p>
             <GAccountingStringInput
                 v-model="withError"
                 label="Accounting String"
-                error="This value is too short to be a valid accounting string"
+                error="This accounting string does not exist in the system"
             />
         </div>
 
@@ -84,25 +83,20 @@ const disabled = ref("1234567890123456789");
         </div>
 
         <div class="demo-group">
-            <h3>Paste Examples</h3>
-            <p>Try pasting these values:</p>
+            <h3>Try It Out</h3>
+            <p>Test these features:</p>
             <ul>
-                <li>
-                    <code>1234567890123456789</code> - CFOP without dashes
-                </li>
-                <li>
-                    <code>1-234567-890123-456789</code> - CFOP with dashes
-                </li>
-                <li>
-                    <code>1234567890123456789012345</code> - CFOAP without
-                    dashes
-                </li>
-                <li>
-                    <code>1-234567-890123-456789-012345</code> - CFOAP with
-                    dashes
-                </li>
-                <li><code>1A2B3C7890123456789</code> - Alphanumeric CFOP</li>
+                <li><strong>Undo/Redo:</strong> Type some text, then press Ctrl+Z (Cmd+Z) to undo</li>
+                <li><strong>Paste with dashes:</strong> <code>1-234567-890123-456789</code></li>
+                <li><strong>Paste without dashes:</strong> <code>1234567890123456789</code></li>
+                <li><strong>CFOAP format:</strong> <code>1234567890123456789012345</code></li>
+                <li><strong>Alphanumeric:</strong> <code>1A2B3C7890123456789</code></li>
             </ul>
+            <p class="demo-note">
+                <strong>Note:</strong> Status messages indicate "Complete CFOP" or "Complete CFOAP" 
+                when the right number of characters are entered, but server-side validation is still 
+                required to confirm the accounting string exists.
+            </p>
         </div>
     </div>
 </template>
@@ -128,6 +122,15 @@ const disabled = ref("1234567890123456789");
     background: var(--g-surface-100);
     border-radius: 4px;
     font-family: monospace;
+}
+
+.demo-note {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: var(--g-primary-50);
+    border-left: 3px solid var(--g-primary-500);
+    border-radius: 4px;
+    font-size: 0.9em;
 }
 
 h2 {

@@ -2,15 +2,18 @@
 /**
  * An input for CFOP (1-6-6-6) or CFOAP (1-6-6-6-6) accounting strings.
  *
- * Accepts input with or without dashes and displays formatted with gray dashes.
- * CFOP format: Chart-Fund-Org-Program (1-6-6-6 = 19 characters)
- * CFOAP format: Chart-Fund-Org-Account-Program (1-6-6-6-6 = 25 characters)
+ * Accepts input with or without dashes. The dashes are stripped from the model value.
+ * Shows a status message indicating whether the input matches CFOP or CFOAP format,
+ * or if more characters are needed.
+ *
+ * CFOP format: Chart-Fund-Org-Program (19 alphanumeric characters)
+ * CFOAP format: Chart-Fund-Org-Account-Program (25 alphanumeric characters)
  *
  * If `label` is omitted, an accessible label must be provided some other way.
  * All non-prop attributes are passed through to the input element, including `id`.
  */
 
-import { ref, useId, computed, watch } from "vue";
+import { computed, useId, watch } from "vue";
 
 defineOptions({
     inheritAttrs: false,
@@ -38,7 +41,7 @@ type Props = {
      */
     instructions?: string;
     /**
-     * Format type: 'cfop' (4 segments), 'cfoap' (5 segments), or 'auto' (detect)
+     * Format type: 'cfop' (19 chars), 'cfoap' (25 chars), or 'auto' (detect)
      */
     format?: "cfop" | "cfoap" | "auto";
 };
@@ -55,8 +58,6 @@ const props = withDefaults(defineProps<Props>(), {
 const model = defineModel<string | null>({ type: String });
 
 const id = useId();
-const inputRef = ref<HTMLInputElement | null>(null);
-const displayValue = ref("");
 
 const emit = defineEmits<{
     change: [
@@ -67,130 +68,79 @@ const emit = defineEmits<{
     ];
 }>();
 
-// Segment lengths for each format
-const CFOP_SEGMENTS = [1, 6, 6, 6]; // Chart, Fund, Org, Program
-const CFOAP_SEGMENTS = [1, 6, 6, 6, 6]; // Chart, Fund, Org, Account, Program
-
 /**
- * Remove all dashes from the input string
+ * Remove all dashes and non-alphanumeric characters from the input string
  */
-function stripDashes(value: string): string {
-    return value.replace(/-/g, "");
+function cleanValue(value: string): string {
+    return value.replace(/[^a-zA-Z0-9]/g, "");
 }
 
 /**
- * Remove all characters except alphanumeric and dashes
+ * Get status message based on cleaned value length
  */
-function sanitizeInput(value: string): string {
-    return value.replace(/[^a-zA-Z0-9-]/g, "");
-}
-
-/**
- * Detect format based on cleaned string length
- */
-function detectFormat(cleaned: string): "cfop" | "cfoap" {
-    if (props.format !== "auto") {
-        return props.format;
-    }
-    // CFOP = 19 chars, CFOAP = 25 chars
-    // If length is closer to 19, assume CFOP; closer to 25, assume CFOAP
-    const cfopTotal = 19;
-    const cfoapTotal = 25;
+const statusMessage = computed(() => {
+    const cleaned = model.value ? cleanValue(model.value) : "";
+    const length = cleaned.length;
     
-    if (cleaned.length <= 19) {
-        return "cfop";
+    if (length === 0) {
+        return "";
+    }
+    
+    if (props.format === "cfop" || (props.format === "auto" && length <= 19)) {
+        if (length === 19) {
+            return "Complete CFOP format (Chart-Fund-Org-Program)";
+        } else if (length < 19) {
+            return `${19 - length} more character${19 - length === 1 ? '' : 's'} needed for CFOP`;
+        } else if (length > 19 && length < 25) {
+            return `${25 - length} more character${25 - length === 1 ? '' : 's'} needed for CFOAP`;
+        }
+    }
+    
+    if (props.format === "cfoap" || (props.format === "auto" && length > 19)) {
+        if (length === 25) {
+            return "Complete CFOAP format (Chart-Fund-Org-Account-Program)";
+        } else if (length < 25) {
+            return `${25 - length} more character${25 - length === 1 ? '' : 's'} needed for CFOAP`;
+        } else if (length > 25) {
+            return `${length - 25} character${length - 25 === 1 ? '' : 's'} too many`;
+        }
+    }
+    
+    if (length > 25) {
+        return `${length - 25} character${length - 25 === 1 ? '' : 's'} too many`;
+    }
+    
+    return "";
+});
+
+/**
+ * Pattern for HTML5 validation
+ * Allows alphanumeric and dashes, for CFOP or CFOAP formats
+ */
+const inputPattern = computed(() => {
+    if (props.format === "cfop") {
+        // CFOP: 19 alphanumeric chars, optionally with dashes
+        return "[a-zA-Z0-9-]{19,}";
+    } else if (props.format === "cfoap") {
+        // CFOAP: 25 alphanumeric chars, optionally with dashes
+        return "[a-zA-Z0-9-]{25,}";
     } else {
-        return "cfoap";
+        // Auto: accept either format
+        return "[a-zA-Z0-9-]{19,}";
     }
-}
+});
 
-/**
- * Format the string with dashes according to the format
- */
-function formatWithDashes(value: string, formatType: "cfop" | "cfoap"): string {
-    const cleaned = stripDashes(sanitizeInput(value));
-    const segments = formatType === "cfop" ? CFOP_SEGMENTS : CFOAP_SEGMENTS;
-    
-    let result = "";
-    let pos = 0;
-    
-    for (let i = 0; i < segments.length; i++) {
-        const segmentLength = segments[i];
-        const segment = cleaned.substring(pos, pos + segmentLength);
-        
-        if (segment.length > 0) {
-            result += segment;
-            if (i < segments.length - 1 && pos + segmentLength < cleaned.length) {
-                result += "-";
-            }
-        }
-        
-        pos += segmentLength;
-    }
-    
-    return result;
-}
-
-/**
- * Update the display value based on the current input
- */
-function updateDisplay(value: string) {
-    const sanitized = sanitizeInput(value);
-    const cleaned = stripDashes(sanitized);
-    const format = detectFormat(cleaned);
-    displayValue.value = formatWithDashes(sanitized, format);
-}
-
-/**
- * Get cursor position in the cleaned string (without dashes)
- */
-function getCleanedCursorPosition(input: HTMLInputElement): number {
-    const cursorPos = input.selectionStart ?? 0;
-    const beforeCursor = input.value.substring(0, cursorPos);
-    return stripDashes(beforeCursor).length;
-}
-
-/**
- * Set cursor position accounting for dashes in the display
- */
-function setCleanedCursorPosition(input: HTMLInputElement, cleanedPos: number) {
-    const cleaned = stripDashes(input.value);
-    const format = detectFormat(cleaned);
-    const segments = format === "cfop" ? CFOP_SEGMENTS : CFOAP_SEGMENTS;
-    
-    let displayPos = 0;
-    let cleanPos = 0;
-    
-    for (let i = 0; i < segments.length && cleanPos < cleanedPos; i++) {
-        const segmentLength = segments[i];
-        const charsToAdd = Math.min(segmentLength, cleanedPos - cleanPos);
-        
-        displayPos += charsToAdd;
-        cleanPos += charsToAdd;
-        
-        // Add dash if not at the end and there are more characters
-        if (i < segments.length - 1 && cleanPos < cleanedPos) {
-            displayPos += 1; // Account for dash
-        }
-    }
-    
-    input.setSelectionRange(displayPos, displayPos);
-}
-
-// Initialize display from model
+// Watch for external model changes and update
 watch(() => model.value, (newValue) => {
-    if (newValue) {
-        updateDisplay(newValue);
-    } else {
-        displayValue.value = "";
-    }
+    // Value is already cleaned, nothing to do
 }, { immediate: true });
 
+let inputTimer: ReturnType<typeof setTimeout> | null = null;
+
 function emitChangeIfNeeded(val: string | null) {
-    const cleaned = val ? stripDashes(val) : null;
-    const currentCleaned = model.value ? stripDashes(model.value) : null;
+    const cleaned = val ? cleanValue(val) : null;
     
-    if (cleaned !== currentCleaned) {
+    if (cleaned !== model.value) {
         const prev = model.value;
         model.value = cleaned;
         emit("change", {
@@ -200,33 +150,14 @@ function emitChangeIfNeeded(val: string | null) {
     }
 }
 
-let inputTimer: ReturnType<typeof setTimeout> | null = null;
-
-function onBeforeInput(e: InputEvent) {
-    // Prevent input of invalid characters (anything except alphanumeric and dash)
-    if (e.data && !/^[a-zA-Z0-9-]*$/.test(e.data)) {
-        e.preventDefault();
-    }
-}
-
 function onInput(e: Event) {
-    const input = e.target as HTMLInputElement;
-    const cleanedCursorPos = getCleanedCursorPosition(input);
-    
-    // Sanitize the input value
-    const sanitized = sanitizeInput(input.value);
-    
-    updateDisplay(sanitized);
-    input.value = displayValue.value;
-    
-    // Restore cursor position
-    setCleanedCursorPosition(input, cleanedCursorPos);
+    const value = (e.target as HTMLInputElement).value;
     
     if (inputTimer) {
         clearTimeout(inputTimer);
     }
     inputTimer = setTimeout(() => {
-        emitChangeIfNeeded(displayValue.value);
+        emitChangeIfNeeded(value);
         inputTimer = null;
     }, 3000);
 }
@@ -237,38 +168,6 @@ function onBlur(e: FocusEvent) {
         inputTimer = null;
     }
     emitChangeIfNeeded((e.target as HTMLInputElement).value);
-}
-
-function onPaste(e: ClipboardEvent) {
-    e.preventDefault();
-    
-    const pastedText = e.clipboardData?.getData("text") ?? "";
-    const sanitizedPaste = sanitizeInput(pastedText);
-    const input = e.target as HTMLInputElement;
-    const cleanedCursorPos = getCleanedCursorPosition(input);
-    
-    // Get current value and selection
-    const currentValue = input.value;
-    const start = input.selectionStart ?? 0;
-    const end = input.selectionEnd ?? 0;
-    
-    // Replace selected text with pasted text
-    const newValue = currentValue.substring(0, start) + sanitizedPaste + currentValue.substring(end);
-    
-    // Update display
-    updateDisplay(newValue);
-    input.value = displayValue.value;
-    
-    // Set cursor after pasted content
-    const pastedCleaned = stripDashes(sanitizedPaste);
-    setCleanedCursorPosition(input, cleanedCursorPos + pastedCleaned.length);
-    
-    if (inputTimer) {
-        clearTimeout(inputTimer);
-        inputTimer = null;
-    }
-    
-    emitChangeIfNeeded(displayValue.value);
 }
 
 function onKeydown(e: KeyboardEvent) {
@@ -304,30 +203,46 @@ function onKeydown(e: KeyboardEvent) {
             <slot name="instructions">{{ instructions }}</slot>
         </div>
         <input
-            ref="inputRef"
-            :value="displayValue"
+            :value="model"
             :placeholder="props.placeholder"
             :disabled="props.disabled"
-            @beforeinput="onBeforeInput"
+            :pattern="inputPattern"
             @input="onInput"
             @blur="onBlur"
-            @paste="onPaste"
             @keydown="onKeydown"
             type="text"
+            inputmode="text"
             class="g-accounting-string-input"
             v-bind="{
                 ...$attrs,
                 id: ($attrs.id as string) || id,
                 'aria-describedby':
-                    $slots.instructions || instructions
-                        ? 'instructions-' + id
-                        : undefined,
+                    [
+                        $slots.instructions || instructions ? 'instructions-' + id : null,
+                        statusMessage ? 'status-' + id : null
+                    ].filter(Boolean).join(' ') || undefined,
                 'aria-errormessage': props.error
                     ? 'error-message-' + id
                     : undefined,
             }"
             :aria-invalid="props.error ? 'true' : 'false'"
         />
+        <div
+            v-if="statusMessage"
+            :id="'status-' + id"
+            class="status-message"
+            role="status"
+            aria-live="polite"
+        >
+            <svg class="g-accounting-string-input-status-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+                <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+                <path
+                    fill="currentColor"
+                    d="M320 64C178.6 64 64 178.6 64 320s114.6 256 256 256s256-114.6 256-256S461.4 64 320 64zM320 128c17.7 0 32 14.3 32 32s-14.3 32-32 32s-32-14.3-32-32s14.3-32 32-32zM368 448c0 8.8-7.2 16-16 16H288c-8.8 0-16-7.2-16-16V288c0-8.8 7.2-16 16-16h64c8.8 0 16 7.2 16 16V448z"
+                />
+            </svg>
+            {{ statusMessage }}
+        </div>
         <div
             v-if="props.error"
             class="error-message"
@@ -371,20 +286,33 @@ function onKeydown(e: KeyboardEvent) {
     font-family: var(--il-font-mono, monospace);
     letter-spacing: 0.05em;
 }
-.g-accounting-string-input-has-error {
-    .g-accounting-string-input {
-        border-color: var(--g-danger-600);
-        background: var(--g-danger-100);
-    }
+.g-accounting-string-input-has-error .g-accounting-string-input {
+    border-color: var(--g-danger-600);
+    background: var(--g-danger-100);
 }
 .g-accounting-string-input:disabled {
     background: var(--g-surface-100);
     color: var(--g-surface-700);
 }
+.status-message {
+    background: var(--g-surface-0);
+    color: var(--g-primary-700);
+    padding: 0.25em 0.5em;
+    margin-top: 0.25em;
+    font-size: 0.9em;
+}
 .error-message {
     background: var(--g-surface-0);
     color: var(--g-danger-600);
     padding: 0.25em 0.5em;
+    margin-top: 0.25em;
+}
+.g-accounting-string-input-status-icon {
+    height: 1.2em;
+    padding: 0.2em 0;
+    display: inline;
+    margin: 0 0.2em 0 0;
+    vertical-align: middle;
 }
 .g-accounting-string-input-error-icon {
     height: 1.2em;

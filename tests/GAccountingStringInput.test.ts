@@ -33,32 +33,6 @@ describe("GAccountingStringInput", () => {
             expect(input.hasAttribute("disabled")).toBe(true);
         });
 
-        it("formats CFOP value with dashes on display", () => {
-            const { container } = mnt(GAccountingStringInput, {
-                props: {
-                    label: "Accounting String",
-                    modelValue: "1234567890123456789",
-                },
-            });
-
-            const input = container.element().querySelector("input")! as HTMLInputElement;
-            // Should display with dashes
-            expect(input.value).toBe("1-234567-890123-456789");
-        });
-
-        it("formats CFOAP value with dashes on display", () => {
-            const { container } = mnt(GAccountingStringInput, {
-                props: {
-                    label: "Accounting String",
-                    modelValue: "1234567890123456789012345",
-                },
-            });
-
-            const input = container.element().querySelector("input")! as HTMLInputElement;
-            // Should display with dashes
-            expect(input.value).toBe("1-234567-890123-456789-012345");
-        });
-
         it("strips dashes from model value", async () => {
             const modelValue = ref("");
             const { container } = mnt(GAccountingStringInput, {
@@ -75,6 +49,89 @@ describe("GAccountingStringInput", () => {
 
             // Model should have dashes stripped
             expect(modelValue.value).toBe("1234567890123456789");
+        });
+
+        it("accepts input without dashes", async () => {
+            const modelValue = ref("");
+            const { container } = mnt(GAccountingStringInput, {
+                props: {
+                    label: "Accounting String",
+                },
+                model: modelValue,
+            });
+
+            const input = container.element().querySelector("input")! as HTMLInputElement;
+            await userEvent.type(input, "1234567890123456789");
+            input.blur();
+
+            expect(modelValue.value).toBe("1234567890123456789");
+        });
+
+        it("shows status message for incomplete CFOP", () => {
+            const { container } = mnt(GAccountingStringInput, {
+                props: {
+                    label: "Accounting String",
+                    modelValue: "123456",
+                },
+            });
+
+            const status = container.element().querySelector(".status-message");
+            expect(status).toBeTruthy();
+            expect(status!.textContent).toContain("more character");
+            expect(status!.textContent).toContain("CFOP");
+        });
+
+        it("shows status message for complete CFOP", () => {
+            const { container } = mnt(GAccountingStringInput, {
+                props: {
+                    label: "Accounting String",
+                    modelValue: "1234567890123456789",
+                },
+            });
+
+            const status = container.element().querySelector(".status-message");
+            expect(status).toBeTruthy();
+            expect(status!.textContent).toContain("Complete CFOP format");
+        });
+
+        it("shows status message for incomplete CFOAP", () => {
+            const { container } = mnt(GAccountingStringInput, {
+                props: {
+                    label: "Accounting String",
+                    modelValue: "12345678901234567890",
+                },
+            });
+
+            const status = container.element().querySelector(".status-message");
+            expect(status).toBeTruthy();
+            expect(status!.textContent).toContain("more character");
+            expect(status!.textContent).toContain("CFOAP");
+        });
+
+        it("shows status message for complete CFOAP", () => {
+            const { container } = mnt(GAccountingStringInput, {
+                props: {
+                    label: "Accounting String",
+                    modelValue: "1234567890123456789012345",
+                },
+            });
+
+            const status = container.element().querySelector(".status-message");
+            expect(status).toBeTruthy();
+            expect(status!.textContent).toContain("Complete CFOAP format");
+        });
+
+        it("shows status message for too many characters", () => {
+            const { container } = mnt(GAccountingStringInput, {
+                props: {
+                    label: "Accounting String",
+                    modelValue: "12345678901234567890123456",
+                },
+            });
+
+            const status = container.element().querySelector(".status-message");
+            expect(status).toBeTruthy();
+            expect(status!.textContent).toContain("too many");
         });
 
         it("emits change event on blur", async () => {
@@ -100,12 +157,12 @@ describe("GAccountingStringInput", () => {
             const { container } = mnt(GAccountingStringInput, {
                 props: {
                     label: "Accounting String",
-                    error: "Invalid accounting string",
+                    error: "Server validation failed",
                     modelValue: "",
                 },
             });
 
-            expect(container.element().querySelector(".error-message")!.textContent).toContain("Invalid accounting string");
+            expect(container.element().querySelector(".error-message")!.textContent).toContain("Server validation failed");
         });
 
         it("uses cfop format when specified", () => {
@@ -117,9 +174,8 @@ describe("GAccountingStringInput", () => {
                 },
             });
 
-            const input = container.element().querySelector("input")! as HTMLInputElement;
-            // Should format as CFOP
-            expect(input.value).toBe("1-234567-890123-456789");
+            const status = container.element().querySelector(".status-message");
+            expect(status!.textContent).toContain("Complete CFOP format");
         });
 
         it("uses cfoap format when specified", () => {
@@ -131,25 +187,11 @@ describe("GAccountingStringInput", () => {
                 },
             });
 
-            const input = container.element().querySelector("input")! as HTMLInputElement;
-            // Should format as CFOAP
-            expect(input.value).toBe("1-234567-890123-456789-012345");
+            const status = container.element().querySelector(".status-message");
+            expect(status!.textContent).toContain("Complete CFOAP format");
         });
 
-        it("supports alphanumeric characters", () => {
-            const { container } = mnt(GAccountingStringInput, {
-                props: {
-                    label: "Accounting String",
-                    modelValue: "1A2B3C7890123456789",
-                },
-            });
-
-            const input = container.element().querySelector("input")! as HTMLInputElement;
-            // Should format with alphanumeric
-            expect(input.value).toBe("1-A2B3C7-890123-456789");
-        });
-
-        it("filters out special characters", async () => {
+        it("supports alphanumeric characters", async () => {
             const modelValue = ref("");
             const { container } = mnt(GAccountingStringInput, {
                 props: {
@@ -159,17 +201,15 @@ describe("GAccountingStringInput", () => {
             });
 
             const input = container.element().querySelector("input")! as HTMLInputElement;
-            // Type with special characters
-            await userEvent.type(input, "1@2#3$4%5^6&7*8(9)0!1+2=3");
+            await userEvent.type(input, "1A2B3C7890123456789");
             input.blur();
 
-            // Special characters should be filtered out
-            expect(modelValue.value).toBe("1234567890123");
+            expect(modelValue.value).toBe("1A2B3C7890123456789");
         });
 
-        it("handles paste with special characters", async () => {
+        it("strips special characters from model value", async () => {
             const modelValue = ref("");
-            const { container, vm } = mnt(GAccountingStringInput, {
+            const { container } = mnt(GAccountingStringInput, {
                 props: {
                     label: "Accounting String",
                 },
@@ -177,21 +217,14 @@ describe("GAccountingStringInput", () => {
             });
 
             const input = container.element().querySelector("input")! as HTMLInputElement;
-            input.focus();
-            
-            // Simulate paste event with special characters
-            const pasteEvent = new ClipboardEvent("paste", {
-                clipboardData: new DataTransfer(),
-            });
-            (pasteEvent.clipboardData as DataTransfer).setData("text", "1@2#3-4$5%6^7&8*9(0)1!2+3=4");
-            input.dispatchEvent(pasteEvent);
-            await vm.$nextTick();
+            await userEvent.type(input, "1@2#3$4");
+            input.blur();
 
-            // Special characters should be filtered out, only alphanumeric and dashes remain
-            expect(input.value).toBe("1-234567-890123-4");
+            // Special characters should be stripped
+            expect(modelValue.value).toBe("1234");
         });
 
-        it("formats input correctly as user types", async () => {
+        it("has pattern attribute for HTML5 validation", () => {
             const { container } = mnt(GAccountingStringInput, {
                 props: {
                     label: "Accounting String",
@@ -199,19 +232,21 @@ describe("GAccountingStringInput", () => {
                 },
             });
 
-            const input = container.element().querySelector("input")! as HTMLInputElement;
-            
-            // Type first character
-            await userEvent.type(input, "1");
-            expect(input.value).toBe("1");
-            
-            // Type more to reach first dash
-            await userEvent.type(input, "234567");
-            expect(input.value).toBe("1-234567");
-            
-            // Continue typing to add second segment
-            await userEvent.type(input, "890123");
-            expect(input.value).toBe("1-234567-890123");
+            const input = container.element().querySelector("input")!;
+            expect(input.hasAttribute("pattern")).toBe(true);
+        });
+
+        it("includes status message in aria-describedby", () => {
+            const { container } = mnt(GAccountingStringInput, {
+                props: {
+                    label: "Accounting String",
+                    modelValue: "123456",
+                },
+            });
+
+            const input = container.element().querySelector("input")!;
+            const describedBy = input.getAttribute("aria-describedby");
+            expect(describedBy).toContain("status-");
         });
     });
 
@@ -236,7 +271,7 @@ describe("GAccountingStringInput", () => {
         it("with error state", async () => {
             await testAccessibility(GAccountingStringInput, {
                 label: "Accounting String",
-                error: "Invalid accounting string",
+                error: "Server validation failed",
                 modelValue: "",
                 "aria-label": "Accounting string input",
             });
@@ -250,11 +285,18 @@ describe("GAccountingStringInput", () => {
             });
         });
 
+        it("with status message", async () => {
+            await testAccessibility(GAccountingStringInput, {
+                label: "Accounting String",
+                modelValue: "123456",
+            });
+        });
+
         it("with label and instructions and error state", async () => {
             await testAccessibility(GAccountingStringInput, {
                 label: "Accounting String",
                 instructions: "Enter a CFOP (19 chars) or CFOAP (25 chars) accounting string",
-                error: "Invalid format",
+                error: "Server validation failed",
             });
         });
     });
