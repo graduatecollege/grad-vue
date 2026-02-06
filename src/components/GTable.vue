@@ -195,9 +195,14 @@ function handleBulkAction(actionId: string) {
 
 function handleCellChange(payload: { row: T; column: C; value: any }) {
     // Update the reactive data
-    payload.row[payload.column.key as keyof T] = payload.value;
-    // Emit the change event
-    emit("cell-change", payload);
+    // Convert the value to the appropriate type based on input attributes
+    let convertedValue: any = payload.value;
+    if (payload.column.editable?.inputAttributes?.type === 'number') {
+        convertedValue = payload.value === '' ? null : Number(payload.value);
+    }
+    payload.row[payload.column.key as keyof T] = convertedValue;
+    // Emit the change event with the converted value
+    emit("cell-change", { ...payload, value: convertedValue });
 }
 
 const id = useId();

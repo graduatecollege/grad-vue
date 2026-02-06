@@ -186,8 +186,8 @@ describe("GTable Editable Columns", () => {
             // Wait for update
             await vm.$nextTick();
 
-            // Check that the data was updated
-            expect(tableData.value[0].price).toBe("15.99");
+            // Check that the data was updated (converted to number)
+            expect(tableData.value[0].price).toBe(15.99);
         });
 
         it("emits cell-change event with correct payload", async () => {
@@ -235,7 +235,7 @@ describe("GTable Editable Columns", () => {
             // Check that the event was emitted
             expect(onCellChange).toHaveBeenCalled();
             const payload = onCellChange.mock.calls[0][0];
-            expect(payload.value).toBe("20.5");
+            expect(payload.value).toBe(20.5); // Should be converted to number
             expect(payload.row.key).toBe("1");
             expect(payload.column.key).toBe("price");
         });
