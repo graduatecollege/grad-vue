@@ -1,4 +1,5 @@
-import { reactive, computed, toRaw } from "vue";
+import { reactive} from "vue";
+import { TableColumn, TableRow } from "../components/table/TableColumn.ts";
 
 /**
  * Represents a single cell change in the table
@@ -6,8 +7,18 @@ import { reactive, computed, toRaw } from "vue";
 export interface CellChange<T = any> {
     rowKey: string;
     columnKey: string;
-    oldValue: T;
+    previousValue: T;
     newValue: T;
+}
+
+/**
+ * Payload for the `trackChange` function
+ */
+export interface CellChangePayload<T extends TableRow = TableRow> {
+    row: T;
+    column: TableColumn<T>;
+    value: any;
+    previousValue: any;
 }
 
 /**
@@ -22,7 +33,7 @@ export interface UseTableChangesReturn<T extends Record<string, any>> {
     /**
      * Track a change to a cell
      */
-    trackChange: (rowKey: string, columnKey: keyof T, newValue: any, oldValue?: any) => void;
+    trackChange: (payload: CellChangePayload<any>) => void;
     
     /**
      * Get all changes as an array
@@ -104,22 +115,24 @@ export function useTableChanges<T extends Record<string, any> = Record<string, a
     /**
      * Track a change to a specific cell
      */
-    const trackChange = (rowKey: string, columnKey: keyof T, newValue: any, oldValue?: any) => {
-        const colKey = String(columnKey);
-        
-        // Get or create the row's change map
+    const trackChange = (payload: CellChangePayload) => {
+        const colKey = payload.column.key as string;
+        const rowKey = payload.row.key;
+        const newValue = payload.value;
+        const previousValue = payload.previousValue;
+
         if (!changes.has(rowKey)) {
             changes.set(rowKey, new Map());
         }
         
         const rowChanges = changes.get(rowKey)!;
         
-        // If there's already a change for this cell, preserve the original oldValue
+        // If there's already a change for this cell, preserve the original previousValue
         const existingChange = rowChanges.get(colKey);
-        const originalOldValue = existingChange ? existingChange.oldValue : oldValue;
+        const originalpreviousValue = existingChange ? existingChange.previousValue : previousValue;
         
         // If the new value equals the original value, remove the change
-        if (newValue === originalOldValue) {
+        if (newValue === originalpreviousValue) {
             rowChanges.delete(colKey);
             // Clean up empty row maps
             if (rowChanges.size === 0) {
@@ -130,7 +143,7 @@ export function useTableChanges<T extends Record<string, any> = Record<string, a
             rowChanges.set(colKey, {
                 rowKey,
                 columnKey: colKey,
-                oldValue: originalOldValue,
+                previousValue: originalpreviousValue,
                 newValue,
             });
         }

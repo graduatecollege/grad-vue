@@ -12,7 +12,10 @@ import GSidebar from "../src/components/GSidebar.vue";
 import GTable from "../src/components/GTable.vue";
 import { TableColumn } from "../src/components/table/TableColumn";
 import { useFiltering } from "../src/compose/useFiltering";
-import { useTableChanges } from "../src/compose/useTableChanges";
+import {
+    CellChangePayload,
+    useTableChanges,
+} from "../src/compose/useTableChanges";
 import GTablePagination from "../src/components/table/GTablePagination.vue";
 import GModal from "../src/components/GModal.vue";
 import { useOverlayStack, useOverlayStackState } from "../src/grad-vue";
@@ -294,11 +297,46 @@ interface ProductRow {
 }
 
 const productData = ref<ProductRow[]>([
-    { key: "1", name: "Laptop", price: 999.99, quantity: 15, weight: 2.5, category: "electronics" },
-    { key: "2", name: "Mouse", price: 29.99, quantity: 50, weight: 0.15, category: "accessories" },
-    { key: "3", name: "Keyboard", price: 79.99, quantity: 30, weight: 0.8, category: "accessories" },
-    { key: "4", name: "Monitor", price: 349.99, quantity: 20, weight: 5.5, category: "electronics" },
-    { key: "5", name: "Webcam", price: 89.99, quantity: 25, weight: 0.3, category: "electronics" },
+    {
+        key: "1",
+        name: "Laptop",
+        price: 999.99,
+        quantity: 15,
+        weight: 2.5,
+        category: "electronics",
+    },
+    {
+        key: "2",
+        name: "Mouse",
+        price: 29.99,
+        quantity: 50,
+        weight: 0.15,
+        category: "accessories",
+    },
+    {
+        key: "3",
+        name: "Keyboard",
+        price: 79.99,
+        quantity: 30,
+        weight: 0.8,
+        category: "accessories",
+    },
+    {
+        key: "4",
+        name: "Monitor",
+        price: 349.99,
+        quantity: 20,
+        weight: 5.5,
+        category: "electronics",
+    },
+    {
+        key: "5",
+        name: "Webcam",
+        price: 89.99,
+        quantity: 25,
+        weight: 0.3,
+        category: "electronics",
+    },
 ]);
 
 const productColumns = computed<TableColumn<ProductRow>[]>(() => {
@@ -373,15 +411,8 @@ const { filters: productFilters } = productFiltering;
 // Create change tracker for editable table
 const productChanges = useTableChanges<ProductRow>();
 
-function handleCellChange(payload: { row: ProductRow; column: TableColumn<ProductRow>; value: any }) {
-    console.log(`Cell changed in row ${payload.row.key}, column ${String(payload.column.key)}: ${payload.value}`);
-    
-    // Track the change with the original value from the data
-    const originalRow = productData.value.find(r => r.key === payload.row.key);
-    if (originalRow) {
-        const originalValue = originalRow[payload.column.key as keyof ProductRow];
-        productChanges.trackChange(payload.row.key, payload.column.key, payload.value, originalValue);
-    }
+function handleCellChange(payload: CellChangePayload<ProductRow>) {
+    productChanges.trackChange(payload);
 }
 
 // Helper to show changes info
@@ -389,7 +420,7 @@ const changesInfo = computed(() => {
     const count = productChanges.changeCount();
     if (count === 0) return "No changes";
     const changes = productChanges.getChanges();
-    return `${count} change${count > 1 ? 's' : ''}: ${changes.map(c => `${c.rowKey}.${c.columnKey}`).join(', ')}`;
+    return `${count} change${count > 1 ? "s" : ""}: ${changes.map((c) => `${c.rowKey}.${c.columnKey}`).join(", ")}`;
 });
 
 function logChanges() {
@@ -405,24 +436,57 @@ function clearAllChanges() {
 function simulateDataRefresh() {
     // Simulate getting fresh data from server with some updates
     const freshData = [
-        { key: "1", name: "Laptop Pro", price: 1099.99, quantity: 18, weight: 2.5, category: "electronics" },
-        { key: "2", name: "Mouse", price: 29.99, quantity: 55, weight: 0.15, category: "accessories" },
-        { key: "3", name: "Keyboard", price: 79.99, quantity: 30, weight: 0.8, category: "accessories" },
-        { key: "4", name: "Monitor 4K", price: 399.99, quantity: 22, weight: 5.5, category: "electronics" },
-        { key: "5", name: "Webcam", price: 89.99, quantity: 25, weight: 0.3, category: "electronics" },
+        {
+            key: "1",
+            name: "Laptop Pro",
+            price: 1099.99,
+            quantity: 18,
+            weight: 2.5,
+            category: "electronics",
+        },
+        {
+            key: "2",
+            name: "Mouse",
+            price: 29.99,
+            quantity: 55,
+            weight: 0.15,
+            category: "accessories",
+        },
+        {
+            key: "3",
+            name: "Keyboard",
+            price: 79.99,
+            quantity: 30,
+            weight: 0.8,
+            category: "accessories",
+        },
+        {
+            key: "4",
+            name: "Monitor 4K",
+            price: 399.99,
+            quantity: 22,
+            weight: 5.5,
+            category: "electronics",
+        },
+        {
+            key: "5",
+            name: "Webcam",
+            price: 89.99,
+            quantity: 25,
+            weight: 0.3,
+            category: "electronics",
+        },
     ];
-    
+
     // Apply user changes to fresh data
     productData.value = productChanges.applyChangesToData(freshData);
     console.log("Data refreshed with user changes preserved");
 }
 
-
 const showModal = ref(false);
 
-const term = ref({year: "2026", name: "Spring"});
+const term = ref({ year: "2026", name: "Spring" });
 const termYears = ref(["2026", "2025", "2024"]);
-
 </script>
 
 <template>
@@ -451,7 +515,8 @@ const termYears = ref(["2026", "2025", "2024"]);
                     title="Components"
                     theme="light"
                     :items="[
-                                            { label: 'Term Selector', href: '#term-selector' },
+                        { label: 'Term Selector', href: '#term-selector' },
+                        { label: 'Table', href: '#table' },
                         { label: 'Buttons', href: '#buttons' },
                         { label: 'Search', href: '#search' },
                         { label: 'Text Input', href: '#text-input' },
@@ -470,15 +535,18 @@ const termYears = ref(["2026", "2025", "2024"]);
                         },
                         { label: 'Modal', href: '#modal' },
                         { label: 'Detail List', href: '#detail-list' },
-]"
+                    ]"
                     v-model="activeId"
                 />
             </GSidebar>
             <main class="main" ref="main">
-
                 <section id="term-selector">
                     <h2>Term Selector</h2>
-                    <GTermSelector label="Term Selector" v-model="term" :term-years="termYears" >
+                    <GTermSelector
+                        label="Term Selector"
+                        v-model="term"
+                        :term-years="termYears"
+                    >
                         <p>Example content</p>
                     </GTermSelector>
                 </section>
@@ -509,13 +577,27 @@ const termYears = ref(["2026", "2025", "2024"]);
                         </template>
                     </GTable>
 
-                    <h3 style="margin-top: 3rem;">Editable Columns Example</h3>
-                    <p>Columns can be made editable by adding the <code>editable</code> configuration. This renders cells as input elements that update data in real-time.</p>
+                    <h3 style="margin-top: 3rem">Editable Columns Example</h3>
+                    <p>
+                        Columns can be made editable by adding the
+                        <code>editable</code> configuration. This renders cells
+                        as input elements that update data in real-time.
+                    </p>
                     <p><strong>Change Tracking:</strong> {{ changesInfo }}</p>
-                    <div style="margin-bottom: 1rem;">
-                        <GButton @click="logChanges" style="margin-right: 0.5rem;">Log Changes</GButton>
-                        <GButton @click="clearAllChanges" style="margin-right: 0.5rem;">Clear Changes</GButton>
-                        <GButton @click="simulateDataRefresh">Simulate Data Refresh</GButton>
+                    <div style="margin-bottom: 1rem">
+                        <GButton
+                            @click="logChanges"
+                            style="margin-right: 0.5rem"
+                            >Log Changes</GButton
+                        >
+                        <GButton
+                            @click="clearAllChanges"
+                            style="margin-right: 0.5rem"
+                            >Clear Changes</GButton
+                        >
+                        <GButton @click="simulateDataRefresh"
+                            >Simulate Data Refresh</GButton
+                        >
                     </div>
                     <GTable
                         label="Products"
@@ -528,8 +610,14 @@ const termYears = ref(["2026", "2025", "2024"]);
                         @cell-change="handleCellChange"
                     >
                         <template #pagination>
-                            <div style="padding: 0.5rem 0; font-style: italic; color: #666;">
-                                Edit values to see change tracking in action. Changed cells are highlighted.
+                            <div
+                                style="
+                                    padding: 0.5rem 0;
+                                    font-style: italic;
+                                "
+                            >
+                                Edit values to see change tracking in action.
+                                Changed cells are highlighted.
                             </div>
                         </template>
                     </GTable>

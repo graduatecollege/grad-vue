@@ -63,7 +63,7 @@ describe("useTableChanges", () => {
             
             const changes = tracker.getChanges();
             expect(changes.length).toBe(1);
-            expect(changes[0].oldValue).toBe(50);
+            expect(changes[0].previousValue).toBe(50);
             expect(changes[0].newValue).toBe(200);
         });
     });
@@ -202,7 +202,7 @@ describe("useTableChanges", () => {
             
             expect(tracker.hasChange("row1", "name")).toBe(true);
             const changes = tracker.getChanges();
-            expect(changes[0].oldValue).toBeUndefined();
+            expect(changes[0].previousValue).toBeUndefined();
         });
 
         it("should handle checking non-existent changes", () => {
