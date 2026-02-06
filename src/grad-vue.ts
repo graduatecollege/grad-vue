@@ -67,11 +67,17 @@ export {
 export { useActiveLinkContent } from "./compose/useActiveLink";
 export { useSidebar } from "./compose/useSidebar";
 export { useFiltering, filtersToQueryParams, filterOmitEmpty, filterAsQuery, asArray, emptyAsUndefined } from "./compose/useFiltering";
+export { useTableChanges } from "./compose/useTableChanges";
 export type {
     FilteringOptions,
     UseFilteringReturn,
     FiltersForRecord,
 } from "./compose/useFiltering";
+export type {
+    UseTableChangesReturn,
+    CellChange,
+    ChangeMap,
+} from "./compose/useTableChanges";
 export type {
     SelectColumnFilter,
     MultiSelectColumnFilter,

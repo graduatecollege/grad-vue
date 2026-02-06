@@ -1,6 +1,7 @@
 <script setup lang="ts" generic="T extends TableRow, C extends TableColumn<T>">
-import { toRefs, type VNode } from "vue";
+import { computed, toRefs, type VNode } from "vue";
 import { TableColumn, TableRow } from "./TableColumn.ts";
+import { UseTableChangesReturn } from "../../compose/useTableChanges.ts";
 import { HTMLInputElement } from "happy-dom";
 
 type Props = {
@@ -13,6 +14,8 @@ type Props = {
     startIndex: number;
     bulkSelectionEnabled?: boolean;
     selectedRows?: string[];
+    tableId: string;
+    changeTracker?: UseTableChangesReturn<T>;
 };
 
 const props = defineProps<Props>();
@@ -20,6 +23,7 @@ const props = defineProps<Props>();
 const emit = defineEmits<{
     (e: "row-click", link: string): void;
     (e: "toggle-row", rowKey: string, shiftKey: boolean): void;
+    (e: "cell-change", payload: { row: T; column: C; value: any }): void;
 }>();
 
 function handleMouseDown(event: MouseEvent, rowKey: string) {
@@ -71,6 +75,46 @@ function isRowSelected(rowKey: string): boolean {
 function handleCheckboxChange(rowKey: string, shiftKey: boolean = false) {
     emit("toggle-row", rowKey, shiftKey);
 }
+
+function handleCellChange(event: Event, row: T, col: C) {
+    const target = event.target as unknown as
+        | HTMLInputElement
+        | HTMLSelectElement;
+    const value = target.value;
+    emit("cell-change", { row, column: col, value });
+}
+
+function buildAriaLabelledBy(row: T, col: C): string {
+    const columnHeaderId = `${props.tableId}-th-${String(col.key)}`;
+
+    // If labelKey is specified, add the label cell ID
+    if (col.editable?.labelKey) {
+        const labelCellId = `${props.tableId}-td-${row.key}-${col.editable.labelKey}`;
+        return `${labelCellId} ${columnHeaderId} `;
+    }
+
+    return columnHeaderId;
+}
+
+const labelCellColumn = computed(() => {
+    for (const col of props.columns) {
+        if (col.editable?.labelKey) {
+            return col.editable.labelKey;
+        }
+    }
+    return undefined;
+    }
+);
+
+function shouldAddCellId(col: C): boolean {
+    // Check if this column is used as a label for any editable column
+    return col.key === labelCellColumn.value;
+}
+
+function hasCellChange(row: T, col: C): boolean {
+    if (!props.changeTracker) return false;
+    return props.changeTracker.hasChange(row.key, col.key);
+}
 </script>
 
 <template>
@@ -116,21 +160,79 @@ function handleCheckboxChange(rowKey: string, shiftKey: boolean = false) {
                         <input
                             type="checkbox"
                             :checked="isRowSelected(row.key)"
-                            @click="(e) => handleCheckboxChange(row.key, e.shiftKey)"
+                            @click="
+                                (e) => handleCheckboxChange(row.key, e.shiftKey)
+                            "
                             :aria-label="`Select row ${row.key}`"
                             class="g-bulk-select-checkbox"
+                            :name="`row-${row.key}-checkbox`"
                         />
                     </td>
                     <td
                         v-for="col in columns"
                         :key="col.key"
-                        :class="
+                        :id="
+                            shouldAddCellId(col)
+                                ? `${tableId}-td-${row.key}-${String(col.key)}`
+                                : undefined
+                        "
+                        :class="[
+                            col.editable ? 'editable-td' : '',
+                            hasCellChange(row, col) ? 'cell-changed' : '',
                             typeof col.tdClass === 'function'
                                 ? col.tdClass(row)
-                                : col.tdClass
-                        "
+                                : col.tdClass,
+                        ]"
                     >
-                        <component v-if="col.display" :is="col.display(row)" />
+                        <div v-if="col.editable" class="editable-cell">
+                            <span
+                                v-if="col.editable.prefix"
+                                class="cell-prefix"
+                                >{{ col.editable.prefix }}</span
+                            >
+                            <select
+                                v-if="col.editable.type === 'select'"
+                                :value="row[col.key]"
+                                @change="handleCellChange($event, row, col)"
+                                :aria-labelledby="buildAriaLabelledBy(row, col)"
+                                class="editable-input editable-select"
+                                :name="`row-${row.key}-${String(col.key)}-select`"
+                            >
+                                <option
+                                    v-for="option in col.editable.options"
+                                    :key="option.value"
+                                    :value="option.value"
+                                >
+                                    {{ option.label }}
+                                </option>
+                            </select>
+                            <input
+                                v-else
+                                :value="row[col.key]"
+                                v-bind="col.editable.inputAttributes"
+                                @input="handleCellChange($event, row, col)"
+                                :aria-labelledby="buildAriaLabelledBy(row, col)"
+                                :name="`row-${row.key}-${String(col.key)}-input`"
+                                class="editable-input"
+                                :style="{
+                                    paddingLeft: col.editable.prefix
+                                        ? '1.5rem'
+                                        : undefined,
+                                    paddingRight: col.editable.suffix
+                                        ? '2rem'
+                                        : undefined,
+                                }"
+                            />
+                            <span
+                                v-if="col.editable.suffix"
+                                class="cell-suffix"
+                                >{{ col.editable.suffix }}</span
+                            >
+                        </div>
+                        <component
+                            v-else-if="col.display"
+                            :is="col.display(row)"
+                        />
                         <template v-else>{{ row[col.key] }}</template>
                     </td>
                 </tr>
@@ -156,21 +258,72 @@ function handleCheckboxChange(rowKey: string, shiftKey: boolean = false) {
                     <input
                         type="checkbox"
                         :checked="isRowSelected(row.key)"
-                        @click="(e) => handleCheckboxChange(row.key, e.shiftKey)"
+                        @click="
+                            (e) => handleCheckboxChange(row.key, e.shiftKey)
+                        "
                         :aria-label="`Select row ${row.key}`"
+                        :name="`row-${row.key}-checkbox`"
                         class="g-bulk-select-checkbox"
                     />
                 </td>
                 <td
                     v-for="col in columns"
                     :key="col.key"
-                    :class="
+                    :id="
+                        shouldAddCellId(col)
+                            ? `${tableId}-td-${row.key}-${String(col.key)}`
+                            : undefined
+                    "
+                    :class="[
+                        col.editable ? 'editable-td' : '',
+                        hasCellChange(row, col) ? 'cell-changed' : '',
                         typeof col.tdClass === 'function'
                             ? col.tdClass(row)
-                            : col.tdClass
-                    "
+                            : col.tdClass,
+                    ]"
                 >
-                    <component v-if="col.display" :is="col.display(row)" />
+                    <div v-if="col.editable" class="editable-cell">
+                        <span v-if="col.editable.prefix" class="cell-prefix">{{
+                            col.editable.prefix
+                        }}</span>
+                        <select
+                            v-if="col.editable.type === 'select'"
+                            :value="row[col.key]"
+                            @change="handleCellChange($event, row, col)"
+                            :aria-labelledby="buildAriaLabelledBy(row, col)"
+                            :name="`row-${row.key}-${String(col.key)}-select`"
+                            class="editable-input editable-select"
+                        >
+                            <option
+                                v-for="option in col.editable.options"
+                                :key="option.value"
+                                :value="option.value"
+                            >
+                                {{ option.label }}
+                            </option>
+                        </select>
+                        <input
+                            v-else
+                            :value="row[col.key]"
+                            v-bind="col.editable.inputAttributes"
+                            @input="handleCellChange($event, row, col)"
+                            :aria-labelledby="buildAriaLabelledBy(row, col)"
+                            :name="`row-${row.key}-${String(col.key)}-input`"
+                            class="editable-input"
+                            :style="{
+                                paddingLeft: col.editable.prefix
+                                    ? '1.5rem'
+                                    : undefined,
+                                paddingRight: col.editable.suffix
+                                    ? '2rem'
+                                    : undefined,
+                            }"
+                        />
+                        <span v-if="col.editable.suffix" class="cell-suffix">{{
+                            col.editable.suffix
+                        }}</span>
+                    </div>
+                    <component v-else-if="col.display" :is="col.display(row)" />
                     <template v-else>{{ row[col.key] }}</template>
                 </td>
             </tr>
@@ -183,6 +336,23 @@ function handleCheckboxChange(rowKey: string, shiftKey: boolean = false) {
     th,
     td {
         padding: 0.4rem 0.2rem;
+    }
+
+    td.editable-td {
+        padding: 0;
+        border-right: 1px solid var(--g-surface-300);
+        border-bottom: 1px solid var(--g-surface-300);
+    }
+
+    /* Add left border to first editable cell or after non-editable cell */
+    td.editable-td:first-child,
+    td:not(.editable-td) + td.editable-td {
+        border-left: 1px solid var(--g-surface-300);
+    }
+
+    /* Add top border to editable cells in first row */
+    tr:first-child td.editable-td {
+        border-top: 1px solid var(--g-surface-300);
     }
 
     .table-group-row {
@@ -236,5 +406,56 @@ function handleCheckboxChange(rowKey: string, shiftKey: boolean = false) {
     .efficient-table-row.row-clickable:hover {
         transition: none !important;
     }
+}
+
+.editable-cell {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.editable-input {
+    width: 100%;
+    padding: 0.4rem 0.5rem;
+    border: none;
+    border-radius: 0;
+    font-size: 1rem;
+    font-family: var(--il-font-sans);
+    background: transparent;
+    box-sizing: border-box;
+}
+
+.editable-input:focus {
+    outline: 2px solid var(--g-primary-500);
+    outline-offset: -2px;
+    background: var(--g-surface-0);
+}
+
+.editable-select {
+    cursor: pointer;
+}
+
+.cell-prefix,
+.cell-suffix {
+    position: absolute;
+    font-size: 1rem;
+    color: var(--g-surface-600);
+    pointer-events: none;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.cell-prefix {
+    left: 0.5rem;
+}
+
+.cell-suffix {
+    right: 0.5rem;
+}
+
+/* Highlight cells that have been changed by the user */
+.cell-changed {
+    background: rgba(101, 199, 255, 0.29);
 }
 </style>

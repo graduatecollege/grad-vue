@@ -39,12 +39,15 @@ describe("GClipboard", () => {
                 props: { label: "Clipboard", text: "Example text" },
             });
 
-            await page.getByLabelText("Copy").click();
             await vm.$nextTick();
 
-            await expect.element(
+            // Focus can be flaky, so start waiting first and then click
+            let promise = expect.element(
                 page.getByLabelText("Copy"),
             ).toHaveAccessibleDescription("Copied");
+
+            await page.getByLabelText("Copy").click();
+            await promise;
         });
     });
 });
