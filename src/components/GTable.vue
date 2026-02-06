@@ -97,6 +97,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
     (e: "row-click", link: string): void;
     (e: "bulk-action", actionId: string, selectedKeys: string[]): void;
+    (e: "cell-change", payload: { row: T; column: C; value: any }): void;
 }>();
 
 function onSort(col: TableColumn<T>) {
@@ -192,6 +193,13 @@ function handleBulkAction(actionId: string) {
     emit("bulk-action", actionId, selectedRows.value);
 }
 
+function handleCellChange(payload: { row: T; column: C; value: any }) {
+    // Update the reactive data
+    payload.row[payload.column.key as keyof T] = payload.value;
+    // Emit the change event
+    emit("cell-change", payload);
+}
+
 const id = useId();
 
 onMounted(() => {
@@ -201,6 +209,11 @@ onMounted(() => {
         );
     }
     for (const col of props.columns) {
+        if (col.editable && col.display) {
+            console.warn(
+                `GTable: Column "${String(col.key)}" has both 'editable' and 'display' configured. 'display' will be ignored.`,
+            );
+        }
         if (col.filter && col.filter.type === "multi-select") {
             if (!Array.isArray(filter.value[col.key])) {
                 let val = filter.value[col.key];
@@ -457,6 +470,7 @@ watch(
                 :selected-rows="selectedRows"
                 @row-click="clickRow"
                 @toggle-row="toggleRow"
+                @cell-change="handleCellChange"
             />
         </table>
         <div

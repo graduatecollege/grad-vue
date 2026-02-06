@@ -20,6 +20,7 @@ const props = defineProps<Props>();
 const emit = defineEmits<{
     (e: "row-click", link: string): void;
     (e: "toggle-row", rowKey: string, shiftKey: boolean): void;
+    (e: "cell-change", payload: { row: T; column: C; value: any }): void;
 }>();
 
 function handleMouseDown(event: MouseEvent, rowKey: string) {
@@ -70,6 +71,12 @@ function isRowSelected(rowKey: string): boolean {
 
 function handleCheckboxChange(rowKey: string, shiftKey: boolean = false) {
     emit("toggle-row", rowKey, shiftKey);
+}
+
+function handleCellChange(event: Event, row: T, col: C) {
+    const input = event.target as unknown as HTMLInputElement;
+    const value = input.value;
+    emit("cell-change", { row, column: col, value });
 }
 </script>
 
@@ -130,7 +137,17 @@ function handleCheckboxChange(rowKey: string, shiftKey: boolean = false) {
                                 : col.tdClass
                         "
                     >
-                        <component v-if="col.display" :is="col.display(row)" />
+                        <div v-if="col.editable" class="editable-cell">
+                            <span v-if="col.editable.prefix" class="cell-prefix">{{ col.editable.prefix }}</span>
+                            <input
+                                :value="row[col.key]"
+                                v-bind="col.editable.inputAttributes"
+                                @input="handleCellChange($event, row, col)"
+                                class="editable-input"
+                            />
+                            <span v-if="col.editable.suffix" class="cell-suffix">{{ col.editable.suffix }}</span>
+                        </div>
+                        <component v-else-if="col.display" :is="col.display(row)" />
                         <template v-else>{{ row[col.key] }}</template>
                     </td>
                 </tr>
@@ -170,7 +187,17 @@ function handleCheckboxChange(rowKey: string, shiftKey: boolean = false) {
                             : col.tdClass
                     "
                 >
-                    <component v-if="col.display" :is="col.display(row)" />
+                    <div v-if="col.editable" class="editable-cell">
+                        <span v-if="col.editable.prefix" class="cell-prefix">{{ col.editable.prefix }}</span>
+                        <input
+                            :value="row[col.key]"
+                            v-bind="col.editable.inputAttributes"
+                            @input="handleCellChange($event, row, col)"
+                            class="editable-input"
+                        />
+                        <span v-if="col.editable.suffix" class="cell-suffix">{{ col.editable.suffix }}</span>
+                    </div>
+                    <component v-else-if="col.display" :is="col.display(row)" />
                     <template v-else>{{ row[col.key] }}</template>
                 </td>
             </tr>
@@ -236,5 +263,32 @@ function handleCheckboxChange(rowKey: string, shiftKey: boolean = false) {
     .efficient-table-row.row-clickable:hover {
         transition: none !important;
     }
+}
+
+.editable-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.editable-input {
+    flex: 1;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--g-surface-900);
+    border-radius: 3px;
+    font-size: 1rem;
+    font-family: var(--il-font-sans);
+    background: var(--g-surface-0);
+}
+
+.editable-input:focus {
+    outline: 2px solid var(--g-primary-500);
+    outline-offset: 2px;
+}
+
+.cell-prefix,
+.cell-suffix {
+    font-size: 1rem;
+    color: var(--g-text-color);
 }
 </style>
