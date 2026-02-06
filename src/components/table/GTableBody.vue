@@ -13,6 +13,7 @@ type Props = {
     startIndex: number;
     bulkSelectionEnabled?: boolean;
     selectedRows?: string[];
+    tableId: string;
 };
 
 const props = defineProps<Props>();
@@ -78,6 +79,23 @@ function handleCellChange(event: Event, row: T, col: C) {
     const value = input.value;
     emit("cell-change", { row, column: col, value });
 }
+
+function buildAriaLabelledBy(row: T, col: C): string {
+    const columnHeaderId = `${props.tableId}-th-${String(col.key)}`;
+    
+    // If labelKey is specified, add the label cell ID
+    if (col.editable?.labelKey) {
+        const labelCellId = `${props.tableId}-td-${row.key}-${col.editable.labelKey}`;
+        return `${columnHeaderId} ${labelCellId}`;
+    }
+    
+    return columnHeaderId;
+}
+
+function shouldAddCellId(col: C): boolean {
+    // Check if this column is used as a label for any editable column
+    return props.columns.some(c => c.editable?.labelKey === col.key);
+}
 </script>
 
 <template>
@@ -131,6 +149,7 @@ function handleCellChange(event: Event, row: T, col: C) {
                     <td
                         v-for="col in columns"
                         :key="col.key"
+                        :id="shouldAddCellId(col) ? `${tableId}-td-${row.key}-${String(col.key)}` : undefined"
                         :class="
                             typeof col.tdClass === 'function'
                                 ? col.tdClass(row)
@@ -143,6 +162,7 @@ function handleCellChange(event: Event, row: T, col: C) {
                                 :value="row[col.key]"
                                 v-bind="col.editable.inputAttributes"
                                 @input="handleCellChange($event, row, col)"
+                                :aria-labelledby="buildAriaLabelledBy(row, col)"
                                 class="editable-input"
                             />
                             <span v-if="col.editable.suffix" class="cell-suffix">{{ col.editable.suffix }}</span>
@@ -181,6 +201,7 @@ function handleCellChange(event: Event, row: T, col: C) {
                 <td
                     v-for="col in columns"
                     :key="col.key"
+                    :id="shouldAddCellId(col) ? `${tableId}-td-${row.key}-${String(col.key)}` : undefined"
                     :class="
                         typeof col.tdClass === 'function'
                             ? col.tdClass(row)
@@ -193,6 +214,7 @@ function handleCellChange(event: Event, row: T, col: C) {
                             :value="row[col.key]"
                             v-bind="col.editable.inputAttributes"
                             @input="handleCellChange($event, row, col)"
+                            :aria-labelledby="buildAriaLabelledBy(row, col)"
                             class="editable-input"
                         />
                         <span v-if="col.editable.suffix" class="cell-suffix">{{ col.editable.suffix }}</span>

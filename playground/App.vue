@@ -315,6 +315,7 @@ const productColumns = computed<TableColumn<ProductRow>[]>(() => {
                     min: "0",
                 },
                 prefix: "$",
+                labelKey: "name",
             },
         },
         {
@@ -325,6 +326,7 @@ const productColumns = computed<TableColumn<ProductRow>[]>(() => {
                     type: "number",
                     min: "0",
                 },
+                labelKey: "name",
             },
         },
         {
@@ -337,6 +339,7 @@ const productColumns = computed<TableColumn<ProductRow>[]>(() => {
                     min: "0",
                 },
                 suffix: "kg",
+                labelKey: "name",
             },
         },
     ];

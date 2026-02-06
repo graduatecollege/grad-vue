@@ -36,6 +36,11 @@ export interface EditableColumnConfig {
      * Text to display after the input (e.g., "kg" for weight)
      */
     suffix?: string;
+    /**
+     * Key of the column to use as the identifying label for the input's aria-labelledby.
+     * If not provided, the input will only be labeled by its column header.
+     */
+    labelKey?: string;
 }
 
 export interface TableColumn<T extends TableRow, K = keyof T> {

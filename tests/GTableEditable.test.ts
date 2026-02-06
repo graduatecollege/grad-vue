@@ -365,5 +365,189 @@ describe("GTable Editable Columns", () => {
 
             await testAccessibility(GTableFixture);
         });
+
+        it("adds unique IDs to column headers", async () => {
+            const columns: TableColumn<ProductRow>[] = [
+                {
+                    key: "name",
+                    label: "Product Name",
+                },
+                {
+                    key: "price",
+                    label: "Price",
+                    editable: {
+                        inputAttributes: { type: "number" },
+                    },
+                },
+            ];
+
+            const tableData: ProductRow[] = [
+                {
+                    key: "1",
+                    name: "Product A",
+                    price: 10.99,
+                    quantity: 5,
+                    weight: 1.5,
+                },
+            ];
+
+            const { GTableFixture } = createGTableFixture<ProductRow>({
+                label: "Products",
+                columns,
+                data: tableData,
+                initialFilter: defaultFilter,
+                paginate: false,
+            });
+
+            const { container } = mnt(GTableFixture);
+
+            // Check that column headers have IDs
+            const nameHeader = container.element().querySelector("th[id$='-th-name']");
+            const priceHeader = container.element().querySelector("th[id$='-th-price']");
+            
+            expect(nameHeader).not.toBeNull();
+            expect(priceHeader).not.toBeNull();
+            expect(nameHeader?.id).toMatch(/-th-name$/);
+            expect(priceHeader?.id).toMatch(/-th-price$/);
+        });
+
+        it("adds aria-labelledby to editable inputs referencing column header", async () => {
+            const columns: TableColumn<ProductRow>[] = [
+                {
+                    key: "price",
+                    label: "Price",
+                    editable: {
+                        inputAttributes: { type: "number" },
+                    },
+                },
+            ];
+
+            const tableData: ProductRow[] = [
+                {
+                    key: "1",
+                    name: "Product A",
+                    price: 10.99,
+                    quantity: 5,
+                    weight: 1.5,
+                },
+            ];
+
+            const { GTableFixture } = createGTableFixture<ProductRow>({
+                label: "Products",
+                columns,
+                data: tableData,
+                initialFilter: defaultFilter,
+                paginate: false,
+            });
+
+            const { container } = mnt(GTableFixture);
+
+            const priceInput = container.element().querySelector("input[type='number']") as HTMLInputElement;
+            const priceHeader = container.element().querySelector("th[id$='-th-price']");
+            
+            expect(priceInput).not.toBeNull();
+            expect(priceInput.getAttribute("aria-labelledby")).toBe(priceHeader?.id);
+        });
+
+        it("adds aria-labelledby referencing both column header and label cell when labelKey is specified", async () => {
+            const columns: TableColumn<ProductRow>[] = [
+                {
+                    key: "name",
+                    label: "Product Name",
+                },
+                {
+                    key: "price",
+                    label: "Price",
+                    editable: {
+                        inputAttributes: { type: "number" },
+                        labelKey: "name",
+                    },
+                },
+            ];
+
+            const tableData: ProductRow[] = [
+                {
+                    key: "1",
+                    name: "Product A",
+                    price: 10.99,
+                    quantity: 5,
+                    weight: 1.5,
+                },
+            ];
+
+            const { GTableFixture } = createGTableFixture<ProductRow>({
+                label: "Products",
+                columns,
+                data: tableData,
+                initialFilter: defaultFilter,
+                paginate: false,
+            });
+
+            const { container } = mnt(GTableFixture);
+
+            const priceInput = container.element().querySelector("input[type='number']") as HTMLInputElement;
+            const priceHeader = container.element().querySelector("th[id$='-th-price']");
+            const nameCell = container.element().querySelector("td[id$='-td-1-name']");
+            
+            expect(priceInput).not.toBeNull();
+            expect(nameCell).not.toBeNull();
+            
+            const ariaLabelledBy = priceInput.getAttribute("aria-labelledby");
+            expect(ariaLabelledBy).toContain(priceHeader?.id);
+            expect(ariaLabelledBy).toContain(nameCell?.id);
+        });
+
+        it("adds IDs to cells that are used as labels for editable columns", async () => {
+            const columns: TableColumn<ProductRow>[] = [
+                {
+                    key: "name",
+                    label: "Product Name",
+                },
+                {
+                    key: "price",
+                    label: "Price",
+                    editable: {
+                        inputAttributes: { type: "number" },
+                        labelKey: "name",
+                    },
+                },
+            ];
+
+            const tableData: ProductRow[] = [
+                {
+                    key: "1",
+                    name: "Product A",
+                    price: 10.99,
+                    quantity: 5,
+                    weight: 1.5,
+                },
+                {
+                    key: "2",
+                    name: "Product B",
+                    price: 25.5,
+                    quantity: 3,
+                    weight: 2.0,
+                },
+            ];
+
+            const { GTableFixture } = createGTableFixture<ProductRow>({
+                label: "Products",
+                columns,
+                data: tableData,
+                initialFilter: defaultFilter,
+                paginate: false,
+            });
+
+            const { container } = mnt(GTableFixture);
+
+            // Check that name cells have IDs
+            const nameCell1 = container.element().querySelector("td[id$='-td-1-name']");
+            const nameCell2 = container.element().querySelector("td[id$='-td-2-name']");
+            
+            expect(nameCell1).not.toBeNull();
+            expect(nameCell2).not.toBeNull();
+            expect(nameCell1?.textContent).toBe("Product A");
+            expect(nameCell2?.textContent).toBe("Product B");
+        });
     });
 });

@@ -304,6 +304,7 @@ watch(
                     <th
                         v-for="col in columns"
                         :key="col.key"
+                        :id="`${id}-th-${String(col.key)}`"
                         :aria-sort="
                             sortField === col.key
                                 ? sortOrder === 1
@@ -473,6 +474,7 @@ watch(
                 :start-index="startIndex"
                 :bulk-selection-enabled="bulkSelectionEnabled"
                 :selected-rows="selectedRows"
+                :table-id="id"
                 @row-click="clickRow"
                 @toggle-row="toggleRow"
                 @cell-change="handleCellChange"
