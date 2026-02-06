@@ -41,6 +41,7 @@ import {
 } from "vue";
 import GSelect from "./GSelect.vue";
 import { UseFilteringReturn } from "../compose/useFiltering.ts";
+import { UseTableChangesReturn } from "../compose/useTableChanges.ts";
 import GButton from "./GButton.vue";
 
 export interface BulkAction {
@@ -78,6 +79,11 @@ type Props = {
     bulkSelectionEnabled?: boolean;
     // Array of actions to show in the sticky toolbar when rows are selected
     bulkActions?: BulkAction[];
+    /**
+     * Optional change tracker for editable tables
+     * Pass a composable from useTableChanges() to track user edits
+     */
+    changeTracker?: UseTableChangesReturn<T>;
 };
 
 const sortField = defineModel<keyof T>("sortField");
@@ -475,6 +481,7 @@ watch(
                 :bulk-selection-enabled="bulkSelectionEnabled"
                 :selected-rows="selectedRows"
                 :table-id="id"
+                :change-tracker="changeTracker"
                 @row-click="clickRow"
                 @toggle-row="toggleRow"
                 @cell-change="handleCellChange"

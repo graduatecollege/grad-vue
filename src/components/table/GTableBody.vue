@@ -1,6 +1,7 @@
 <script setup lang="ts" generic="T extends TableRow, C extends TableColumn<T>">
 import { toRefs, type VNode } from "vue";
 import { TableColumn, TableRow } from "./TableColumn.ts";
+import { UseTableChangesReturn } from "../../compose/useTableChanges.ts";
 import { HTMLInputElement } from "happy-dom";
 
 type Props = {
@@ -14,6 +15,7 @@ type Props = {
     bulkSelectionEnabled?: boolean;
     selectedRows?: string[];
     tableId: string;
+    changeTracker?: UseTableChangesReturn<T>;
 };
 
 const props = defineProps<Props>();
@@ -96,6 +98,11 @@ function shouldAddCellId(col: C): boolean {
     // Check if this column is used as a label for any editable column
     return props.columns.some(c => c.editable?.labelKey === col.key);
 }
+
+function hasCellChange(row: T, col: C): boolean {
+    if (!props.changeTracker) return false;
+    return props.changeTracker.hasChange(row.key, col.key);
+}
 </script>
 
 <template>
@@ -152,6 +159,7 @@ function shouldAddCellId(col: C): boolean {
                         :id="shouldAddCellId(col) ? `${tableId}-td-${row.key}-${String(col.key)}` : undefined"
                         :class="[
                             col.editable ? 'editable-td' : '',
+                            hasCellChange(row, col) ? 'cell-changed' : '',
                             typeof col.tdClass === 'function'
                                 ? col.tdClass(row)
                                 : col.tdClass
@@ -225,6 +233,7 @@ function shouldAddCellId(col: C): boolean {
                     :id="shouldAddCellId(col) ? `${tableId}-td-${row.key}-${String(col.key)}` : undefined"
                     :class="[
                         col.editable ? 'editable-td' : '',
+                        hasCellChange(row, col) ? 'cell-changed' : '',
                         typeof col.tdClass === 'function'
                             ? col.tdClass(row)
                             : col.tdClass
@@ -390,5 +399,10 @@ function shouldAddCellId(col: C): boolean {
 
 .cell-suffix {
     right: 0.5rem;
+}
+
+/* Highlight cells that have been changed by the user */
+.cell-changed {
+    background: var(--ilw-color--focus--background, #e8f4f8);
 }
 </style>

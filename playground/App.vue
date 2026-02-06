@@ -12,6 +12,7 @@ import GSidebar from "../src/components/GSidebar.vue";
 import GTable from "../src/components/GTable.vue";
 import { TableColumn } from "../src/components/table/TableColumn";
 import { useFiltering } from "../src/compose/useFiltering";
+import { useTableChanges } from "../src/compose/useTableChanges";
 import GTablePagination from "../src/components/table/GTablePagination.vue";
 import GModal from "../src/components/GModal.vue";
 import { useOverlayStack, useOverlayStackState } from "../src/grad-vue";
@@ -369,8 +370,51 @@ const productFiltering = useFiltering({
 
 const { filters: productFilters } = productFiltering;
 
+// Create change tracker for editable table
+const productChanges = useTableChanges<ProductRow>();
+
 function handleCellChange(payload: { row: ProductRow; column: TableColumn<ProductRow>; value: any }) {
     console.log(`Cell changed in row ${payload.row.key}, column ${String(payload.column.key)}: ${payload.value}`);
+    
+    // Track the change with the original value from the data
+    const originalRow = productData.value.find(r => r.key === payload.row.key);
+    if (originalRow) {
+        const originalValue = originalRow[payload.column.key as keyof ProductRow];
+        productChanges.trackChange(payload.row.key, payload.column.key, payload.value, originalValue);
+    }
+}
+
+// Helper to show changes info
+const changesInfo = computed(() => {
+    const count = productChanges.changeCount();
+    if (count === 0) return "No changes";
+    const changes = productChanges.getChanges();
+    return `${count} change${count > 1 ? 's' : ''}: ${changes.map(c => `${c.rowKey}.${c.columnKey}`).join(', ')}`;
+});
+
+function logChanges() {
+    console.log("Current changes:", productChanges.getChanges());
+    console.log("Changes by row:", productChanges.getChangesByRow());
+}
+
+function clearAllChanges() {
+    productChanges.clearChanges();
+    console.log("All changes cleared");
+}
+
+function simulateDataRefresh() {
+    // Simulate getting fresh data from server with some updates
+    const freshData = [
+        { key: "1", name: "Laptop Pro", price: 1099.99, quantity: 18, weight: 2.5, category: "electronics" },
+        { key: "2", name: "Mouse", price: 29.99, quantity: 55, weight: 0.15, category: "accessories" },
+        { key: "3", name: "Keyboard", price: 79.99, quantity: 30, weight: 0.8, category: "accessories" },
+        { key: "4", name: "Monitor 4K", price: 399.99, quantity: 22, weight: 5.5, category: "electronics" },
+        { key: "5", name: "Webcam", price: 89.99, quantity: 25, weight: 0.3, category: "electronics" },
+    ];
+    
+    // Apply user changes to fresh data
+    productData.value = productChanges.applyChangesToData(freshData);
+    console.log("Data refreshed with user changes preserved");
 }
 
 
@@ -467,6 +511,12 @@ const termYears = ref(["2026", "2025", "2024"]);
 
                     <h3 style="margin-top: 3rem;">Editable Columns Example</h3>
                     <p>Columns can be made editable by adding the <code>editable</code> configuration. This renders cells as input elements that update data in real-time.</p>
+                    <p><strong>Change Tracking:</strong> {{ changesInfo }}</p>
+                    <div style="margin-bottom: 1rem;">
+                        <GButton @click="logChanges" style="margin-right: 0.5rem;">Log Changes</GButton>
+                        <GButton @click="clearAllChanges" style="margin-right: 0.5rem;">Clear Changes</GButton>
+                        <GButton @click="simulateDataRefresh">Simulate Data Refresh</GButton>
+                    </div>
                     <GTable
                         label="Products"
                         :data="productData"
@@ -474,11 +524,12 @@ const termYears = ref(["2026", "2025", "2024"]);
                         :filtering="productFiltering"
                         :filter="productFilters"
                         :start-index="0"
+                        :change-tracker="productChanges"
                         @cell-change="handleCellChange"
                     >
                         <template #pagination>
                             <div style="padding: 0.5rem 0; font-style: italic; color: #666;">
-                                Edit any price, quantity, or weight value to see real-time updates
+                                Edit values to see change tracking in action. Changed cells are highlighted.
                             </div>
                         </template>
                     </GTable>
