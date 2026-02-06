@@ -278,7 +278,19 @@ function shouldAddCellId(col: C): boolean {
     
     td.editable-td {
         padding: 0;
-        border: 1px solid var(--g-surface-300);
+        border-right: 1px solid var(--g-surface-300);
+        border-bottom: 1px solid var(--g-surface-300);
+    }
+    
+    /* Add left border to first editable cell or after non-editable cell */
+    td.editable-td:first-child,
+    td:not(.editable-td) + td.editable-td {
+        border-left: 1px solid var(--g-surface-300);
+    }
+    
+    /* Add top border to editable cells in first row */
+    tr:first-child td.editable-td {
+        border-top: 1px solid var(--g-surface-300);
     }
 
     .table-group-row {
