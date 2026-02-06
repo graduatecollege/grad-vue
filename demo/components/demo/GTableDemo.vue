@@ -17,6 +17,7 @@ interface ProductRow {
     price: number;
     quantity: number;
     weight: number;
+    category: string;
 }
 
 const columns = computed<TableColumn<TableEntry>[]>(() => {
@@ -208,11 +209,11 @@ const computedData = computed(() => {
 
 // Editable table data
 const productData = ref<ProductRow[]>([
-    { key: "1", name: "Laptop", price: 999.99, quantity: 15, weight: 2.5 },
-    { key: "2", name: "Mouse", price: 29.99, quantity: 50, weight: 0.15 },
-    { key: "3", name: "Keyboard", price: 79.99, quantity: 30, weight: 0.8 },
-    { key: "4", name: "Monitor", price: 349.99, quantity: 20, weight: 5.5 },
-    { key: "5", name: "Webcam", price: 89.99, quantity: 25, weight: 0.3 },
+    { key: "1", name: "Laptop", price: 999.99, quantity: 15, weight: 2.5, category: "electronics" },
+    { key: "2", name: "Mouse", price: 29.99, quantity: 50, weight: 0.15, category: "accessories" },
+    { key: "3", name: "Keyboard", price: 79.99, quantity: 30, weight: 0.8, category: "accessories" },
+    { key: "4", name: "Monitor", price: 349.99, quantity: 20, weight: 5.5, category: "electronics" },
+    { key: "5", name: "Webcam", price: 89.99, quantity: 25, weight: 0.3, category: "electronics" },
 ]);
 
 const productColumns = computed<TableColumn<ProductRow>[]>(() => {
@@ -220,6 +221,19 @@ const productColumns = computed<TableColumn<ProductRow>[]>(() => {
         {
             key: "name",
             label: "Product Name",
+        },
+        {
+            key: "category",
+            label: "Category",
+            editable: {
+                type: "select",
+                options: [
+                    { label: "Electronics", value: "electronics" },
+                    { label: "Accessories", value: "accessories" },
+                    { label: "Office Supplies", value: "office" },
+                ],
+                labelKey: "name",
+            },
         },
         {
             key: "price",
@@ -263,6 +277,7 @@ const productColumns = computed<TableColumn<ProductRow>[]>(() => {
 
 const productFiltering = useFiltering({
     name: undefined,
+    category: undefined,
     price: undefined,
     quantity: undefined,
     weight: undefined,

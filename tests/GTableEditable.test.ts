@@ -11,6 +11,7 @@ interface ProductRow {
     price: number;
     quantity: number;
     weight: number;
+    category?: string;
 }
 
 const defaultFilter = {
@@ -18,6 +19,7 @@ const defaultFilter = {
     price: undefined,
     quantity: undefined,
     weight: undefined,
+    category: undefined,
 };
 
 function filterProductData(data: ProductRow[], filter: Record<string, any>) {
@@ -548,6 +550,207 @@ describe("GTable Editable Columns", () => {
             expect(nameCell2).not.toBeNull();
             expect(nameCell1?.textContent).toBe("Product A");
             expect(nameCell2?.textContent).toBe("Product B");
+        });
+    });
+
+    describe("Select Dropdown Features", () => {
+        it("renders select dropdown for editable columns with type='select'", async () => {
+            const columns: TableColumn<ProductRow>[] = [
+                {
+                    key: "name",
+                    label: "Product Name",
+                },
+                {
+                    key: "category",
+                    label: "Category",
+                    editable: {
+                        type: "select",
+                        options: [
+                            { label: "Electronics", value: "electronics" },
+                            { label: "Accessories", value: "accessories" },
+                        ],
+                    },
+                },
+            ];
+
+            const tableData: ProductRow[] = [
+                {
+                    key: "1",
+                    name: "Product A",
+                    price: 10.99,
+                    quantity: 5,
+                    weight: 1.5,
+                    category: "electronics",
+                },
+            ];
+
+            const { GTableFixture } = createGTableFixture<ProductRow>({
+                label: "Products",
+                columns,
+                data: tableData,
+                initialFilter: defaultFilter,
+                paginate: false,
+            });
+
+            const { container } = mnt(GTableFixture);
+
+            // Check that select element is rendered
+            const selectElement = container.element().querySelector("select");
+            expect(selectElement).not.toBeNull();
+            expect(selectElement?.classList.contains("editable-select")).toBe(true);
+
+            // Check that options are rendered
+            const options = container.element().querySelectorAll("select option");
+            expect(options.length).toBe(2);
+            expect(options[0].textContent).toBe("Electronics");
+            expect(options[1].textContent).toBe("Accessories");
+        });
+
+        it("updates reactive data when select value changes", async () => {
+            const columns: TableColumn<ProductRow>[] = [
+                {
+                    key: "category",
+                    label: "Category",
+                    editable: {
+                        type: "select",
+                        options: [
+                            { label: "Electronics", value: "electronics" },
+                            { label: "Accessories", value: "accessories" },
+                        ],
+                    },
+                },
+            ];
+
+            const tableData = ref<ProductRow[]>([
+                {
+                    key: "1",
+                    name: "Product A",
+                    price: 10.99,
+                    quantity: 5,
+                    weight: 1.5,
+                    category: "electronics",
+                },
+            ]);
+
+            const { GTableFixture } = createGTableFixture<ProductRow>({
+                label: "Products",
+                columns,
+                data: tableData.value,
+                initialFilter: defaultFilter,
+                paginate: false,
+            });
+
+            const { container, vm } = mnt(GTableFixture);
+
+            const selectElement = container.element().querySelector("select") as HTMLSelectElement;
+            expect(selectElement).not.toBeNull();
+
+            // Change the value
+            selectElement.value = "accessories";
+            selectElement.dispatchEvent(new Event("change", { bubbles: true }));
+
+            // Wait for update
+            await vm.$nextTick();
+
+            // Check that the data was updated
+            expect(tableData.value[0].category).toBe("accessories");
+        });
+
+        it("emits cell-change event when select value changes", async () => {
+            const columns: TableColumn<ProductRow>[] = [
+                {
+                    key: "category",
+                    label: "Category",
+                    editable: {
+                        type: "select",
+                        options: [
+                            { label: "Electronics", value: "electronics" },
+                            { label: "Accessories", value: "accessories" },
+                        ],
+                    },
+                },
+            ];
+
+            const tableData: ProductRow[] = [
+                {
+                    key: "1",
+                    name: "Product A",
+                    price: 10.99,
+                    quantity: 5,
+                    weight: 1.5,
+                    category: "electronics",
+                },
+            ];
+
+            const { GTableFixture } = createGTableFixture<ProductRow>({
+                label: "Products",
+                columns,
+                data: tableData,
+                initialFilter: defaultFilter,
+                paginate: false,
+            });
+
+            const onCellChange = vi.fn();
+            const { container, vm } = mnt(GTableFixture, {
+                props: {
+                    onCellChange,
+                },
+            });
+
+            const selectElement = container.element().querySelector("select") as HTMLSelectElement;
+            selectElement.value = "accessories";
+            selectElement.dispatchEvent(new Event("change", { bubbles: true }));
+
+            await vm.$nextTick();
+
+            // Check that the event was emitted
+            expect(onCellChange).toHaveBeenCalled();
+            const payload = onCellChange.mock.calls[0][0];
+            expect(payload.value).toBe("accessories");
+            expect(payload.row.key).toBe("1");
+            expect(payload.column.key).toBe("category");
+        });
+
+        it("passes accessibility tests with select dropdown", async () => {
+            const columns: TableColumn<ProductRow>[] = [
+                {
+                    key: "name",
+                    label: "Product Name",
+                },
+                {
+                    key: "category",
+                    label: "Category",
+                    editable: {
+                        type: "select",
+                        options: [
+                            { label: "Electronics", value: "electronics" },
+                            { label: "Accessories", value: "accessories" },
+                        ],
+                        labelKey: "name",
+                    },
+                },
+            ];
+
+            const tableData: ProductRow[] = [
+                {
+                    key: "1",
+                    name: "Product A",
+                    price: 10.99,
+                    quantity: 5,
+                    weight: 1.5,
+                    category: "electronics",
+                },
+            ];
+
+            const { GTableFixture } = createGTableFixture<ProductRow>({
+                label: "Products",
+                columns,
+                data: tableData,
+                initialFilter: defaultFilter,
+                paginate: false,
+            });
+
+            await testAccessibility(GTableFixture);
         });
     });
 });

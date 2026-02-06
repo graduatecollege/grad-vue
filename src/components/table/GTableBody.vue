@@ -75,8 +75,8 @@ function handleCheckboxChange(rowKey: string, shiftKey: boolean = false) {
 }
 
 function handleCellChange(event: Event, row: T, col: C) {
-    const input = event.target as unknown as HTMLInputElement;
-    const value = input.value;
+    const target = event.target as unknown as HTMLInputElement | HTMLSelectElement;
+    const value = target.value;
     emit("cell-change", { row, column: col, value });
 }
 
@@ -150,20 +150,41 @@ function shouldAddCellId(col: C): boolean {
                         v-for="col in columns"
                         :key="col.key"
                         :id="shouldAddCellId(col) ? `${tableId}-td-${row.key}-${String(col.key)}` : undefined"
-                        :class="
+                        :class="[
+                            col.editable ? 'editable-td' : '',
                             typeof col.tdClass === 'function'
                                 ? col.tdClass(row)
                                 : col.tdClass
-                        "
+                        ]"
                     >
                         <div v-if="col.editable" class="editable-cell">
                             <span v-if="col.editable.prefix" class="cell-prefix">{{ col.editable.prefix }}</span>
+                            <select
+                                v-if="col.editable.type === 'select'"
+                                :value="row[col.key]"
+                                @change="handleCellChange($event, row, col)"
+                                :aria-labelledby="buildAriaLabelledBy(row, col)"
+                                class="editable-input editable-select"
+                            >
+                                <option
+                                    v-for="option in col.editable.options"
+                                    :key="option.value"
+                                    :value="option.value"
+                                >
+                                    {{ option.label }}
+                                </option>
+                            </select>
                             <input
+                                v-else
                                 :value="row[col.key]"
                                 v-bind="col.editable.inputAttributes"
                                 @input="handleCellChange($event, row, col)"
                                 :aria-labelledby="buildAriaLabelledBy(row, col)"
                                 class="editable-input"
+                                :style="{
+                                    paddingLeft: col.editable.prefix ? '1.5rem' : undefined,
+                                    paddingRight: col.editable.suffix ? '2rem' : undefined
+                                }"
                             />
                             <span v-if="col.editable.suffix" class="cell-suffix">{{ col.editable.suffix }}</span>
                         </div>
@@ -202,20 +223,41 @@ function shouldAddCellId(col: C): boolean {
                     v-for="col in columns"
                     :key="col.key"
                     :id="shouldAddCellId(col) ? `${tableId}-td-${row.key}-${String(col.key)}` : undefined"
-                    :class="
+                    :class="[
+                        col.editable ? 'editable-td' : '',
                         typeof col.tdClass === 'function'
                             ? col.tdClass(row)
                             : col.tdClass
-                    "
+                    ]"
                 >
                     <div v-if="col.editable" class="editable-cell">
                         <span v-if="col.editable.prefix" class="cell-prefix">{{ col.editable.prefix }}</span>
+                        <select
+                            v-if="col.editable.type === 'select'"
+                            :value="row[col.key]"
+                            @change="handleCellChange($event, row, col)"
+                            :aria-labelledby="buildAriaLabelledBy(row, col)"
+                            class="editable-input editable-select"
+                        >
+                            <option
+                                v-for="option in col.editable.options"
+                                :key="option.value"
+                                :value="option.value"
+                            >
+                                {{ option.label }}
+                            </option>
+                        </select>
                         <input
+                            v-else
                             :value="row[col.key]"
                             v-bind="col.editable.inputAttributes"
                             @input="handleCellChange($event, row, col)"
                             :aria-labelledby="buildAriaLabelledBy(row, col)"
                             class="editable-input"
+                            :style="{
+                                paddingLeft: col.editable.prefix ? '1.5rem' : undefined,
+                                paddingRight: col.editable.suffix ? '2rem' : undefined
+                            }"
                         />
                         <span v-if="col.editable.suffix" class="cell-suffix">{{ col.editable.suffix }}</span>
                     </div>
@@ -232,6 +274,11 @@ function shouldAddCellId(col: C): boolean {
     th,
     td {
         padding: 0.4rem 0.2rem;
+    }
+    
+    td.editable-td {
+        padding: 0;
+        border: 1px solid var(--g-surface-300);
     }
 
     .table-group-row {
@@ -288,29 +335,48 @@ function shouldAddCellId(col: C): boolean {
 }
 
 .editable-cell {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
 }
 
 .editable-input {
-    flex: 1;
-    padding: 0.25rem 0.5rem;
-    border: 1px solid var(--g-surface-900);
-    border-radius: 3px;
+    width: 100%;
+    padding: 0.4rem 0.5rem;
+    border: none;
+    border-radius: 0;
     font-size: 1rem;
     font-family: var(--il-font-sans);
-    background: var(--g-surface-0);
+    background: transparent;
+    box-sizing: border-box;
 }
 
 .editable-input:focus {
     outline: 2px solid var(--g-primary-500);
-    outline-offset: 2px;
+    outline-offset: -2px;
+    background: var(--g-surface-0);
+}
+
+.editable-select {
+    cursor: pointer;
 }
 
 .cell-prefix,
 .cell-suffix {
+    position: absolute;
     font-size: 1rem;
-    color: var(--g-text-color);
+    color: var(--g-surface-600);
+    pointer-events: none;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.cell-prefix {
+    left: 0.5rem;
+}
+
+.cell-suffix {
+    right: 0.5rem;
 }
 </style>

@@ -25,9 +25,18 @@ export interface ToggleColumnFilter {
 
 export interface EditableColumnConfig {
     /**
+     * Type of editable control. Defaults to "input".
+     */
+    type?: "input" | "select";
+    /**
      * Attributes to apply to the input element (type, pattern, step, min, max, etc.)
+     * Only applies when type is "input" or undefined.
      */
     inputAttributes?: Record<string, any>;
+    /**
+     * Options for select dropdown. Required when type is "select".
+     */
+    options?: Array<{ label: string; value: any }>;
     /**
      * Text to display before the input (e.g., "$" for currency)
      */
