@@ -79,6 +79,13 @@ function stripDashes(value: string): string {
 }
 
 /**
+ * Remove all characters except alphanumeric and dashes
+ */
+function sanitizeInput(value: string): string {
+    return value.replace(/[^a-zA-Z0-9-]/g, "");
+}
+
+/**
  * Detect format based on cleaned string length
  */
 function detectFormat(cleaned: string): "cfop" | "cfoap" {
@@ -101,7 +108,7 @@ function detectFormat(cleaned: string): "cfop" | "cfoap" {
  * Format the string with dashes according to the format
  */
 function formatWithDashes(value: string, formatType: "cfop" | "cfoap"): string {
-    const cleaned = stripDashes(value);
+    const cleaned = stripDashes(sanitizeInput(value));
     const segments = formatType === "cfop" ? CFOP_SEGMENTS : CFOAP_SEGMENTS;
     
     let result = "";
@@ -128,9 +135,10 @@ function formatWithDashes(value: string, formatType: "cfop" | "cfoap"): string {
  * Update the display value based on the current input
  */
 function updateDisplay(value: string) {
-    const cleaned = stripDashes(value);
+    const sanitized = sanitizeInput(value);
+    const cleaned = stripDashes(sanitized);
     const format = detectFormat(cleaned);
-    displayValue.value = formatWithDashes(cleaned, format);
+    displayValue.value = formatWithDashes(sanitized, format);
 }
 
 /**
@@ -194,11 +202,21 @@ function emitChangeIfNeeded(val: string | null) {
 
 let inputTimer: ReturnType<typeof setTimeout> | null = null;
 
+function onBeforeInput(e: InputEvent) {
+    // Prevent input of invalid characters (anything except alphanumeric and dash)
+    if (e.data && !/^[a-zA-Z0-9-]*$/.test(e.data)) {
+        e.preventDefault();
+    }
+}
+
 function onInput(e: Event) {
     const input = e.target as HTMLInputElement;
     const cleanedCursorPos = getCleanedCursorPosition(input);
     
-    updateDisplay(input.value);
+    // Sanitize the input value
+    const sanitized = sanitizeInput(input.value);
+    
+    updateDisplay(sanitized);
     input.value = displayValue.value;
     
     // Restore cursor position
@@ -225,6 +243,7 @@ function onPaste(e: ClipboardEvent) {
     e.preventDefault();
     
     const pastedText = e.clipboardData?.getData("text") ?? "";
+    const sanitizedPaste = sanitizeInput(pastedText);
     const input = e.target as HTMLInputElement;
     const cleanedCursorPos = getCleanedCursorPosition(input);
     
@@ -234,14 +253,14 @@ function onPaste(e: ClipboardEvent) {
     const end = input.selectionEnd ?? 0;
     
     // Replace selected text with pasted text
-    const newValue = currentValue.substring(0, start) + pastedText + currentValue.substring(end);
+    const newValue = currentValue.substring(0, start) + sanitizedPaste + currentValue.substring(end);
     
     // Update display
     updateDisplay(newValue);
     input.value = displayValue.value;
     
     // Set cursor after pasted content
-    const pastedCleaned = stripDashes(pastedText);
+    const pastedCleaned = stripDashes(sanitizedPaste);
     setCleanedCursorPosition(input, cleanedCursorPos + pastedCleaned.length);
     
     if (inputTimer) {
@@ -289,6 +308,7 @@ function onKeydown(e: KeyboardEvent) {
             :value="displayValue"
             :placeholder="props.placeholder"
             :disabled="props.disabled"
+            @beforeinput="onBeforeInput"
             @input="onInput"
             @blur="onBlur"
             @paste="onPaste"
