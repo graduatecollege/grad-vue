@@ -11,6 +11,14 @@ interface TableEntry {
     collegeInName: boolean;
 }
 
+interface ProductRow {
+    key: string;
+    name: string;
+    price: number;
+    quantity: number;
+    weight: number;
+}
+
 const columns = computed<TableColumn<TableEntry>[]>(() => {
     return [
         {
@@ -197,6 +205,72 @@ const computedData = computed(() => {
 
     return data;
 });
+
+// Editable table data
+const productData = ref<ProductRow[]>([
+    { key: "1", name: "Laptop", price: 999.99, quantity: 15, weight: 2.5 },
+    { key: "2", name: "Mouse", price: 29.99, quantity: 50, weight: 0.15 },
+    { key: "3", name: "Keyboard", price: 79.99, quantity: 30, weight: 0.8 },
+    { key: "4", name: "Monitor", price: 349.99, quantity: 20, weight: 5.5 },
+    { key: "5", name: "Webcam", price: 89.99, quantity: 25, weight: 0.3 },
+]);
+
+const productColumns = computed<TableColumn<ProductRow>[]>(() => {
+    return [
+        {
+            key: "name",
+            label: "Product Name",
+        },
+        {
+            key: "price",
+            label: "Price",
+            editable: {
+                inputAttributes: {
+                    type: "number",
+                    step: "0.01",
+                    min: "0",
+                },
+                prefix: "$",
+            },
+        },
+        {
+            key: "quantity",
+            label: "Quantity",
+            editable: {
+                inputAttributes: {
+                    type: "number",
+                    min: "0",
+                },
+            },
+        },
+        {
+            key: "weight",
+            label: "Weight",
+            editable: {
+                inputAttributes: {
+                    type: "number",
+                    step: "0.01",
+                    min: "0",
+                },
+                suffix: "kg",
+            },
+        },
+    ];
+});
+
+const productFiltering = useFiltering({
+    name: undefined,
+    price: undefined,
+    quantity: undefined,
+    weight: undefined,
+});
+
+const { filters: productFilters } = productFiltering;
+
+function handleCellChange(payload: { row: ProductRow; column: TableColumn<ProductRow>; value: any }) {
+    console.log(`Cell changed in row ${payload.row.key}, column ${String(payload.column.key)}: ${payload.value}`);
+}
+
 </script>
 
 <template>
@@ -267,6 +341,48 @@ with the link <code>href</code> from the first link in the row.</p>
                             :total="filteredData.length"
                             :page-sizes="[5, 10, 50]"
                         />
+                    </template>
+                </GTable>
+            </template>
+        </ComponentDemo>
+
+        <h3 class="demo-section__subtitle">Editable Columns</h3>
+        <ComponentDemo
+            description="Table with editable columns for in-place data entry."
+            component="GTable"
+            :props-config="{
+                label: {
+                    type: 'string',
+                    label: 'Accessible label',
+                    default: 'Products'
+                }
+            }"
+        >
+            <template #docs><p>Columns can be made editable by adding the <code>editable</code> configuration to a column. This will render the cell as an input element that updates the data in real-time.</p>
+<p>Key features of editable columns:</p>
+<ul>
+<li><code>inputAttributes</code>: Object containing any HTML input attributes (type, step, min, max, pattern, etc.)</li>
+<li><code>prefix</code>: Text displayed before the input (e.g., "$" for currency)</li>
+<li><code>suffix</code>: Text displayed after the input (e.g., "kg" for weight)</li>
+<li>Changes update the reactive data and emit a <code>cell-change</code> event</li>
+<li>Editable columns cannot use custom <code>display</code> functions</li>
+</ul>
+</template>
+            <template #default="{ props }">
+                <!-- @vue-generic {ProductRow, TableColumn<ProductRow>} -->
+                <GTable
+                    :label="props.label"
+                    :data="productData"
+                    :columns="productColumns"
+                    :filtering="productFiltering"
+                    :filter="productFilters"
+                    :start-index="0"
+                    @cell-change="handleCellChange"
+                >
+                    <template #pagination>
+                        <div style="padding: 0.5rem 0; font-style: italic; color: #666;">
+                            Edit any price, quantity, or weight value to see real-time updates
+                        </div>
                     </template>
                 </GTable>
             </template>

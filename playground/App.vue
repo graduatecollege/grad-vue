@@ -282,6 +282,80 @@ const computedData = computed(() => {
     return data;
 });
 
+// Editable table data
+interface ProductRow {
+    key: string;
+    name: string;
+    price: number;
+    quantity: number;
+    weight: number;
+}
+
+const productData = ref<ProductRow[]>([
+    { key: "1", name: "Laptop", price: 999.99, quantity: 15, weight: 2.5 },
+    { key: "2", name: "Mouse", price: 29.99, quantity: 50, weight: 0.15 },
+    { key: "3", name: "Keyboard", price: 79.99, quantity: 30, weight: 0.8 },
+    { key: "4", name: "Monitor", price: 349.99, quantity: 20, weight: 5.5 },
+    { key: "5", name: "Webcam", price: 89.99, quantity: 25, weight: 0.3 },
+]);
+
+const productColumns = computed<TableColumn<ProductRow>[]>(() => {
+    return [
+        {
+            key: "name",
+            label: "Product Name",
+        },
+        {
+            key: "price",
+            label: "Price",
+            editable: {
+                inputAttributes: {
+                    type: "number",
+                    step: "0.01",
+                    min: "0",
+                },
+                prefix: "$",
+            },
+        },
+        {
+            key: "quantity",
+            label: "Quantity",
+            editable: {
+                inputAttributes: {
+                    type: "number",
+                    min: "0",
+                },
+            },
+        },
+        {
+            key: "weight",
+            label: "Weight",
+            editable: {
+                inputAttributes: {
+                    type: "number",
+                    step: "0.01",
+                    min: "0",
+                },
+                suffix: "kg",
+            },
+        },
+    ];
+});
+
+const productFiltering = useFiltering({
+    name: undefined,
+    price: undefined,
+    quantity: undefined,
+    weight: undefined,
+});
+
+const { filters: productFilters } = productFiltering;
+
+function handleCellChange(payload: { row: ProductRow; column: TableColumn<ProductRow>; value: any }) {
+    console.log(`Cell changed in row ${payload.row.key}, column ${String(payload.column.key)}: ${payload.value}`);
+}
+
+
 const showModal = ref(false);
 
 const term = ref({year: "2026", name: "Spring"});
@@ -370,6 +444,24 @@ const termYears = ref(["2026", "2025", "2024"]);
                                 :total="filteredData.length"
                                 :page-sizes="[5, 10, 50]"
                             />
+                        </template>
+                    </GTable>
+
+                    <h3 style="margin-top: 3rem;">Editable Columns Example</h3>
+                    <p>Columns can be made editable by adding the <code>editable</code> configuration. This renders cells as input elements that update data in real-time.</p>
+                    <GTable
+                        label="Products"
+                        :data="productData"
+                        :columns="productColumns"
+                        :filtering="productFiltering"
+                        :filter="productFilters"
+                        :start-index="0"
+                        @cell-change="handleCellChange"
+                    >
+                        <template #pagination>
+                            <div style="padding: 0.5rem 0; font-style: italic; color: #666;">
+                                Edit any price, quantity, or weight value to see real-time updates
+                            </div>
                         </template>
                     </GTable>
                 </section>
