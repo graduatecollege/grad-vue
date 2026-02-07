@@ -34,6 +34,7 @@ import {
     computed,
     onMounted,
     ref,
+    toRaw,
     useId,
     useTemplateRef,
     VNode,
@@ -41,6 +42,10 @@ import {
 } from "vue";
 import GSelect from "./GSelect.vue";
 import { UseFilteringReturn } from "../compose/useFiltering.ts";
+import {
+    CellChangePayload,
+    UseTableChangesReturn,
+} from "../compose/useTableChanges.ts";
 import GButton from "./GButton.vue";
 
 export interface BulkAction {
@@ -78,6 +83,11 @@ type Props = {
     bulkSelectionEnabled?: boolean;
     // Array of actions to show in the sticky toolbar when rows are selected
     bulkActions?: BulkAction[];
+    /**
+     * Optional change tracker for editable tables
+     * Pass a composable from useTableChanges() to track user edits
+     */
+    changeTracker?: UseTableChangesReturn<T>;
 };
 
 const sortField = defineModel<keyof T>("sortField");
@@ -97,6 +107,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
     (e: "row-click", link: string): void;
     (e: "bulk-action", actionId: string, selectedKeys: string[]): void;
+    (e: "cell-change", payload: CellChangePayload<T>): void;
 }>();
 
 function onSort(col: TableColumn<T>) {
@@ -160,12 +171,12 @@ function toggleRow(rowKey: string, shiftKey: boolean = false) {
         // Handle shift-click range selection
         const lastIndex = allRowKeys.value.indexOf(lastClickedRowKey.value);
         const currentIndex = allRowKeys.value.indexOf(rowKey);
-        
+
         if (lastIndex !== -1 && currentIndex !== -1) {
             const start = Math.min(lastIndex, currentIndex);
             const end = Math.max(lastIndex, currentIndex);
             const rowsInRange = allRowKeys.value.slice(start, end + 1);
-            
+
             // Select all rows in the range
             const newSelected = new Set(selectedRows.value);
             rowsInRange.forEach((key) => newSelected.add(key));
@@ -174,12 +185,14 @@ function toggleRow(rowKey: string, shiftKey: boolean = false) {
     } else {
         // Normal toggle behavior
         if (selectedRows.value.includes(rowKey)) {
-            selectedRows.value = selectedRows.value.filter((key) => key !== rowKey);
+            selectedRows.value = selectedRows.value.filter(
+                (key) => key !== rowKey,
+            );
         } else {
             selectedRows.value = [...selectedRows.value, rowKey];
         }
     }
-    
+
     // Update last clicked row
     lastClickedRowKey.value = rowKey;
 }
@@ -192,6 +205,26 @@ function handleBulkAction(actionId: string) {
     emit("bulk-action", actionId, selectedRows.value);
 }
 
+function handleCellChange(change: { row: T; column: C; value: any }) {
+    // Update the reactive data
+    // Convert the value to the appropriate type based on input attributes
+    let convertedValue: any = change.value;
+    let previousValue = toRaw(change.row[change.column.key as keyof T]);
+    if (change.column.editable?.inputAttributes?.type === "number") {
+        convertedValue = change.value === "" ? null : Number(change.value);
+    }
+    change.row[change.column.key as keyof T] = convertedValue;
+
+    const payload: CellChangePayload<T> = {
+        row: change.row,
+        column: change.column,
+        value: convertedValue,
+        previousValue,
+    }
+
+    emit("cell-change", payload);
+}
+
 const id = useId();
 
 onMounted(() => {
@@ -201,6 +234,11 @@ onMounted(() => {
         );
     }
     for (const col of props.columns) {
+        if (col.editable && col.display) {
+            console.warn(
+                `GTable: Column "${String(col.key)}" has both 'editable' and 'display' configured. 'display' will be ignored.`,
+            );
+        }
         if (col.filter && col.filter.type === "multi-select") {
             if (!Array.isArray(filter.value[col.key])) {
                 let val = filter.value[col.key];
@@ -286,6 +324,7 @@ watch(
                     <th
                         v-for="col in columns"
                         :key="col.key"
+                        :id="`${id}-th-${String(col.key)}`"
                         :aria-sort="
                             sortField === col.key
                                 ? sortOrder === 1
@@ -455,8 +494,11 @@ watch(
                 :start-index="startIndex"
                 :bulk-selection-enabled="bulkSelectionEnabled"
                 :selected-rows="selectedRows"
+                :table-id="id"
+                :change-tracker="changeTracker"
                 @row-click="clickRow"
                 @toggle-row="toggleRow"
+                @cell-change="handleCellChange"
             />
         </table>
         <div
@@ -503,6 +545,7 @@ watch(
     background: var(--g-surface-0);
     position: sticky;
     top: 40px;
+    z-index: 1;
 }
 
 .g-th {
@@ -510,6 +553,7 @@ watch(
     padding: 0.5rem 0.2rem;
     border: 0;
     border-bottom: 2px solid var(--g-surface-900);
+    background: var(--g-surface-0);
 
     &.sorted {
         color: var(--ilw-color--link-hover);
@@ -523,20 +567,21 @@ watch(
 
     .th-inner {
         display: flex;
+        align-items: center;
     }
 }
 
 .g-column-head {
     color: currentColor;
     position: relative;
-    height: 2rem;
     border: none;
-    background: none;
     font-weight: 700;
     font-family: var(--il-font-sans);
     font-size: 1rem;
     line-height: 1.3;
     white-space: nowrap;
+    padding-left: 4px;
+    background: var(--g-surface-0);
 
     .sort-indicator {
         position: absolute;
@@ -545,8 +590,13 @@ watch(
     }
 }
 
+th:first-of-type .g-column-head {
+    padding-left: 0;
+}
+
 button.g-column-head {
     cursor: pointer;
+    height: 2rem;
 }
 
 button.g-column-head:hover {

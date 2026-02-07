@@ -28,7 +28,7 @@ interface Props {
     termNames?: string[];
 }
 
-const props = withDefaults(defineProps<Required<Props>>(), {
+const props = withDefaults(defineProps<Props>(), {
     title: "Period Selection",
     termYears: () => ["2026"],
     termNames: () => ["Spring", "Summer", "Fall"],

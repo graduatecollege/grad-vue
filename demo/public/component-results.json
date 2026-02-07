@@ -1,7 +1,7 @@
 {
-  "totalComponents": 18,
-  "totalTests": 161,
-  "passedTests": 161,
+  "totalComponents": 21,
+  "totalTests": 178,
+  "passedTests": 178,
   "failedTests": 0,
   "skippedTests": 0,
   "components": {
@@ -1186,6 +1186,155 @@
         },
         {
           "title": "passes accessibility tests with a different table configuration",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        }
+      ]
+    },
+    "GTable Editable Columns": {
+      "component": "GTable Editable Columns",
+      "total": 15,
+      "passed": 15,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed",
+      "tests": [
+        {
+          "title": "renders input elements for editable columns",
+          "status": "passed",
+          "ancestors": [
+            "Basic Editable Features"
+          ]
+        },
+        {
+          "title": "displays prefix and suffix correctly",
+          "status": "passed",
+          "ancestors": [
+            "Basic Editable Features"
+          ]
+        },
+        {
+          "title": "updates reactive data when input changes",
+          "status": "passed",
+          "ancestors": [
+            "Basic Editable Features"
+          ]
+        },
+        {
+          "title": "emits cell-change event with correct payload",
+          "status": "passed",
+          "ancestors": [
+            "Basic Editable Features"
+          ]
+        },
+        {
+          "title": "applies various input attributes correctly",
+          "status": "passed",
+          "ancestors": [
+            "Basic Editable Features"
+          ]
+        },
+        {
+          "title": "editable columns do not support custom display function",
+          "status": "passed",
+          "ancestors": [
+            "Basic Editable Features"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with editable columns",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "adds unique IDs to column headers",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "adds aria-labelledby to editable inputs referencing column header",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "adds aria-labelledby referencing both column header and label cell when labelKey is specified",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "adds IDs to cells that are used as labels for editable columns",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "renders select dropdown for editable columns with type='select'",
+          "status": "passed",
+          "ancestors": [
+            "Select Dropdown Features"
+          ]
+        },
+        {
+          "title": "updates reactive data when select value changes",
+          "status": "passed",
+          "ancestors": [
+            "Select Dropdown Features"
+          ]
+        },
+        {
+          "title": "emits cell-change event when select value changes",
+          "status": "passed",
+          "ancestors": [
+            "Select Dropdown Features"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with select dropdown",
+          "status": "passed",
+          "ancestors": [
+            "Select Dropdown Features"
+          ]
+        }
+      ]
+    },
+    "GTermSelector": {
+      "component": "GTermSelector",
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed",
+      "tests": [
+        {
+          "title": "passes accessibility tests with default content",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        }
+      ]
+    },
+    "GTermSelectorControl": {
+      "component": "GTermSelectorControl",
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed",
+      "tests": [
+        {
+          "title": "passes accessibility tests with default content",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"

@@ -3,12 +3,25 @@ import ComponentDemo from "../ComponentDemo.vue";
 import { computed, h, ref } from "vue";
 import type { TableColumn } from "@illinois-grad/grad-vue";
 import { useFiltering } from "@illinois-grad/grad-vue";
+import {
+    CellChangePayload,
+    useTableChanges,
+} from "../../../src/compose/useTableChanges";
 
 interface TableEntry {
     key: string;
     code: string;
     name: string;
     collegeInName: boolean;
+}
+
+interface ProductRow {
+    key: string;
+    name: string;
+    price: number;
+    quantity: number;
+    weight: number;
+    category: string;
 }
 
 const columns = computed<TableColumn<TableEntry>[]>(() => {
@@ -197,6 +210,126 @@ const computedData = computed(() => {
 
     return data;
 });
+
+// Editable table data
+const productData = ref<ProductRow[]>([
+    {
+        key: "1",
+        name: "Laptop",
+        price: 999.99,
+        quantity: 15,
+        weight: 2.5,
+        category: "electronics",
+    },
+    {
+        key: "2",
+        name: "Mouse",
+        price: 29.99,
+        quantity: 50,
+        weight: 0.15,
+        category: "accessories",
+    },
+    {
+        key: "3",
+        name: "Keyboard",
+        price: 79.99,
+        quantity: 30,
+        weight: 0.8,
+        category: "accessories",
+    },
+    {
+        key: "4",
+        name: "Monitor",
+        price: 349.99,
+        quantity: 20,
+        weight: 5.5,
+        category: "electronics",
+    },
+    {
+        key: "5",
+        name: "Webcam",
+        price: 89.99,
+        quantity: 25,
+        weight: 0.3,
+        category: "electronics",
+    },
+]);
+
+const productColumns = computed<TableColumn<ProductRow>[]>(() => {
+    return [
+        {
+            key: "name",
+            label: "Product",
+        },
+        {
+            key: "category",
+            label: "Category",
+            editable: {
+                type: "select",
+                options: [
+                    { label: "Electronics", value: "electronics" },
+                    { label: "Accessories", value: "accessories" },
+                    { label: "Office Supplies", value: "office" },
+                ],
+                labelKey: "name",
+            },
+        },
+        {
+            key: "price",
+            label: "Price",
+            editable: {
+                inputAttributes: {
+                    type: "number",
+                    step: "0.01",
+                    min: "0",
+                },
+                prefix: "$",
+                labelKey: "name",
+            },
+        },
+        {
+            key: "quantity",
+            label: "Quantity",
+            editable: {
+                inputAttributes: {
+                    type: "number",
+                    min: "0",
+                },
+                labelKey: "name",
+            },
+        },
+        {
+            key: "weight",
+            label: "Weight",
+            editable: {
+                inputAttributes: {
+                    type: "number",
+                    step: "0.01",
+                    min: "0",
+                },
+                suffix: "kg",
+                labelKey: "name",
+            },
+        },
+    ];
+});
+
+const productFiltering = useFiltering({
+    name: undefined,
+    category: undefined,
+    price: undefined,
+    quantity: undefined,
+    weight: undefined,
+});
+
+const { filters: productFilters } = productFiltering;
+
+// Create change tracker for editable table
+const productChanges = useTableChanges<ProductRow>();
+
+function handleCellChange(payload: CellChangePayload<ProductRow>) {
+    productChanges.trackChange(payload);
+}
 </script>
 
 <template>
@@ -209,40 +342,82 @@ const computedData = computed(() => {
                 label: {
                     type: 'string',
                     label: 'Accessible label',
-                    default: 'Colleges'
+                    default: 'Colleges',
                 },
                 bulkSelectionEnabled: {
                     type: 'boolean',
                     label: 'Enable bulk selection with checkboxes',
-                    default: false
-                }
+                    default: false,
+                },
             }"
         >
-            <template #docs><p>A data table component with support for grouping, sorting, filtering, and pagination.</p>
-<p>A heavy focus has been on performance. The table body doesn&#39;t use any
-Vue components, it&#39;s pure render functions. We&#39;ve used it with
-4000 rows and 14 columns loaded without issues.</p>
-<p>This is a bit complicated to use, so an example has been omitted here.
-Instead, look at the source for this demo: <a href="https://github.com/graduatecollege/grad-vue/blob/main/demo/components/demo/GTableDemo.vue">GTable Demo Source</a>.</p>
-<p>Here are some of the key points.</p>
-<p>Table content is provided with:</p>
-<ul>
-<li><code>columns</code> configuration using the <code>TableColumn</code> type.<ul>
-<li>At minimum the configuration must include <code>key</code> for which field of the data
-objects to use, and <code>label</code> for the column header.</li>
-<li><code>sortable: true</code> makes the column sortable.</li>
-<li><code>filter</code> can be used to provide a <code>TableColumnFilter</code> configuration.</li>
-<li><code>display</code> accepts a custom render function for the column data.</li>
-<li><code>trClass</code> and <code>tdClass</code> can be used to provide custom classes for table rows and cells.</li>
-</ul>
-</li>
-<li><code>data</code> array with objects containing fields for the columns.</li>
-</ul>
-<p>Rows can be made clickable with <code>row-clickable</code>. In this case, one of the
-cells must contain a link. Clicking a row will emit a <code>row-click</code> event
-with the link <code>href</code> from the first link in the row.</p>
-<p>Grouping can be enabled by passing a column key to <code>groupBy</code>.</p>
-</template>
+            <template #docs
+                ><p>
+                    A data table component with support for grouping, sorting,
+                    filtering, and pagination.
+                </p>
+                <p>
+                    A heavy focus has been on performance. The table body
+                    doesn&#39;t use any Vue components, it&#39;s pure render
+                    functions. We&#39;ve used it with 4000 rows and 14 columns
+                    loaded without issues.
+                </p>
+                <p>
+                    This is a bit complicated to use, so an example has been
+                    omitted here. Instead, look at the source for this demo:
+                    <a
+                        href="https://github.com/graduatecollege/grad-vue/blob/main/demo/components/demo/GTableDemo.vue"
+                        >GTable Demo Source</a
+                    >.
+                </p>
+                <p>Here are some of the key points.</p>
+                <p>Table content is provided with:</p>
+                <ul>
+                    <li>
+                        <code>columns</code> configuration using the
+                        <code>TableColumn</code> type.
+                        <ul>
+                            <li>
+                                At minimum the configuration must include
+                                <code>key</code> for which field of the data
+                                objects to use, and <code>label</code> for the
+                                column header.
+                            </li>
+                            <li>
+                                <code>sortable: true</code> makes the column
+                                sortable.
+                            </li>
+                            <li>
+                                <code>filter</code> can be used to provide a
+                                <code>TableColumnFilter</code> configuration.
+                            </li>
+                            <li>
+                                <code>display</code> accepts a custom render
+                                function for the column data.
+                            </li>
+                            <li>
+                                <code>trClass</code> and
+                                <code>tdClass</code> can be used to provide
+                                custom classes for table rows and cells.
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <code>data</code> array with objects containing fields
+                        for the columns.
+                    </li>
+                </ul>
+                <p>
+                    Rows can be made clickable with <code>row-clickable</code>.
+                    In this case, one of the cells must contain a link. Clicking
+                    a row will emit a <code>row-click</code> event with the link
+                    <code>href</code> from the first link in the row.
+                </p>
+                <p>
+                    Grouping can be enabled by passing a column key to
+                    <code>groupBy</code>.
+                </p>
+            </template>
             <template #default="{ props }">
                 <!-- @vue-generic {TableEntry, TableColumn<TableEntry>} -->
                 <GTable
@@ -267,6 +442,31 @@ with the link <code>href</code> from the first link in the row.</p>
                             :total="filteredData.length"
                             :page-sizes="[5, 10, 50]"
                         />
+                    </template>
+                </GTable>
+            </template>
+        </ComponentDemo>
+
+        <ComponentDemo
+            name="Editable Table"
+            sample="Editable Table"
+            description="Table with editable columns for in-place data entry."
+            additional
+        >
+            <template #default="{ props }">
+                <!-- @vue-generic {ProductRow, TableColumn<ProductRow>} -->
+                <GTable
+                    label="Products"
+                    :data="productData"
+                    :columns="productColumns"
+                    :filtering="productFiltering"
+                    :filter="productFilters"
+                    :start-index="0"
+                    :change-tracker="productChanges"
+                    @cell-change="handleCellChange"
+                >
+                    <template #pagination>
+                        Edited cells are highlighted and changes are tracked.
                     </template>
                 </GTable>
             </template>

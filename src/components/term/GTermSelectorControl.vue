@@ -25,7 +25,7 @@ interface Props {
     periodLabel?: string;
 }
 
-const props = withDefaults(defineProps<Required<Props>>(), {
+const props = withDefaults(defineProps<Props>(), {
     termYears: () => ["2026"],
     termNames: () => ["Spring", "Summer", "Fall"],
     yearLabel: "Select Year",
