@@ -26,6 +26,109 @@ function filterProductData(data: ProductRow[], filter: Record<string, any>) {
     return data;
 }
 
+// ========== Utility Functions for Test Data ==========
+
+function createProduct(key: string, name: string, overrides: Partial<ProductRow> = {}): ProductRow {
+    return {
+        key,
+        name,
+        price: 10.99,
+        quantity: 5,
+        weight: 1.5,
+        ...overrides,
+    };
+}
+
+function createProductA(overrides: Partial<ProductRow> = {}): ProductRow {
+    return createProduct("1", "Product A", overrides);
+}
+
+function createProductB(overrides: Partial<ProductRow> = {}): ProductRow {
+    return createProduct("2", "Product B", { price: 25.5, quantity: 3, weight: 2.0, ...overrides });
+}
+
+// ========== Utility Functions for Column Definitions ==========
+
+function nameColumn(): TableColumn<ProductRow> {
+    return {
+        key: "name",
+        label: "Product Name",
+    };
+}
+
+function priceColumn(editable: boolean = false, withPrefix: boolean = false): TableColumn<ProductRow> {
+    const column: TableColumn<ProductRow> = {
+        key: "price",
+        label: "Price",
+    };
+    
+    if (editable) {
+        column.editable = {
+            inputAttributes: { type: "number", step: "0.01" },
+        };
+        if (withPrefix) {
+            column.editable.prefix = "$";
+        }
+    }
+    
+    return column;
+}
+
+function quantityColumn(editable: boolean = false): TableColumn<ProductRow> {
+    const column: TableColumn<ProductRow> = {
+        key: "quantity",
+        label: "Quantity",
+    };
+    
+    if (editable) {
+        column.editable = {
+            inputAttributes: { type: "number", min: "0" },
+        };
+    }
+    
+    return column;
+}
+
+function weightColumn(editable: boolean = false, withSuffix: boolean = false): TableColumn<ProductRow> {
+    const column: TableColumn<ProductRow> = {
+        key: "weight",
+        label: "Weight",
+    };
+    
+    if (editable) {
+        column.editable = {
+            inputAttributes: { type: "number" },
+        };
+        if (withSuffix) {
+            column.editable.suffix = "kg";
+        }
+    }
+    
+    return column;
+}
+
+function categoryColumn(editable: boolean = false, withLabelKey: boolean = false): TableColumn<ProductRow> {
+    const column: TableColumn<ProductRow> = {
+        key: "category",
+        label: "Category",
+    };
+    
+    if (editable) {
+        column.editable = {
+            type: "select",
+            options: [
+                { label: "Electronics", value: "electronics" },
+                { label: "Accessories", value: "accessories" },
+            ],
+        };
+        if (withLabelKey) {
+            column.editable.labelKey = "name";
+        }
+    }
+    
+    return column;
+}
+
 beforeEach(() => {
     return page.viewport(600, 800);
 });
@@ -34,42 +137,14 @@ describe("GTable Editable Columns", () => {
     describe("Basic Editable Features", () => {
         it("renders input elements for editable columns", async () => {
             const columns: TableColumn<ProductRow>[] = [
-                {
-                    key: "name",
-                    label: "Product Name",
-                },
-                {
-                    key: "price",
-                    label: "Price",
-                    editable: {
-                        inputAttributes: { type: "number", step: "0.01" },
-                        prefix: "$",
-                    },
-                },
-                {
-                    key: "quantity",
-                    label: "Quantity",
-                    editable: {
-                        inputAttributes: { type: "number", min: "0" },
-                    },
-                },
+                nameColumn(),
+                priceColumn(true, true),
+                quantityColumn(true),
             ];
 
             const tableData: ProductRow[] = [
-                {
-                    key: "1",
-                    name: "Product A",
-                    price: 10.99,
-                    quantity: 5,
-                    weight: 1.5,
-                },
-                {
-                    key: "2",
-                    name: "Product B",
-                    price: 25.5,
-                    quantity: 3,
-                    weight: 2.0,
-                },
+                createProductA(),
+                createProductB(),
             ];
 
             const { GTableFixture } = createGTableFixture<ProductRow>({
@@ -96,33 +171,11 @@ describe("GTable Editable Columns", () => {
 
         it("displays prefix and suffix correctly", async () => {
             const columns: TableColumn<ProductRow>[] = [
-                {
-                    key: "price",
-                    label: "Price",
-                    editable: {
-                        inputAttributes: { type: "number" },
-                        prefix: "$",
-                    },
-                },
-                {
-                    key: "weight",
-                    label: "Weight",
-                    editable: {
-                        inputAttributes: { type: "number" },
-                        suffix: "kg",
-                    },
-                },
+                priceColumn(true, true),
+                weightColumn(true, true),
             ];
 
-            const tableData: ProductRow[] = [
-                {
-                    key: "1",
-                    name: "Product A",
-                    price: 10.99,
-                    quantity: 5,
-                    weight: 1.5,
-                },
-            ];
+            const tableData: ProductRow[] = [createProductA()];
 
             const { GTableFixture } = createGTableFixture<ProductRow>({
                 label: "Products",
@@ -145,28 +198,11 @@ describe("GTable Editable Columns", () => {
 
         it("updates reactive data when input changes", async () => {
             const columns: TableColumn<ProductRow>[] = [
-                {
-                    key: "name",
-                    label: "Product Name",
-                },
-                {
-                    key: "price",
-                    label: "Price",
-                    editable: {
-                        inputAttributes: { type: "number" },
-                    },
-                },
+                nameColumn(),
+                priceColumn(true),
             ];
 
-            const tableData = ref<ProductRow[]>([
-                {
-                    key: "1",
-                    name: "Product A",
-                    price: 10.99,
-                    quantity: 5,
-                    weight: 1.5,
-                },
-            ]);
+            const tableData = ref<ProductRow[]>([createProductA()]);
 
             const { GTableFixture } = createGTableFixture<ProductRow>({
                 label: "Products",
@@ -193,25 +229,9 @@ describe("GTable Editable Columns", () => {
         });
 
         it("emits cell-change event with correct payload", async () => {
-            const columns: TableColumn<ProductRow>[] = [
-                {
-                    key: "price",
-                    label: "Price",
-                    editable: {
-                        inputAttributes: { type: "number" },
-                    },
-                },
-            ];
+            const columns: TableColumn<ProductRow>[] = [priceColumn(true)];
 
-            const tableData: ProductRow[] = [
-                {
-                    key: "1",
-                    name: "Product A",
-                    price: 10.99,
-                    quantity: 5,
-                    weight: 1.5,
-                },
-            ];
+            const tableData: ProductRow[] = [createProductA()];
 
             const { GTableFixture } = createGTableFixture<ProductRow>({
                 label: "Products",
@@ -259,15 +279,7 @@ describe("GTable Editable Columns", () => {
                 },
             ];
 
-            const tableData: ProductRow[] = [
-                {
-                    key: "1",
-                    name: "Product A",
-                    price: 10.99,
-                    quantity: 5,
-                    weight: 1.5,
-                },
-            ];
+            const tableData: ProductRow[] = [createProductA()];
 
             const { GTableFixture } = createGTableFixture<ProductRow>({
                 label: "Products",
@@ -299,15 +311,7 @@ describe("GTable Editable Columns", () => {
                 },
             ];
 
-            const tableData: ProductRow[] = [
-                {
-                    key: "1",
-                    name: "Product A",
-                    price: 10.99,
-                    quantity: 5,
-                    weight: 1.5,
-                },
-            ];
+            const tableData: ProductRow[] = [createProductA()];
 
             const consoleWarnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
 
@@ -333,10 +337,7 @@ describe("GTable Editable Columns", () => {
     describe("Accessibility Tests", () => {
         it("passes accessibility tests with editable columns", async () => {
             const columns: TableColumn<ProductRow>[] = [
-                {
-                    key: "name",
-                    label: "Product Name",
-                },
+                nameColumn(),
                 {
                     key: "price",
                     label: "Price",
@@ -347,15 +348,7 @@ describe("GTable Editable Columns", () => {
                 },
             ];
 
-            const tableData: ProductRow[] = [
-                {
-                    key: "1",
-                    name: "Product A",
-                    price: 10.99,
-                    quantity: 5,
-                    weight: 1.5,
-                },
-            ];
+            const tableData: ProductRow[] = [createProductA()];
 
             const { GTableFixture } = createGTableFixture<ProductRow>({
                 label: "Products",
@@ -370,28 +363,11 @@ describe("GTable Editable Columns", () => {
 
         it("adds unique IDs to column headers", async () => {
             const columns: TableColumn<ProductRow>[] = [
-                {
-                    key: "name",
-                    label: "Product Name",
-                },
-                {
-                    key: "price",
-                    label: "Price",
-                    editable: {
-                        inputAttributes: { type: "number" },
-                    },
-                },
+                nameColumn(),
+                priceColumn(true),
             ];
 
-            const tableData: ProductRow[] = [
-                {
-                    key: "1",
-                    name: "Product A",
-                    price: 10.99,
-                    quantity: 5,
-                    weight: 1.5,
-                },
-            ];
+            const tableData: ProductRow[] = [createProductA()];
 
             const { GTableFixture } = createGTableFixture<ProductRow>({
                 label: "Products",
@@ -414,25 +390,9 @@ describe("GTable Editable Columns", () => {
         });
 
         it("adds aria-labelledby to editable inputs referencing column header", async () => {
-            const columns: TableColumn<ProductRow>[] = [
-                {
-                    key: "price",
-                    label: "Price",
-                    editable: {
-                        inputAttributes: { type: "number" },
-                    },
-                },
-            ];
+            const columns: TableColumn<ProductRow>[] = [priceColumn(true)];
 
-            const tableData: ProductRow[] = [
-                {
-                    key: "1",
-                    name: "Product A",
-                    price: 10.99,
-                    quantity: 5,
-                    weight: 1.5,
-                },
-            ];
+            const tableData: ProductRow[] = [createProductA()];
 
             const { GTableFixture } = createGTableFixture<ProductRow>({
                 label: "Products",
@@ -453,10 +413,7 @@ describe("GTable Editable Columns", () => {
 
         it("adds aria-labelledby referencing both column header and label cell when labelKey is specified", async () => {
             const columns: TableColumn<ProductRow>[] = [
-                {
-                    key: "name",
-                    label: "Product Name",
-                },
+                nameColumn(),
                 {
                     key: "price",
                     label: "Price",
@@ -467,15 +424,7 @@ describe("GTable Editable Columns", () => {
                 },
             ];
 
-            const tableData: ProductRow[] = [
-                {
-                    key: "1",
-                    name: "Product A",
-                    price: 10.99,
-                    quantity: 5,
-                    weight: 1.5,
-                },
-            ];
+            const tableData: ProductRow[] = [createProductA()];
 
             const { GTableFixture } = createGTableFixture<ProductRow>({
                 label: "Products",
@@ -501,10 +450,7 @@ describe("GTable Editable Columns", () => {
 
         it("adds IDs to cells that are used as labels for editable columns", async () => {
             const columns: TableColumn<ProductRow>[] = [
-                {
-                    key: "name",
-                    label: "Product Name",
-                },
+                nameColumn(),
                 {
                     key: "price",
                     label: "Price",
@@ -516,20 +462,8 @@ describe("GTable Editable Columns", () => {
             ];
 
             const tableData: ProductRow[] = [
-                {
-                    key: "1",
-                    name: "Product A",
-                    price: 10.99,
-                    quantity: 5,
-                    weight: 1.5,
-                },
-                {
-                    key: "2",
-                    name: "Product B",
-                    price: 25.5,
-                    quantity: 3,
-                    weight: 2.0,
-                },
+                createProductA(),
+                createProductB(),
             ];
 
             const { GTableFixture } = createGTableFixture<ProductRow>({
@@ -556,33 +490,11 @@ describe("GTable Editable Columns", () => {
     describe("Select Dropdown Features", () => {
         it("renders select dropdown for editable columns with type='select'", async () => {
             const columns: TableColumn<ProductRow>[] = [
-                {
-                    key: "name",
-                    label: "Product Name",
-                },
-                {
-                    key: "category",
-                    label: "Category",
-                    editable: {
-                        type: "select",
-                        options: [
-                            { label: "Electronics", value: "electronics" },
-                            { label: "Accessories", value: "accessories" },
-                        ],
-                    },
-                },
+                nameColumn(),
+                categoryColumn(true),
             ];
 
-            const tableData: ProductRow[] = [
-                {
-                    key: "1",
-                    name: "Product A",
-                    price: 10.99,
-                    quantity: 5,
-                    weight: 1.5,
-                    category: "electronics",
-                },
-            ];
+            const tableData: ProductRow[] = [createProductA({ category: "electronics" })];
 
             const { GTableFixture } = createGTableFixture<ProductRow>({
                 label: "Products",
@@ -607,30 +519,9 @@ describe("GTable Editable Columns", () => {
         });
 
         it("updates reactive data when select value changes", async () => {
-            const columns: TableColumn<ProductRow>[] = [
-                {
-                    key: "category",
-                    label: "Category",
-                    editable: {
-                        type: "select",
-                        options: [
-                            { label: "Electronics", value: "electronics" },
-                            { label: "Accessories", value: "accessories" },
-                        ],
-                    },
-                },
-            ];
+            const columns: TableColumn<ProductRow>[] = [categoryColumn(true)];
 
-            const tableData = ref<ProductRow[]>([
-                {
-                    key: "1",
-                    name: "Product A",
-                    price: 10.99,
-                    quantity: 5,
-                    weight: 1.5,
-                    category: "electronics",
-                },
-            ]);
+            const tableData = ref<ProductRow[]>([createProductA({ category: "electronics" })]);
 
             const { GTableFixture } = createGTableFixture<ProductRow>({
                 label: "Products",
@@ -657,30 +548,9 @@ describe("GTable Editable Columns", () => {
         });
 
         it("emits cell-change event when select value changes", async () => {
-            const columns: TableColumn<ProductRow>[] = [
-                {
-                    key: "category",
-                    label: "Category",
-                    editable: {
-                        type: "select",
-                        options: [
-                            { label: "Electronics", value: "electronics" },
-                            { label: "Accessories", value: "accessories" },
-                        ],
-                    },
-                },
-            ];
+            const columns: TableColumn<ProductRow>[] = [categoryColumn(true)];
 
-            const tableData: ProductRow[] = [
-                {
-                    key: "1",
-                    name: "Product A",
-                    price: 10.99,
-                    quantity: 5,
-                    weight: 1.5,
-                    category: "electronics",
-                },
-            ];
+            const tableData: ProductRow[] = [createProductA({ category: "electronics" })];
 
             const { GTableFixture } = createGTableFixture<ProductRow>({
                 label: "Products",
@@ -713,34 +583,11 @@ describe("GTable Editable Columns", () => {
 
         it("passes accessibility tests with select dropdown", async () => {
             const columns: TableColumn<ProductRow>[] = [
-                {
-                    key: "name",
-                    label: "Product Name",
-                },
-                {
-                    key: "category",
-                    label: "Category",
-                    editable: {
-                        type: "select",
-                        options: [
-                            { label: "Electronics", value: "electronics" },
-                            { label: "Accessories", value: "accessories" },
-                        ],
-                        labelKey: "name",
-                    },
-                },
+                nameColumn(),
+                categoryColumn(true, true),
             ];
 
-            const tableData: ProductRow[] = [
-                {
-                    key: "1",
-                    name: "Product A",
-                    price: 10.99,
-                    quantity: 5,
-                    weight: 1.5,
-                    category: "electronics",
-                },
-            ];
+            const tableData: ProductRow[] = [createProductA({ category: "electronics" })];
 
             const { GTableFixture } = createGTableFixture<ProductRow>({
                 label: "Products",
