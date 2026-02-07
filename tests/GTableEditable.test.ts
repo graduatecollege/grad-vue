@@ -158,15 +158,16 @@ describe("GTable Editable Columns", () => {
             const { container } = mnt(GTableFixture);
 
             // Check that editable columns have input elements
-            const priceInputs = container.element().querySelectorAll("input[type='number'][step='0.01']");
-            expect(priceInputs.length).toBe(2);
+            // Price column should have 2 inputs + quantity column should have 2 inputs = 4 total
+            const allInputs = await container.getByRole("spinbutton").all();
+            expect(allInputs.length).toBe(4); // 2 price + 2 quantity
 
-            const quantityInputs = container.element().querySelectorAll("input[type='number'][min='0']:not([step])");
-            expect(quantityInputs.length).toBe(2);
-
-            // Check that non-editable column doesn't have input
-            const nameInputs = container.element().querySelectorAll("td:nth-child(1) input");
-            expect(nameInputs.length).toBe(0);
+            // Check that non-editable column doesn't have input in Product Name cells
+            const nameCell = container.getByRole("cell", { name: "Product A", exact: true });
+            await expect.element(nameCell).toBeVisible();
+            // Name cells should not have inputs - count should be 0
+            const inputsInNameCell = await nameCell.locator("input").all();
+            expect(inputsInNameCell.length).toBe(0);
         });
 
         it("displays prefix and suffix correctly", async () => {
@@ -188,12 +189,16 @@ describe("GTable Editable Columns", () => {
             const { container } = mnt(GTableFixture);
 
             // Check for prefix
-            const prefix = container.element().querySelector(".cell-prefix");
-            expect(prefix?.textContent).toBe("$");
+            const prefix = container.locator(".cell-prefix").first();
+            await expect.element(prefix).toBeVisible();
+            const prefixEl = await prefix.element();
+            expect(prefixEl.textContent).toBe("$");
 
             // Check for suffix
-            const suffix = container.element().querySelector(".cell-suffix");
-            expect(suffix?.textContent).toBe("kg");
+            const suffix = container.locator(".cell-suffix").first();
+            await expect.element(suffix).toBeVisible();
+            const suffixEl = await suffix.element();
+            expect(suffixEl.textContent).toBe("kg");
         });
 
         it("updates reactive data when input changes", async () => {
@@ -214,12 +219,12 @@ describe("GTable Editable Columns", () => {
 
             const { container, vm } = mnt(GTableFixture);
 
-            const priceInput = container.element().querySelector("input[type='number']") as HTMLInputElement;
-            expect(priceInput).not.toBeNull();
+            // Get the price input
+            const priceInput = container.getByRole("spinbutton").first();
+            await expect.element(priceInput).toBeVisible();
 
             // Change the value
-            priceInput.value = "15.99";
-            priceInput.dispatchEvent(new Event("input", { bubbles: true }));
+            await priceInput.fill("15.99");
 
             // Wait for update
             await vm.$nextTick();
@@ -248,9 +253,8 @@ describe("GTable Editable Columns", () => {
                 },
             });
 
-            const priceInput = container.element().querySelector("input[type='number']") as HTMLInputElement;
-            priceInput.value = "20.5";
-            priceInput.dispatchEvent(new Event("input", { bubbles: true }));
+            const priceInput = container.getByRole("spinbutton").first();
+            await priceInput.fill("20.5");
 
             await vm.$nextTick();
 
@@ -291,12 +295,16 @@ describe("GTable Editable Columns", () => {
 
             const { container } = mnt(GTableFixture);
 
-            const input = container.element().querySelector("input") as HTMLInputElement;
-            expect(input.type).toBe("number");
-            expect(input.step).toBe("0.01");
-            expect(input.min).toBe("0");
-            expect(input.max).toBe("1000");
-            expect(input.pattern).toBe("[0-9]+(\.[0-9]{1,2})?");
+            const input = container.getByRole("spinbutton").first();
+            await expect.element(input).toBeVisible();
+            
+            // Check attributes via element
+            const inputEl = await input.element();
+            expect(inputEl.getAttribute("type")).toBe("number");
+            expect(inputEl.getAttribute("step")).toBe("0.01");
+            expect(inputEl.getAttribute("min")).toBe("0");
+            expect(inputEl.getAttribute("max")).toBe("1000");
+            expect(inputEl.getAttribute("pattern")).toBe("[0-9]+(\.[0-9]{1,2})?");
         });
 
         it("editable columns do not support custom display function", async () => {
@@ -380,13 +388,16 @@ describe("GTable Editable Columns", () => {
             const { container } = mnt(GTableFixture);
 
             // Check that column headers have IDs
-            const nameHeader = container.element().querySelector("th[id$='-th-name']");
-            const priceHeader = container.element().querySelector("th[id$='-th-price']");
+            const nameHeader = container.getByRole("columnheader", { name: "Product Name" });
+            const priceHeader = container.getByRole("columnheader", { name: "Price" });
             
-            expect(nameHeader).not.toBeNull();
-            expect(priceHeader).not.toBeNull();
-            expect(nameHeader?.id).toMatch(/-th-name$/);
-            expect(priceHeader?.id).toMatch(/-th-price$/);
+            await expect.element(nameHeader).toBeVisible();
+            await expect.element(priceHeader).toBeVisible();
+            
+            const nameHeaderEl = await nameHeader.element();
+            const priceHeaderEl = await priceHeader.element();
+            expect(nameHeaderEl.id).toMatch(/-th-name$/);
+            expect(priceHeaderEl.id).toMatch(/-th-price$/);
         });
 
         it("adds aria-labelledby to editable inputs referencing column header", async () => {
@@ -404,11 +415,14 @@ describe("GTable Editable Columns", () => {
 
             const { container } = mnt(GTableFixture);
 
-            const priceInput = container.element().querySelector("input[type='number']") as HTMLInputElement;
-            const priceHeader = container.element().querySelector("th[id$='-th-price']");
+            const priceInput = container.getByRole("spinbutton").first();
+            const priceHeader = container.getByRole("columnheader", { name: "Price" });
             
-            expect(priceInput).not.toBeNull();
-            expect(priceInput.getAttribute("aria-labelledby")).toBe(priceHeader?.id);
+            await expect.element(priceInput).toBeVisible();
+            
+            const priceInputEl = await priceInput.element();
+            const priceHeaderEl = await priceHeader.element();
+            expect(priceInputEl.getAttribute("aria-labelledby")).toBe(priceHeaderEl.id);
         });
 
         it("adds aria-labelledby referencing both column header and label cell when labelKey is specified", async () => {
@@ -436,16 +450,21 @@ describe("GTable Editable Columns", () => {
 
             const { container } = mnt(GTableFixture);
 
-            const priceInput = container.element().querySelector("input[type='number']") as HTMLInputElement;
-            const priceHeader = container.element().querySelector("th[id$='-th-price']");
-            const nameCell = container.element().querySelector("td[id$='-td-1-name']");
+            const priceInput = container.getByRole("spinbutton").first();
+            const priceHeader = container.getByRole("columnheader", { name: "Price" });
+            // Use exact match to get the non-editable Product A cell (not the one with the input)
+            const nameCell = container.getByRole("cell", { name: "Product A", exact: true });
             
-            expect(priceInput).not.toBeNull();
-            expect(nameCell).not.toBeNull();
+            await expect.element(priceInput).toBeVisible();
+            await expect.element(nameCell).toBeVisible();
             
-            const ariaLabelledBy = priceInput.getAttribute("aria-labelledby");
-            expect(ariaLabelledBy).toContain(priceHeader?.id);
-            expect(ariaLabelledBy).toContain(nameCell?.id);
+            const priceInputEl = await priceInput.element();
+            const priceHeaderEl = await priceHeader.element();
+            const nameCellEl = await nameCell.element();
+            
+            const ariaLabelledBy = priceInputEl.getAttribute("aria-labelledby");
+            expect(ariaLabelledBy).toContain(priceHeaderEl.id);
+            expect(ariaLabelledBy).toContain(nameCellEl.id);
         });
 
         it("adds IDs to cells that are used as labels for editable columns", async () => {
@@ -476,14 +495,18 @@ describe("GTable Editable Columns", () => {
 
             const { container } = mnt(GTableFixture);
 
-            // Check that name cells have IDs
-            const nameCell1 = container.element().querySelector("td[id$='-td-1-name']");
-            const nameCell2 = container.element().querySelector("td[id$='-td-2-name']");
+            // Check that name cells have IDs - use exact match to avoid matching editable cells
+            const nameCell1 = container.getByRole("cell", { name: "Product A", exact: true });
+            const nameCell2 = container.getByRole("cell", { name: "Product B", exact: true });
             
-            expect(nameCell1).not.toBeNull();
-            expect(nameCell2).not.toBeNull();
-            expect(nameCell1?.textContent).toBe("Product A");
-            expect(nameCell2?.textContent).toBe("Product B");
+            await expect.element(nameCell1).toBeVisible();
+            await expect.element(nameCell2).toBeVisible();
+            
+            const nameCell1El = await nameCell1.element();
+            const nameCell2El = await nameCell2.element();
+            
+            expect(nameCell1El.id).toMatch(/-td-1-name$/);
+            expect(nameCell2El.id).toMatch(/-td-2-name$/);
         });
     });
 
@@ -507,15 +530,22 @@ describe("GTable Editable Columns", () => {
             const { container } = mnt(GTableFixture);
 
             // Check that select element is rendered
-            const selectElement = container.element().querySelector("select");
-            expect(selectElement).not.toBeNull();
-            expect(selectElement?.classList.contains("editable-select")).toBe(true);
+            const selectElement = container.getByRole("combobox").first();
+            await expect.element(selectElement).toBeVisible();
+            
+            // Check CSS class
+            const selectEl = await selectElement.element();
+            expect(selectEl.classList.contains("editable-select")).toBe(true);
 
             // Check that options are rendered
-            const options = container.element().querySelectorAll("select option");
+            const options = await container.getByRole("option").all();
             expect(options.length).toBe(2);
-            expect(options[0].textContent).toBe("Electronics");
-            expect(options[1].textContent).toBe("Accessories");
+            
+            // Check option text content by getting elements
+            const option1El = await options[0].element();
+            const option2El = await options[1].element();
+            expect(option1El.textContent).toBe("Electronics");
+            expect(option2El.textContent).toBe("Accessories");
         });
 
         it("updates reactive data when select value changes", async () => {
@@ -533,12 +563,11 @@ describe("GTable Editable Columns", () => {
 
             const { container, vm } = mnt(GTableFixture);
 
-            const selectElement = container.element().querySelector("select") as HTMLSelectElement;
-            expect(selectElement).not.toBeNull();
+            const selectElement = container.getByRole("combobox").first();
+            await expect.element(selectElement).toBeVisible();
 
             // Change the value
-            selectElement.value = "accessories";
-            selectElement.dispatchEvent(new Event("change", { bubbles: true }));
+            await selectElement.selectOptions("accessories");
 
             // Wait for update
             await vm.$nextTick();
@@ -567,9 +596,8 @@ describe("GTable Editable Columns", () => {
                 },
             });
 
-            const selectElement = container.element().querySelector("select") as HTMLSelectElement;
-            selectElement.value = "accessories";
-            selectElement.dispatchEvent(new Event("change", { bubbles: true }));
+            const selectElement = container.getByRole("combobox").first();
+            await selectElement.selectOptions("accessories");
 
             await vm.$nextTick();
 
