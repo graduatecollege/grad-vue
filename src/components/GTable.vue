@@ -83,10 +83,9 @@ type Props = {
     bulkSelectionEnabled?: boolean;
     // Array of actions to show in the sticky toolbar when rows are selected
     bulkActions?: BulkAction[];
-    /**
-     * Optional change tracker for editable tables
-     * Pass a composable from useTableChanges() to track user edits
-     */
+
+    // Optional change tracker for editable tables
+    // Pass a composable from useTableChanges() to track user edits
     changeTracker?: UseTableChangesReturn<T>;
 };
 

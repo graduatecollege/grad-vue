@@ -749,6 +749,15 @@ const termYears = ref(["2026", "2025", "2024"]);
                         label="Three Way Toggle"
                         :modelValue="null"
                     />
+                    <GThreeWayToggle
+                        label="Three Way Toggle"
+                        :modelValue="null"
+                    >
+                        <template #label>
+                            Hey
+                            <span style="display: inline-block; background: #999; padding: 3px; border-radius: 4px; margin-left: 4px;">1/2/2026</span>
+                        </template>
+                    </GThreeWayToggle>
                 </section>
                 <section id="modal">
                     <h2>Modal</h2>

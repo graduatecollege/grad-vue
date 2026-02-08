@@ -826,6 +826,10 @@ interface Props {
     bulkSelectionEnabled?: boolean;
     // Array of actions to show in the sticky toolbar when rows are selected
     bulkActions?: BulkAction[];
+
+    // Optional change tracker for editable tables
+    // Pass a composable from useTableChanges() to track user edits
+    changeTracker?: UseTableChangesReturn<T>;
 }
 ```
 
@@ -924,6 +928,9 @@ the `aria-describedby` for the group element.
 When the value changes, `v-model` is updated. A `change` event is also emitted
 if the value changed from user interaction.
 
+Slots:
+- `label`: Custom label content. Defaults to `label` prop if not provided.
+
 ### Props
 
 ```typescript
@@ -947,5 +954,9 @@ interface Props {
     disabled?: boolean;
 }
 ```
+
+### Slots
+
+- `label`
 
 ---
