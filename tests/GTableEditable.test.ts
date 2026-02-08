@@ -65,6 +65,7 @@ function priceColumn(editable: boolean = false, withPrefix: boolean = false): Ta
     if (editable) {
         column.editable = {
             inputAttributes: { type: "number", step: "0.01" },
+            labelKey: "name",
         };
         if (withPrefix) {
             column.editable.prefix = "$";
@@ -98,6 +99,7 @@ function weightColumn(editable: boolean = false, withSuffix: boolean = false): T
     if (editable) {
         column.editable = {
             inputAttributes: { type: "number" },
+            labelKey: "name",
         };
         if (withSuffix) {
             column.editable.suffix = "kg";
@@ -134,73 +136,84 @@ beforeEach(() => {
 });
 
 describe("GTable Editable Columns", () => {
-    describe("Basic Editable Features", () => {
-        it("renders input elements for editable columns", async () => {
-            const columns: TableColumn<ProductRow>[] = [
-                nameColumn(),
-                priceColumn(true, true),
-                quantityColumn(true),
-            ];
+    describe("Setting editable columns", () => {
 
-            const tableData: ProductRow[] = [
-                createProductA(),
-                createProductB(),
-            ];
+        const columns: TableColumn<ProductRow>[] = [
+            nameColumn(),
+            priceColumn(true, true),
+            quantityColumn(true),
+        ];
 
-            const { GTableFixture } = createGTableFixture<ProductRow>({
-                label: "Products",
-                columns,
-                data: tableData,
-                initialFilter: defaultFilter,
-                paginate: false,
-            });
+        const tableData: ProductRow[] = [
+            createProductA(),
+            createProductB(),
+        ];
 
-            const { container } = mnt(GTableFixture);
-
-            // Check that editable columns have input elements
-            // Price column should have 2 inputs + quantity column should have 2 inputs = 4 total
-            const allInputs = await container.getByRole("spinbutton").all();
-            expect(allInputs.length).toBe(4); // 2 price + 2 quantity
-
-            // Check that non-editable column doesn't have input in Product Name cells
-            const nameCell = container.getByRole("cell", { name: "Product A", exact: true });
-            await expect.element(nameCell).toBeVisible();
-            // Name cells should not have inputs - count should be 0
-            const inputsInNameCell = await nameCell.locator("input").all();
-            expect(inputsInNameCell.length).toBe(0);
+        const { GTableFixture } = createGTableFixture<ProductRow>({
+            label: "Products",
+            columns,
+            data: tableData,
+            initialFilter: defaultFilter,
+            paginate: false,
         });
 
-        it("displays prefix and suffix correctly", async () => {
-            const columns: TableColumn<ProductRow>[] = [
-                priceColumn(true, true),
-                weightColumn(true, true),
-            ];
+        it("doesn't render inputs for non-editable columns", async () => {
+            mnt(GTableFixture);
 
-            const tableData: ProductRow[] = [createProductA()];
+            const row = page.getByRole('row').filter({ hasText: 'Product A' });
+            const cells = row.getByRole('cell');
+            await expect.element(cells.nth(0)).toHaveTextContent('Product A');
+            await expect.element(cells.nth(0).getByRole('textbox')).not.toBeInTheDocument();
+            await expect.element(cells.nth(0).getByRole('spinbutton')).not.toBeInTheDocument();
+        });
+        it("renders inputs for editable columns", async () => {
+            mnt(GTableFixture);
 
-            const { GTableFixture } = createGTableFixture<ProductRow>({
-                label: "Products",
-                columns,
-                data: tableData,
-                initialFilter: defaultFilter,
-                paginate: false,
-            });
+            const row = page.getByRole('row').filter({ hasText: 'Product A' });
+            const cells = row.getByRole('cell');
+            await expect.element(cells.nth(1).getByRole('spinbutton', {name: 'Product A Price'})).toBeVisible();
+        })
 
-            const { container } = mnt(GTableFixture);
+    });
 
-            // Check for prefix
-            const prefix = container.locator(".cell-prefix").first();
-            await expect.element(prefix).toBeVisible();
-            const prefixEl = await prefix.element();
-            expect(prefixEl.textContent).toBe("$");
+    describe("Prefix and Suffix", () => {
+        const columns: TableColumn<ProductRow>[] = [
+            nameColumn(),
+            priceColumn(true, true),
+            weightColumn(true, true),
+        ];
 
-            // Check for suffix
-            const suffix = container.locator(".cell-suffix").first();
-            await expect.element(suffix).toBeVisible();
-            const suffixEl = await suffix.element();
-            expect(suffixEl.textContent).toBe("kg");
+        const tableData: ProductRow[] = [createProductA()];
+
+        const { GTableFixture } = createGTableFixture<ProductRow>({
+            label: "Products",
+            columns,
+            data: tableData,
+            initialFilter: defaultFilter,
+            paginate: false,
         });
 
+        it("displays prefix correctly", async () => {
+            mnt(GTableFixture);
+            // The value should be unchanged
+            await expect.element(page.getByRole('spinbutton', {name: 'Product A Price'})).toHaveValue(10.99);
+
+            const row = page.getByRole('row').filter({ hasText: 'Product A' });
+            const cells = row.getByRole('cell');
+            await expect.element(cells.nth(1).getByText('$')).toBeVisible();
+        });
+        it("displays suffix correctly", async () => {
+            mnt(GTableFixture);
+            // The value should be unchanged
+            await expect.element(page.getByRole('spinbutton', {name: 'Product A Weight'})).toHaveValue(1.5);
+
+            const row = page.getByRole('row').filter({ hasText: 'Product A' });
+            const cells = row.getByRole('cell');
+            await expect.element(cells.nth(2).getByText('kg')).toBeVisible();
+        });
+    });
+
+    describe("Data updates", () => {
         it("updates reactive data when input changes", async () => {
             const columns: TableColumn<ProductRow>[] = [
                 nameColumn(),

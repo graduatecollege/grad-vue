@@ -90,7 +90,7 @@ function buildAriaLabelledBy(row: T, col: C): string {
     // If labelKey is specified, add the label cell ID
     if (col.editable?.labelKey) {
         const labelCellId = `${props.tableId}-td-${row.key}-${col.editable.labelKey}`;
-        return `${columnHeaderId} ${labelCellId}`;
+        return `${labelCellId} ${columnHeaderId} `;
     }
 
     return columnHeaderId;
@@ -165,6 +165,7 @@ function hasCellChange(row: T, col: C): boolean {
                             "
                             :aria-label="`Select row ${row.key}`"
                             class="g-bulk-select-checkbox"
+                            :name="`row-${row.key}-checkbox`"
                         />
                     </td>
                     <td
@@ -195,6 +196,7 @@ function hasCellChange(row: T, col: C): boolean {
                                 @change="handleCellChange($event, row, col)"
                                 :aria-labelledby="buildAriaLabelledBy(row, col)"
                                 class="editable-input editable-select"
+                                :name="`row-${row.key}-${String(col.key)}-select`"
                             >
                                 <option
                                     v-for="option in col.editable.options"
@@ -210,6 +212,7 @@ function hasCellChange(row: T, col: C): boolean {
                                 v-bind="col.editable.inputAttributes"
                                 @input="handleCellChange($event, row, col)"
                                 :aria-labelledby="buildAriaLabelledBy(row, col)"
+                                :name="`row-${row.key}-${String(col.key)}-input`"
                                 class="editable-input"
                                 :style="{
                                     paddingLeft: col.editable.prefix
@@ -259,6 +262,7 @@ function hasCellChange(row: T, col: C): boolean {
                             (e) => handleCheckboxChange(row.key, e.shiftKey)
                         "
                         :aria-label="`Select row ${row.key}`"
+                        :name="`row-${row.key}-checkbox`"
                         class="g-bulk-select-checkbox"
                     />
                 </td>
@@ -287,6 +291,7 @@ function hasCellChange(row: T, col: C): boolean {
                             :value="row[col.key]"
                             @change="handleCellChange($event, row, col)"
                             :aria-labelledby="buildAriaLabelledBy(row, col)"
+                            :name="`row-${row.key}-${String(col.key)}-select`"
                             class="editable-input editable-select"
                         >
                             <option
@@ -303,6 +308,7 @@ function hasCellChange(row: T, col: C): boolean {
                             v-bind="col.editable.inputAttributes"
                             @input="handleCellChange($event, row, col)"
                             :aria-labelledby="buildAriaLabelledBy(row, col)"
+                            :name="`row-${row.key}-${String(col.key)}-input`"
                             class="editable-input"
                             :style="{
                                 paddingLeft: col.editable.prefix
