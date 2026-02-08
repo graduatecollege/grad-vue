@@ -12,3 +12,15 @@ beforeEach(() => {
     // in one test may prevent cleanup and then affect other tests.
     document.body.innerHTML = "";
 });
+
+const style = document.createElement('style');
+style.innerHTML = `
+  *,
+  *:before,
+  *:after {
+    transition-property: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+`;
+document.head.appendChild(style);
