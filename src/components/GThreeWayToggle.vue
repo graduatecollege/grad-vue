@@ -11,6 +11,9 @@
  *
  * When the value changes, `v-model` is updated. A `change` event is also emitted
  * if the value changed from user interaction.
+ *
+ * Slots:
+ * - `label`: Custom label content. Defaults to `label` prop if not provided.
  */
 import { ref, computed, watch, useId } from "vue";
 
@@ -104,7 +107,11 @@ function onLabelKeydown(e: KeyboardEvent) {
 <template>
     <div class="g-three-way-toggle-wrapper">
         <div class="g-three-way-toggle-control">
-            <span class="g-label" :id="id">{{ label }}</span>
+            <span class="g-label" :id="id">
+                <slot name="label">
+                    {{ label }}
+                </slot>
+            </span>
             <fieldset
                 class="g-three-way-toggle"
                 :class="{ 'g-has-error': error }"
@@ -201,6 +208,7 @@ function onLabelKeydown(e: KeyboardEvent) {
         font-size: 0.875rem;
         line-height: 1;
         align-self: center;
+        display: block;
     }
 }
 

@@ -32,6 +32,10 @@ bindings exist for &#39;y&#39; and &#39;n&#39; to set yes and no respectively.</
 the <code>aria-describedby</code> for the group element.</p>
 <p>When the value changes, <code>v-model</code> is updated. A <code>change</code> event is also emitted
 if the value changed from user interaction.</p>
+<p>Slots:</p>
+<ul>
+<li><code>label</code>: Custom label content. Defaults to <code>label</code> prop if not provided.</li>
+</ul>
 </template>
             <template #default="{ props }">
                 <div style="max-width: 200px">
