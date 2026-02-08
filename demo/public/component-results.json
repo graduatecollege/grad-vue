@@ -1,7 +1,7 @@
 {
-  "totalComponents": 21,
-  "totalTests": 178,
-  "passedTests": 178,
+  "totalComponents": 22,
+  "totalTests": 194,
+  "passedTests": 194,
   "failedTests": 0,
   "skippedTests": 0,
   "components": {
@@ -1202,45 +1202,59 @@
       "status": "passed",
       "tests": [
         {
-          "title": "renders input elements for editable columns",
+          "title": "doesn't render inputs for non-editable columns",
           "status": "passed",
           "ancestors": [
-            "Basic Editable Features"
+            "Setting editable columns"
           ]
         },
         {
-          "title": "displays prefix and suffix correctly",
+          "title": "renders inputs for editable columns",
           "status": "passed",
           "ancestors": [
-            "Basic Editable Features"
+            "Setting editable columns"
+          ]
+        },
+        {
+          "title": "displays prefix correctly",
+          "status": "passed",
+          "ancestors": [
+            "Prefix and Suffix"
+          ]
+        },
+        {
+          "title": "displays suffix correctly",
+          "status": "passed",
+          "ancestors": [
+            "Prefix and Suffix"
           ]
         },
         {
           "title": "updates reactive data when input changes",
           "status": "passed",
           "ancestors": [
-            "Basic Editable Features"
+            "Data updates"
           ]
         },
         {
           "title": "emits cell-change event with correct payload",
           "status": "passed",
           "ancestors": [
-            "Basic Editable Features"
+            "Data updates"
           ]
         },
         {
           "title": "applies various input attributes correctly",
           "status": "passed",
           "ancestors": [
-            "Basic Editable Features"
+            "Data updates"
           ]
         },
         {
           "title": "editable columns do not support custom display function",
           "status": "passed",
           "ancestors": [
-            "Basic Editable Features"
+            "Data updates"
           ]
         },
         {
@@ -1252,20 +1266,6 @@
         },
         {
           "title": "adds unique IDs to column headers",
-          "status": "passed",
-          "ancestors": [
-            "Accessibility Tests"
-          ]
-        },
-        {
-          "title": "adds aria-labelledby to editable inputs referencing column header",
-          "status": "passed",
-          "ancestors": [
-            "Accessibility Tests"
-          ]
-        },
-        {
-          "title": "adds aria-labelledby referencing both column header and label cell when labelKey is specified",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
@@ -1505,6 +1505,128 @@
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
+          ]
+        }
+      ]
+    },
+    "useTableChanges": {
+      "component": "useTableChanges",
+      "total": 16,
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed",
+      "tests": [
+        {
+          "title": "should track a single change",
+          "status": "passed",
+          "ancestors": [
+            "Basic Change Tracking"
+          ]
+        },
+        {
+          "title": "should track multiple changes in same row",
+          "status": "passed",
+          "ancestors": [
+            "Basic Change Tracking"
+          ]
+        },
+        {
+          "title": "should track changes across multiple rows",
+          "status": "passed",
+          "ancestors": [
+            "Basic Change Tracking"
+          ]
+        },
+        {
+          "title": "should remove change when value returns to original",
+          "status": "passed",
+          "ancestors": [
+            "Basic Change Tracking"
+          ]
+        },
+        {
+          "title": "should preserve original value through multiple edits",
+          "status": "passed",
+          "ancestors": [
+            "Basic Change Tracking"
+          ]
+        },
+        {
+          "title": "should return all changes as array",
+          "status": "passed",
+          "ancestors": [
+            "Getting Changes"
+          ]
+        },
+        {
+          "title": "should return changes organized by row",
+          "status": "passed",
+          "ancestors": [
+            "Getting Changes"
+          ]
+        },
+        {
+          "title": "should return empty array when no changes",
+          "status": "passed",
+          "ancestors": [
+            "Getting Changes"
+          ]
+        },
+        {
+          "title": "should clear all changes",
+          "status": "passed",
+          "ancestors": [
+            "Clearing Changes"
+          ]
+        },
+        {
+          "title": "should clear changes for specific row",
+          "status": "passed",
+          "ancestors": [
+            "Clearing Changes"
+          ]
+        },
+        {
+          "title": "should apply changes to updated data",
+          "status": "passed",
+          "ancestors": [
+            "Applying Changes to Data"
+          ]
+        },
+        {
+          "title": "should not modify rows without changes",
+          "status": "passed",
+          "ancestors": [
+            "Applying Changes to Data"
+          ]
+        },
+        {
+          "title": "should handle empty change set",
+          "status": "passed",
+          "ancestors": [
+            "Applying Changes to Data"
+          ]
+        },
+        {
+          "title": "should handle undefined old value",
+          "status": "passed",
+          "ancestors": [
+            "Edge Cases"
+          ]
+        },
+        {
+          "title": "should handle checking non-existent changes",
+          "status": "passed",
+          "ancestors": [
+            "Edge Cases"
+          ]
+        },
+        {
+          "title": "should handle clearing non-existent row",
+          "status": "passed",
+          "ancestors": [
+            "Edge Cases"
           ]
         }
       ]

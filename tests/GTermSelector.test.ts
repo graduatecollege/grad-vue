@@ -8,7 +8,7 @@ describe("GTermSelector", () => {
             await testAccessibility(
                 GTermSelector,
                 { label: "Term Selector" },
-                { default: "<p>Example content</p>" },
+                { default: () => "<p>Example content</p>" },
             );
         });
     });

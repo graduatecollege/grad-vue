@@ -4,6 +4,8 @@
  * that allows jumping to a different term.
  */
 import GTermSelectorControl from "./term/GTermSelectorControl.vue";
+import GButton from "./GButton.vue";
+import GPopover from "./GPopover.vue";
 
 interface Props {
     /**

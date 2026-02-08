@@ -1,8 +1,9 @@
-<script setup lang="ts">
-/**
+<script setup lang="ts">/**
  * Prebuilt GSelect and GSelectButton components that can be used to
  * select a term.
  */
+import GSelect from "../GSelect.vue";
+import GSelectButton from "../GSelectButton.vue";
 
 interface Props {
     /**

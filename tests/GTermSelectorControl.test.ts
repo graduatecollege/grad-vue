@@ -8,7 +8,7 @@ describe("GTermSelectorControl", () => {
             await testAccessibility(
                 GTermSelectorControl,
                 { label: "Term Selector Control" },
-                { default: "<p>Example content</p>" },
+                { default: () => "<p>Example content</p>" },
             );
         });
     });
