@@ -202,6 +202,10 @@ const componentResult = computed<ComponentResult | null>(() => {
     }
 }
 
+.component-demo--additional .component-demo__content {
+    display: block;
+}
+
 .component-demo__preview {
     display: flex;
     align-items: center;
