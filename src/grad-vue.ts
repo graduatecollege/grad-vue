@@ -23,6 +23,7 @@ export type { VGtooltipDirective } from "./directives/v-gtooltip.ts";
 import GOverlay from "./components/GOverlay.vue";
 import GTermSelector from "./components/GTermSelector.vue";
 import GTermSelectorControl from "./components/term/GTermSelectorControl.vue";
+import GUserMenu from "./components/GUserMenu.vue";
 
 import "./css/main.css";
 import VGtooltip from "./directives/v-gtooltip.ts";
@@ -54,6 +55,7 @@ export {
     GDetailListItem,
     GTermSelector,
     GTermSelectorControl,
+    GUserMenu,
 };
 
 export { calculatePopoverPosition } from "./compose/popoverPosition";

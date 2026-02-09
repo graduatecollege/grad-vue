@@ -960,3 +960,58 @@ interface Props {
 - `label`
 
 ---
+
+## GUserMenu
+
+User menu component for toolbars. Displays a button with the user's initials
+inside a colored circle. When clicked, it opens a popover with the user's
+email and a menu for account-related links.
+
+**Slots**:
+- `default` contains menu items (links or buttons) that will be wrapped in
+  an unordered list for accessibility.
+
+**Props**:
+- `initials` - User's initials to display in the avatar
+- `email` - User's email to display in the popover
+- `color` - Background color for the avatar (should be deterministic)
+- `label` - Accessible label for the menu button. The initial will be prepended to this for the full label.
+
+Example:
+
+```vue-html
+<GUserMenu
+    initials="J"
+    email="j@example.com"
+    color="#4A90E2"
+>
+    <router-link to="/profile">Profile</router-link>
+    <a href="/settings">Settings</a>
+    <button @click="handleLogout">Logout</button>
+</GUserMenu>
+```
+
+### Props
+
+```typescript
+interface Props {
+    /**
+     * User initial(s)
+     */
+    initials: string; // Demo: J
+    /**
+     * User email
+     */
+    email: string; // Demo: j@example.org
+    /**
+     * Background color
+     */
+    color?: string;
+    /**
+     * Accessible label
+     */
+    label?: string;
+}
+```
+
+---
