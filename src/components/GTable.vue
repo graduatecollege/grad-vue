@@ -109,6 +109,8 @@ const emit = defineEmits<{
     (e: "cell-change", payload: CellChangePayload<T>): void;
 }>();
 
+const tableRef = useTemplateRef("tableRef");
+
 function onSort(col: TableColumn<T>) {
     if (!col.sortable) {
         return;
@@ -261,6 +263,7 @@ watch(
     },
     { immediate: true },
 );
+
 </script>
 
 <template>
@@ -297,6 +300,7 @@ watch(
         </div>
         <table
             class="g-table"
+            ref="tableRef"
             :aria-label="label"
             :aria-rowcount="props.resultCount || data.length"
         >

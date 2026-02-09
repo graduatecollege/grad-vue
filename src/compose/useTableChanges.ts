@@ -1,14 +1,23 @@
 import { reactive} from "vue";
 import { TableColumn, TableRow } from "../components/table/TableColumn.ts";
+import { createEventHook, EventHook, EventHookOn } from "@vueuse/core";
 
 /**
  * Represents a single cell change in the table
  */
-export interface CellChange<T = any> {
+export interface CellChange<T = any, K extends TableRow = TableRow> {
     rowKey: string;
-    columnKey: string;
+    columnKey: keyof K;
+    /**
+     * Represents the original value before user changes.
+     */
     previousValue: T;
+    /**
+     * New value from the change. This will be null in events
+     * if the new value is the same as the original.
+     */
     newValue: T;
+    error?: string;
 }
 
 /**
@@ -29,7 +38,7 @@ export type ChangeMap = Map<string, Map<string, CellChange>>;
 /**
  * Return type for the useTableChanges composable
  */
-export interface UseTableChangesReturn<T extends Record<string, any>> {
+export interface UseTableChangesReturn<T extends TableRow> {
     /**
      * Track a change to a cell
      */
@@ -79,6 +88,33 @@ export interface UseTableChangesReturn<T extends Record<string, any>> {
      * Get count of changed cells
      */
     changeCount: () => number;
+    
+    /**
+     * Set an error message for a specific cell
+     */
+    setError: (rowKey: string, columnKey: keyof T, error: string) => void;
+    
+    /**
+     * Clear the error for a specific cell
+     */
+    clearError: (rowKey: string, columnKey: keyof T) => void;
+    
+    /**
+     * Get the error message for a specific cell, or undefined if no error
+     */
+    getError: (rowKey: string, columnKey: keyof T) => string | undefined;
+    
+    /**
+     * Check if a specific cell has an error
+     */
+    hasError: (rowKey: string, columnKey: keyof T) => boolean;
+
+    /**
+     * Event emitted when a cell changes.
+     *
+     * `newValue` will be null if the cell's value is the same as the original.
+     */
+    onChange: EventHookOn<CellChange<any, T>>;
 }
 
 /**
@@ -108,9 +144,11 @@ export interface UseTableChangesReturn<T extends Record<string, any>> {
  * const mergedData = changes.applyChangesToData(freshData);
  * ```
  */
-export function useTableChanges<T extends Record<string, any> = Record<string, any>>(): UseTableChangesReturn<T> {
+export function useTableChanges<T extends TableRow>(): UseTableChangesReturn<T> {
     // Store changes in a reactive map: rowKey -> columnKey -> CellChange
     const changes = reactive<ChangeMap>(new Map());
+
+    const changeEvent = createEventHook<CellChange<any, T>>();
     
     /**
      * Track a change to a specific cell
@@ -130,6 +168,7 @@ export function useTableChanges<T extends Record<string, any> = Record<string, a
         // If there's already a change for this cell, preserve the original previousValue
         const existingChange = rowChanges.get(colKey);
         const originalpreviousValue = existingChange ? existingChange.previousValue : previousValue;
+        const existingError = existingChange?.error;
         
         // If the new value equals the original value, remove the change
         if (newValue === originalpreviousValue) {
@@ -138,14 +177,24 @@ export function useTableChanges<T extends Record<string, any> = Record<string, a
             if (rowChanges.size === 0) {
                 changes.delete(rowKey);
             }
+            // null newValue means the value was reverted to the original
+            changeEvent.trigger({ rowKey, columnKey: colKey, previousValue: originalpreviousValue, newValue: null });
         } else {
-            // Store or update the change
-            rowChanges.set(colKey, {
+            // Store or update the change, preserving error if it exists
+            const updatedChange: CellChange = {
                 rowKey,
                 columnKey: colKey,
                 previousValue: originalpreviousValue,
                 newValue,
-            });
+            };
+            
+            // Preserve error if it exists
+            if (existingError !== undefined) {
+                updatedChange.error = existingError;
+            }
+            
+            rowChanges.set(colKey, updatedChange);
+            changeEvent.trigger(updatedChange);
         }
     };
     
@@ -250,6 +299,51 @@ export function useTableChanges<T extends Record<string, any> = Record<string, a
         return count;
     };
     
+    /**
+     * Set an error message for a specific cell
+     */
+    const setError = (rowKey: string, columnKey: keyof T, error: string) => {
+        const rowChanges = changes.get(rowKey);
+        if (!rowChanges) return;
+        
+        const change = rowChanges.get(String(columnKey));
+        if (!change) return;
+        
+        change.error = error;
+    };
+    
+    /**
+     * Clear the error for a specific cell
+     */
+    const clearError = (rowKey: string, columnKey: keyof T) => {
+        const rowChanges = changes.get(rowKey);
+        if (!rowChanges) return;
+        
+        const change = rowChanges.get(String(columnKey));
+        if (!change) return;
+        
+        delete change.error;
+    };
+    
+    /**
+     * Get the error message for a specific cell
+     */
+    const getError = (rowKey: string, columnKey: keyof T): string | undefined => {
+        const rowChanges = changes.get(rowKey);
+        if (!rowChanges) return undefined;
+        
+        const change = rowChanges.get(String(columnKey));
+        return change?.error;
+    };
+    
+    /**
+     * Check if a specific cell has an error
+     */
+    const hasError = (rowKey: string, columnKey: keyof T): boolean => {
+        const error = getError(rowKey, columnKey);
+        return error !== undefined && error !== '';
+    };
+    
     return {
         trackChange,
         getChanges,
@@ -261,5 +355,10 @@ export function useTableChanges<T extends Record<string, any> = Record<string, a
         clearRowChanges,
         applyChangesToData,
         changeCount,
+        setError,
+        clearError,
+        getError,
+        hasError,
+        onChange: changeEvent.on
     };
 }

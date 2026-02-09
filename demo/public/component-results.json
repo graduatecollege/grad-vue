@@ -1,7 +1,7 @@
 {
-  "totalComponents": 23,
-  "totalTests": 200,
-  "passedTests": 200,
+  "totalComponents": 24,
+  "totalTests": 215,
+  "passedTests": 215,
   "failedTests": 0,
   "skippedTests": 0,
   "components": {
@@ -1308,6 +1308,65 @@
         }
       ]
     },
+    "GTable Error Handling": {
+      "component": "GTable Error Handling",
+      "total": 7,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed",
+      "tests": [
+        {
+          "title": "applies aria-invalid to cells with errors",
+          "status": "passed",
+          "ancestors": [
+            "Cell Error States"
+          ]
+        },
+        {
+          "title": "applies aria-invalid to select inputs with errors",
+          "status": "passed",
+          "ancestors": [
+            "Cell Error States"
+          ]
+        },
+        {
+          "title": "removes aria-invalid when error is cleared",
+          "status": "passed",
+          "ancestors": [
+            "Cell Error States"
+          ]
+        },
+        {
+          "title": "shows error message when a cell has an error",
+          "status": "passed",
+          "ancestors": [
+            "Error Message"
+          ]
+        },
+        {
+          "title": "hides error when error is cleared",
+          "status": "passed",
+          "ancestors": [
+            "Error Message"
+          ]
+        },
+        {
+          "title": "error should be associated with input",
+          "status": "passed",
+          "ancestors": [
+            "Error Message"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with error states",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility"
+          ]
+        }
+      ]
+    },
     "GTermSelector": {
       "component": "GTermSelector",
       "total": 1,
@@ -1563,8 +1622,8 @@
     },
     "useTableChanges": {
       "component": "useTableChanges",
-      "total": 16,
-      "passed": 16,
+      "total": 24,
+      "passed": 24,
       "failed": 0,
       "skipped": 0,
       "status": "passed",
@@ -1679,6 +1738,62 @@
           "status": "passed",
           "ancestors": [
             "Edge Cases"
+          ]
+        },
+        {
+          "title": "should set and get error for a cell",
+          "status": "passed",
+          "ancestors": [
+            "Error Tracking"
+          ]
+        },
+        {
+          "title": "should clear error for a cell",
+          "status": "passed",
+          "ancestors": [
+            "Error Tracking"
+          ]
+        },
+        {
+          "title": "should return false for hasError when no error exists",
+          "status": "passed",
+          "ancestors": [
+            "Error Tracking"
+          ]
+        },
+        {
+          "title": "should return undefined for getError when no error exists",
+          "status": "passed",
+          "ancestors": [
+            "Error Tracking"
+          ]
+        },
+        {
+          "title": "should handle error on non-existent change",
+          "status": "passed",
+          "ancestors": [
+            "Error Tracking"
+          ]
+        },
+        {
+          "title": "should preserve error when updating the cell value",
+          "status": "passed",
+          "ancestors": [
+            "Error Tracking"
+          ]
+        },
+        {
+          "title": "should clear error when change is removed by returning to original value",
+          "status": "passed",
+          "ancestors": [
+            "Error Tracking"
+          ]
+        },
+        {
+          "title": "should include error in getChanges result",
+          "status": "passed",
+          "ancestors": [
+            "Error Tracking"
           ]
         }
       ]
