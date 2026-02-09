@@ -3,7 +3,7 @@ import { ref } from "vue";
 import type { TableColumn } from "../src/components/table/TableColumn";
 import { useTableChanges } from "../src/compose/useTableChanges";
 import { createGTableFixture } from "./fixtures/createGTableFixture";
-import { mnt } from "./test-utils";
+import { mnt, testAccessibility } from "./test-utils";
 import { page, userEvent } from "vitest/browser";
 
 interface ProductRow {
@@ -363,6 +363,46 @@ describe("GTable Error Handling", () => {
             // We check by querying the DOM directly since the element may not exist
             const overlays = document.querySelectorAll('[role="alert"]');
             expect(overlays.length).toBe(0);
+        });
+    });
+
+    describe("Accessibility", () => {
+        it("passes accessibility tests with error states", async () => {
+            const changeTracker = useTableChanges<ProductRow>();
+            const columns: TableColumn<ProductRow>[] = [
+                { key: "name", label: "Name" },
+                {
+                    key: "price",
+                    label: "Price",
+                    editable: {
+                        inputAttributes: { type: "number" },
+                    },
+                },
+            ];
+            const tableData = ref<ProductRow[]>([
+                createProduct("1", "Product A", 10.99, 5),
+            ]);
+
+            const { GTableFixture } = createGTableFixture<ProductRow>({
+                label: "Products",
+                columns,
+                data: tableData.value,
+                initialFilter: defaultFilter,
+                paginate: false,
+                changeTracker,
+            });
+
+            // Track a change with error
+            changeTracker.trackChange({
+                row: tableData.value[0],
+                column: columns[1],
+                value: -5,
+                previousValue: 10.99,
+            });
+            changeTracker.setError("1", "price", "Price must be positive");
+
+            // Test accessibility
+            await testAccessibility(GTableFixture);
         });
     });
 });
