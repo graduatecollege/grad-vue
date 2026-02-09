@@ -1,8 +1,9 @@
 <script setup lang="ts" generic="T extends TableRow, C extends TableColumn<T>">
-import { computed, toRefs, type VNode } from "vue";
+import { computed, ref, type VNode } from "vue";
 import { TableColumn, TableRow } from "./TableColumn.ts";
 import { UseTableChangesReturn } from "../../compose/useTableChanges.ts";
 import { HTMLInputElement } from "happy-dom";
+import GTableErrorOverlay from "./GTableErrorOverlay.vue";
 
 type Props = {
     data: T[];
@@ -25,6 +26,11 @@ const emit = defineEmits<{
     (e: "toggle-row", rowKey: string, shiftKey: boolean): void;
     (e: "cell-change", payload: { row: T; column: C; value: any }): void;
 }>();
+
+// Error overlay state
+const errorOverlayVisible = ref(false);
+const focusedErrorMessage = ref<string | undefined>(undefined);
+const tableBodyRef = ref<HTMLElement | null>(null);
 
 function handleMouseDown(event: MouseEvent, rowKey: string) {
     // Prevent text selection when shift-clicking for bulk selection
@@ -115,10 +121,33 @@ function hasCellChange(row: T, col: C): boolean {
     if (!props.changeTracker) return false;
     return props.changeTracker.hasChange(row.key, col.key);
 }
+
+function hasCellError(row: T, col: C): boolean {
+    if (!props.changeTracker) return false;
+    return props.changeTracker.hasError(row.key, col.key);
+}
+
+function getCellError(row: T, col: C): string | undefined {
+    if (!props.changeTracker) return undefined;
+    return props.changeTracker.getError(row.key, col.key);
+}
+
+function handleInputFocus(event: FocusEvent, row: T, col: C) {
+    const error = getCellError(row, col);
+    if (error) {
+        focusedErrorMessage.value = error;
+        errorOverlayVisible.value = true;
+    }
+}
+
+function handleInputBlur() {
+    errorOverlayVisible.value = false;
+    focusedErrorMessage.value = undefined;
+}
 </script>
 
 <template>
-    <tbody class="efficient-table-body">
+    <tbody ref="tableBodyRef" class="efficient-table-body">
         <template v-if="groupBy">
             <template v-for="(row, idx) in data" :key="row.key">
                 <tr
@@ -179,6 +208,7 @@ function hasCellChange(row: T, col: C): boolean {
                         :class="[
                             col.editable ? 'editable-td' : '',
                             hasCellChange(row, col) ? 'cell-changed' : '',
+                            hasCellError(row, col) ? 'cell-error' : '',
                             typeof col.tdClass === 'function'
                                 ? col.tdClass(row)
                                 : col.tdClass,
@@ -194,7 +224,10 @@ function hasCellChange(row: T, col: C): boolean {
                                 v-if="col.editable.type === 'select'"
                                 :value="row[col.key]"
                                 @change="handleCellChange($event, row, col)"
+                                @focus="handleInputFocus($event, row, col)"
+                                @blur="handleInputBlur"
                                 :aria-labelledby="buildAriaLabelledBy(row, col)"
+                                :aria-invalid="hasCellError(row, col)"
                                 class="editable-input editable-select"
                                 :name="`row-${row.key}-${String(col.key)}-select`"
                             >
@@ -211,7 +244,10 @@ function hasCellChange(row: T, col: C): boolean {
                                 :value="row[col.key]"
                                 v-bind="col.editable.inputAttributes"
                                 @input="handleCellChange($event, row, col)"
+                                @focus="handleInputFocus($event, row, col)"
+                                @blur="handleInputBlur"
                                 :aria-labelledby="buildAriaLabelledBy(row, col)"
+                                :aria-invalid="hasCellError(row, col)"
                                 :name="`row-${row.key}-${String(col.key)}-input`"
                                 class="editable-input"
                                 :style="{
@@ -277,6 +313,7 @@ function hasCellChange(row: T, col: C): boolean {
                     :class="[
                         col.editable ? 'editable-td' : '',
                         hasCellChange(row, col) ? 'cell-changed' : '',
+                        hasCellError(row, col) ? 'cell-error' : '',
                         typeof col.tdClass === 'function'
                             ? col.tdClass(row)
                             : col.tdClass,
@@ -290,7 +327,10 @@ function hasCellChange(row: T, col: C): boolean {
                             v-if="col.editable.type === 'select'"
                             :value="row[col.key]"
                             @change="handleCellChange($event, row, col)"
+                            @focus="handleInputFocus($event, row, col)"
+                            @blur="handleInputBlur"
                             :aria-labelledby="buildAriaLabelledBy(row, col)"
+                            :aria-invalid="hasCellError(row, col)"
                             :name="`row-${row.key}-${String(col.key)}-select`"
                             class="editable-input editable-select"
                         >
@@ -307,7 +347,10 @@ function hasCellChange(row: T, col: C): boolean {
                             :value="row[col.key]"
                             v-bind="col.editable.inputAttributes"
                             @input="handleCellChange($event, row, col)"
+                            @focus="handleInputFocus($event, row, col)"
+                            @blur="handleInputBlur"
                             :aria-labelledby="buildAriaLabelledBy(row, col)"
+                            :aria-invalid="hasCellError(row, col)"
                             :name="`row-${row.key}-${String(col.key)}-input`"
                             class="editable-input"
                             :style="{
@@ -329,6 +372,13 @@ function hasCellChange(row: T, col: C): boolean {
             </tr>
         </template>
     </tbody>
+    
+    <!-- Error overlay -->
+    <GTableErrorOverlay
+        :visible="errorOverlayVisible"
+        :error-message="focusedErrorMessage"
+        :table-ref="tableBodyRef"
+    />
 </template>
 
 <style>
@@ -457,5 +507,20 @@ function hasCellChange(row: T, col: C): boolean {
 /* Highlight cells that have been changed by the user */
 .cell-changed {
     background: rgba(101, 199, 255, 0.29);
+}
+
+/* Highlight cells with errors */
+.cell-error {
+    background: #fef2f2;
+    border-color: #dc2626 !important;
+}
+
+/* Error state for input elements */
+.cell-error .editable-input[aria-invalid="true"] {
+    border-color: #dc2626;
+}
+
+.cell-error .editable-input[aria-invalid="true"]:focus {
+    outline-color: #dc2626;
 }
 </style>

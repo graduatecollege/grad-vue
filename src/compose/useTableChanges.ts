@@ -9,6 +9,7 @@ export interface CellChange<T = any> {
     columnKey: string;
     previousValue: T;
     newValue: T;
+    error?: string;
 }
 
 /**
@@ -79,6 +80,26 @@ export interface UseTableChangesReturn<T extends Record<string, any>> {
      * Get count of changed cells
      */
     changeCount: () => number;
+    
+    /**
+     * Set an error message for a specific cell
+     */
+    setError: (rowKey: string, columnKey: keyof T, error: string) => void;
+    
+    /**
+     * Clear the error for a specific cell
+     */
+    clearError: (rowKey: string, columnKey: keyof T) => void;
+    
+    /**
+     * Get the error message for a specific cell, or undefined if no error
+     */
+    getError: (rowKey: string, columnKey: keyof T) => string | undefined;
+    
+    /**
+     * Check if a specific cell has an error
+     */
+    hasError: (rowKey: string, columnKey: keyof T) => boolean;
 }
 
 /**
@@ -250,6 +271,51 @@ export function useTableChanges<T extends Record<string, any> = Record<string, a
         return count;
     };
     
+    /**
+     * Set an error message for a specific cell
+     */
+    const setError = (rowKey: string, columnKey: keyof T, error: string) => {
+        const rowChanges = changes.get(rowKey);
+        if (!rowChanges) return;
+        
+        const change = rowChanges.get(String(columnKey));
+        if (!change) return;
+        
+        change.error = error;
+    };
+    
+    /**
+     * Clear the error for a specific cell
+     */
+    const clearError = (rowKey: string, columnKey: keyof T) => {
+        const rowChanges = changes.get(rowKey);
+        if (!rowChanges) return;
+        
+        const change = rowChanges.get(String(columnKey));
+        if (!change) return;
+        
+        delete change.error;
+    };
+    
+    /**
+     * Get the error message for a specific cell
+     */
+    const getError = (rowKey: string, columnKey: keyof T): string | undefined => {
+        const rowChanges = changes.get(rowKey);
+        if (!rowChanges) return undefined;
+        
+        const change = rowChanges.get(String(columnKey));
+        return change?.error;
+    };
+    
+    /**
+     * Check if a specific cell has an error
+     */
+    const hasError = (rowKey: string, columnKey: keyof T): boolean => {
+        const error = getError(rowKey, columnKey);
+        return error !== undefined && error !== '';
+    };
+    
     return {
         trackChange,
         getChanges,
@@ -261,5 +327,9 @@ export function useTableChanges<T extends Record<string, any> = Record<string, a
         clearRowChanges,
         applyChangesToData,
         changeCount,
+        setError,
+        clearError,
+        getError,
+        hasError,
     };
 }
