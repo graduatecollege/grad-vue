@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, CSSProperties, ref, watch } from 'vue';
 
 const props = defineProps<{
     visible: boolean;
@@ -39,7 +39,7 @@ const props = defineProps<{
 
 const overlayRef = ref<HTMLElement | null>(null);
 
-const overlayStyle = computed(() => {
+const overlayStyle = computed<CSSProperties>(() => {
     if (!props.tableRef) {
         return {};
     }
@@ -48,7 +48,7 @@ const overlayStyle = computed(() => {
     
     // Position the overlay near the top of the table, with some padding
     return {
-        position: 'fixed',
+        position: 'fixed' as const,
         top: `${Math.max(tableRect.top + 16, 16)}px`,
         left: `${tableRect.left + 16}px`,
         maxWidth: `${Math.max(tableRect.width - 32, 200)}px`,
