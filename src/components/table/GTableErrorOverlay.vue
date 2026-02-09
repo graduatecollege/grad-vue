@@ -58,8 +58,8 @@ const overlayStyle = computed<CSSProperties>(() => {
 // Update position when visibility changes
 watch(() => props.visible, (isVisible) => {
     if (isVisible && props.tableRef) {
-        // Force a recalculation of position
-        overlayRef.value?.offsetHeight;
+        // Force a layout recalculation to ensure proper positioning
+        void overlayRef.value?.offsetHeight;
     }
 });
 </script>
