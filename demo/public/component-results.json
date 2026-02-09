@@ -1,7 +1,7 @@
 {
-  "totalComponents": 22,
-  "totalTests": 194,
-  "passedTests": 194,
+  "totalComponents": 23,
+  "totalTests": 200,
+  "passedTests": 200,
   "failedTests": 0,
   "skippedTests": 0,
   "components": {
@@ -1502,6 +1502,58 @@
         },
         {
           "title": "should have an accessible description when set",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        }
+      ]
+    },
+    "GUserMenu": {
+      "component": "GUserMenu",
+      "total": 6,
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed",
+      "tests": [
+        {
+          "title": "renders avatar with initials",
+          "status": "passed",
+          "ancestors": [
+            "Rendering"
+          ]
+        },
+        {
+          "title": "uses custom label for accessibility",
+          "status": "passed",
+          "ancestors": [
+            "Rendering"
+          ]
+        },
+        {
+          "title": "opens popover on button click",
+          "status": "passed",
+          "ancestors": [
+            "Popover Interaction"
+          ]
+        },
+        {
+          "title": "displays menu items in popover",
+          "status": "passed",
+          "ancestors": [
+            "Popover Interaction"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with menu closed",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with menu open",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"

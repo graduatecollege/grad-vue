@@ -535,7 +535,8 @@ const termYears = ref(["2026", "2025", "2024"]);
                         },
                         { label: 'Modal', href: '#modal' },
                         { label: 'Detail List', href: '#detail-list' },
-                    ]"
+                                            { label: 'User Menu', href: '#user-menu' },
+]"
                     v-model="activeId"
                 />
             </GSidebar>
@@ -799,6 +800,12 @@ const termYears = ref(["2026", "2025", "2024"]);
                             >None</GDetailListItem
                         >
                     </GDetailList>
+                </section>
+                <section id="user-menu">
+                    <h2>User Menu</h2>
+                    <GUserMenu label="User Menu">
+                        <p>Example content</p>
+                    </GUserMenu>
                 </section>
             </main>
         </div>
