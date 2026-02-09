@@ -4,31 +4,35 @@ import { h } from "vue";
 import GUserMenu from "../src/components/GUserMenu.vue";
 import { mnt, testAccessibility } from "./test-utils";
 
+const J = {
+    props: {
+        initials: "J",
+        email: "j@example.com",
+    },
+    slots: {
+        default: () => [
+            h("a", { href: "/profile" }, "Profile"),
+            h("a", { href: "/settings" }, "Settings"),
+            h("button", { type: "button" }, "Logout"),
+        ],
+    },
+};
+
 describe("GUserMenu", () => {
     describe("Rendering", () => {
         it("renders avatar with initials", async () => {
-            await mnt(GUserMenu, {
-                props: {
-                    initials: "JD",
-                    email: "john.doe@example.com",
-                    color: "#4A90E2",
-                },
-                slots: {
-                    default: () => h("a", { href: "/profile" }, "Profile"),
-                },
-            });
+            mnt(GUserMenu, J);
 
             const avatar = page.getByRole("button", { name: "User menu" });
             await expect.element(avatar).toBeVisible();
-            await expect.element(avatar).toHaveTextContent("JD");
+            await expect.element(avatar).toHaveTextContent("J");
         });
 
         it("uses custom label for accessibility", async () => {
-            await mnt(GUserMenu, {
+            mnt(GUserMenu, {
                 props: {
                     initials: "XY",
                     email: "user@example.com",
-                    color: "#000000",
                     label: "Account menu",
                 },
                 slots: {
@@ -36,23 +40,14 @@ describe("GUserMenu", () => {
                 },
             });
 
-            const avatar = page.getByRole("button", { name: "Account menu" });
+            const avatar = page.getByRole("button", { name: "XY - Account menu" });
             await expect.element(avatar).toBeVisible();
         });
     });
 
     describe("Popover Interaction", () => {
         it("opens popover on button click", async () => {
-            await mnt(GUserMenu, {
-                props: {
-                    initials: "JD",
-                    email: "john.doe@example.com",
-                    color: "#4A90E2",
-                },
-                slots: {
-                    default: () => h("a", { href: "/profile" }, "Profile"),
-                },
-            });
+            mnt(GUserMenu, J);
 
             const avatar = page.getByRole("button", { name: "User menu" });
             await avatar.click();
@@ -63,26 +58,13 @@ describe("GUserMenu", () => {
 
             // Check if email is displayed
             const email = page.getByRole("heading", {
-                name: "john.doe@example.com",
+                name: "j@example.com",
             });
             await expect.element(email).toBeVisible();
         });
 
         it("displays menu items in popover", async () => {
-            await mnt(GUserMenu, {
-                props: {
-                    initials: "JD",
-                    email: "john.doe@example.com",
-                    color: "#4A90E2",
-                },
-                slots: {
-                    default: () => [
-                        h("a", { href: "/profile" }, "Profile"),
-                        h("a", { href: "/settings" }, "Settings"),
-                        h("button", { type: "button" }, "Logout"),
-                    ],
-                },
-            });
+            mnt(GUserMenu, J);
 
             const avatar = page.getByRole("button", { name: "User menu" });
             await avatar.click();
@@ -103,35 +85,19 @@ describe("GUserMenu", () => {
         it("passes accessibility tests with menu closed", async () => {
             await testAccessibility(
                 GUserMenu,
-                {
-                    initials: "JD",
-                    email: "john.doe@example.com",
-                    color: "#005A9C", // Darker blue for better contrast
-                },
-                {
-                    default: () => [
-                        h("a", { href: "/profile" }, "Profile"),
-                        h("a", { href: "/settings" }, "Settings"),
-                        h("button", { type: "button" }, "Logout"),
-                    ],
-                },
+                J.props,
+                J.slots,
             );
         });
 
         it("passes accessibility tests with menu open", async () => {
-            await mnt(GUserMenu, {
+            mnt(GUserMenu, {
                 props: {
-                    initials: "JD",
-                    email: "john.doe@example.com",
-                    color: "#005A9C", // Darker blue for better contrast
+                    initials: "J",
+                    email: "j@example.com",
+                    color: "#005A9C"
                 },
-                slots: {
-                    default: () => [
-                        h("a", { href: "/profile" }, "Profile"),
-                        h("a", { href: "/settings" }, "Settings"),
-                        h("button", { type: "button" }, "Logout"),
-                    ],
-                },
+                slots: J.slots
             });
 
             const avatar = page.getByRole("button", { name: "User menu" });
