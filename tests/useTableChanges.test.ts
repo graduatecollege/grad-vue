@@ -244,4 +244,103 @@ describe("useTableChanges", () => {
             expect(tracker.hasChange("row1", "name")).toBe(true);
         });
     });
+
+    describe("Error Tracking", () => {
+        it("should set and get error for a cell", () => {
+            const tracker = useTableChanges<TestRow>();
+            
+            tracker.trackChange(createChange("row1", "value", -5, 10));
+            tracker.setError("row1", "value", "Value must be positive");
+            
+            expect(tracker.hasError("row1", "value")).toBe(true);
+            expect(tracker.getError("row1", "value")).toBe("Value must be positive");
+        });
+
+        it("should clear error for a cell", () => {
+            const tracker = useTableChanges<TestRow>();
+            
+            tracker.trackChange(createChange("row1", "value", -5, 10));
+            tracker.setError("row1", "value", "Value must be positive");
+            
+            expect(tracker.hasError("row1", "value")).toBe(true);
+            
+            tracker.clearError("row1", "value");
+            
+            expect(tracker.hasError("row1", "value")).toBe(false);
+            expect(tracker.getError("row1", "value")).toBeUndefined();
+        });
+
+        it("should return false for hasError when no error exists", () => {
+            const tracker = useTableChanges<TestRow>();
+            
+            tracker.trackChange(createChange("row1", "value", 100, 50));
+            
+            expect(tracker.hasError("row1", "value")).toBe(false);
+        });
+
+        it("should return undefined for getError when no error exists", () => {
+            const tracker = useTableChanges<TestRow>();
+            
+            tracker.trackChange(createChange("row1", "value", 100, 50));
+            
+            expect(tracker.getError("row1", "value")).toBeUndefined();
+        });
+
+        it("should handle error on non-existent change", () => {
+            const tracker = useTableChanges<TestRow>();
+            
+            // Try to set error without a change
+            tracker.setError("row1", "value", "Some error");
+            
+            expect(tracker.hasError("row1", "value")).toBe(false);
+            expect(tracker.getError("row1", "value")).toBeUndefined();
+        });
+
+        it("should preserve error when updating the cell value", () => {
+            const tracker = useTableChanges<TestRow>();
+            
+            tracker.trackChange(createChange("row1", "value", -5, 10));
+            tracker.setError("row1", "value", "Value must be positive");
+            
+            // Update the value
+            tracker.trackChange(createChange("row1", "value", -10, -5));
+            
+            // Error should still be there
+            expect(tracker.hasError("row1", "value")).toBe(true);
+            expect(tracker.getError("row1", "value")).toBe("Value must be positive");
+        });
+
+        it("should clear error when change is removed by returning to original value", () => {
+            const tracker = useTableChanges<TestRow>();
+            
+            tracker.trackChange(createChange("row1", "value", -5, 10));
+            tracker.setError("row1", "value", "Value must be positive");
+            
+            expect(tracker.hasError("row1", "value")).toBe(true);
+            
+            // Change back to original value
+            tracker.trackChange(createChange("row1", "value", 10, -5));
+            
+            // Change should be removed, so error should also be gone
+            expect(tracker.hasChange("row1", "value")).toBe(false);
+            expect(tracker.hasError("row1", "value")).toBe(false);
+        });
+
+        it("should include error in getChanges result", () => {
+            const tracker = useTableChanges<TestRow>();
+            
+            tracker.trackChange(createChange("row1", "value", -5, 10));
+            tracker.setError("row1", "value", "Value must be positive");
+            tracker.trackChange(createChange("row2", "name", "Test", "Old"));
+            
+            const changes = tracker.getChanges();
+            
+            expect(changes.length).toBe(2);
+            const changeWithError = changes.find(c => c.rowKey === "row1");
+            const changeWithoutError = changes.find(c => c.rowKey === "row2");
+            
+            expect(changeWithError?.error).toBe("Value must be positive");
+            expect(changeWithoutError?.error).toBeUndefined();
+        });
+    });
 });

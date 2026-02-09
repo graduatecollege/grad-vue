@@ -151,6 +151,7 @@ export function useTableChanges<T extends Record<string, any> = Record<string, a
         // If there's already a change for this cell, preserve the original previousValue
         const existingChange = rowChanges.get(colKey);
         const originalpreviousValue = existingChange ? existingChange.previousValue : previousValue;
+        const existingError = existingChange?.error;
         
         // If the new value equals the original value, remove the change
         if (newValue === originalpreviousValue) {
@@ -160,13 +161,20 @@ export function useTableChanges<T extends Record<string, any> = Record<string, a
                 changes.delete(rowKey);
             }
         } else {
-            // Store or update the change
-            rowChanges.set(colKey, {
+            // Store or update the change, preserving error if it exists
+            const updatedChange: CellChange = {
                 rowKey,
                 columnKey: colKey,
                 previousValue: originalpreviousValue,
                 newValue,
-            });
+            };
+            
+            // Preserve error if it exists
+            if (existingError !== undefined) {
+                updatedChange.error = existingError;
+            }
+            
+            rowChanges.set(colKey, updatedChange);
         }
     };
     
