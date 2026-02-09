@@ -803,8 +803,15 @@ const termYears = ref(["2026", "2025", "2024"]);
                 </section>
                 <section id="user-menu">
                     <h2>User Menu</h2>
-                    <GUserMenu label="User Menu">
-                        <p>Example content</p>
+                    <GUserMenu
+                        initials="JD"
+                        email="john.doe@example.com"
+                        color="#4A90E2"
+                        label="User Menu"
+                    >
+                        <a href="/profile">Profile</a>
+                        <a href="/settings">Settings</a>
+                        <button type="button">Logout</button>
                     </GUserMenu>
                 </section>
             </main>
