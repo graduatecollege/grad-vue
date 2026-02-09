@@ -24,6 +24,7 @@ import {
     GThreeWayToggle,
     GTermSelector,
     GTermSelectorControl,
+    GUserMenu,
     VGtooltip,
     VGtooltipDirective,
 } from "./grad-vue.ts";
@@ -56,6 +57,7 @@ export default {
         app.component("GDetailListItem", GDetailListItem);
         app.component("GTermSelector", GTermSelector);
         app.component("GTermSelectorControl", GTermSelectorControl);
+        app.component("GUserMenu", GUserMenu);
     },
 };
 

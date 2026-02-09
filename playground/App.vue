@@ -535,11 +535,24 @@ const termYears = ref(["2026", "2025", "2024"]);
                         },
                         { label: 'Modal', href: '#modal' },
                         { label: 'Detail List', href: '#detail-list' },
-                    ]"
+                                            { label: 'User Menu', href: '#user-menu' },
+]"
                     v-model="activeId"
                 />
             </GSidebar>
             <main class="main" ref="main">
+                <section id="user-menu">
+                    <h2>User Menu</h2>
+                    <GUserMenu
+                        initials="J"
+                        email="john.doe@example.com"
+                        label="User Menu"
+                    >
+                        <a href="/profile">Profile</a>
+                        <a href="/settings">Settings</a>
+                        <button type="button">Logout</button>
+                    </GUserMenu>
+                </section>
                 <section id="term-selector">
                     <h2>Term Selector</h2>
                     <GTermSelector

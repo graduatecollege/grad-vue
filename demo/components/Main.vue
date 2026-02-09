@@ -28,6 +28,7 @@ import GHamburgerMenuDemo from "~/components/demo/GHamburgerMenuDemo.vue";
 import GDetailListDemo from "~/components/demo/GDetailListDemo.vue";
 import GTermSelectorDemo from "~/components/demo/GTermSelectorDemo.vue";
 
+import GUserMenuDemo from "~/components/demo/GUserMenuDemo.vue";
 import { onMounted, provide } from "vue";
 import { useTemplateRef } from "#imports";
 
@@ -63,6 +64,7 @@ const demoComponents = [
     { label: "Term Selector", component: GTermSelectorDemo },
     { label: "Text Input", component: GTextInputDemo },
     { label: "Three Way Toggle", component: GThreeWayToggleDemo },
+    { label: "User Menu", component: GUserMenuDemo },
 ];
 
 const demo = useTemplateRef("demo");
