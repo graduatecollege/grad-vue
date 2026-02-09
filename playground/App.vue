@@ -24,6 +24,7 @@ import GHamburgerMenu from "../src/components/GHamburgerMenu.vue";
 import GDetailListItem from "../src/components/detail-list/GDetailListItem.vue";
 import GDetailList from "../src/components/GDetailList.vue";
 import GTermSelector from "../src/components/GTermSelector.vue";
+import ErrorHandlingExample from "./ErrorHandlingExample.vue";
 
 const sidebar = useSidebar();
 
@@ -634,6 +635,8 @@ const termYears = ref(["2026", "2025", "2024"]);
                             </div>
                         </template>
                     </GTable>
+
+                    <ErrorHandlingExample />
                 </section>
                 <section id="buttons" ref="buttons">
                     <h2>Buttons</h2>

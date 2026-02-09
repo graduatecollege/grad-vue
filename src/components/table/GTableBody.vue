@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T extends TableRow, C extends TableColumn<T>">
-import { computed, toRefs, type VNode } from "vue";
+import { computed, ref, type VNode } from "vue";
 import { TableColumn, TableRow } from "./TableColumn.ts";
 import { UseTableChangesReturn } from "../../compose/useTableChanges.ts";
 import { HTMLInputElement } from "happy-dom";
@@ -25,6 +25,7 @@ const emit = defineEmits<{
     (e: "toggle-row", rowKey: string, shiftKey: boolean): void;
     (e: "cell-change", payload: { row: T; column: C; value: any }): void;
 }>();
+
 
 function handleMouseDown(event: MouseEvent, rowKey: string) {
     // Prevent text selection when shift-clicking for bulk selection
@@ -115,133 +116,43 @@ function hasCellChange(row: T, col: C): boolean {
     if (!props.changeTracker) return false;
     return props.changeTracker.hasChange(row.key, col.key);
 }
+
+function hasCellError(row: T, col: C): boolean {
+    if (!props.changeTracker) return false;
+    return props.changeTracker.hasError(row.key, col.key);
+}
+function getCellError(row: T, col: C): string | undefined {
+    if (!props.changeTracker) return undefined;
+    return props.changeTracker.getError(row.key, col.key);
+}
+
 </script>
 
 <template>
-    <tbody class="efficient-table-body">
-        <template v-if="groupBy">
-            <template v-for="(row, idx) in data" :key="row.key">
-                <tr
-                    v-if="idx === 0 || row[groupBy] !== data[idx - 1][groupBy]"
-                    :aria-rowindex="startIndex + idx + 2"
-                >
-                    <td
-                        v-if="bulkSelectionEnabled"
-                        class="table-group-checkbox"
-                    ></td>
-                    <td :colspan="columns.length" class="table-group-row">
-                        <template v-if="groupRender">
-                            <component :is="groupRender(row[groupBy], row)" />
-                        </template>
-                        <template v-else>
-                            {{ row[groupBy] }}
-                        </template>
-                    </td>
-                </tr>
-                <tr
-                    :class="[
-                        'efficient-table-row',
-                        {
-                            'row-striped': idx % 2 === 1,
-                            'row-clickable':
-                                rowClickable || bulkSelectionEnabled,
-                        },
-                        rowClass ? rowClass(row) : undefined,
-                    ]"
-                    :aria-rowindex="startIndex + idx + 2"
-                    @mousedown="handleMouseDown($event, row.key)"
-                    @click="handleRowClick($event, row.key)"
-                >
-                    <td
-                        v-if="bulkSelectionEnabled"
-                        class="td-checkbox"
-                        @click.stop
-                    >
-                        <input
-                            type="checkbox"
-                            :checked="isRowSelected(row.key)"
-                            @click="
-                                (e) => handleCheckboxChange(row.key, e.shiftKey)
-                            "
-                            :aria-label="`Select row ${row.key}`"
-                            class="g-bulk-select-checkbox"
-                            :name="`row-${row.key}-checkbox`"
-                        />
-                    </td>
-                    <td
-                        v-for="col in columns"
-                        :key="col.key"
-                        :id="
-                            shouldAddCellId(col)
-                                ? `${tableId}-td-${row.key}-${String(col.key)}`
-                                : undefined
-                        "
-                        :class="[
-                            col.editable ? 'editable-td' : '',
-                            hasCellChange(row, col) ? 'cell-changed' : '',
-                            typeof col.tdClass === 'function'
-                                ? col.tdClass(row)
-                                : col.tdClass,
-                        ]"
-                    >
-                        <div v-if="col.editable" class="editable-cell">
-                            <span
-                                v-if="col.editable.prefix"
-                                class="cell-prefix"
-                                >{{ col.editable.prefix }}</span
-                            >
-                            <select
-                                v-if="col.editable.type === 'select'"
-                                :value="row[col.key]"
-                                @change="handleCellChange($event, row, col)"
-                                :aria-labelledby="buildAriaLabelledBy(row, col)"
-                                class="editable-input editable-select"
-                                :name="`row-${row.key}-${String(col.key)}-select`"
-                            >
-                                <option
-                                    v-for="option in col.editable.options"
-                                    :key="option.value"
-                                    :value="option.value"
-                                >
-                                    {{ option.label }}
-                                </option>
-                            </select>
-                            <input
-                                v-else
-                                :value="row[col.key]"
-                                v-bind="col.editable.inputAttributes"
-                                @input="handleCellChange($event, row, col)"
-                                :aria-labelledby="buildAriaLabelledBy(row, col)"
-                                :name="`row-${row.key}-${String(col.key)}-input`"
-                                class="editable-input"
-                                :style="{
-                                    paddingLeft: col.editable.prefix
-                                        ? '1.5rem'
-                                        : undefined,
-                                    paddingRight: col.editable.suffix
-                                        ? '2rem'
-                                        : undefined,
-                                }"
-                            />
-                            <span
-                                v-if="col.editable.suffix"
-                                class="cell-suffix"
-                                >{{ col.editable.suffix }}</span
-                            >
-                        </div>
-                        <component
-                            v-else-if="col.display"
-                            :is="col.display(row)"
-                        />
-                        <template v-else>{{ row[col.key] }}</template>
-                    </td>
-                </tr>
-            </template>
-        </template>
-        <template v-else>
+    <tbody ref="tableBodyRef" class="efficient-table-body">
+        <template v-for="(row, idx) in data" :key="row.key">
             <tr
-                v-for="(row, idx) in data"
-                :key="row.key"
+                v-if="
+                    groupBy &&
+                    (idx === 0 || row[groupBy] !== data[idx - 1][groupBy])
+                "
+                :aria-rowindex="startIndex + idx + 2"
+            >
+                <td
+                    v-if="bulkSelectionEnabled"
+                    class="table-group-checkbox"
+                ></td>
+                <td :colspan="columns.length" class="table-group-row">
+                    <template v-if="groupRender">
+                        <component :is="groupRender(row[groupBy], row)" />
+                    </template>
+                    <template v-else>
+                        {{ row[groupBy] }}
+                    </template>
+                </td>
+            </tr>
+
+            <tr
                 :class="[
                     'efficient-table-row',
                     {
@@ -258,14 +169,13 @@ function hasCellChange(row: T, col: C): boolean {
                     <input
                         type="checkbox"
                         :checked="isRowSelected(row.key)"
-                        @click="
-                            (e) => handleCheckboxChange(row.key, e.shiftKey)
-                        "
+                        @click="(e) => handleCheckboxChange(row.key, e.shiftKey)"
                         :aria-label="`Select row ${row.key}`"
                         :name="`row-${row.key}-checkbox`"
                         class="g-bulk-select-checkbox"
                     />
                 </td>
+
                 <td
                     v-for="col in columns"
                     :key="col.key"
@@ -276,7 +186,8 @@ function hasCellChange(row: T, col: C): boolean {
                     "
                     :class="[
                         col.editable ? 'editable-td' : '',
-                        hasCellChange(row, col) ? 'cell-changed' : '',
+                        hasCellChange(row, col) ? 'g-cell-changed' : '',
+                        hasCellError(row, col) ? 'g-cell-error' : '',
                         typeof col.tdClass === 'function'
                             ? col.tdClass(row)
                             : col.tdClass,
@@ -291,6 +202,7 @@ function hasCellChange(row: T, col: C): boolean {
                             :value="row[col.key]"
                             @change="handleCellChange($event, row, col)"
                             :aria-labelledby="buildAriaLabelledBy(row, col)"
+                            :aria-invalid="hasCellError(row, col)"
                             :name="`row-${row.key}-${String(col.key)}-select`"
                             class="editable-input editable-select"
                         >
@@ -308,6 +220,8 @@ function hasCellChange(row: T, col: C): boolean {
                             v-bind="col.editable.inputAttributes"
                             @input="handleCellChange($event, row, col)"
                             :aria-labelledby="buildAriaLabelledBy(row, col)"
+                            :aria-invalid="hasCellError(row, col)"
+                            :aria-errormessage="hasCellError(row, col) ? `${tableId}-error-${row.key}-${String(col.key)}` : undefined"
                             :name="`row-${row.key}-${String(col.key)}-input`"
                             class="editable-input"
                             :style="{
@@ -325,6 +239,9 @@ function hasCellChange(row: T, col: C): boolean {
                     </div>
                     <component v-else-if="col.display" :is="col.display(row)" />
                     <template v-else>{{ row[col.key] }}</template>
+                    <div v-if="hasCellError(row, col)" role="alert" class="g-cell-error-message" :id="`${tableId}-error-${row.key}-${String(col.key)}`">
+                        {{ getCellError(row, col) }}
+                    </div>
                 </td>
             </tr>
         </template>
@@ -417,7 +334,7 @@ function hasCellChange(row: T, col: C): boolean {
 
 .editable-input {
     width: 100%;
-    padding: 0.4rem 0.5rem;
+    padding: 0.4rem 0.5rem 0.4rem 0.75rem;
     border: none;
     border-radius: 0;
     font-size: 1rem;
@@ -455,7 +372,24 @@ function hasCellChange(row: T, col: C): boolean {
 }
 
 /* Highlight cells that have been changed by the user */
-.cell-changed {
+.g-cell-changed {
     background: rgba(101, 199, 255, 0.29);
+}
+
+/* Highlight cells with errors */
+.g-cell-error {
+    background: var(--g-danger-100);
+    position: relative;
+}
+
+.g-cell-error-message {
+    background: var(--g-danger-500);
+    color: var(--g-surface-0);
+    font-size: 0.875rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.g-cell-error .editable-input[aria-invalid="true"]:focus {
+    outline-color: var(--g-danger-500);
 }
 </style>

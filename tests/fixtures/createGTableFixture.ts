@@ -7,6 +7,7 @@ import type {
 } from "../../src/components/table/TableColumn";
 import { useFiltering } from "../../src/compose/useFiltering";
 import type { BulkAction } from "../../src/components/GTable.vue";
+import type { UseTableChangesReturn } from "../../src/compose/useTableChanges";
 
 export type CreateGTableFixtureOptions<T extends TableRow, C extends TableColumn<T>> = {
     label?: string;
@@ -41,6 +42,7 @@ export type CreateGTableFixtureOptions<T extends TableRow, C extends TableColumn
     rowClass?: (row: T) => string | string[] | undefined;
     bulkSelectionEnabled?: boolean;
     bulkActions?: BulkAction[];
+    changeTracker?: UseTableChangesReturn<T>;
 };
 
 function defaultSortData<T extends Record<string, any>>(
@@ -171,6 +173,7 @@ export function createGTableFixture<T extends TableRow, C extends TableColumn<T>
                         "onUpdate:selectedRows": (value: string[]) => {
                             selectedRows.value = value;
                         },
+                        changeTracker: options.changeTracker,
                     },
                     {
                         pagination:
