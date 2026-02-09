@@ -1,5 +1,5 @@
 <template>
-    <Teleport to="body">
+    <Teleport to="body" :disabled="!visible || !errorMessage">
         <div
             v-if="visible && errorMessage"
             ref="overlayRef"
