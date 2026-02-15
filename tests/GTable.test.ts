@@ -502,7 +502,7 @@ describe("GTable", () => {
     });
 
     describe("Pagination Visibility Tests", () => {
-        it("shows pagination bar when slot has content", async () => {
+        it("shows controls bar when slot has content", async () => {
             const { GTableFixture } = createCollegesTableFixture();
             const { container } = mnt(GTableFixture);
 
@@ -514,9 +514,13 @@ describe("GTable", () => {
                 name: "Next Page",
             });
             await expect.element(nextPageButton).toBeInTheDocument();
+            
+            // The controls bar should be visible
+            const controlsBar = container.element().querySelector('.g-table-controls');
+            expect(controlsBar).toBeTruthy();
         });
 
-        it("hides pagination bar when slot is empty and showPagination is false", async () => {
+        it("hides entire controls bar when slot is empty and showPagination is false", async () => {
             const { GTableFixture } = createGTableFixture<TableEntry>({
                 label: "Test Table",
                 columns,
@@ -525,12 +529,16 @@ describe("GTable", () => {
             });
             const { container } = mnt(GTableFixture);
 
-            // The pagination div should not be visible
+            // The entire controls bar should not be visible
+            const controlsBar = container.element().querySelector('.g-table-controls');
+            expect(controlsBar).toBeNull();
+            
+            // The pagination div should not exist
             const paginationDiv = container.element().querySelector('.pagination');
             expect(paginationDiv).toBeNull();
         });
 
-        it("shows pagination bar when showPagination prop is true even with empty slot", async () => {
+        it("shows controls bar when showPagination prop is true even with empty slot", async () => {
             const GTableFixture = defineComponent({
                 setup() {
                     const filtering = useFiltering(defaultFilter);
@@ -557,12 +565,16 @@ describe("GTable", () => {
             
             const { container } = mnt(GTableFixture);
 
+            // The controls bar should be visible
+            const controlsBar = container.element().querySelector('.g-table-controls');
+            expect(controlsBar).toBeTruthy();
+            
             // The pagination div should be visible even though the slot is empty
             const paginationDiv = container.element().querySelector('.pagination');
             expect(paginationDiv).toBeTruthy();
         });
 
-        it("hides pagination bar when showPagination is false and slot is empty", async () => {
+        it("hides controls bar when showPagination is false and slot is empty", async () => {
             const GTableFixture = defineComponent({
                 setup() {
                     const filtering = useFiltering(defaultFilter);
@@ -589,12 +601,12 @@ describe("GTable", () => {
             
             const { container } = mnt(GTableFixture);
 
-            // The pagination div should not be visible
-            const paginationDiv = container.element().querySelector('.pagination');
-            expect(paginationDiv).toBeNull();
+            // The entire controls bar should not be visible
+            const controlsBar = container.element().querySelector('.g-table-controls');
+            expect(controlsBar).toBeNull();
         });
 
-        it("shows pagination bar with custom content in slot", async () => {
+        it("shows controls bar with custom content in slot", async () => {
             const GTableFixture = defineComponent({
                 setup() {
                     const filtering = useFiltering(defaultFilter);
@@ -622,6 +634,49 @@ describe("GTable", () => {
 
             // The pagination div should be visible with custom content
             await expect.element(container.getByText("Custom pagination content")).toBeVisible();
+        });
+
+        it("shows controls bar when filters are active even without pagination", async () => {
+            const GTableFixture = defineComponent({
+                setup() {
+                    const filtering = useFiltering(defaultFilter);
+                    const { filters } = filtering;
+                    
+                    // Set a filter to make isFiltered true
+                    filters.collegeInName = "yes";
+                    
+                    return () =>
+                        h(
+                            GTable<TableEntry>,
+                            {
+                                label: "Test Table",
+                                data: tableData,
+                                columns,
+                                filtering,
+                                filter: filters,
+                                "onUpdate:filter": (value: any) => {
+                                    for (const key in Object.keys(value)) {
+                                        // @ts-ignore
+                                        filters[key] = value[key];
+                                    }
+                                },
+                                startIndex: 0,
+                            },
+                            {
+                                // No pagination slot
+                            },
+                        );
+                },
+            });
+            
+            const { container } = mnt(GTableFixture);
+
+            // The controls bar should be visible because filters are active
+            const controlsBar = container.element().querySelector('.g-table-controls');
+            expect(controlsBar).toBeTruthy();
+            
+            // The clear filters button should be visible
+            await expect.element(container.getByText("Clear Filters")).toBeVisible();
         });
     });
 

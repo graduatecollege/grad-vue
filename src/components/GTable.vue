@@ -245,6 +245,19 @@ const shouldShowPagination = computed(() => {
     return !!slots.pagination;
 });
 
+const shouldShowControls = computed(() => {
+    // Show if filters are active (clear filters button is visible)
+    if (isFiltered.value) {
+        return true;
+    }
+    // Show if pagination should be shown
+    if (shouldShowPagination.value) {
+        return true;
+    }
+    // Otherwise hide the entire controls bar
+    return false;
+});
+
 onMounted(() => {
     if (props.rowClickable && props.bulkSelectionEnabled) {
         console.warn(
@@ -285,7 +298,7 @@ watch(
 
 <template>
     <div class="g-table-outer-wrap">
-        <div class="g-table-controls">
+        <div v-if="shouldShowControls" class="g-table-controls">
             <div class="g-clear-filters-wrap">
                 <GButton
                     v-if="isFiltered"

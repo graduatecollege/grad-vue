@@ -1,7 +1,7 @@
 {
   "totalComponents": 24,
-  "totalTests": 220,
-  "passedTests": 220,
+  "totalTests": 221,
+  "passedTests": 221,
   "failedTests": 0,
   "skippedTests": 0,
   "components": {
@@ -1038,8 +1038,8 @@
     },
     "GTable": {
       "component": "GTable",
-      "total": 26,
-      "passed": 26,
+      "total": 27,
+      "passed": 27,
       "failed": 0,
       "skipped": 0,
       "status": "passed",
@@ -1178,35 +1178,42 @@
           ]
         },
         {
-          "title": "shows pagination bar when slot has content",
+          "title": "shows controls bar when slot has content",
           "status": "passed",
           "ancestors": [
             "Pagination Visibility Tests"
           ]
         },
         {
-          "title": "hides pagination bar when slot is empty and showPagination is false",
+          "title": "hides entire controls bar when slot is empty and showPagination is false",
           "status": "passed",
           "ancestors": [
             "Pagination Visibility Tests"
           ]
         },
         {
-          "title": "shows pagination bar when showPagination prop is true even with empty slot",
+          "title": "shows controls bar when showPagination prop is true even with empty slot",
           "status": "passed",
           "ancestors": [
             "Pagination Visibility Tests"
           ]
         },
         {
-          "title": "hides pagination bar when showPagination is false and slot is empty",
+          "title": "hides controls bar when showPagination is false and slot is empty",
           "status": "passed",
           "ancestors": [
             "Pagination Visibility Tests"
           ]
         },
         {
-          "title": "shows pagination bar with custom content in slot",
+          "title": "shows controls bar with custom content in slot",
+          "status": "passed",
+          "ancestors": [
+            "Pagination Visibility Tests"
+          ]
+        },
+        {
+          "title": "shows controls bar when filters are active even without pagination",
           "status": "passed",
           "ancestors": [
             "Pagination Visibility Tests"
