@@ -1,9 +1,11 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { h } from "vue";
+import { defineComponent, h } from "vue";
 import type { TableColumn } from "../src/components/table/TableColumn";
 import { createGTableFixture } from "./fixtures/createGTableFixture";
 import { mnt, testAccessibility } from "./test-utils";
 import { Locator, page } from "vitest/browser";
+import GTable from "../src/components/GTable.vue";
+import { useFiltering } from "../src/compose/useFiltering";
 
 interface TableEntry {
     key: string;
@@ -498,6 +500,131 @@ describe("GTable", () => {
             expect(selectedRows.value).toEqual(["LT", "KY", "KN", "KM"]);
         });
     });
+
+    describe("Pagination Visibility Tests", () => {
+        it("shows pagination bar when slot has content", async () => {
+            const { GTableFixture } = createCollegesTableFixture();
+            const { container } = mnt(GTableFixture);
+
+            // The pagination component should be visible
+            await expect.element(container.getByText("1 to 3")).toBeVisible();
+            
+            // The pagination navigation buttons should exist
+            const nextPageButton = container.getByRole("button", {
+                name: "Next Page",
+            });
+            await expect.element(nextPageButton).toBeInTheDocument();
+        });
+
+        it("hides pagination bar when slot is empty and showPagination is false", async () => {
+            const { GTableFixture } = createGTableFixture<TableEntry>({
+                label: "Test Table",
+                columns,
+                data: tableData,
+                paginate: false, // Don't provide pagination slot
+            });
+            const { container } = mnt(GTableFixture);
+
+            // The pagination div should not be visible
+            const paginationDiv = container.element().querySelector('.pagination');
+            expect(paginationDiv).toBeNull();
+        });
+
+        it("shows pagination bar when showPagination prop is true even with empty slot", async () => {
+            const GTableFixture = defineComponent({
+                setup() {
+                    const filtering = useFiltering(defaultFilter);
+                    const { filters } = filtering;
+                    
+                    return () =>
+                        h(
+                            GTable<TableEntry>,
+                            {
+                                label: "Test Table",
+                                data: tableData,
+                                columns,
+                                filtering,
+                                filter: filters,
+                                startIndex: 0,
+                                showPagination: true, // Explicitly show pagination
+                            },
+                            {
+                                // Empty pagination slot
+                            },
+                        );
+                },
+            });
+            
+            const { container } = mnt(GTableFixture);
+
+            // The pagination div should be visible even though the slot is empty
+            const paginationDiv = container.element().querySelector('.pagination');
+            expect(paginationDiv).toBeTruthy();
+        });
+
+        it("hides pagination bar when showPagination is false and slot is empty", async () => {
+            const GTableFixture = defineComponent({
+                setup() {
+                    const filtering = useFiltering(defaultFilter);
+                    const { filters } = filtering;
+                    
+                    return () =>
+                        h(
+                            GTable<TableEntry>,
+                            {
+                                label: "Test Table",
+                                data: tableData,
+                                columns,
+                                filtering,
+                                filter: filters,
+                                startIndex: 0,
+                                showPagination: false, // Explicitly hide pagination
+                            },
+                            {
+                                // Empty pagination slot
+                            },
+                        );
+                },
+            });
+            
+            const { container } = mnt(GTableFixture);
+
+            // The pagination div should not be visible
+            const paginationDiv = container.element().querySelector('.pagination');
+            expect(paginationDiv).toBeNull();
+        });
+
+        it("shows pagination bar with custom content in slot", async () => {
+            const GTableFixture = defineComponent({
+                setup() {
+                    const filtering = useFiltering(defaultFilter);
+                    const { filters } = filtering;
+                    
+                    return () =>
+                        h(
+                            GTable<TableEntry>,
+                            {
+                                label: "Test Table",
+                                data: tableData,
+                                columns,
+                                filtering,
+                                filter: filters,
+                                startIndex: 0,
+                            },
+                            {
+                                pagination: () => h('span', 'Custom pagination content'),
+                            },
+                        );
+                },
+            });
+            
+            const { container } = mnt(GTableFixture);
+
+            // The pagination div should be visible with custom content
+            await expect.element(container.getByText("Custom pagination content")).toBeVisible();
+        });
+    });
+
     describe("Accessibility Tests", () => {
         it("passes accessibility tests with default content", async () => {
             const { GTableFixture } = createCollegesTableFixture();
