@@ -815,7 +815,7 @@ interface Props {
     columns: C[];
     resultCount?: number;
     groupBy?: keyof T;
-    filtering: UseFilteringReturn<any>;
+    filtering?: UseFilteringReturn<any>;
     groupRender?: (groupValue: any, row: T) => VNode;
     rowClickable?: boolean;
     rowClass?: (row: T) => string | string[] | undefined;
@@ -830,6 +830,11 @@ interface Props {
     // Optional change tracker for editable tables
     // Pass a composable from useTableChanges() to track user edits
     changeTracker?: UseTableChangesReturn<T>;
+
+    /**
+     * Explicitly show the pagination bar even if the slot is empty
+     */
+    showPagination?: boolean;
 }
 ```
 
