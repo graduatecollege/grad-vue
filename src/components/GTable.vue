@@ -98,7 +98,7 @@ type Props = {
 const sortField = defineModel<keyof T>("sortField");
 const sortOrder = defineModel<1 | -1>("sortOrder");
 const filter = defineModel<Partial<Record<keyof T, any>>>("filter", {
-    required: true,
+    default: () => ({}),
 });
 const selectedRows = defineModel<string[]>("selectedRows", {
     default: () => [],
