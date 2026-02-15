@@ -36,6 +36,7 @@ import {
     ref,
     toRaw,
     useId,
+    useSlots,
     useTemplateRef,
     VNode,
     watch,
@@ -87,6 +88,11 @@ type Props = {
     // Optional change tracker for editable tables
     // Pass a composable from useTableChanges() to track user edits
     changeTracker?: UseTableChangesReturn<T>;
+
+    /**
+     * Explicitly show the pagination bar even if the slot is empty
+     */
+    showPagination?: boolean;
 };
 
 const sortField = defineModel<keyof T>("sortField");
@@ -101,6 +107,7 @@ const selectedRows = defineModel<string[]>("selectedRows", {
 const props = withDefaults(defineProps<Props>(), {
     bulkSelectionEnabled: false,
     bulkActions: () => [],
+    showPagination: false,
 });
 
 const emit = defineEmits<{
@@ -227,6 +234,29 @@ function handleCellChange(change: { row: T; column: C; value: any }) {
 }
 
 const id = useId();
+const slots = useSlots();
+
+const shouldShowPagination = computed(() => {
+    // Show if explicitly requested via prop
+    if (props.showPagination) {
+        return true;
+    }
+    // Show if the pagination slot has content
+    return !!slots.pagination;
+});
+
+const shouldShowControls = computed(() => {
+    // Show if filters are active (clear filters button is visible)
+    if (isFiltered.value) {
+        return true;
+    }
+    // Show if pagination should be shown
+    if (shouldShowPagination.value) {
+        return true;
+    }
+    // Otherwise hide the entire controls bar
+    return false;
+});
 
 onMounted(() => {
     if (props.rowClickable && props.bulkSelectionEnabled) {
@@ -268,7 +298,7 @@ watch(
 
 <template>
     <div class="g-table-outer-wrap">
-        <div class="g-table-controls">
+        <div v-if="shouldShowControls" class="g-table-controls">
             <div class="g-clear-filters-wrap">
                 <GButton
                     v-if="isFiltered"
@@ -291,7 +321,7 @@ watch(
                     <span class="g-clear-filters-text"> Clear Filters </span>
                 </GButton>
             </div>
-            <div class="pagination">
+            <div v-if="shouldShowPagination" class="pagination">
                 <slot name="pagination"></slot>
             </div>
             <span class="g-result-count"
