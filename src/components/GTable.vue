@@ -42,7 +42,7 @@ import {
     watch,
 } from "vue";
 import GSelect from "./GSelect.vue";
-import { UseFilteringReturn } from "../compose/useFiltering.ts";
+import { useFiltering, UseFilteringReturn } from "../compose/useFiltering.ts";
 import {
     CellChangePayload,
     UseTableChangesReturn,
@@ -73,7 +73,7 @@ type Props = {
     columns: C[];
     resultCount?: number;
     groupBy?: keyof T;
-    filtering: UseFilteringReturn<any>;
+    filtering?: UseFilteringReturn<any>;
     groupRender?: (groupValue: any, row: T) => VNode;
     rowClickable?: boolean;
     rowClass?: (row: T) => string | string[] | undefined;
@@ -116,8 +116,6 @@ const emit = defineEmits<{
     (e: "cell-change", payload: CellChangePayload<T>): void;
 }>();
 
-const tableRef = useTemplateRef("tableRef");
-
 function onSort(col: TableColumn<T>) {
     if (!col.sortable) {
         return;
@@ -135,7 +133,13 @@ function onSort(col: TableColumn<T>) {
     }
 }
 
-const { filters, filteredColumns, isFiltered, clearFilters } = props.filtering;
+let filtering: UseFilteringReturn<any> = props.filtering!;
+
+if (!filtering) {
+    filtering = useFiltering({}) as any;
+}
+
+const { filters, filteredColumns, isFiltered, clearFilters } = filtering;
 
 // Bulk selection logic
 const allRowKeys = computed(() => props.data.map((row) => row.key));
@@ -228,7 +232,7 @@ function handleCellChange(change: { row: T; column: C; value: any }) {
         column: change.column,
         value: convertedValue,
         previousValue,
-    }
+    };
 
     emit("cell-change", payload);
 }
@@ -293,7 +297,6 @@ watch(
     },
     { immediate: true },
 );
-
 </script>
 
 <template>
