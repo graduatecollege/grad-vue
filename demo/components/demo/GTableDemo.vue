@@ -4,9 +4,9 @@ import { computed, h, ref } from "vue";
 import type { TableColumn } from "@illinois-grad/grad-vue";
 import { useFiltering } from "@illinois-grad/grad-vue";
 import {
-    CellChangePayload,
+    type CellChangePayload,
     useTableChanges,
-} from "../../../src/compose/useTableChanges";
+} from "@illinois-grad/grad-vue";
 
 interface TableEntry {
     key: string;

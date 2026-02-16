@@ -79,6 +79,7 @@ export type {
     UseTableChangesReturn,
     CellChange,
     ChangeMap,
+    CellChangePayload
 } from "./compose/useTableChanges";
 export type {
     SelectColumnFilter,
