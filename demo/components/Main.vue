@@ -32,6 +32,7 @@ import GUserMenuDemo from "~/components/demo/GUserMenuDemo.vue";
 import GCurrencyInputDemo from "~/components/demo/GCurrencyInputDemo.vue";
 import GEmailInputDemo from "~/components/demo/GEmailInputDemo.vue";
 import GDateInputDemo from "~/components/demo/GDateInputDemo.vue";
+import GDateRangeInputDemo from "~/components/demo/GDateRangeInputDemo.vue";
 import { onMounted, provide } from "vue";
 import { useTemplateRef } from "#imports";
 
@@ -71,6 +72,7 @@ const demoComponents = [
     { label: "Currency Input", component: GCurrencyInputDemo },
     { label: "Email Input", component: GEmailInputDemo },
     { label: "Date Input", component: GDateInputDemo },
+    { label: "Date Range Input", component: GDateRangeInputDemo },
 ];
 
 const demo = useTemplateRef("demo");

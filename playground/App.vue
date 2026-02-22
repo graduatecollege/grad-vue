@@ -540,6 +540,7 @@ const termYears = ref(["2026", "2025", "2024"]);
                         { label: 'Currency Input', href: '#currency-input' },
                         { label: 'Email Input', href: '#email-input' },
                         { label: 'Date Input', href: '#date-input' },
+                        { label: 'Date Range Input', href: '#date-range-input' },
 ]"
                     v-model="activeId"
                 />
@@ -836,6 +837,12 @@ const termYears = ref(["2026", "2025", "2024"]);
                     <GDateInput label="Date Input">
                         <p>Example content</p>
                     </GDateInput>
+                </section>
+                <section id="date-range-input">
+                    <h2>Date Range Input</h2>
+                    <GDateRangeInput label="Date Range Input">
+                        <p>Example content</p>
+                    </GDateRangeInput>
                 </section>
             </main>
         </div>

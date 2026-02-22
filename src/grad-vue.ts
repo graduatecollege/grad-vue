@@ -27,6 +27,7 @@ import GUserMenu from "./components/GUserMenu.vue";
 import GCurrencyInput from "./components/GCurrencyInput.vue";
 import GEmailInput from "./components/GEmailInput.vue";
 import GDateInput from "./components/GDateInput.vue";
+import GDateRangeInput from "./components/GDateRangeInput.vue";
 
 import "./css/main.css";
 import VGtooltip from "./directives/v-gtooltip.ts";
@@ -62,6 +63,7 @@ export {
     GCurrencyInput,
     GEmailInput,
     GDateInput,
+    GDateRangeInput,
 };
 
 export { calculatePopoverPosition } from "./compose/popoverPosition";

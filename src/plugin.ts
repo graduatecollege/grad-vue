@@ -28,6 +28,7 @@ import {
     GCurrencyInput,
     GEmailInput,
     GDateInput,
+    GDateRangeInput,
     VGtooltip,
     VGtooltipDirective,
 } from "./grad-vue.ts";
@@ -64,6 +65,7 @@ export default {
         app.component("GCurrencyInput", GCurrencyInput);
         app.component("GEmailInput", GEmailInput);
         app.component("GDateInput", GDateInput);
+        app.component("GDateRangeInput", GDateRangeInput);
     },
 };
 
