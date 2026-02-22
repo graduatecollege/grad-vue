@@ -24,6 +24,10 @@ import GHamburgerMenu from "../src/components/GHamburgerMenu.vue";
 import GDetailListItem from "../src/components/detail-list/GDetailListItem.vue";
 import GDetailList from "../src/components/GDetailList.vue";
 import GTermSelector from "../src/components/GTermSelector.vue";
+import GCurrencyInput from "../src/components/GCurrencyInput.vue";
+import GEmailInput from "../src/components/GEmailInput.vue";
+import GDateInput from "../src/components/GDateInput.vue";
+import GDateRangeInput from "../src/components/GDateRangeInput.vue";
 import ErrorHandlingExample from "./ErrorHandlingExample.vue";
 
 const sidebar = useSidebar();
@@ -44,6 +48,11 @@ onMounted(() => {
 const searchQuery = ref("");
 const select = ref("");
 const searchLoading = ref(false);
+
+const currencyValue = ref("");
+const emailValue = ref("");
+const dateValue = ref("");
+const dateRangeValue = ref({ start: null, end: null });
 
 interface SearchResult {
     id: string | number;
@@ -537,6 +546,10 @@ const termYears = ref(["2026", "2025", "2024"]);
                         { label: 'Modal', href: '#modal' },
                         { label: 'Detail List', href: '#detail-list' },
                                             { label: 'User Menu', href: '#user-menu' },
+                        { label: 'Currency Input', href: '#currency-input' },
+                        { label: 'Email Input', href: '#email-input' },
+                        { label: 'Date Input', href: '#date-input' },
+                        { label: 'Date Range Input', href: '#date-range-input' },
 ]"
                     v-model="activeId"
                 />
@@ -815,6 +828,22 @@ const termYears = ref(["2026", "2025", "2024"]);
                             >None</GDetailListItem
                         >
                     </GDetailList>
+                </section>
+                <section id="currency-input">
+                    <h2>Currency Input</h2>
+                    <GCurrencyInput v-model="currencyValue" label="Amount" placeholder="0.00" />
+                </section>
+                <section id="email-input">
+                    <h2>Email Input</h2>
+                    <GEmailInput v-model="emailValue" label="Email" placeholder="user@example.com" />
+                </section>
+                <section id="date-input">
+                    <h2>Date Input</h2>
+                    <GDateInput v-model="dateValue" label="Date" />
+                </section>
+                <section id="date-range-input">
+                    <h2>Date Range Input</h2>
+                    <GDateRangeInput v-model="dateRangeValue" label="Date Range" />
                 </section>
             </main>
         </div>
