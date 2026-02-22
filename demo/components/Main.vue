@@ -29,6 +29,9 @@ import GDetailListDemo from "~/components/demo/GDetailListDemo.vue";
 import GTermSelectorDemo from "~/components/demo/GTermSelectorDemo.vue";
 
 import GUserMenuDemo from "~/components/demo/GUserMenuDemo.vue";
+import GCurrencyInputDemo from "~/components/demo/GCurrencyInputDemo.vue";
+import GEmailInputDemo from "~/components/demo/GEmailInputDemo.vue";
+import GDateInputDemo from "~/components/demo/GDateInputDemo.vue";
 import { onMounted, provide } from "vue";
 import { useTemplateRef } from "#imports";
 
@@ -65,6 +68,9 @@ const demoComponents = [
     { label: "Text Input", component: GTextInputDemo },
     { label: "Three Way Toggle", component: GThreeWayToggleDemo },
     { label: "User Menu", component: GUserMenuDemo },
+    { label: "Currency Input", component: GCurrencyInputDemo },
+    { label: "Email Input", component: GEmailInputDemo },
+    { label: "Date Input", component: GDateInputDemo },
 ];
 
 const demo = useTemplateRef("demo");

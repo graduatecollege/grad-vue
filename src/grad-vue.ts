@@ -24,6 +24,9 @@ import GOverlay from "./components/GOverlay.vue";
 import GTermSelector from "./components/GTermSelector.vue";
 import GTermSelectorControl from "./components/term/GTermSelectorControl.vue";
 import GUserMenu from "./components/GUserMenu.vue";
+import GCurrencyInput from "./components/GCurrencyInput.vue";
+import GEmailInput from "./components/GEmailInput.vue";
+import GDateInput from "./components/GDateInput.vue";
 
 import "./css/main.css";
 import VGtooltip from "./directives/v-gtooltip.ts";
@@ -56,6 +59,9 @@ export {
     GTermSelector,
     GTermSelectorControl,
     GUserMenu,
+    GCurrencyInput,
+    GEmailInput,
+    GDateInput,
 };
 
 export { calculatePopoverPosition } from "./compose/popoverPosition";

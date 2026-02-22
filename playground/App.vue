@@ -537,6 +537,9 @@ const termYears = ref(["2026", "2025", "2024"]);
                         { label: 'Modal', href: '#modal' },
                         { label: 'Detail List', href: '#detail-list' },
                                             { label: 'User Menu', href: '#user-menu' },
+                        { label: 'Currency Input', href: '#currency-input' },
+                        { label: 'Email Input', href: '#email-input' },
+                        { label: 'Date Input', href: '#date-input' },
 ]"
                     v-model="activeId"
                 />
@@ -815,6 +818,24 @@ const termYears = ref(["2026", "2025", "2024"]);
                             >None</GDetailListItem
                         >
                     </GDetailList>
+                </section>
+                <section id="currency-input">
+                    <h2>Currency Input</h2>
+                    <GCurrencyInput label="Currency Input">
+                        <p>Example content</p>
+                    </GCurrencyInput>
+                </section>
+                <section id="email-input">
+                    <h2>Email Input</h2>
+                    <GEmailInput label="Email Input">
+                        <p>Example content</p>
+                    </GEmailInput>
+                </section>
+                <section id="date-input">
+                    <h2>Date Input</h2>
+                    <GDateInput label="Date Input">
+                        <p>Example content</p>
+                    </GDateInput>
                 </section>
             </main>
         </div>
