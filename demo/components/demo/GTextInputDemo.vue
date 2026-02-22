@@ -38,6 +38,16 @@ const textValue = ref("");
                     type: 'string',
                     label: 'Instructions',
                     default: ''
+                },
+                prefix: {
+                    type: 'string',
+                    label: 'Prefix',
+                    default: ''
+                },
+                suffix: {
+                    type: 'string',
+                    label: 'Suffix',
+                    default: ''
                 }
             }"
         >

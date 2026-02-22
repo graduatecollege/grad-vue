@@ -30,6 +30,52 @@ describe("GTextInput", () => {
             const input = wrapper.find("input");
             expect(input.attributes("disabled")).toBeDefined();
         });
+
+        it("renders with prefix", () => {
+            const wrapper = mount(GTextInput, {
+                props: {
+                    label: "Text Input",
+                    prefix: "$",
+                    modelValue: "",
+                },
+            });
+
+            const prefix = wrapper.find(".g-text-input-prefix");
+            expect(prefix.exists()).toBe(true);
+            expect(prefix.text()).toBe("$");
+        });
+
+        it("renders with suffix", () => {
+            const wrapper = mount(GTextInput, {
+                props: {
+                    label: "Text Input",
+                    suffix: "USD",
+                    modelValue: "",
+                },
+            });
+
+            const suffix = wrapper.find(".g-text-input-suffix");
+            expect(suffix.exists()).toBe(true);
+            expect(suffix.text()).toBe("USD");
+        });
+
+        it("renders with both prefix and suffix", () => {
+            const wrapper = mount(GTextInput, {
+                props: {
+                    label: "Text Input",
+                    prefix: "$",
+                    suffix: "USD",
+                    modelValue: "",
+                },
+            });
+
+            const prefix = wrapper.find(".g-text-input-prefix");
+            const suffix = wrapper.find(".g-text-input-suffix");
+            expect(prefix.exists()).toBe(true);
+            expect(prefix.text()).toBe("$");
+            expect(suffix.exists()).toBe(true);
+            expect(suffix.text()).toBe("USD");
+        });
     });
 
     describe("Accessibility Tests", () => {
@@ -80,6 +126,31 @@ describe("GTextInput", () => {
                 label: "Text Input",
                 instructions: "Enter text here",
                 error: "This field has an error",
+            });
+        });
+
+        it("with prefix", async () => {
+            await testAccessibility(GTextInput, {
+                label: "Text Input",
+                prefix: "$",
+                modelValue: "",
+            });
+        });
+
+        it("with suffix", async () => {
+            await testAccessibility(GTextInput, {
+                label: "Text Input",
+                suffix: "USD",
+                modelValue: "",
+            });
+        });
+
+        it("with prefix and suffix", async () => {
+            await testAccessibility(GTextInput, {
+                label: "Text Input",
+                prefix: "$",
+                suffix: "USD",
+                modelValue: "",
             });
         });
     });
