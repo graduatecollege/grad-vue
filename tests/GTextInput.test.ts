@@ -1,12 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { mount } from "@vue/test-utils";
 import GTextInput from "../src/components/GTextInput.vue";
-import { testAccessibility } from "./test-utils";
+import { mnt, testAccessibility } from "./test-utils";
 
 describe("GTextInput", () => {
     describe("Functional Tests", () => {
-        it("renders with placeholder", () => {
-            const wrapper = mount(GTextInput, {
+        it("renders with placeholder", async () => {
+            const wrapper = mnt(GTextInput, {
                 props: {
                     label: "Text Input",
                     placeholder: "Enter text",
@@ -14,12 +13,12 @@ describe("GTextInput", () => {
                 },
             });
 
-            const input = wrapper.find("input");
-            expect(input.attributes("placeholder")).toBe("Enter text");
+            const input = wrapper.instance.getByRole("textbox", { name: "Text Input" });
+            await expect.element(input).toHaveAttribute("placeholder", "Enter text");
         });
 
-        it("renders with disabled state", () => {
-            const wrapper = mount(GTextInput, {
+        it("renders with disabled state", async () => {
+            const wrapper = mnt(GTextInput, {
                 props: {
                     label: "Text Input",
                     disabled: true,
@@ -27,8 +26,46 @@ describe("GTextInput", () => {
                 },
             });
 
-            const input = wrapper.find("input");
-            expect(input.attributes("disabled")).toBeDefined();
+            const input = wrapper.instance.getByRole("textbox", { name: "Text Input" });
+            await expect.element(input).toBeDisabled();
+        });
+
+        it("renders with prefix", async () => {
+            const wrapper = mnt(GTextInput, {
+                props: {
+                    label: "Text Input",
+                    prefix: "$",
+                    modelValue: "",
+                },
+            });
+
+            await expect.element(wrapper.instance.getByText("$")).toBeInTheDocument();
+        });
+
+        it("renders with suffix", async () => {
+            const wrapper = mnt(GTextInput, {
+                props: {
+                    label: "Text Input",
+                    suffix: "USD",
+                    modelValue: "",
+                },
+            });
+
+            await expect.element(wrapper.instance.getByText("USD")).toBeInTheDocument();
+        });
+
+        it("renders with both prefix and suffix", async () => {
+            const wrapper = mnt(GTextInput, {
+                props: {
+                    label: "Text Input",
+                    prefix: "$",
+                    suffix: "USD",
+                    modelValue: "",
+                },
+            });
+
+            await expect.element(wrapper.instance.getByText("$")).toBeInTheDocument();
+            await expect.element(wrapper.instance.getByText("USD")).toBeInTheDocument();
         });
     });
 
@@ -80,6 +117,31 @@ describe("GTextInput", () => {
                 label: "Text Input",
                 instructions: "Enter text here",
                 error: "This field has an error",
+            });
+        });
+
+        it("with prefix", async () => {
+            await testAccessibility(GTextInput, {
+                label: "Text Input",
+                prefix: "$",
+                modelValue: "",
+            });
+        });
+
+        it("with suffix", async () => {
+            await testAccessibility(GTextInput, {
+                label: "Text Input",
+                suffix: "USD",
+                modelValue: "",
+            });
+        });
+
+        it("with prefix and suffix", async () => {
+            await testAccessibility(GTextInput, {
+                label: "Text Input",
+                prefix: "$",
+                suffix: "USD",
+                modelValue: "",
             });
         });
     });

@@ -29,6 +29,10 @@ import GDetailListDemo from "~/components/demo/GDetailListDemo.vue";
 import GTermSelectorDemo from "~/components/demo/GTermSelectorDemo.vue";
 
 import GUserMenuDemo from "~/components/demo/GUserMenuDemo.vue";
+import GCurrencyInputDemo from "~/components/demo/GCurrencyInputDemo.vue";
+import GEmailInputDemo from "~/components/demo/GEmailInputDemo.vue";
+import GDateInputDemo from "~/components/demo/GDateInputDemo.vue";
+import GDateRangeInputDemo from "~/components/demo/GDateRangeInputDemo.vue";
 import { onMounted, provide } from "vue";
 import { useTemplateRef } from "#imports";
 
@@ -49,7 +53,11 @@ const demoComponents = [
     { label: "App Header", component: GAppHeaderDemo },
     { label: "Button", component: GButtonDemo },
     { label: "Clipboard", component: GClipboardDemo },
+    { label: "Currency Input", component: GCurrencyInputDemo },
+    { label: "Date Input", component: GDateInputDemo },
+    { label: "Date Range Input", component: GDateRangeInputDemo },
     { label: "Detail List", component: GDetailListDemo },
+    { label: "Email Input", component: GEmailInputDemo },
     { label: "Hamburger Menu", component: GHamburgerMenuDemo },
     { label: "History Scroller", component: GHistoryScrollerDemo },
     { label: "Modal", component: GModalDemo },

@@ -33,6 +33,14 @@ type Props = {
      * Instructions
      */
     instructions?: string;
+    /**
+     * Prefix text (displayed before input)
+     */
+    prefix?: string;
+    /**
+     * Suffix text (displayed after input)
+     */
+    suffix?: string;
 };
 
 const props = withDefaults(defineProps<Props>(), {
@@ -41,6 +49,8 @@ const props = withDefaults(defineProps<Props>(), {
     placeholder: "",
     disabled: false,
     error: "",
+    prefix: "",
+    suffix: "",
 });
 const model = defineModel<string | null>({ type: String });
 
@@ -133,29 +143,37 @@ function onKeydown(e: KeyboardEvent) {
         >
             <slot name="instructions">{{ instructions }}</slot>
         </div>
-        <input
-            :value="model"
-            :placeholder="props.placeholder"
-            :disabled="props.disabled"
-            @input="onInput"
-            @blur="onBlur"
-            @paste="onPaste"
-            @keydown="onKeydown"
-            type="text"
-            class="g-text-input"
-            v-bind="{
-                ...$attrs,
-                id: ($attrs.id as string) || id,
-                'aria-describedby':
-                    $slots.instructions || instructions
-                        ? 'instructions-' + id
+        <div class="g-text-input-field-wrapper">
+            <span v-if="props.prefix" class="g-text-input-prefix">{{
+                props.prefix
+            }}</span>
+            <input
+                :value="model"
+                :placeholder="props.placeholder"
+                :disabled="props.disabled"
+                @input="onInput"
+                @blur="onBlur"
+                @paste="onPaste"
+                @keydown="onKeydown"
+                type="text"
+                class="g-text-input"
+                v-bind="{
+                    ...$attrs,
+                    id: ($attrs.id as string) || id,
+                    'aria-describedby':
+                        $slots.instructions || instructions
+                            ? 'instructions-' + id
+                            : undefined,
+                    'aria-errormessage': props.error
+                        ? 'error-message-' + id
                         : undefined,
-                'aria-errormessage': props.error
-                    ? 'error-message-' + id
-                    : undefined,
-            }"
-            :aria-invalid="props.error ? 'true' : 'false'"
-        />
+                }"
+                :aria-invalid="props.error ? 'true' : 'false'"
+            />
+            <span v-if="props.suffix" class="g-text-input-suffix">{{
+                props.suffix
+            }}</span>
+        </div>
         <div
             v-if="props.error"
             class="error-message"
@@ -188,25 +206,47 @@ function onKeydown(e: KeyboardEvent) {
     margin: 0 0 0.75em 0.5em;
     color: var(--g-surface-800);
 }
+.g-text-input-field-wrapper {
+    display: flex;
+    align-items: center;
+    border: 2px solid var(--g-primary-500);
+    border-radius: 4px;
+    background: var(--g-surface-0);
+    overflow: hidden;
+}
+.g-text-input-prefix,
+.g-text-input-suffix {
+    padding: 0.5em;
+    background: var(--g-surface-100);
+    color: var(--g-surface-700);
+    white-space: nowrap;
+    font-family: var(--il-font-sans);
+}
 .g-text-input {
     width: 100%;
     padding: 0.5em;
     font-size: 1em;
-    border: 2px solid var(--g-primary-500);
-    border-radius: 4px;
-    background: var(--g-surface-0);
+    border: none;
+    border-radius: 0;
+    background: transparent;
     color: var(--g-surface-950);
     font-family: var(--il-font-sans);
 }
+.g-text-input:focus {
+    outline: none;
+}
 .g-text-input-has-error {
-    .g-text-input {
+    .g-text-input-field-wrapper {
         border-color: var(--g-danger-600);
         background: var(--g-danger-100);
     }
 }
 .g-text-input:disabled {
-    background: var(--g-surface-100);
+    background: transparent;
     color: var(--g-surface-700);
+}
+.g-text-input-field-wrapper:has(.g-text-input:disabled) {
+    background: var(--g-surface-100);
 }
 .error-message {
     background: var(--g-surface-0);

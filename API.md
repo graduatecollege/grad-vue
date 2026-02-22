@@ -154,6 +154,118 @@ interface Props {
 
 ---
 
+## GCurrencyInput
+
+A currency input component for US dollars.
+
+This component is a wrapper around a text input with a prefix and
+appropriate input type for currency values.
+
+### Props
+
+```typescript
+interface Props {
+    /**
+     * Label
+     */
+    label?: string;
+    /**
+     * Placeholder text
+     */
+    placeholder?: string;
+    /**
+     * Disabled
+     */
+    disabled?: boolean;
+    /**
+     * Error message
+     */
+    error?: string;
+    /**
+     * Instructions
+     */
+    instructions?: string;
+}
+```
+
+---
+
+## GDateInput
+
+A date input component.
+
+This component is a wrapper around GTextInput with type="date" for
+proper date selection using the browser's native date picker.
+
+### Props
+
+```typescript
+interface Props {
+    /**
+     * Label
+     */
+    label?: string;
+    /**
+     * Placeholder text
+     */
+    placeholder?: string;
+    /**
+     * Disabled
+     */
+    disabled?: boolean;
+    /**
+     * Error message
+     */
+    error?: string;
+    /**
+     * Instructions
+     */
+    instructions?: string;
+}
+```
+
+---
+
+## GDateRangeInput
+
+A date range input component with start and end dates.
+
+This component uses two GDateInput components laid out horizontally
+to allow selecting a date range.
+
+### Props
+
+```typescript
+interface Props {
+    /**
+     * Label for the component
+     */
+    label?: string;
+    /**
+     * Label for the start date input
+     */
+    startLabel?: string;
+    /**
+     * Label for the end date input
+     */
+    endLabel?: string;
+    /**
+     * Disabled
+     */
+    disabled?: boolean;
+    /**
+     * Error message
+     */
+    error?: string;
+    /**
+     * Instructions
+     */
+    instructions?: string;
+}
+```
+
+---
+
 ## GDetailList
 
 This component is used with the `GDetailListItem` component to display
@@ -183,6 +295,42 @@ interface Props {
 ### Slots
 
 - `default`
+
+---
+
+## GEmailInput
+
+An email input component.
+
+This component is a wrapper around GTextInput with type="email" for
+proper email validation and mobile keyboard optimization.
+
+### Props
+
+```typescript
+interface Props {
+    /**
+     * Label
+     */
+    label?: string;
+    /**
+     * Placeholder text
+     */
+    placeholder?: string;
+    /**
+     * Disabled
+     */
+    disabled?: boolean;
+    /**
+     * Error message
+     */
+    error?: string;
+    /**
+     * Instructions
+     */
+    instructions?: string;
+}
+```
 
 ---
 
@@ -910,6 +1058,14 @@ interface Props {
      * Instructions
      */
     instructions?: string;
+    /**
+     * Prefix text (displayed before input)
+     */
+    prefix?: string;
+    /**
+     * Suffix text (displayed after input)
+     */
+    suffix?: string;
 }
 ```
 

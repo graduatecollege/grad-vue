@@ -1,18 +1,19 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import ComponentSection from "../ComponentSection.vue";
 import ComponentDemo from "../ComponentDemo.vue";
 import DemoResult from "../DemoResult.vue";
-import { GTextInput } from "@illinois-grad/grad-vue";
+import { GCurrencyInput } from "@illinois-grad/grad-vue";
 
-const textValue = ref("");
+const currencyValue = ref("");
 </script>
 
 <template>
-    <ComponentSection title="Text Input">
+    <section id="currency-input" class="demo-section">
+        <h2 class="demo-section__title">Currency Input</h2>
         <ComponentDemo
-            description="A text input component."
-            component="GTextInput"
+            name="Basic Currency Input"
+            description="A currency input component for US dollars with a $ prefix."
+            component="GCurrencyInput"
             :props-config="{
                 label: {
                     type: 'string',
@@ -38,32 +39,20 @@ const textValue = ref("");
                     type: 'string',
                     label: 'Instructions',
                     default: ''
-                },
-                prefix: {
-                    type: 'string',
-                    label: 'Prefix text (displayed before input)',
-                    default: ''
-                },
-                suffix: {
-                    type: 'string',
-                    label: 'Suffix text (displayed after input)',
-                    default: ''
                 }
             }"
         >
-            <template #docs><p>A text input with styling for a label, instructions, and an error message.</p>
-<p>If <code>label</code> is omitted, an accessible label must be provided some other way.
-All non-prop attributes are passed through to the input element, including
-<code>id</code>.</p>
+            <template #docs><p>A currency input component for US dollars.</p>
+<p>This component is a wrapper around a text input with a prefix and
+appropriate input type for currency values.</p>
 </template>
             <template #default="{ props }">
-                <GTextInput
-                    v-model="textValue"
+                <GCurrencyInput
+                    v-model="currencyValue"
                     v-bind="props"
-                    :label="props.label"
                 />
-                <DemoResult>{{ textValue }}</DemoResult>
+                <DemoResult>{{ currencyValue }}</DemoResult>
             </template>
         </ComponentDemo>
-    </ComponentSection>
+    </section>
 </template>
