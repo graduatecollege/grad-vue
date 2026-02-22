@@ -1,32 +1,30 @@
 import { describe, it, expect } from "vitest";
-import { mount } from "@vue/test-utils";
 import GDateInput from "../src/components/GDateInput.vue";
-import { testAccessibility } from "./test-utils";
+import { mnt, testAccessibility } from "./test-utils";
 
 describe("GDateInput", () => {
     describe("Functional Tests", () => {
-        it("has date input type", () => {
-            const wrapper = mount(GDateInput, {
+        it("has date input type", async () => {
+            const wrapper = mnt(GDateInput, {
                 props: {
                     label: "Date",
                     modelValue: "",
                 },
             });
 
-            const input = wrapper.find("input");
-            expect(input.attributes("type")).toBe("date");
+            const input = wrapper.instance.getByRole("textbox", { name: "Date" });
+            await expect.element(input).toHaveAttribute("type", "date");
         });
 
-        it("renders with label", () => {
-            const wrapper = mount(GDateInput, {
+        it("renders with label", async () => {
+            const wrapper = mnt(GDateInput, {
                 props: {
                     label: "Start Date",
                     modelValue: "",
                 },
             });
 
-            const label = wrapper.find("label");
-            expect(label.text()).toBe("Start Date");
+            await expect.element(wrapper.instance.getByRole("textbox", { name: "Start Date" })).toBeInTheDocument();
         });
     });
 

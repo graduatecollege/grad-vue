@@ -1,12 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { mount } from "@vue/test-utils";
 import GTextInput from "../src/components/GTextInput.vue";
-import { testAccessibility } from "./test-utils";
+import { mnt, testAccessibility } from "./test-utils";
 
 describe("GTextInput", () => {
     describe("Functional Tests", () => {
-        it("renders with placeholder", () => {
-            const wrapper = mount(GTextInput, {
+        it("renders with placeholder", async () => {
+            const wrapper = mnt(GTextInput, {
                 props: {
                     label: "Text Input",
                     placeholder: "Enter text",
@@ -14,12 +13,12 @@ describe("GTextInput", () => {
                 },
             });
 
-            const input = wrapper.find("input");
-            expect(input.attributes("placeholder")).toBe("Enter text");
+            const input = wrapper.instance.getByRole("textbox", { name: "Text Input" });
+            await expect.element(input).toHaveAttribute("placeholder", "Enter text");
         });
 
-        it("renders with disabled state", () => {
-            const wrapper = mount(GTextInput, {
+        it("renders with disabled state", async () => {
+            const wrapper = mnt(GTextInput, {
                 props: {
                     label: "Text Input",
                     disabled: true,
@@ -27,12 +26,12 @@ describe("GTextInput", () => {
                 },
             });
 
-            const input = wrapper.find("input");
-            expect(input.attributes("disabled")).toBeDefined();
+            const input = wrapper.instance.getByRole("textbox", { name: "Text Input" });
+            await expect.element(input).toBeDisabled();
         });
 
-        it("renders with prefix", () => {
-            const wrapper = mount(GTextInput, {
+        it("renders with prefix", async () => {
+            const wrapper = mnt(GTextInput, {
                 props: {
                     label: "Text Input",
                     prefix: "$",
@@ -40,13 +39,11 @@ describe("GTextInput", () => {
                 },
             });
 
-            const prefix = wrapper.find(".g-text-input-prefix");
-            expect(prefix.exists()).toBe(true);
-            expect(prefix.text()).toBe("$");
+            await expect.element(wrapper.instance.getByText("$")).toBeInTheDocument();
         });
 
-        it("renders with suffix", () => {
-            const wrapper = mount(GTextInput, {
+        it("renders with suffix", async () => {
+            const wrapper = mnt(GTextInput, {
                 props: {
                     label: "Text Input",
                     suffix: "USD",
@@ -54,13 +51,11 @@ describe("GTextInput", () => {
                 },
             });
 
-            const suffix = wrapper.find(".g-text-input-suffix");
-            expect(suffix.exists()).toBe(true);
-            expect(suffix.text()).toBe("USD");
+            await expect.element(wrapper.instance.getByText("USD")).toBeInTheDocument();
         });
 
-        it("renders with both prefix and suffix", () => {
-            const wrapper = mount(GTextInput, {
+        it("renders with both prefix and suffix", async () => {
+            const wrapper = mnt(GTextInput, {
                 props: {
                     label: "Text Input",
                     prefix: "$",
@@ -69,12 +64,8 @@ describe("GTextInput", () => {
                 },
             });
 
-            const prefix = wrapper.find(".g-text-input-prefix");
-            const suffix = wrapper.find(".g-text-input-suffix");
-            expect(prefix.exists()).toBe(true);
-            expect(prefix.text()).toBe("$");
-            expect(suffix.exists()).toBe(true);
-            expect(suffix.text()).toBe("USD");
+            await expect.element(wrapper.instance.getByText("$")).toBeInTheDocument();
+            await expect.element(wrapper.instance.getByText("USD")).toBeInTheDocument();
         });
     });
 

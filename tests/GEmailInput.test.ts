@@ -1,24 +1,23 @@
 import { describe, it, expect } from "vitest";
-import { mount } from "@vue/test-utils";
 import GEmailInput from "../src/components/GEmailInput.vue";
-import { testAccessibility } from "./test-utils";
+import { mnt, testAccessibility } from "./test-utils";
 
 describe("GEmailInput", () => {
     describe("Functional Tests", () => {
-        it("has email input type", () => {
-            const wrapper = mount(GEmailInput, {
+        it("has email input type", async () => {
+            const wrapper = mnt(GEmailInput, {
                 props: {
                     label: "Email",
                     modelValue: "",
                 },
             });
 
-            const input = wrapper.find("input");
-            expect(input.attributes("type")).toBe("email");
+            const input = wrapper.instance.getByRole("textbox", { name: "Email" });
+            await expect.element(input).toHaveAttribute("type", "email");
         });
 
-        it("renders with placeholder", () => {
-            const wrapper = mount(GEmailInput, {
+        it("renders with placeholder", async () => {
+            const wrapper = mnt(GEmailInput, {
                 props: {
                     label: "Email",
                     placeholder: "user@example.com",
@@ -26,8 +25,8 @@ describe("GEmailInput", () => {
                 },
             });
 
-            const input = wrapper.find("input");
-            expect(input.attributes("placeholder")).toBe("user@example.com");
+            const input = wrapper.instance.getByRole("textbox", { name: "Email" });
+            await expect.element(input).toHaveAttribute("placeholder", "user@example.com");
         });
     });
 

@@ -1,24 +1,23 @@
 import { describe, it, expect } from "vitest";
-import { mount } from "@vue/test-utils";
 import GDateRangeInput from "../src/components/GDateRangeInput.vue";
-import { testAccessibility } from "./test-utils";
+import { mnt, testAccessibility } from "./test-utils";
 
 describe("GDateRangeInput", () => {
     describe("Functional Tests", () => {
-        it("renders two date inputs", () => {
-            const wrapper = mount(GDateRangeInput, {
+        it("renders two date inputs", async () => {
+            const wrapper = mnt(GDateRangeInput, {
                 props: {
                     label: "Date Range",
                     modelValue: { start: null, end: null },
                 },
             });
 
-            const inputs = wrapper.findAll("input[type='date']");
+            const inputs = await wrapper.instance.getByRole("textbox").all();
             expect(inputs.length).toBe(2);
         });
 
-        it("renders with custom start and end labels", () => {
-            const wrapper = mount(GDateRangeInput, {
+        it("renders with custom start and end labels", async () => {
+            const wrapper = mnt(GDateRangeInput, {
                 props: {
                     label: "Date Range",
                     startLabel: "From",
@@ -27,13 +26,12 @@ describe("GDateRangeInput", () => {
                 },
             });
 
-            const labels = wrapper.findAll("label");
-            expect(labels[0].text()).toBe("From");
-            expect(labels[1].text()).toBe("To");
+            await expect.element(wrapper.instance.getByRole("textbox", { name: "From" })).toBeInTheDocument();
+            await expect.element(wrapper.instance.getByRole("textbox", { name: "To" })).toBeInTheDocument();
         });
 
-        it("displays error message", () => {
-            const wrapper = mount(GDateRangeInput, {
+        it("displays error message", async () => {
+            const wrapper = mnt(GDateRangeInput, {
                 props: {
                     label: "Date Range",
                     error: "Invalid date range",
@@ -41,9 +39,7 @@ describe("GDateRangeInput", () => {
                 },
             });
 
-            const error = wrapper.find(".g-date-range-input__error");
-            expect(error.exists()).toBe(true);
-            expect(error.text()).toBe("Invalid date range");
+            await expect.element(wrapper.instance.getByRole("alert")).toHaveTextContent("Invalid date range");
         });
     });
 
