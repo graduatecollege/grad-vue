@@ -7,6 +7,21 @@ export default defineConfig({
     plugins: [
         vue(),
     ],
+    optimizeDeps: {
+        include: [
+            "@tiptap/vue-3",
+            "@tiptap/core",
+            "@tiptap/extension-document",
+            "@tiptap/extension-paragraph",
+            "@tiptap/extension-text",
+            "@tiptap/extension-bold",
+            "@tiptap/extension-italic",
+            "@tiptap/extension-list",
+            "@tiptap/extension-placeholder",
+            "@tiptap/extensions",
+            "@tiptap/vue-3/menus",
+        ],
+    },
     test: {
         testTimeout: 5000,
         browser: {
