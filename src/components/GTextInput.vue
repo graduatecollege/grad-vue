@@ -123,6 +123,14 @@ function onKeydown(e: KeyboardEvent) {
         emitChangeIfNeeded((e.target as HTMLInputElement).value);
     }
 }
+
+function onChange(e: Event) {
+    if (inputTimer) {
+        clearTimeout(inputTimer);
+        inputTimer = null;
+    }
+    emitChangeIfNeeded((e.target as HTMLInputElement).value);
+}
 </script>
 
 <template>
@@ -155,6 +163,7 @@ function onKeydown(e: KeyboardEvent) {
                 @blur="onBlur"
                 @paste="onPaste"
                 @keydown="onKeydown"
+                @change="onChange"
                 type="text"
                 class="g-text-input"
                 v-bind="{
