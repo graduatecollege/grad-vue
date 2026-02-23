@@ -9,7 +9,7 @@ import { codeToHtml } from "shiki";
 // It also updates the demo docs from a JSDoc comment at the top of the script tag.
 // Run this script after updating the component's props.
 
-const componentsDir = 'packages/grad-vue/src/components';
+const packagesDir = 'packages';
 const demosDir = 'demo/components/demo';
 
 const marked = new Marked();
@@ -221,22 +221,41 @@ function generateApiMarkdown(apiData: any[]) {
 
 (async () => {
     const apiData: any[] = [];
-    const files = fs.readdirSync(componentsDir);
-    for (const file of files) {
-        if (file.endsWith('.vue')) {
-            const componentName = file.replace('.vue', '');
-            const content = fs.readFileSync(path.join(componentsDir, file), 'utf8');
-            const { props, docs, rawProps, slots } = parseProps(content);
-            if (Object.keys(props).length > 0) {
-                await updateDemo(componentName, props, docs);
+    
+    // Discover all packages with components
+    const packages = fs.readdirSync(packagesDir, { withFileTypes: true })
+        .filter(dirent => dirent.isDirectory())
+        .map(dirent => dirent.name);
+    
+    for (const packageName of packages) {
+        const componentsDir = path.join(packagesDir, packageName, 'src', 'components');
+        
+        // Skip if this package doesn't have a components directory
+        if (!fs.existsSync(componentsDir)) {
+            continue;
+        }
+        
+        const files = fs.readdirSync(componentsDir);
+        for (const file of files) {
+            if (file.endsWith('.vue')) {
+                const componentName = file.replace('.vue', '');
+                const componentPath = path.join(componentsDir, file);
+                const content = fs.readFileSync(componentPath, 'utf8');
+                const { props, docs, rawProps, slots } = parseProps(content);
+                
+                if (Object.keys(props).length > 0) {
+                    await updateDemo(componentName, props, docs);
+                }
+                
+                apiData.push({
+                    name: componentName,
+                    docs,
+                    rawProps,
+                    slots,
+                });
             }
-            apiData.push({
-                name: componentName,
-                docs,
-                rawProps,
-                slots,
-            });
         }
     }
+    
     generateApiMarkdown(apiData);
 })();
