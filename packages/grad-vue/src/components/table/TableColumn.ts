@@ -1,0 +1,77 @@
+import { VNode } from "vue";
+
+export type TableColumnFilter =
+    | SelectColumnFilter
+    | MultiSelectColumnFilter
+    | ToggleColumnFilter;
+
+export interface SelectColumnFilter {
+    type: 'select';
+    options: Array<{ label: string; value: any }>;
+    placeholder?: string;
+}
+
+export interface MultiSelectColumnFilter {
+    type: 'multi-select';
+    options: Array<{ label: string; value: any }>;
+    placeholder?: string;
+}
+
+export interface ToggleColumnFilter {
+    type: 'toggle';
+    label: string;
+    description?: string;
+}
+
+export interface EditableColumnConfig {
+    /**
+     * Type of editable control. Defaults to "input".
+     */
+    type?: "input" | "select";
+    /**
+     * Attributes to apply to the input element (type, pattern, step, min, max, etc.)
+     * Only applies when type is "input" or undefined.
+     */
+    inputAttributes?: Record<string, any>;
+    /**
+     * Options for select dropdown. Required when type is "select".
+     */
+    options?: Array<{ label: string; value: any }>;
+    /**
+     * Text to display before the input (e.g., "$" for currency)
+     */
+    prefix?: string;
+    /**
+     * Text to display after the input (e.g., "kg" for weight)
+     */
+    suffix?: string;
+    /**
+     * Key of the column to use as the identifying label for the input's aria-labelledby.
+     * If not provided, the input will only be labeled by its column header.
+     */
+    labelKey?: string;
+}
+
+export interface TableColumn<T extends TableRow, K = keyof T> {
+    key: K;
+    label: string;
+    sortable?: boolean;
+    filter?: TableColumnFilter;
+    /**
+     * Custom render function for the column data.
+     * Cannot be used with `editable`.
+     */
+    display?: (row: T) => string | VNode;
+    tdClass?: string | ((row: T) => string);
+    trClass?: string | ((row: T) => string);
+    /**
+     * Configuration for editable columns.
+     * When set, the column will render as an input element.
+     * Cannot be used with `display`.
+     */
+    editable?: EditableColumnConfig;
+}
+
+export interface TableRow extends Record<string, any> {
+    key: string;
+}

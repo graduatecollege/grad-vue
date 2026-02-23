@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import GDateRangeInput from "../src/components/GDateRangeInput.vue";
+import GDateRangeInput from "../packages/grad-vue/src/components/GDateRangeInput.vue";
 import { mnt, testAccessibility } from "./test-utils";
 
 describe("GDateRangeInput", () => {

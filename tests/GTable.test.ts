@@ -1,11 +1,11 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { defineComponent, h } from "vue";
-import type { TableColumn } from "../src/components/table/TableColumn";
+import type { TableColumn } from "../packages/grad-vue/src/components/table/TableColumn";
 import { createGTableFixture } from "./fixtures/createGTableFixture";
 import { mnt, testAccessibility } from "./test-utils";
 import { Locator, page } from "vitest/browser";
-import GTable from "../src/components/GTable.vue";
-import { useFiltering } from "../src/compose/useFiltering";
+import GTable from "../packages/grad-vue/src/components/GTable.vue";
+import { useFiltering } from "../packages/grad-vue/src/compose/useFiltering";
 
 interface TableEntry {
     key: string;

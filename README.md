@@ -1,140 +1,121 @@
-# grad-vue
+# grad-vue Monorepo
 
 Shared Vue.js components and composable functions for the Graduate College.
 
-**Package has moved in npm** to `@illinois-grad/grad-vue`.
+This monorepo contains multiple packages:
 
-Features:
+## Packages
+
+### [@illinois-grad/grad-vue](./packages/grad-vue)
+
+The main component library with minimal dependencies. Contains components for common UI patterns like buttons, inputs, modals, tables, and more.
+
+**Installation:**
+```bash
+npm install @illinois-grad/grad-vue
+```
+
+### [@illinois-grad/grad-vue-rte](./packages/grad-vue-rte)
+
+Rich text editor components built with Tiptap. This package is kept separate to avoid adding rich text editor dependencies to projects that don't need them.
+
+**Installation:**
+```bash
+npm install @illinois-grad/grad-vue-rte
+```
+
+## Features
 
 - **Vue 3**: Built with Vue.js version 3 and the Composition API.
-- **Accessibility-First**: All grad-vue components are built first to be accessible to all users.
-- **Minimal Dependencies**: Only depends on Vue.js, VueUse and focus-trap.
-
-All grad-vue components are **accessibility-first**. We can't make guarantees about
-complying with specific accessibility standards, but all components are built with
-consideration for all users.
+- **Accessibility-First**: All components are built with consideration for all users.
+- **Minimal Dependencies**: Main library only depends on Vue.js, VueUse and focus-trap.
+- **Modular**: Choose the packages you need.
 
 ## Demo Site
 
 View live interactive demos and documentation at: [https://graduatecollege.github.io/grad-vue/](https://graduatecollege.github.io/grad-vue/)
 
-The demo site is located in the [`demo/`](./demo) directory and is built with Nuxt 4.
-
-## Installation
-
-```bash
-npm install @illinois-grad/grad-vue
-```
-
-## Usage
-
-### Import All Components In Vue.js
-
-```javascript
-import { createApp } from 'vue'
-import GradVue from '@illinois-grad/grad-vue'
-import App from './App.vue'
-
-const app = createApp(App)
-app.use(GradVue)
-```
-
-### Import All Components in Nuxt.js
-
-Add `grad-vue.ts` into your plugins folder:
-
-```javascript
-import GradVue from '@illinois-grad/grad-vue';
-import '@illinois-grad/grad-vue/grad-vue.css';
-
-export default defineNuxtPlugin(async (nuxt) => {
-    nuxt.vueApp.use(GradVue);
-})
-```
-
-### Import Individual Components In Vue.js
-
-```javascript
-import { GButton } from '@illinois-grad/grad-vue'
-
-export default {
-  components: {
-    GButton
-  }
-}
-```
-
-Or in a script setup:
-
-```vue
-<script setup>
-import { GButton } from '@illinois-grad/grad-vue'
-</script>
-
-<template>
-  <GButton @click="handleClick">Click me</GButton>
-</template>
-```
-
 ## Development
 
-### Bootstrapping a New Component
+This is a monorepo managed with npm workspaces.
+
+### Prerequisites
+
+- Node.js 18+ 
+- npm 7+
+
+### Setup
 
 ```bash
-npm run component:new -- GMyNewComponent
-```
+# Install dependencies for all packages
+npm install
 
-This script creates a new component in the `src/components` directory and adds it to the `playground/`, `demo/`,
-and the package exports.
+# Build all packages
+npm run build
 
-### Demo Props And Documentation
+# Build specific package
+npm run build:grad-vue
+npm run build:grad-vue-rte
 
-The `props-config` and `docs` in each component's demo are generated automatically from the component's source:
-
-```bash
-npm run sync-props
-```
-
-Some notes on this process:
-
-- The `docs` section is generated from a jsdoc immediately after the opening `<script setup` tag. It supports markdown formatting.
-- The `props-config` section is generated from the `Props` interface or type in the component script, with default
-  values from the `withDefaults` function call.
-- The `Props` interface can have a `// Demo: <value>` comment to override the default value for the prop in the demo.
-- Props without a jsdoc will not be included in the demo.
-
-> [!TIP]
-> The markdown docs at the top of the component file cannot have a `</script>` because of how Vue.js parses the file.
-> Instead, use `&lt;/script>` in the docs.
-
-### Running Tests
-
-The project uses Vitest 4 for unit and accessibility testing in **browser mode**.
-
-```bash
-# Run tests in watch mode
+# Run tests
 npm test
 
-# Run tests once
+# Start playground for development
+npm run dev
+```
+
+### Project Structure
+
+```
+grad-vue/
+├── packages/
+│   ├── grad-vue/          # Main component library
+│   └── grad-vue-rte/      # Rich text editor components
+├── demo/                  # Demo site (Nuxt 4)
+├── playground/            # Development playground
+├── tests/                 # Tests for all packages
+└── scripts/               # Build and utility scripts
+```
+
+### Creating a New Component
+
+For the main grad-vue package:
+
+```bash
+npm run component:new ComponentName
+```
+
+For the grad-vue-rte package, manually create the component in `packages/grad-vue-rte/src/components/`.
+
+### Testing
+
+Tests are located in the `tests/` directory and use Vitest with Playwright.
+
+```bash
+# Run all tests
+npm test
+
+# Run tests with UI
+npm run test:ui
+
+# Run tests and generate report
 npm run test:run
 ```
 
-### Building
+## Code Conventions
 
-```bash
-# Build the library
-npm run build
+- Avoid obvious comments when the code is self-explanatory
+- Prefer const over let
+- Always use braces for `if`, `else`, and `for` loops
+- Avoid using `any` type
+- Components must be compatible with Nuxt 4
 
-# Watch for changes during development
-npm run watch
-```
+## Contributing
 
-## Release Process
+See individual package READMEs for more details:
+- [grad-vue README](./packages/grad-vue/README.md)
+- [grad-vue-rte README](./packages/grad-vue-rte/README.md)
 
-This package is automatically published to NPM when a semantic version tag (prefixed with `v`) is pushed to the repository. For example:
+## License
 
-```bash
-# Create and push a new release
-git tag v1.0.0
-git push origin v1.0.0
-```
+MIT - University of Illinois Graduate College

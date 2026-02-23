@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeEach } from "vitest";
-import { useTableChanges, CellChangePayload } from "../src/compose/useTableChanges";
+import { useTableChanges, CellChangePayload } from "../packages/grad-vue/src/compose/useTableChanges";
 
 interface TestRow {
     key: string;

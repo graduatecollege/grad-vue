@@ -1,9 +1,9 @@
 import { createApp } from 'vue'
 import App from './App.vue'
-import GradVue from '../src/plugin'
+import GradVue from '../packages/grad-vue/src/plugin'
 
 // Use library styles directly from src during dev for fast iteration
-import '../src/css/main.css'
+import '../packages/grad-vue/src/css/main.css'
 import { createPinia } from "pinia";
 
 const app = createApp(App)

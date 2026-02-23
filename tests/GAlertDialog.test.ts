@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import GAlertDialog from "../src/components/GAlertDialog.vue";
+import GAlertDialog from "../packages/grad-vue/src/components/GAlertDialog.vue";
 import { mnt, testAccessibility } from "./test-utils";
 import { page, userEvent } from "vitest/browser";
 

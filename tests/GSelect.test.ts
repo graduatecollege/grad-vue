@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { nextTick } from "vue";
-import GSelect from "../src/components/GSelect.vue";
+import GSelect from "../packages/grad-vue/src/components/GSelect.vue";
 import { mnt, testAccessibility } from "./test-utils";
 import { page } from "vitest/browser";
 

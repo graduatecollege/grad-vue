@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { h, ref } from "vue";
-import type { TableColumn } from "../src/components/table/TableColumn";
+import type { TableColumn } from "../packages/grad-vue/src/components/table/TableColumn";
 import { createGTableFixture } from "./fixtures/createGTableFixture";
 import { mnt, testAccessibility } from "./test-utils";
 import { page } from "vitest/browser";

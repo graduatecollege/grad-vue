@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import GSearch from "../src/components/GSearch.vue";
+import GSearch from "../packages/grad-vue/src/components/GSearch.vue";
 import { mnt, testAccessibility } from "./test-utils";
 import { userEvent } from "vitest/browser";
 

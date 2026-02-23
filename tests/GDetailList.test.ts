@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { defineComponent, h } from "vue";
-import GDetailList from "../src/components/GDetailList.vue";
-import GDetailListItem from "../src/components/detail-list/GDetailListItem.vue";
+import GDetailList from "../packages/grad-vue/src/components/GDetailList.vue";
+import GDetailListItem from "../packages/grad-vue/src/components/detail-list/GDetailListItem.vue";
 import { mnt, testAccessibility } from "./test-utils";
 
 describe("GDetailList", () => {

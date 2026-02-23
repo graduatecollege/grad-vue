@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { userEvent } from "vitest/browser";
-import GSelectButton from "../src/components/GSelectButton.vue";
+import GSelectButton from "../packages/grad-vue/src/components/GSelectButton.vue";
 import { mnt, testAccessibility } from "./test-utils";
 
 describe("GSelectButton", () => {

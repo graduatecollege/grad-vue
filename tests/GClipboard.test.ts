@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import GClipboard from "../src/components/GClipboard.vue";
+import GClipboard from "../packages/grad-vue/src/components/GClipboard.vue";
 import { mnt, testAccessibility } from "./test-utils";
 import { page, userEvent } from "vitest/browser";
 
