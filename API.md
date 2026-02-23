@@ -1066,6 +1066,10 @@ interface Props {
      * Suffix text (displayed after input)
      */
     suffix?: string;
+    /**
+     * Debounce in milliseconds
+     */
+    debounce?: number;
 }
 ```
 

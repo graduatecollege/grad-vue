@@ -48,6 +48,11 @@ const textValue = ref("");
                     type: 'string',
                     label: 'Suffix text (displayed after input)',
                     default: ''
+                },
+                debounce: {
+                    type: 'number',
+                    label: 'Debounce in milliseconds',
+                    default: 100
                 }
             }"
         >

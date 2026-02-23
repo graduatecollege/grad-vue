@@ -41,6 +41,10 @@ type Props = {
      * Suffix text (displayed after input)
      */
     suffix?: string;
+    /**
+     * Debounce in milliseconds
+     */
+    debounce?: number;
 };
 
 const props = withDefaults(defineProps<Props>(), {
@@ -51,6 +55,7 @@ const props = withDefaults(defineProps<Props>(), {
     error: "",
     prefix: "",
     suffix: "",
+    debounce: 100,
 });
 const model = defineModel<string | null>({ type: String });
 
@@ -88,7 +93,7 @@ function onInput(e: Event) {
     inputTimer = setTimeout(() => {
         emitChangeIfNeeded(lastInputValue.value);
         inputTimer = null;
-    }, 3000);
+    }, props.debounce);
 }
 
 function onBlur(e: FocusEvent) {
