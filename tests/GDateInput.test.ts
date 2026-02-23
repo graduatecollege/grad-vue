@@ -38,10 +38,10 @@ describe("GDateInput", () => {
             });
 
             const input = wrapper.instance.getByRole("textbox", { name: "Date" });
-            
+
             // Fill in a date value and trigger change event
             await input.fill("2026-03-15");
-            
+
             // The model should be updated immediately after the change event
             // without needing to lose focus
             expect(dateModel.value).toBe("2026-03-15");
