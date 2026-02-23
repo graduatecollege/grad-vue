@@ -9,7 +9,7 @@ import { codeToHtml } from "shiki";
 // It also updates the demo docs from a JSDoc comment at the top of the script tag.
 // Run this script after updating the component's props.
 
-const componentsDir = 'src/components';
+const componentsDir = 'packages/grad-vue/src/components';
 const demosDir = 'demo/components/demo';
 
 const marked = new Marked();

@@ -28,6 +28,7 @@ import GCurrencyInput from "../src/components/GCurrencyInput.vue";
 import GEmailInput from "../src/components/GEmailInput.vue";
 import GDateInput from "../src/components/GDateInput.vue";
 import GDateRangeInput from "../src/components/GDateRangeInput.vue";
+import GChatInput from "../packages/grad-vue-rte/src/components/GChatInput.vue";
 import ErrorHandlingExample from "./ErrorHandlingExample.vue";
 
 const sidebar = useSidebar();
@@ -53,6 +54,7 @@ const currencyValue = ref("");
 const emailValue = ref("");
 const dateValue = ref("");
 const dateRangeValue = ref({ start: null, end: null });
+const chatComment = ref<object | "">("");
 
 interface SearchResult {
     id: string | number;
@@ -550,6 +552,7 @@ const termYears = ref(["2026", "2025", "2024"]);
                         { label: 'Email Input', href: '#email-input' },
                         { label: 'Date Input', href: '#date-input' },
                         { label: 'Date Range Input', href: '#date-range-input' },
+                        { label: 'Chat Input', href: '#chat-input' },
 ]"
                     v-model="activeId"
                 />
@@ -844,6 +847,19 @@ const termYears = ref(["2026", "2025", "2024"]);
                 <section id="date-range-input">
                     <h2>Date Range Input</h2>
                     <GDateRangeInput v-model="dateRangeValue" label="Date Range" />
+                </section>
+                <section id="chat-input">
+                    <h2>Chat Input (RTE Package)</h2>
+                    <div style="max-width: 600px;">
+                        <GChatInput 
+                            v-model="chatComment"
+                            placeholder="Type a comment..."
+                            @send="(content) => { console.log('Sent:', content); chatComment = ''; }"
+                        />
+                        <p style="margin-top: 1rem; font-size: 0.875rem; color: #666;">
+                            Try selecting text to see the formatting bubble menu. Press Enter to send, Shift+Enter for new line.
+                        </p>
+                    </div>
                 </section>
             </main>
         </div>

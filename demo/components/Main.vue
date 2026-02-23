@@ -33,6 +33,7 @@ import GCurrencyInputDemo from "~/components/demo/GCurrencyInputDemo.vue";
 import GEmailInputDemo from "~/components/demo/GEmailInputDemo.vue";
 import GDateInputDemo from "~/components/demo/GDateInputDemo.vue";
 import GDateRangeInputDemo from "~/components/demo/GDateRangeInputDemo.vue";
+import GChatInputDemo from "~/components/demo/GChatInputDemo.vue";
 import { onMounted, provide } from "vue";
 import { useTemplateRef } from "#imports";
 
@@ -52,6 +53,7 @@ const demoComponents = [
     { label: "Alert Dialog", component: GAlertDialogDemo },
     { label: "App Header", component: GAppHeaderDemo },
     { label: "Button", component: GButtonDemo },
+    { label: "Chat Input", component: GChatInputDemo },
     { label: "Clipboard", component: GClipboardDemo },
     { label: "Currency Input", component: GCurrencyInputDemo },
     { label: "Date Input", component: GDateInputDemo },
