@@ -9,7 +9,6 @@ import {
     unref,
     watch,
 } from "vue";
-import { value } from "happy-dom/lib/PropertySymbol";
 
 export type FilterLocationQueryValueRaw = string | number;
 
