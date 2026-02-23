@@ -2,8 +2,8 @@
 import { ref } from "vue";
 import ComponentSection from "../ComponentSection.vue";
 import ComponentDemo from "../ComponentDemo.vue";
-import GModal from "../../../src/components/GModal.vue";
-import GButton from "../../../src/components/GButton.vue";
+import { GModal } from "@illinois-grad/grad-vue";
+import { GButton } from "@illinois-grad/grad-vue";
 
 const showModal = ref(false);
 </script>
@@ -76,37 +76,33 @@ when <code>document</code> is defined. That makes it only load in the client.</p
             <template #default="{ props }">
                 <GButton @click="showModal = true">Open Modal</GButton>
 
-                    <GModal
-                        v-if="showModal"
-                        v-bind="props"
-                        :label="props.label"
-                        @close="showModal = false"
+                <GModal
+                    v-if="showModal"
+                    v-bind="props"
+                    :label="props.label"
+                    @close="showModal = false"
+                >
+                    <p>
+                        This is a generic modal. You can put any content here.
+                        It doesn't have default action buttons, giving you full
+                        control over the content and interactions.
+                    </p>
+                    <div
+                        style="
+                            height: 1500px;
+                            background: linear-gradient(
+                                to bottom,
+                                #f0f0f0,
+                                #ccc
+                            );
+                            padding: 20px;
+                            border: 1px dashed #999;
+                        "
                     >
-                        <p>
-                            This is a generic modal. You can put any content
-                            here. It doesn't have default action buttons, giving
-                            you full control over the content and interactions.
-                        </p>
-                        <div
-                            style="
-                                height: 1500px;
-                                background: linear-gradient(
-                                    to bottom,
-                                    #f0f0f0,
-                                    #ccc
-                                );
-                                padding: 20px;
-                                border: 1px dashed #999;
-                            "
-                        >
-                            <p>
-                                This is a very tall content to test scrolling.
-                            </p>
-                            <p style="margin-top: 1400px">
-                                Bottom of the content.
-                            </p>
-                        </div>
-                    </GModal>
+                        <p>This is a very tall content to test scrolling.</p>
+                        <p style="margin-top: 1400px">Bottom of the content.</p>
+                    </div>
+                </GModal>
             </template>
         </ComponentDemo>
     </ComponentSection>

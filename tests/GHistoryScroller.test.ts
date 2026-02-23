@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import GHistoryScroller from "../src/components/GHistoryScroller.vue";
+import GHistoryScroller from "../packages/grad-vue/src/components/GHistoryScroller.vue";
 import { mnt, testAccessibility } from "./test-utils";
 import { h } from "vue";
 import { page, userEvent } from "vitest/browser";

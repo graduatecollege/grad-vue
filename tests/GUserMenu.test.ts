@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { page } from "vitest/browser";
 import { h } from "vue";
-import GUserMenu from "../src/components/GUserMenu.vue";
+import GUserMenu from "../packages/grad-vue/src/components/GUserMenu.vue";
 import { mnt, testAccessibility } from "./test-utils";
 
 const J = {

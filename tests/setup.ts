@@ -1,4 +1,4 @@
-import '../src/css/main.css';
+import '../packages/grad-vue/src/css/main.css';
 import { beforeEach } from "vitest";
 import { mnt } from "./test-utils";
 

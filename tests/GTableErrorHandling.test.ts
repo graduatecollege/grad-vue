@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { nextTick, ref } from "vue";
-import type { TableColumn } from "../src/components/table/TableColumn";
-import { useTableChanges } from "../src/compose/useTableChanges";
+import type { TableColumn } from "../packages/grad-vue/src/components/table/TableColumn";
+import { useTableChanges } from "../packages/grad-vue/src/compose/useTableChanges";
 import { createGTableFixture } from "./fixtures/createGTableFixture";
 import { mnt, testAccessibility } from "./test-utils";
 import { page, userEvent } from "vitest/browser";

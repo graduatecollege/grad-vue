@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ComponentSection from "../ComponentSection.vue";
 import ComponentDemo from "../ComponentDemo.vue";
-import GHistoryScroller from "../../../src/components/GHistoryScroller.vue";
+import { GHistoryScroller } from "@illinois-grad/grad-vue";
 import { ref } from "vue";
 
 const historyEntries = ref([

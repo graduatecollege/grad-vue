@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { userEvent } from "vitest/browser";
-import GThreeWayToggle from "../src/components/GThreeWayToggle.vue";
+import GThreeWayToggle from "../packages/grad-vue/src/components/GThreeWayToggle.vue";
 import { mnt, testAccessibility } from "./test-utils";
 import { ref } from "vue";
 

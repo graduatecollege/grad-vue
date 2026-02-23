@@ -1180,3 +1180,18 @@ interface Props {
 ```
 
 ---
+
+## GChatInput
+
+### Props
+
+```typescript
+interface Props {
+    placeholder?: string;
+    disabled?: boolean;
+    maxRows?: number;
+    label?: string;
+}
+```
+
+---

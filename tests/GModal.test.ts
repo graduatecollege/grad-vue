@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import GModal from "../src/components/GModal.vue";
+import GModal from "../packages/grad-vue/src/components/GModal.vue";
 import { mnt, testAccessibility } from "./test-utils";
 import { page, userEvent } from "vitest/browser";
 import { h } from "vue";

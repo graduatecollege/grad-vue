@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import GTextInput from "../src/components/GTextInput.vue";
+import GTextInput from "../packages/grad-vue/src/components/GTextInput.vue";
 import { mnt, testAccessibility } from "./test-utils";
 
 describe("GTextInput", () => {

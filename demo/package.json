@@ -9,7 +9,7 @@
         "postinstall": "nuxt prepare"
     },
     "dependencies": {
-        "@illinois-grad/grad-vue": "file:..",
+        "@illinois-grad/grad-vue": "file:../packages/grad-vue",
         "@pinia/nuxt": "^0.11.3",
         "pinia": "^3.0.4",
         "nuxt": "^4.3.1",

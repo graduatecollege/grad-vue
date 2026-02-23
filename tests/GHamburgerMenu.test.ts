@@ -2,9 +2,9 @@ import { describe, expect, it, vi } from "vitest";
 import { defineComponent, h, provide } from "vue";
 import { page, userEvent } from "vitest/browser";
 
-import GHamburgerMenu from "../src/components/GHamburgerMenu.vue";
-import GSidebar from "../src/components/GSidebar.vue";
-import { useSidebar } from "../src/compose/useSidebar";
+import GHamburgerMenu from "../packages/grad-vue/src/components/GHamburgerMenu.vue";
+import GSidebar from "../packages/grad-vue/src/components/GSidebar.vue";
+import { useSidebar } from "../packages/grad-vue/src/compose/useSidebar";
 import { mnt, testAccessibility, tabTo } from "./test-utils";
 
 async function tick(vm: any) {

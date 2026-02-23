@@ -2,7 +2,6 @@
 import { computed, ref, type VNode } from "vue";
 import { TableColumn, TableRow } from "./TableColumn.ts";
 import { UseTableChangesReturn } from "../../compose/useTableChanges.ts";
-import { HTMLInputElement } from "happy-dom";
 
 type Props = {
     data: T[];

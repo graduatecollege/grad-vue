@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import GCurrencyInput from "../src/components/GCurrencyInput.vue";
+import GCurrencyInput from "../packages/grad-vue/src/components/GCurrencyInput.vue";
 import { mnt, testAccessibility } from "./test-utils";
 
 describe("GCurrencyInput", () => {

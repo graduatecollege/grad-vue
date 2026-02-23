@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import GPopover from "../src/components/GPopover.vue";
+import GPopover from "../packages/grad-vue/src/components/GPopover.vue";
 import { mnt, testAccessibility } from "./test-utils";
 import { h } from "vue";
 import { page } from "vitest/browser";

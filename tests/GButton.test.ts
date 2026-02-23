@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import GButton from "../src/components/GButton.vue";
+import GButton from "../packages/grad-vue/src/components/GButton.vue";
 import { mnt, testAccessibility } from "./test-utils";
 import { page, userEvent } from "vitest/browser";
 
