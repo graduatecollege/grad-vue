@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import GDateInput from "../src/components/GDateInput.vue";
+import GDateInput from "../packages/grad-vue/src/components/GDateInput.vue";
 import { mnt, testAccessibility } from "./test-utils";
 
 describe("GDateInput", () => {

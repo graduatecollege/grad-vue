@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import GSidebarMenu from "../src/components/GSidebarMenu.vue";
+import GSidebarMenu from "../packages/grad-vue/src/components/GSidebarMenu.vue";
 import { mnt, testAccessibility } from "./test-utils";
 import { page } from "vitest/browser";
 

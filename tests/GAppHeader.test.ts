@@ -1,5 +1,5 @@
 import { describe, it } from "vitest";
-import GAppHeader from "../src/components/GAppHeader.vue";
+import GAppHeader from "../packages/grad-vue/src/components/GAppHeader.vue";
 import { mnt, testAccessibility } from "./test-utils";
 
 describe("GAppHeader", () => {

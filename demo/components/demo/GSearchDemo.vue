@@ -3,7 +3,7 @@ import { computed, ref } from "vue";
 import ComponentSection from "../ComponentSection.vue";
 import ComponentDemo from "../ComponentDemo.vue";
 import DemoResult from "../DemoResult.vue";
-import GSearch from "../../../src/components/GSearch.vue";
+import { GSearch } from "@illinois-grad/grad-vue";
 
 const searchQuery = ref("");
 const select = ref("");

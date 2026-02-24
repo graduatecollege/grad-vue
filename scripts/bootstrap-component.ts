@@ -16,9 +16,9 @@ function usage(): string {
         "  node --experimental-strip-types scripts/bootstrap-component.ts GMyNewComponent",
         "",
         "Notes:",
-        "  - Creates src/components/<ComponentName>.vue",
+        "  - Creates packages/grad-vue/src/components/<ComponentName>.vue",
         "  - Creates tests/<ComponentName>.test.ts",
-        "  - Updates src/grad-vue.ts exports + plugin registration",
+        "  - Updates packages/grad-vue/src/grad-vue.ts exports + plugin registration",
         "  - Updates playground/App.vue menu + adds a section",
         "  - Creates demo/components/demo/<ComponentName>Demo.vue and adds it to demo/components/Main.vue",
     ].join("\n");
@@ -200,7 +200,7 @@ async function updateGradVue(
     componentName: string,
     options: Options,
 ): Promise<void> {
-    const filePath = path.join(root, "src", "grad-vue.ts");
+    const filePath = path.join(root, "packages", "grad-vue", "src", "grad-vue.ts");
     const original = await readFile(filePath, "utf-8");
     let content = original;
     let changed = false;
@@ -225,7 +225,7 @@ async function updatePlugin(
     componentName: string,
     options: Options,
 ): Promise<void> {
-    const filePath = path.join(root, "src", "plugin.ts");
+    const filePath = path.join(root, "packages", "grad-vue", "src", "plugin.ts");
     const original = await readFile(filePath, "utf-8");
     let content = original;
     let changed = false;
@@ -464,7 +464,7 @@ function testTemplate(componentName: string): string {
     const label = pascalToWords(componentName);
     // language=typescript
     return `import { describe, it } from \"vitest\";
-import ${componentName} from \"../src/components/${componentName}.vue\";
+import ${componentName} from \"../packages/grad-vue/src/components/${componentName}.vue\";
 import { testAccessibility } from \"./test-utils\";
 
 describe(\"${componentName}\", () => {
@@ -532,6 +532,8 @@ async function main() {
 
     const componentFilePath = path.join(
         root,
+        "packages",
+        "grad-vue",
         "src",
         "components",
         `${componentName}.vue`,
@@ -558,9 +560,9 @@ async function main() {
     await updateDemoMain(root, componentName, options);
 
     const summary = [
-        `✓ Component created: src/components/${componentName}.vue`,
+        `✓ Component created: packages/grad-vue/src/components/${componentName}.vue`,
         `✓ Test created: tests/${componentName}.test.ts`,
-        `✓ Exported + registered: src/grad-vue.ts`,
+        `✓ Exported + registered: packages/grad-vue/src/grad-vue.ts`,
         `✓ Added to playground: playground/App.vue`,
         `✓ Demo created + wired: demo/components/demo/${componentName}Demo.vue + demo/components/Main.vue`,
     ];

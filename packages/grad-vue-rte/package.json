@@ -1,0 +1,59 @@
+{
+    "name": "@illinois-grad/grad-vue-rte",
+    "version": "1.0.0",
+    "description": "Rich text editor components for Graduate College apps using Tiptap.",
+    "keywords": [
+        "vue",
+        "vue3",
+        "components",
+        "graduate-college",
+        "rich-text",
+        "tiptap"
+    ],
+    "author": "University of Illinois Graduate College",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/graduatecollege/grad-vue.git"
+    },
+    "type": "module",
+    "main": "./dist/grad-vue-rte.js",
+    "module": "./dist/grad-vue-rte.js",
+    "exports": {
+        ".": {
+            "import": "./dist/grad-vue-rte.js"
+        },
+        "./plugin": {
+            "import": "./dist/plugin.js"
+        },
+        "./grad-vue-rte.css": {
+            "import": "./dist/grad-vue-rte.css"
+        }
+    },
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "vite build && vue-tsc --emitDeclarationOnly"
+    },
+    "dependencies": {
+        "@tiptap/core": "^3.4.0",
+        "@tiptap/extension-bold": "^3.4.0",
+        "@tiptap/extension-document": "^3.4.0",
+        "@tiptap/extension-italic": "^3.4.0",
+        "@tiptap/extension-list": "^3.4.0",
+        "@tiptap/extension-paragraph": "^3.4.0",
+        "@tiptap/extension-placeholder": "^3.4.0",
+        "@tiptap/extension-text": "^3.4.0",
+        "@tiptap/extensions": "^3.4.0",
+        "@tiptap/vue-3": "^3.4.0",
+        "vue": "^3.5"
+    },
+    "devDependencies": {
+        "@vitejs/plugin-vue": "^6.0.4",
+        "typescript": "^5.9.3",
+        "vite": "^7.3.1",
+        "vite-plugin-dts": "^4.5.4",
+        "vue-tsc": "^3.2.5"
+    }
+}

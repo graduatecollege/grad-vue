@@ -1,5 +1,5 @@
 import { describe, it } from "vitest";
-import GSidebar from "../src/components/GSidebar.vue";
+import GSidebar from "../packages/grad-vue/src/components/GSidebar.vue";
 import { testAccessibility } from "./test-utils";
 import { h } from "vue";
 

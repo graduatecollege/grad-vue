@@ -1,38 +1,17 @@
 <script setup lang="ts">
 import { computed, h, onMounted, provide, ref, useTemplateRef } from "vue";
-import { useActiveLinkContent } from "../src/compose/useActiveLink";
-import { useSidebar } from "../src/compose/useSidebar";
-import GAlertDialog from "../src/components/GAlertDialog.vue";
-import GButton from "../src/components/GButton.vue";
-import GSelect from "../src/components/GSelect.vue";
-import GSearch from "../src/components/GSearch.vue";
-import GHistoryScroller from "../src/components/GHistoryScroller.vue";
-import GSelectButton from "../src/components/GSelectButton.vue";
-import GSidebar from "../src/components/GSidebar.vue";
-import GTable from "../src/components/GTable.vue";
-import { TableColumn } from "../src/components/table/TableColumn";
-import { useFiltering } from "../src/compose/useFiltering";
+import ErrorHandlingExample from "./ErrorHandlingExample.vue";
 import {
     CellChangePayload,
+    TableColumn,
+    useActiveLinkContent,
+    useFiltering,
+    useSidebar,
     useTableChanges,
-} from "../src/compose/useTableChanges";
-import GTablePagination from "../src/components/table/GTablePagination.vue";
-import GModal from "../src/components/GModal.vue";
-import { useOverlayStack, useOverlayStackState } from "../src/grad-vue";
-import GOverlay from "../src/components/GOverlay.vue";
-import GHamburgerMenu from "../src/components/GHamburgerMenu.vue";
-import GDetailListItem from "../src/components/detail-list/GDetailListItem.vue";
-import GDetailList from "../src/components/GDetailList.vue";
-import GTermSelector from "../src/components/GTermSelector.vue";
-import GCurrencyInput from "../src/components/GCurrencyInput.vue";
-import GEmailInput from "../src/components/GEmailInput.vue";
-import GDateInput from "../src/components/GDateInput.vue";
-import GDateRangeInput from "../src/components/GDateRangeInput.vue";
-import ErrorHandlingExample from "./ErrorHandlingExample.vue";
+} from "../packages/grad-vue";
 
 const sidebar = useSidebar();
 
-provide("sidebar", sidebar);
 
 const activeId = ref<string>("");
 const alertOpen = ref(false);
@@ -53,6 +32,7 @@ const currencyValue = ref("");
 const emailValue = ref("");
 const dateValue = ref("");
 const dateRangeValue = ref({ start: null, end: null });
+const chatComment = ref<object | "">("");
 
 interface SearchResult {
     id: string | number;
@@ -126,7 +106,8 @@ const columns = computed<TableColumn<TableEntry>[]>(() => {
             key: "collegeInName",
             label: "'College' in Name",
             sortable: true,
-            display: (row) => h("span", row.collegeInName ? "Yes" : "No"),
+            display: (row: TableEntry) =>
+                h("span", row.collegeInName ? "Yes" : "No"),
             filter: {
                 type: "select",
                 options: [
@@ -545,12 +526,16 @@ const termYears = ref(["2026", "2025", "2024"]);
                         },
                         { label: 'Modal', href: '#modal' },
                         { label: 'Detail List', href: '#detail-list' },
-                                            { label: 'User Menu', href: '#user-menu' },
+                        { label: 'User Menu', href: '#user-menu' },
                         { label: 'Currency Input', href: '#currency-input' },
                         { label: 'Email Input', href: '#email-input' },
                         { label: 'Date Input', href: '#date-input' },
-                        { label: 'Date Range Input', href: '#date-range-input' },
-]"
+                        {
+                            label: 'Date Range Input',
+                            href: '#date-range-input',
+                        },
+                        { label: 'Chat Input', href: '#chat-input' },
+                    ]"
                     v-model="activeId"
                 />
             </GSidebar>
@@ -637,12 +622,7 @@ const termYears = ref(["2026", "2025", "2024"]);
                         @cell-change="handleCellChange"
                     >
                         <template #pagination>
-                            <div
-                                style="
-                                    padding: 0.5rem 0;
-                                    font-style: italic;
-                                "
-                            >
+                            <div style="padding: 0.5rem 0; font-style: italic">
                                 Edit values to see change tracking in action.
                                 Changed cells are highlighted.
                             </div>
@@ -716,8 +696,8 @@ const termYears = ref(["2026", "2025", "2024"]);
                 <section id="popover" ref="popover">
                     <h2>Popover</h2>
                     <GPopover label="Popover Demo">
-                        <template #trigger="{ onToggle }">
-                            <GButton @click="onToggle">Open popover</GButton>
+                        <template #trigger="{ toggle }">
+                            <GButton @click="toggle">Open popover</GButton>
                         </template>
                         <template #content>
                             <div style="padding: 0.5rem 1rem">
@@ -784,7 +764,16 @@ const termYears = ref(["2026", "2025", "2024"]);
                     >
                         <template #label>
                             Hey
-                            <span style="display: inline-block; background: #999; padding: 3px; border-radius: 4px; margin-left: 4px;">1/2/2026</span>
+                            <span
+                                style="
+                                    display: inline-block;
+                                    background: #999;
+                                    padding: 3px;
+                                    border-radius: 4px;
+                                    margin-left: 4px;
+                                "
+                                >1/2/2026</span
+                            >
                         </template>
                     </GThreeWayToggle>
                 </section>
@@ -831,11 +820,19 @@ const termYears = ref(["2026", "2025", "2024"]);
                 </section>
                 <section id="currency-input">
                     <h2>Currency Input</h2>
-                    <GCurrencyInput v-model="currencyValue" label="Amount" placeholder="0.00" />
+                    <GCurrencyInput
+                        v-model="currencyValue"
+                        label="Amount"
+                        placeholder="0.00"
+                    />
                 </section>
                 <section id="email-input">
                     <h2>Email Input</h2>
-                    <GEmailInput v-model="emailValue" label="Email" placeholder="user@example.com" />
+                    <GEmailInput
+                        v-model="emailValue"
+                        label="Email"
+                        placeholder="user@example.com"
+                    />
                 </section>
                 <section id="date-input">
                     <h2>Date Input</h2>
@@ -843,7 +840,35 @@ const termYears = ref(["2026", "2025", "2024"]);
                 </section>
                 <section id="date-range-input">
                     <h2>Date Range Input</h2>
-                    <GDateRangeInput v-model="dateRangeValue" label="Date Range" />
+                    <GDateRangeInput
+                        v-model="dateRangeValue"
+                        label="Date Range"
+                    />
+                </section>
+                <section id="chat-input">
+                    <h2>Chat Input (RTE Package)</h2>
+                    <div style="max-width: 600px">
+                        <GChatInput
+                            v-model="chatComment"
+                            placeholder="Type a comment..."
+                            @send="
+                                (content) => {
+                                    console.log('Sent:', content);
+                                    chatComment = '';
+                                }
+                            "
+                        />
+                        <p
+                            style="
+                                margin-top: 1rem;
+                                font-size: 0.875rem;
+                                color: #666;
+                            "
+                        >
+                            Try selecting text to see the formatting bubble
+                            menu. Press Enter to send, Shift+Enter for new line.
+                        </p>
+                    </div>
                 </section>
             </main>
         </div>

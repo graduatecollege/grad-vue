@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import ComponentDemo from "../ComponentDemo.vue";
-import GTermSelector from "../../../src/components/GTermSelector.vue";
+import { GTermSelector } from "@illinois-grad/grad-vue";
 import { ref } from "vue";
 import DemoResult from "~/components/DemoResult.vue";
 
-
-const term = ref({year: "2026", name: "Spring"});
+const term = ref({ year: "2026", name: "Spring" });
 const termYears = ref(["2026", "2025", "2024"]);
 </script>
 
@@ -37,10 +36,13 @@ const termYears = ref(["2026", "2025", "2024"]);
 that allows jumping to a different term.</p>
 </template>
             <template #default="{ props }">
-                <GTermSelector v-bind="props"  v-model="term" :term-years="termYears">
-
-                        <p>Example content</p>
-                    </GTermSelector>
+                <GTermSelector
+                    v-bind="props"
+                    v-model="term"
+                    :term-years="termYears"
+                >
+                    <p>Example content</p>
+                </GTermSelector>
                 <DemoResult label="Selected">{{ term }}</DemoResult>
             </template>
         </ComponentDemo>

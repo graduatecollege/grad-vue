@@ -1,5 +1,5 @@
 import { describe, it } from "vitest";
-import GProgress from "../src/components/GProgress.vue";
+import GProgress from "../packages/grad-vue/src/components/GProgress.vue";
 import { testAccessibility } from "./test-utils";
 
 describe("GProgress", () => {

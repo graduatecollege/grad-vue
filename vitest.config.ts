@@ -7,6 +7,21 @@ export default defineConfig({
     plugins: [
         vue(),
     ],
+    optimizeDeps: {
+        include: [
+            "@tiptap/vue-3",
+            "@tiptap/core",
+            "@tiptap/extension-document",
+            "@tiptap/extension-paragraph",
+            "@tiptap/extension-text",
+            "@tiptap/extension-bold",
+            "@tiptap/extension-italic",
+            "@tiptap/extension-list",
+            "@tiptap/extension-placeholder",
+            "@tiptap/extensions",
+            "@tiptap/vue-3/menus",
+        ],
+    },
     test: {
         testTimeout: 5000,
         browser: {
@@ -34,6 +49,8 @@ export default defineConfig({
     resolve: {
         alias: {
             "@": resolve(__dirname, "./src"),
+            "@grad-vue": resolve(__dirname, "./packages/grad-vue/src"),
+            "@grad-vue-rte": resolve(__dirname, "./packages/grad-vue-rte/src"),
         },
     },
 });

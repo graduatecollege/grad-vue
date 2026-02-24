@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import GEmailInput from "../src/components/GEmailInput.vue";
+import GEmailInput from "../packages/grad-vue/src/components/GEmailInput.vue";
 import { mnt, testAccessibility } from "./test-utils";
 
 describe("GEmailInput", () => {

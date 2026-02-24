@@ -1,5 +1,5 @@
 import { describe, it } from "vitest";
-import GTermSelector from "../src/components/GTermSelector.vue";
+import GTermSelector from "../packages/grad-vue/src/components/GTermSelector.vue";
 import { testAccessibility } from "./test-utils";
 
 describe("GTermSelector", () => {
