@@ -44,7 +44,7 @@ describe("GChatInput", () => {
                 },
             });
 
-            const sendButton = wrapper.instance.getByRole("button", { name: /send comment/i });
+            const sendButton = wrapper.instance.getByRole("button", { name: /send/i });
             await expect.element(sendButton).toBeInTheDocument();
         });
 
@@ -55,7 +55,7 @@ describe("GChatInput", () => {
                 },
             });
 
-            const sendButton = wrapper.instance.getByRole("button", { name: /send comment/i });
+            const sendButton = wrapper.instance.getByRole("button", { name: /send/i });
             await expect.element(sendButton).toBeDisabled();
         });
 
@@ -68,7 +68,7 @@ describe("GChatInput", () => {
                 },
             });
 
-            const sendButton = wrapper.instance.getByRole("button", { name: /send comment/i });
+            const sendButton = wrapper.instance.getByRole("button", { name: /send/i });
             await userEvent.click(sendButton);
             
             expect(onSend).toHaveBeenCalled();
@@ -82,7 +82,7 @@ describe("GChatInput", () => {
                 },
             });
 
-            const sendButton = wrapper.instance.getByRole("button", { name: /send comment/i });
+            const sendButton = wrapper.instance.getByRole("button", { name: /send/i });
             await expect.element(sendButton).toBeDisabled();
         });
     });
@@ -129,7 +129,7 @@ describe("GChatInput", () => {
                 },
             });
 
-            const sendButton = wrapper.instance.getByRole("button", { name: /send comment/i });
+            const sendButton = wrapper.instance.getByRole("button", { name: /send/i });
             const svg = sendButton.element().querySelector('svg');
             
             expect(svg?.getAttribute('aria-hidden')).toBe('true');

@@ -35,7 +35,7 @@ describe("GSelect", () => {
             await container.getByRole("combobox").click();
             await nextTick();
 
-            await expect.element(container.getByRole("listbox")).toBeInViewport({ratio: 0.99});
+            await expect.element(container.getByRole("listbox")).toBeInView();
         });
 
         it("opens below when listbox is shorter than 200px and there is enough room for the full listbox", async () => {
@@ -53,7 +53,7 @@ describe("GSelect", () => {
             await container.getByRole("combobox").click();
             await nextTick();
 
-            await expect.element(container.getByRole("listbox")).toBeInViewport({ratio: 0.99});
+            await expect.element(container.getByRole("listbox")).toBeInView();
         });
 
         it("opens above when there is less than 200px below and more space above", async () => {

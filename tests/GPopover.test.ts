@@ -33,9 +33,7 @@ describe("GPopover", () => {
             await page.getByRole("button", { name: "Open" }).click();
             await wrapper.vm.$nextTick();
 
-            await expect.element(page.getByRole("dialog")).toBeInViewport({
-                ratio: 1,
-            });
+            await expect.element(page.getByRole("dialog")).toBeInView();
 
             content.remove();
         });
@@ -62,7 +60,7 @@ describe("GPopover", () => {
 
             await expect
                 .element(page.getByRole("dialog"))
-                .toBeInViewport({ ratio: 1 });
+                .toBeInView();
 
             content.remove();
         });

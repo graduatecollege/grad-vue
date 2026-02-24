@@ -76,7 +76,14 @@ export {
 
 export { useActiveLinkContent } from "./compose/useActiveLink";
 export { useSidebar } from "./compose/useSidebar";
-export { useFiltering, filtersToQueryParams, filterOmitEmpty, filterAsQuery, asArray, emptyAsUndefined } from "./compose/useFiltering";
+export {
+    useFiltering,
+    filtersToQueryParams,
+    filterOmitEmpty,
+    filterAsQuery,
+    asArray,
+    emptyAsUndefined,
+} from "./compose/useFiltering";
 export { useTableChanges } from "./compose/useTableChanges";
 export type {
     FilteringOptions,
@@ -87,7 +94,7 @@ export type {
     UseTableChangesReturn,
     CellChange,
     ChangeMap,
-    CellChangePayload
+    CellChangePayload,
 } from "./compose/useTableChanges";
 export type {
     SelectColumnFilter,
@@ -95,4 +102,6 @@ export type {
     TableColumnFilter,
     ToggleColumnFilter,
     TableColumn,
+    TableRow,
 } from "./components/table/TableColumn";
+export type { BulkAction } from "./components/GTable.vue";

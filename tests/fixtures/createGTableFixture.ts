@@ -1,15 +1,18 @@
 import { computed, ComputedRef, defineComponent, h, ref, VNode } from "vue";
-import GTable from "../../src/components/GTable.vue";
-import GTablePagination from "../../src/components/table/GTablePagination.vue";
-import type {
+import {
+    GTable,
     TableColumn,
+    useFiltering,
+    UseTableChangesReturn,
+    GTablePagination,
+    BulkAction,
     TableRow,
-} from "../../src/components/table/TableColumn";
-import { useFiltering } from "../../src/compose/useFiltering";
-import type { BulkAction } from "../../src/components/GTable.vue";
-import type { UseTableChangesReturn } from "../../src/compose/useTableChanges";
+} from "@illinois-grad/grad-vue";
 
-export type CreateGTableFixtureOptions<T extends TableRow, C extends TableColumn<T>> = {
+export type CreateGTableFixtureOptions<
+    T extends TableRow,
+    C extends TableColumn<T>,
+> = {
     label?: string;
     columns: C[] | (() => C[]);
     data: T[];
@@ -78,9 +81,10 @@ function buildInitialFilter(options: {
     };
 }
 
-export function createGTableFixture<T extends TableRow, C extends TableColumn<T> = TableColumn<T>>(
-    options: CreateGTableFixtureOptions<T, C>,
-) {
+export function createGTableFixture<
+    T extends TableRow,
+    C extends TableColumn<T> = TableColumn<T>,
+>(options: CreateGTableFixtureOptions<T, C>) {
     const sortField = ref<keyof T | undefined>(options.initialSortField);
     const sortOrder = ref<1 | -1 | undefined>(options.initialSortOrder);
     const start = ref(options.initialStart ?? 0);
@@ -102,9 +106,11 @@ export function createGTableFixture<T extends TableRow, C extends TableColumn<T>
         name: "GTableFixture",
         setup() {
             const columnsComputed = computed(() => {
-                return (typeof options.columns === "function"
-                    ? options.columns()
-                    : options.columns) as C[];
+                return (
+                    typeof options.columns === "function"
+                        ? options.columns()
+                        : options.columns
+                ) as C[];
             });
 
             const tableData = ref<T[]>([...options.data]);
