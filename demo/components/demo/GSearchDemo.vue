@@ -51,114 +51,58 @@ function selected(item: SearchResult) {
                 placeholder: {
                     type: 'string',
                     label: 'Placeholder',
-                    default: 'Search...',
+                    default: 'Search...'
                 },
                 label: {
                     type: 'string',
                     label: 'Accessible label',
-                    default: 'Search',
+                    default: 'Search'
                 },
                 auto: {
                     type: 'boolean',
                     label: 'Automatic search',
-                    default: true,
+                    default: true
                 },
                 loading: {
                     type: 'boolean',
-                    label: 'Show search loading indicator',
-                },
+                    label: 'Show search loading indicator'
+                }
             }"
         >
-            <template #docs
-                ><p>
-                    A combobox-style search that shows a list of results as an
-                    auto complete dropdown.
-                </p>
-                <p>
-                    The component doesn&#39;t perform any real searching. It
-                    emits events that can be used to trigger searches, and then
-                    the results are passed back to the component.
-                </p>
-                <p><strong>Events</strong>:</p>
-                <ul>
-                    <li>
-                        <code>submit</code> event is emitted when a search
-                        should be performed.
-                    </li>
-                    <li>
-                        <code>select</code> event is submitted when a user makes
-                        a selection in the dropdown.
-                    </li>
-                </ul>
-                <div class="markdown-alert markdown-alert-note">
-                    <p class="markdown-alert-title">
-                        <svg
-                            class="octicon octicon-info mr-2"
-                            viewBox="0 0 16 16"
-                            width="16"
-                            height="16"
-                            aria-hidden="true"
-                        >
-                            <path
-                                d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"
-                            ></path></svg
-                        >Note
-                    </p>
-                    <p>
-                        The <code>v-model</code> value should <em>not</em> be
-                        used to trigger a search, but it can be used to get the
-                        current user input.
-                    </p>
-                </div>
-                <p><strong>Props</strong>:</p>
-                <ul>
-                    <li>
-                        <code>results</code> will be rendered in the dropdown.
-                        There are two options:
-                        <ul>
-                            <li>
-                                Pass an array of objects that extend
-                                <code
-                                    >&lcub; id: string | number; title: string;
-                                    }</code
-                                >.
-                            </li>
-                            <li>
-                                Pass an array of
-                                <code>GSearchGroup&lt;T&gt;</code> objects,
-                                where the <code>items</code> property extends
-                                the above type. In this case the results are
-                                grouped.
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <code>auto</code> makes search submit on user input.
-                        Defaults to <code>true</code>. if <code>false</code>,
-                        submission happens on Enter or clicking the search
-                        button.
-                    </li>
-                    <li>
-                        <code>loading</code> shows a loading indicator. Use if
-                        the search may take longer.
-                    </li>
-                </ul>
-                <p>
-                    <strong>Slot</strong>: <code>option</code> customizes how an
-                    option is rendered. It receives the current item as
-                    <code>option</code>.
-                </p>
-                <p>
-                    <strong>Slot</strong>: <code>group</code> customizes the
-                    group label for each group.
-                </p>
-                <p>Here is a minimal implementation:</p>
-                <figure class="highlighted-code">
-                    <pre
-                        class="shiki light-plus"
-                        style="background-color: #ffffff; color: #000000"
-                        tabindex="0"
-                    ><code><span class="line"><span style="color:#800000">&#x3C;script</span><span style="color:#E50000"> setup</span><span style="color:#E50000"> lang</span><span style="color:#000000">=</span><span style="color:#0000FF">"ts"</span><span style="color:#800000">></span></span>
+            <template #docs><p>A combobox-style search that shows a list of results as an auto
+complete dropdown.</p>
+<p>The component doesn&#39;t perform any real searching. It emits events
+that can be used to trigger searches, and then the results are
+passed back to the component.</p>
+<p><strong>Events</strong>:</p>
+<ul>
+<li><code>submit</code> event is emitted when a search should be performed.</li>
+<li><code>select</code> event is submitted when a user makes a selection
+in the dropdown.</li>
+</ul>
+<div class="markdown-alert markdown-alert-note">
+<p class="markdown-alert-title"><svg class="octicon octicon-info mr-2" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+<p>The <code>v-model</code> value should <em>not</em> be used to trigger a search,
+but it can be used to get the current user input.</p>
+</div>
+<p><strong>Props</strong>:</p>
+<ul>
+<li><code>results</code> will be rendered in the dropdown. There are two options:<ul>
+<li>Pass an array of objects that extend <code>&lcub; id: string | number; title: string; }</code>.</li>
+<li>Pass an array of <code>GSearchGroup&lt;T&gt;</code> objects, where the <code>items</code> property extends the above type.
+In this case the results are grouped.</li>
+</ul>
+</li>
+<li><code>auto</code> makes search submit on user input. Defaults to <code>true</code>.
+if <code>false</code>, submission happens on Enter or clicking the search button.</li>
+<li><code>loading</code> shows a loading indicator. Use if the search may take longer.</li>
+</ul>
+<p><strong>Slot</strong>: <code>option</code> customizes how an option is rendered.
+It receives the current item as <code>option</code>.</p>
+<p><strong>Slot</strong>: <code>group</code> customizes the group label for each group.</p>
+<p>Here is a minimal implementation:</p>
+<figure class="highlighted-code">
+<pre class="shiki light-plus" style="background-color:#FFFFFF;color:#000000" tabindex="0"><code><span class="line"><span style="color:#800000">&#x3C;script</span><span style="color:#E50000"> setup</span><span style="color:#E50000"> lang</span><span style="color:#000000">=</span><span style="color:#0000FF">"ts"</span><span style="color:#800000">></span></span>
 <span class="line"><span style="color:#0000FF">interface</span><span style="color:#267F99"> SearchResult</span><span style="color:#000000"> &lcub;</span></span>
 <span class="line"><span style="color:#001080">    id</span><span style="color:#000000">: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#001080">    title</span><span style="color:#000000">: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
@@ -187,8 +131,9 @@ function selected(item: SearchResult) {
 <span class="line"><span style="color:#E50000">        @select</span><span style="color:#000000">=</span><span style="color:#0000FF">"selected"</span><span style="color:#800000">></span></span>
 <span class="line"><span style="color:#800000">    &#x3C;/GSearch></span></span>
 <span class="line"><span style="color:#800000">&#x3C;/template></span></span></code></pre>
-                </figure>
-            </template>
+</figure>
+
+</template>
             <template #default="{ props }">
                 <GSearch
                     v-bind="props"

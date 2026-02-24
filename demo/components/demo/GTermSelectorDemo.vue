@@ -18,26 +18,23 @@ const termYears = ref(["2026", "2025", "2024"]);
                 title: {
                     type: 'string',
                     label: 'Title for the popover.',
-                    default: 'Period Selection',
+                    default: 'Period Selection'
                 },
                 yearLabel: {
                     type: 'string',
                     label: 'Label for year select.',
-                    default: 'Select Year',
+                    default: 'Select Year'
                 },
                 periodLabel: {
                     type: 'string',
                     label: 'Label for period select.',
-                    default: 'Term',
-                },
+                    default: 'Term'
+                }
             }"
         >
-            <template #docs
-                ><p>
-                    A button that shows the selected term. Clicking it opens a
-                    popover that allows jumping to a different term.
-                </p>
-            </template>
+            <template #docs><p>A button that shows the selected term. Clicking it opens a popover
+that allows jumping to a different term.</p>
+</template>
             <template #default="{ props }">
                 <GTermSelector
                     v-bind="props"
