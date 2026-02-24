@@ -7,7 +7,7 @@ import {
     GTablePagination,
     BulkAction,
     TableRow,
-} from "@illinois-grad/grad-vue";
+} from "../../packages/grad-vue";
 
 export type CreateGTableFixtureOptions<
     T extends TableRow,
