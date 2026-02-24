@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import GTable from "../src/components/GTable.vue";
 import {
-    CellChangePayload,
+    TableColumn,
+    useFiltering,
     useTableChanges,
-} from "../src/compose/useTableChanges";
-import type { TableColumn } from "../src/components/table/TableColumn";
-import { useFiltering } from "../src/compose/useFiltering";
+    GTable,
+} from "../packages/grad-vue";
 
 interface ProductRow {
     key: string;
@@ -62,11 +61,7 @@ changeTracker.onChange((change) => {
 
     // Validate price
     if (columnKey === "price" && newValue < 0) {
-        changeTracker.setError(
-            rowKey,
-            columnKey,
-            "Price must be non-negative",
-        );
+        changeTracker.setError(rowKey, columnKey, "Price must be non-negative");
     } else if (
         columnKey === "price" &&
         changeTracker.hasError(rowKey, columnKey)
@@ -88,7 +83,6 @@ changeTracker.onChange((change) => {
         changeTracker.clearError(rowKey, columnKey);
     }
 });
-
 </script>
 
 <template>

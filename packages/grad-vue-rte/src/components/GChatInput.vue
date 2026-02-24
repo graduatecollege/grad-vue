@@ -168,6 +168,7 @@ defineExpose({ focusInput });
         font-size: 15px;
         max-height: 10em;
         flex: 1;
+        outline: none;
 
         p {
             margin: 0.375em 0 0;
@@ -248,12 +249,12 @@ defineExpose({ focusInput });
 .g-chat-input-wrap {
     position: relative;
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     background: var(--g-surface-0);
     border: 2px solid var(--g-primary-500);
     border-radius: 4px;
     padding: 0.5em;
-    min-height: 3em;
+
 
     &:focus-within {
         outline: 2px solid var(--g-primary-500);
@@ -274,7 +275,8 @@ defineExpose({ focusInput });
     border: 2px solid transparent;
     border-radius: 4px;
     padding: 0.4em;
-    margin-left: 0.5em;
+    margin: 0;
+    align-self: flex-end;
     cursor: pointer;
     display: flex;
     align-items: center;
