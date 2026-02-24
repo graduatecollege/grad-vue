@@ -1183,13 +1183,35 @@ interface Props {
 
 ## GChatInput
 
+The GChatInput component provides a rich text editing experience using Tiptap. It supports:
+
+ - **Bold** and *italic* text formatting
+ - Bullet and numbered lists
+ - Bubble menu for formatting (appears when text is selected)
+ - Press <kbd>Enter</kbd> to send, <kbd>Shift+Enter</kbd> for new line
+ - Undo/redo support
+
+ **Note**: This component is part of the `@illinois-grad/grad-vue-rte` package, which includes Tiptap dependencies.
+
 ### Props
 
 ```typescript
 interface Props {
+    /**
+     * Placeholder text
+     */
     placeholder?: string;
+    /**
+     * Disabled
+     */
     disabled?: boolean;
+    /**
+     * Maximum number of rows
+     */
     maxRows?: number;
+    /**
+     * Accessible label
+     */
     label?: string;
 }
 ```

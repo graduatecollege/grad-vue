@@ -26,31 +26,35 @@ function handleSend(content: object) {
                 placeholder: {
                     type: 'string',
                     label: 'Placeholder text',
-                    default: 'Type a comment...'
-                },
-                label: {
-                    type: 'string',
-                    label: 'Accessible label',
-                    default: 'Comment input'
+                    default: 'Type a comment'
                 },
                 disabled: {
                     type: 'boolean',
                     label: 'Disabled',
                     default: false
+                },
+                maxRows: {
+                    type: 'number',
+                    label: 'Maximum number of rows',
+                    default: 5
+                },
+                label: {
+                    type: 'string',
+                    label: 'Accessible label',
+                    default: 'Comment input'
                 }
             }"
         >
-            <template #docs>
-                <p>The <strong>GChatInput</strong> component provides a rich text editing experience using Tiptap. It supports:</p>
-                <ul>
-                    <li><strong>Bold</strong> and <em>italic</em> text formatting</li>
-                    <li>Bullet and numbered lists</li>
-                    <li>Bubble menu for formatting (appears when text is selected)</li>
-                    <li>Press <kbd>Enter</kbd> to send, <kbd>Shift+Enter</kbd> for new line</li>
-                    <li>Undo/redo support</li>
-                </ul>
-                <p><strong>Note:</strong> This component is part of the <code>@illinois-grad/grad-vue-rte</code> package, which includes Tiptap dependencies.</p>
-            </template>
+            <template #docs><p>The GChatInput component provides a rich text editing experience using Tiptap. It supports:</p>
+<ul>
+<li><strong>Bold</strong> and <em>italic</em> text formatting</li>
+<li>Bullet and numbered lists</li>
+<li>Bubble menu for formatting (appears when text is selected)</li>
+<li>Press <kbd>Enter</kbd> to send, <kbd>Shift+Enter</kbd> for new line</li>
+<li>Undo/redo support</li>
+</ul>
+<p> <strong>Note</strong>: This component is part of the <code>@illinois-grad/grad-vue-rte</code> package, which includes Tiptap dependencies.</p>
+</template>
             <template #default="{ props }">
                 <div class="demo-container">
                     <GChatInput 

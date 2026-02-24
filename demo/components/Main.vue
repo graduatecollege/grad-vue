@@ -137,6 +137,10 @@ onMounted(() => {
                     <h3>Installation</h3>
                     <p>To install grad-vue, use npm:</p>
                     <pre><code>npm install @illinois-grad/grad-vue</code></pre>
+
+                    <p>Some components come with heavy dependencies that are not appropriate for all projects. Those are split into separate packages to allow for more granular installation.</p>
+                    <pre><code>npm install @illinois-grad/grad-vue-rte</code></pre>
+
                     <h3>More Information</h3>
                     <p>
                         More details about the library can be found in the
