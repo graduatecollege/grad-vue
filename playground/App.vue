@@ -12,7 +12,6 @@ import {
 
 const sidebar = useSidebar();
 
-
 const activeId = ref<string>("");
 const alertOpen = ref(false);
 const alert2Open = ref(false);
@@ -540,6 +539,10 @@ const termYears = ref(["2026", "2025", "2024"]);
                 />
             </GSidebar>
             <main class="main" ref="main">
+                <section id="note-input">
+                    <h2>Note Input</h2>
+                    <GNoteInput />
+                </section>
                 <section id="user-menu">
                     <h2>User Menu</h2>
                     <GUserMenu
