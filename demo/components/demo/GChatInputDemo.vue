@@ -20,7 +20,6 @@ function handleSend(content: object) {
     <section id="chat-input" class="demo-section">
         <h2 class="demo-section__title">Chat Input</h2>
         <ComponentDemo
-            name="Basic Chat Input"
             description="A rich text input component for chat and comments with formatting support."
             component="GChatInput"
             :props-config="{
