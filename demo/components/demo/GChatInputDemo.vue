@@ -52,22 +52,22 @@ function handleSend(content: object) {
                 <p><strong>Note:</strong> This component is part of the <code>@illinois-grad/grad-vue-rte</code> package, which includes Tiptap dependencies.</p>
             </template>
             <template #default="{ props }">
-                <div style="max-width: 600px;">
+                <div class="demo-container">
                     <GChatInput 
                         v-model="comment"
                         v-bind="props"
                         @send="handleSend"
                     />
                     
-                    <div v-if="sentComments.length > 0" style="margin-top: 2rem;">
-                        <h3 style="font-size: 1rem; margin-bottom: 0.5rem;">Sent Comments:</h3>
+                    <div v-if="sentComments.length > 0" class="sent-comments">
+                        <h3 class="sent-comments__title">Sent Comments:</h3>
                         <div 
                             v-for="sent in sentComments" 
                             :key="sent.id"
-                            style="background: #f5f5f5; padding: 0.75rem; margin-bottom: 0.5rem; border-radius: 4px; font-size: 0.875rem;"
+                            class="sent-comment"
                         >
-                            <div style="color: #666; margin-bottom: 0.25rem;">{{ sent.timestamp }}</div>
-                            <pre style="margin: 0; white-space: pre-wrap; font-size: 0.75rem;">{{ sent.content }}</pre>
+                            <div class="sent-comment__timestamp">{{ sent.timestamp }}</div>
+                            <pre class="sent-comment__content">{{ sent.content }}</pre>
                         </div>
                     </div>
                 </div>
@@ -75,3 +75,37 @@ function handleSend(content: object) {
         </ComponentDemo>
     </section>
 </template>
+
+<style scoped>
+.demo-container {
+    max-width: 600px;
+}
+
+.sent-comments {
+    margin-top: 2rem;
+}
+
+.sent-comments__title {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.sent-comment {
+    background: #f5f5f5;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+}
+
+.sent-comment__timestamp {
+    color: #666;
+    margin-bottom: 0.25rem;
+}
+
+.sent-comment__content {
+    margin: 0;
+    white-space: pre-wrap;
+    font-size: 0.75rem;
+}
+</style>

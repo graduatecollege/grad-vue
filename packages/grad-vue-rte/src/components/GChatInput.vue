@@ -110,37 +110,51 @@ defineExpose({ focusInput });
                 <button
                     @click="editor.chain().focus().toggleBold().run()"
                     :class="{ bold: true, 'is-active': editor.isActive('bold') }"
+                    aria-label="Bold"
                 >
-                    <span class="fa-solid fa-bold" aria-label="Bold"></span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" width="16" height="16" fill="currentColor">
+                        <path d="M0 64C0 46.3 14.3 32 32 32H80 96 224c70.7 0 128 57.3 128 128c0 31.3-11.3 60.1-30 82.3c37.1 22.4 62 63.1 62 109.7c0 70.7-57.3 128-128 128H96 80 32c-17.7 0-32-14.3-32-32s14.3-32 32-32H48V256 96H32C14.3 96 0 81.7 0 64zM224 224c35.3 0 64-28.7 64-64s-28.7-64-64-64H112V224H224zM112 288V416H256c35.3 0 64-28.7 64-64s-28.7-64-64-64H224 112z"/>
+                    </svg>
                 </button>
                 <button
                     @click="editor.chain().focus().toggleItalic().run()"
                     :class="{ italic: true, 'is-active': editor.isActive('italic') }"
+                    aria-label="Italic"
                 >
-                    <span class="fa-solid fa-italic" aria-label="Italic"></span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" width="16" height="16" fill="currentColor">
+                        <path d="M128 64c0-17.7 14.3-32 32-32H352c17.7 0 32 14.3 32 32s-14.3 32-32 32H293.3L160 416h64c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H90.7L224 96H160c-17.7 0-32-14.3-32-32z"/>
+                    </svg>
                 </button>
                 <button
                     @click="editor.chain().focus().toggleOrderedList().run()"
-                    :class="{ italic: true, 'is-active': editor.isActive('orderedList') }"
+                    :class="{ 'is-active': editor.isActive('orderedList') }"
+                    aria-label="Ordered List"
                 >
-                    <span class="fa-solid fa-list-ol" aria-label="Ordered List"></span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="16" height="16" fill="currentColor">
+                        <path d="M24 56c0-13.3 10.7-24 24-24H80c13.3 0 24 10.7 24 24V176h16c13.3 0 24 10.7 24 24s-10.7 24-24 24H48c-13.3 0-24-10.7-24-24s10.7-24 24-24H64V80H48C34.7 80 24 69.3 24 56zM86.7 341.2c-6.5-7.4-18.3-6.9-24 1.2L51.5 357.9c-7.7 10.8-22.7 13.3-33.5 5.6s-13.3-22.7-5.6-33.5l11.1-15.6c23.7-33.2 72.3-35.6 99.2-4.9c21.3 24.4 20.8 60.9-1.1 84.7L86.8 432H120c13.3 0 24 10.7 24 24s-10.7 24-24 24H48c-9.5 0-18.2-5.6-22-14.4s-2.1-18.9 4.3-25.9l72-78c5.3-5.8 5.4-14.6 .3-20.5zM224 64H480c17.7 0 32 14.3 32 32s-14.3 32-32 32H224c-17.7 0-32-14.3-32-32s14.3-32 32-32zm0 160H480c17.7 0 32 14.3 32 32s-14.3 32-32 32H224c-17.7 0-32-14.3-32-32s14.3-32 32-32zm0 160H480c17.7 0 32 14.3 32 32s-14.3 32-32 32H224c-17.7 0-32-14.3-32-32s14.3-32 32-32z"/>
+                    </svg>
                 </button>
                 <button
                     @click="editor.chain().focus().toggleBulletList().run()"
-                    :class="{ italic: true, 'is-active': editor.isActive('bulletList') }"
+                    :class="{ 'is-active': editor.isActive('bulletList') }"
+                    aria-label="Unordered List"
                 >
-                    <span class="fa-solid fa-list-ul" aria-label="Unordered List"></span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="16" height="16" fill="currentColor">
+                        <path d="M40 48C26.7 48 16 58.7 16 72v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V72c0-13.3-10.7-24-24-24H40zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zM16 232v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V232c0-13.3-10.7-24-24-24H40c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V392c0-13.3-10.7-24-24-24H40z"/>
+                    </svg>
                 </button>
             </div>
         </BubbleMenu>
-        <EditorContent :editor="editor" ref="inputRef" />
+        <EditorContent :editor="editor" ref="inputRef" class="editor-content" />
         <button
             class="g-chat-send-btn"
             :disabled="props.disabled || !model || (model && Object.keys(model).length === 0)"
             @click="clickSend"
             aria-label="Add comment"
         >
-            <span class="fa-solid fa-paper-plane-top"></span>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="16" height="16" fill="currentColor">
+                <path d="M498.1 5.6c10.1 7 15.4 19.1 13.5 31.2l-64 416c-1.5 9.7-7.4 18.2-16 23s-18.9 5.4-28 1.6L284 427.7l-68.5 74.1c-8.9 9.7-22.9 12.9-35.2 8.1S160 493.2 160 480V396.4c0-4 1.5-7.8 4.2-10.7L331.8 202.8c5.8-6.3 5.6-16-.4-22s-15.7-6.4-22-.7L106 360.8 17.7 316.6C7.1 311.3 .3 300.7 0 288.9s5.9-22.8 16.1-28.7l448-256c10.7-6.1 23.9-5.5 34 1.4z"/>
+            </svg>
         </button>
     </div>
 </template>
@@ -148,12 +162,12 @@ defineExpose({ focusInput });
 <style>
 .g-chat-input-wrap {
     .tiptap {
-        background: var(--g-surface-0);
-        border: 2px solid var(--g-primary-500);
-        border-radius: 4px;
-        padding: 0.15em 2.1rem 0.15em 0.5em;
+        background: transparent;
+        border: none;
+        padding: 0.15em 0;
         font-size: 15px;
         max-height: 10em;
+        flex: 1;
 
         p {
             margin: 0.375em 0 0;
@@ -195,8 +209,13 @@ defineExpose({ focusInput });
 
     button {
         background-color: unset;
-        padding: 0.2rem 0.5rem;
+        padding: 0.4rem 0.5rem;
         font-size: 0.875rem;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
         &.bold {
             font-weight: 700;
@@ -225,6 +244,7 @@ defineExpose({ focusInput });
         }
     }
 }
+
 .g-chat-input-wrap {
     position: relative;
     display: flex;
@@ -232,51 +252,46 @@ defineExpose({ focusInput });
     background: var(--g-surface-0);
     border: 2px solid var(--g-primary-500);
     border-radius: 4px;
-    padding: 0.15em 0 0.15em 0.5em;
+    padding: 0.5em;
+    min-height: 3em;
 
-    &:has(.g-chat-input:focus) {
+    &:focus-within {
         outline: 2px solid var(--g-primary-500);
         outline-offset: 2px;
         box-shadow: 0 0 0 2px var(--g-info-200);
         border-color: var(--g-info-200);
-        outline: 2px solid var(--g-primary-500);
     }
 }
-.g-chat-input {
+
+.editor-content {
     flex: 1;
-    resize: none;
-    border: none;
-    background: var(--g-surface-0);
-    font-size: 0.9em;
-    color: var(--g-surface-950);
-    padding: 3px 0.1em 3px 0;
-    min-height: 1.8em;
-    max-height: 10em;
-    line-height: 1.2em;
+    min-width: 0;
 }
+
 .g-chat-send-btn {
-    position: absolute;
-    bottom: 0.6em;
-    right: 0.5em;
     color: var(--g-primary-500);
     font-size: 1em;
     border: 2px solid transparent;
     border-radius: 4px;
-    padding: 0.3em 0.4em 0.2em;
-    margin-left: 0.1em;
+    padding: 0.4em;
+    margin-left: 0.5em;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
+    background: transparent;
+    flex-shrink: 0;
+    
     &:hover:not(:disabled) {
         color: var(--g-accent-700);
-        text-decoration: underline;
-        text-underline-offset: 2px;
+        background-color: var(--g-surface-100);
     }
+    
     &:focus:not(:disabled) {
         background-color: var(--g-info-200);
         color: var(--g-primary-500);
     }
+    
     &:active:not(:disabled) {
         background-color: var(--g-primary-500);
         color: var(--g-surface-0);
