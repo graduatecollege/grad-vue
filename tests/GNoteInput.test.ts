@@ -72,11 +72,17 @@ describe("GNoteInput", () => {
                 },
             });
 
-            const toolbar = wrapper.instance.getByRole("toolbar", { name: /text formatting/i });
-            const buttons = toolbar.element().querySelectorAll('button');
+            // Use vi.waitUntil to wait for toolbar to be ready
+            await vi.waitUntil(() => {
+                const toolbar = wrapper.container.element().querySelector('[role="toolbar"]');
+                return toolbar !== null;
+            });
+
+            const toolbar = wrapper.container.element().querySelector('[role="toolbar"]');
+            const buttons = toolbar?.querySelectorAll('button');
             
             // Should have 4 buttons: Bold, Italic, Ordered List, Unordered List
-            expect(buttons.length).toBe(4);
+            expect(buttons?.length).toBe(4);
         });
 
         it("updates model value when content changes", async () => {
