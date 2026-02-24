@@ -202,6 +202,10 @@ onMounted(() => {
     padding: 2rem;
     max-width: 1400px;
     margin: var(--g-toolbar-height) auto 0;
+
+    @media screen and (max-width: 768px) {
+        padding: 1rem;
+    }
 }
 
 .demo-page {
@@ -221,6 +225,11 @@ onMounted(() => {
     ul {
         font-size: 1.125rem;
         line-height: 1.666;
+    }
+
+    pre {
+        white-space: pre-wrap;
+        font-size: 1rem;
     }
 }
 
@@ -341,11 +350,16 @@ pre.shiki {
     border-radius: 0.5rem;
     border: 1px solid var(--il-storm-80);
     font-size: 1rem;
+    overflow-x: auto;
 }
 
 pre.shiki code {
     display: block;
     padding: 0 1.5rem;
     transition: color 0.5s;
+
+    @media screen and (max-width: 768px) {
+        padding: 0 0.5rem;
+    }
 }
 </style>

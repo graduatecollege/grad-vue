@@ -42,7 +42,6 @@ const props = withDefaults(defineProps<Props>(), {
     propsConfig: () => ({}) as TypeForProps<T>,
     component: "",
     additional: false,
-    padding: "1.5rem",
 });
 
 // Store the dynamic props values
@@ -177,6 +176,10 @@ const componentResult = computed<ComponentResult | null>(() => {
     border-bottom: 1px solid var(--il-storm-70);
     background: var(--il-storm-95);
     border-radius: 8px 8px 0 0;
+
+    @media screen and (max-width: 768px) {
+        padding: 1rem;
+    }
 }
 
 .component-demo__title {
@@ -210,6 +213,12 @@ const componentResult = computed<ComponentResult | null>(() => {
     display: flex;
     align-items: center;
     justify-content: center;
+
+    padding: 1.5rem;
+
+    @media screen and (max-width: 768px) {
+        padding: 0.5rem;
+    }
 }
 
 .component-demo__preview-inner {
@@ -220,6 +229,11 @@ const componentResult = computed<ComponentResult | null>(() => {
     padding: 1.5rem;
     background: var(--il-storm-95);
     border-left: 1px solid var(--il-storm-70);
+
+
+    @media screen and (max-width: 768px) {
+        padding: 0.5rem;
+    }
 }
 
 .component-demo__controls-title {
@@ -268,6 +282,12 @@ const componentResult = computed<ComponentResult | null>(() => {
     box-shadow:
         2px 0 1rem rgba(0, 0, 0, 0.05),
         0 0 0.25rem rgba(0, 0, 0, 0.05);
+
+
+
+    @media screen and (max-width: 768px) {
+        padding: 0.5rem;
+    }
 }
 .component-demo__docs-summary {
     font-size: 1.25rem;

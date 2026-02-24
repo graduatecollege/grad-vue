@@ -1,12 +1,16 @@
 import { nextTick, Ref, ref, watch } from "vue";
 import { useFocusTrap } from "@vueuse/integrations/useFocusTrap";
 
-export function useOverlayFocus(element: Ref<HTMLElement | null>, isTop: Ref<boolean>) {
-
+export function useOverlayFocus(
+    element: Ref<HTMLElement | null>,
+    isTop: Ref<boolean>,
+    clickOutsideDeactivates = false,
+) {
     const unpausing = ref(false);
 
     const { activate, deactivate, pause, unpause } = useFocusTrap(element, {
         immediate: true,
+        clickOutsideDeactivates,
         initialFocus: () => {
             if (unpausing.value) {
                 return false;
@@ -19,7 +23,9 @@ export function useOverlayFocus(element: Ref<HTMLElement | null>, isTop: Ref<boo
             if (h2) {
                 return h2 as HTMLElement;
             }
-            const selected = element.value?.querySelector("[aria-selected='true']");
+            const selected = element.value?.querySelector(
+                "[aria-selected='true']",
+            );
             if (selected) {
                 return selected as HTMLElement;
             }
@@ -30,7 +36,7 @@ export function useOverlayFocus(element: Ref<HTMLElement | null>, isTop: Ref<boo
                 unpausing.value = false;
             }).catch((err) => {
                 console.error(err);
-            })
+            });
         },
     });
 
@@ -43,7 +49,7 @@ export function useOverlayFocus(element: Ref<HTMLElement | null>, isTop: Ref<boo
                 unpause();
             }).catch((err) => {
                 console.error(err);
-            })
+            });
         } else {
             pause();
         }
