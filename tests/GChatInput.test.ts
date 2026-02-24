@@ -44,7 +44,7 @@ describe("GChatInput", () => {
                 },
             });
 
-            const sendButton = wrapper.instance.getByRole("button", { name: "Add comment" });
+            const sendButton = wrapper.instance.getByRole("button", { name: /send comment/i });
             await expect.element(sendButton).toBeInTheDocument();
         });
 
@@ -55,7 +55,7 @@ describe("GChatInput", () => {
                 },
             });
 
-            const sendButton = wrapper.instance.getByRole("button", { name: "Add comment" });
+            const sendButton = wrapper.instance.getByRole("button", { name: /send comment/i });
             await expect.element(sendButton).toBeDisabled();
         });
 
@@ -68,7 +68,7 @@ describe("GChatInput", () => {
                 },
             });
 
-            const sendButton = wrapper.instance.getByRole("button", { name: "Add comment" });
+            const sendButton = wrapper.instance.getByRole("button", { name: /send comment/i });
             await userEvent.click(sendButton);
             
             expect(onSend).toHaveBeenCalled();
@@ -82,8 +82,42 @@ describe("GChatInput", () => {
                 },
             });
 
-            const sendButton = wrapper.instance.getByRole("button", { name: "Add comment" });
+            const sendButton = wrapper.instance.getByRole("button", { name: /send comment/i });
             await expect.element(sendButton).toBeDisabled();
+        });
+    });
+
+    describe("Accessibility Tests", () => {
+        it("has aria-keyshortcuts on editor", async () => {
+            const wrapper = mnt(GChatInput, {
+                props: {
+                    modelValue: "",
+                },
+            });
+
+            // Use vi.waitUntil to wait for editor to be ready
+            await vi.waitUntil(() => {
+                const editor = wrapper.container.element().querySelector('.tiptap');
+                return editor !== null;
+            });
+
+            const editor = wrapper.container.element().querySelector('.tiptap');
+            expect(editor?.getAttribute('aria-keyshortcuts')).toContain('Shift+Enter');
+            expect(editor?.getAttribute('aria-keyshortcuts')).toContain('Control+b');
+            expect(editor?.getAttribute('aria-keyshortcuts')).toContain('Control+i');
+        });
+
+        it("SVG icons have aria-hidden", async () => {
+            const wrapper = mnt(GChatInput, {
+                props: {
+                    modelValue: "",
+                },
+            });
+
+            const sendButton = wrapper.instance.getByRole("button", { name: /send comment/i });
+            const svg = sendButton.element().querySelector('svg');
+            
+            expect(svg?.getAttribute('aria-hidden')).toBe('true');
         });
     });
 });
