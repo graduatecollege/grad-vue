@@ -39,7 +39,7 @@ const props = withDefaults(defineProps<Props>(), {
 const model = defineModel<object | "">();
 
 const { editor, focusEditor } = useRichTextEditor({
-    content: model,
+    content: model as any,
     placeholder: computed(() => props.placeholder),
     label: computed(() => props.label),
 });

@@ -47,11 +47,11 @@ const model = defineModel<object | "">();
 const emit = defineEmits<{ send: [content: object] }>();
 
 const { editor, focusEditor } = useRichTextEditor({
-    content: model,
+    content: model as any,
     placeholder: computed(() => props.placeholder),
     label: computed(() => props.label),
     editorProps: {
-        handleKeyDown(view, event) {
+        handleKeyDown(view: any, event: any) {
             if (editor.value && event.key === "Enter") {
                 if (
                     editor.value.isActive("orderedList") ||

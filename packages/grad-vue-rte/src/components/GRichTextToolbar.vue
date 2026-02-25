@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import type { Editor } from "@tiptap/vue-3";
 import { useToolbarNavigation } from "../composables/useToolbarNavigation";
 
@@ -10,8 +10,9 @@ interface Props {
 const props = defineProps<Props>();
 
 const toolbarRef = ref<HTMLElement | null>(null);
+const editorRef = computed(() => props.editor);
 const { handleToolbarKeyDown, getButtonTabIndex } = useToolbarNavigation(
-    () => props.editor as any,
+    editorRef,
     toolbarRef,
 );
 </script>

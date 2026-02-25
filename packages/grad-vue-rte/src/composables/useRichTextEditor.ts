@@ -1,5 +1,5 @@
 import { toRaw, watch, type Ref } from "vue";
-import { useEditor, type Editor } from "@tiptap/vue-3";
+import { useEditor } from "@tiptap/vue-3";
 import Document from "@tiptap/extension-document";
 import Paragraph from "@tiptap/extension-paragraph";
 import Text from "@tiptap/extension-text";
@@ -9,15 +9,18 @@ import { ListKit } from "@tiptap/extension-list";
 import { UndoRedo, Placeholder } from "@tiptap/extensions";
 
 interface UseRichTextEditorOptions {
-    content: Ref<object | "">;
-    placeholder: string;
-    label: string;
-    onUpdate?: (editor: Editor) => void;
+    content: Ref<object | "" | undefined>;
+    placeholder: Ref<string> | string;
+    label: Ref<string> | string;
+    onUpdate?: (editor: any) => void;
     editorProps?: Record<string, any>;
 }
 
 export function useRichTextEditor(options: UseRichTextEditorOptions) {
     const { content, placeholder, label, onUpdate, editorProps = {} } = options;
+
+    const placeholderValue = typeof placeholder === 'string' ? placeholder : placeholder.value;
+    const labelValue = typeof label === 'string' ? label : label.value;
 
     const editor = useEditor({
         content: content.value || "",
@@ -29,12 +32,12 @@ export function useRichTextEditor(options: UseRichTextEditorOptions) {
             Italic,
             ListKit,
             UndoRedo,
-            Placeholder.configure({ placeholder }),
+            Placeholder.configure({ placeholder: placeholderValue }),
         ],
         editorProps: {
             ...editorProps,
             attributes: {
-                "aria-label": label,
+                "aria-label": labelValue,
                 ...editorProps.attributes,
             },
         },
@@ -48,7 +51,7 @@ export function useRichTextEditor(options: UseRichTextEditorOptions) {
 
     // Watch for label changes and update editor
     watch(
-        () => label,
+        () => typeof label === 'string' ? label : label.value,
         (val) => {
             if (editor.value) {
                 editor.value?.setOptions({
