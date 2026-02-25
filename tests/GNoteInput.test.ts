@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import GNoteInput from "../packages/grad-vue-rte/src/components/GNoteInput.vue";
-import { mnt } from "./test-utils";
+import { mnt, testAccessibility } from "./test-utils";
 import { page, userEvent } from "vitest/browser";
 
 describe("GNoteInput", () => {
@@ -75,23 +75,14 @@ describe("GNoteInput", () => {
             await expect.element(buttons.nth(2)).toBeInTheDocument();
             await expect.element(buttons.nth(3)).toBeInTheDocument();
         });
-
-        it("updates model value when content changes", async () => {
-            const modelValue = { type: "doc", content: [{ type: "paragraph" }] };
-            const wrapper = mnt(GNoteInput, {
-                props: {
-                    modelValue,
-                    "onUpdate:modelValue": (val: any) => {
-                        wrapper.props.modelValue = val;
-                    },
-                },
-            });
-
-            await expect.element(wrapper.instance).toBeInTheDocument();
-        });
     });
 
     describe("Accessibility Tests", () => {
+        it("with basic props", async () => {
+            await testAccessibility(GNoteInput, {
+            });
+        });
+
         it("toolbar has role and aria-label", async () => {
             const wrapper = mnt(GNoteInput, {
                 props: {

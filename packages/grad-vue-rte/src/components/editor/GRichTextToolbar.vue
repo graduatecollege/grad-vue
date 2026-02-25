@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref, computed } from "vue";
 import type { Editor } from "@tiptap/vue-3";
-import { useToolbarNavigation } from "../composables/useToolbarNavigation";
+import { useToolbarNavigation } from "../../composables/useToolbarNavigation.ts";
 
 interface Props {
     editor: Editor | undefined;
@@ -126,7 +126,6 @@ const { handleToolbarKeyDown, getButtonTabIndex } = useToolbarNavigation(
 
 <style scoped>
 .g-rich-text-toolbar {
-    background-color: var(--g-surface-100);
     display: flex;
 
     button {

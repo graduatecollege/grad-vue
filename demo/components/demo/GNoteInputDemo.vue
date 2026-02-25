@@ -17,11 +17,6 @@ const note = ref<object | "">("");
                     label: 'Placeholder text',
                     default: 'Write a note...'
                 },
-                disabled: {
-                    type: 'boolean',
-                    label: 'Disabled',
-                    default: false
-                },
                 label: {
                     type: 'string',
                     label: 'Accessible label',

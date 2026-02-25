@@ -14,7 +14,7 @@ import { computed } from "vue";
 import { EditorContent } from "@tiptap/vue-3";
 import { BubbleMenu } from "@tiptap/vue-3/menus";
 import { useRichTextEditor } from "../composables/useRichTextEditor";
-import GRichTextToolbar from "./GRichTextToolbar.vue";
+import GRichTextToolbar from "./editor/GRichTextToolbar.vue";
 
 defineOptions({ inheritAttrs: false });
 
@@ -173,6 +173,7 @@ defineExpose({ focusInput });
 <style scoped>
 .bubble-menu {
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+    background-color: var(--g-surface-100);
 
     :deep(button) {
         &:first-child {

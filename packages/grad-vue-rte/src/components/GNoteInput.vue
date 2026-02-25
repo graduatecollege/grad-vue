@@ -12,7 +12,7 @@
 import { computed } from "vue";
 import { EditorContent } from "@tiptap/vue-3";
 import { useRichTextEditor } from "../composables/useRichTextEditor";
-import GRichTextToolbar from "./GRichTextToolbar.vue";
+import GRichTextToolbar from "./editor/GRichTextToolbar.vue";
 
 defineOptions({ inheritAttrs: false });
 
@@ -22,10 +22,6 @@ interface Props {
      */
     placeholder?: string;
     /**
-     * Disabled
-     */
-    disabled?: boolean;
-    /**
      * Accessible label
      */
     label?: string;
@@ -34,7 +30,6 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
     placeholder: "Write a note...",
     label: "Note input",
-    disabled: false,
 });
 const model = defineModel<object | "">();
 
@@ -119,6 +114,7 @@ defineExpose({ focusInput });
 
 .toolbar {
     border-bottom: 1px solid var(--g-surface-200);
+    background-color: var(--g-surface-0);
     padding: 0.25rem;
 
     :deep(button) {
