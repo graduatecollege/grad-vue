@@ -3,6 +3,24 @@ import { Component, createApp, h, reactive, Ref, watch } from "vue";
 import { Locator, page, userEvent } from "vitest/browser";
 import { mounts } from "./setup";
 import { vi } from "vitest";
+import { generateText } from "@tiptap/core";
+import Document from "@tiptap/extension-document";
+import Paragraph from "@tiptap/extension-paragraph";
+import Text from "@tiptap/extension-text";
+import Bold from "@tiptap/extension-bold";
+import Italic from "@tiptap/extension-italic";
+import { ListKit } from "@tiptap/extension-list";
+
+/**
+ * Renders TipTap JSON model to plain text using the standard extensions
+ * 
+ * @param content - The TipTap JSON content to render
+ * @returns The plain text representation of the content
+ */
+export function renderTipTapText(content: any): string {
+    const extensions = [Document, Paragraph, Text, Bold, Italic, ListKit];
+    return generateText(content, extensions);
+}
 
 /**
  * Run accessibility tests on a component using axe-core

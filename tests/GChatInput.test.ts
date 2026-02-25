@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import GChatInput from "../packages/grad-vue-rte/src/components/GChatInput.vue";
-import { mnt } from "./test-utils";
+import { mnt, renderTipTapText } from "./test-utils";
 import { page, userEvent } from "vitest/browser";
 import { ref } from "vue";
 
@@ -75,17 +75,13 @@ describe("GChatInput", () => {
 
             // Wait for the model to update
             await vi.waitUntil(() => {
-                return model.value && 
-                    typeof model.value === 'object' && 
-                    model.value.type === 'doc';
+                return model.value && typeof model.value === 'object';
             });
 
-            // Verify the model contains the typed text
+            // Verify the rendered text matches what was typed
             expect(model.value).toBeTruthy();
-            expect(model.value.type).toBe('doc');
-            expect(model.value.content).toBeTruthy();
-            expect(model.value.content[0].content).toBeTruthy();
-            expect(model.value.content[0].content[0].text).toBe('Hello World');
+            const renderedText = renderTipTapText(model.value);
+            expect(renderedText).toBe('Hello World');
         });
     });
 
