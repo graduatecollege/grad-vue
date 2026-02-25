@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import GNoteInput from "../packages/grad-vue-rte/src/components/GNoteInput.vue";
 import { mnt, testAccessibility } from "./test-utils";
 import { page, userEvent } from "vitest/browser";
+import { ref } from "vue";
 
 describe("GNoteInput", () => {
     describe("Functional Tests", () => {
@@ -13,39 +14,6 @@ describe("GNoteInput", () => {
             });
 
             await expect.element(wrapper.instance).toBeInTheDocument();
-        });
-
-        it("renders with custom placeholder", async () => {
-            const wrapper = mnt(GNoteInput, {
-                props: {
-                    modelValue: "",
-                    placeholder: "Type your note here",
-                },
-            });
-
-            await expect.element(wrapper.instance).toBeInTheDocument();
-        });
-
-        it("renders with custom label", async () => {
-            const wrapper = mnt(GNoteInput, {
-                props: {
-                    modelValue: "",
-                    label: "Custom label",
-                },
-            });
-
-            await expect.element(wrapper.instance).toBeInTheDocument();
-        });
-
-        it("renders toolbar", async () => {
-            const wrapper = mnt(GNoteInput, {
-                props: {
-                    modelValue: "",
-                },
-            });
-
-            const toolbar = wrapper.instance.getByRole("toolbar", { name: /text formatting/i });
-            await expect.element(toolbar).toBeInTheDocument();
         });
 
         it("toolbar is always visible", async () => {
@@ -75,23 +43,46 @@ describe("GNoteInput", () => {
             await expect.element(buttons.nth(2)).toBeInTheDocument();
             await expect.element(buttons.nth(3)).toBeInTheDocument();
         });
+
+        it("updates model when text is typed in editor", async () => {
+            const model = ref<any>("");
+            const wrapper = mnt(GNoteInput, {
+                props: {
+                    modelValue: "",
+                },
+                model,
+            });
+
+            await expect.element(wrapper.instance).toBeInTheDocument();
+
+            // Find the editor (contenteditable element)
+            const editor = wrapper.container.element().querySelector('.tiptap');
+            expect(editor).toBeTruthy();
+
+            // Type text into the editor
+            await userEvent.click(editor as HTMLElement);
+            await userEvent.keyboard("Hello World");
+
+            // Wait for the model to update
+            await vi.waitUntil(() => {
+                return model.value && 
+                    typeof model.value === 'object' && 
+                    model.value.type === 'doc';
+            });
+
+            // Verify the model contains the typed text
+            expect(model.value).toBeTruthy();
+            expect(model.value.type).toBe('doc');
+            expect(model.value.content).toBeTruthy();
+            expect(model.value.content[0].content).toBeTruthy();
+            expect(model.value.content[0].content[0].text).toBe('Hello World');
+        });
     });
 
     describe("Accessibility Tests", () => {
         it("with basic props", async () => {
             await testAccessibility(GNoteInput, {
             });
-        });
-
-        it("toolbar has role and aria-label", async () => {
-            const wrapper = mnt(GNoteInput, {
-                props: {
-                    modelValue: "",
-                },
-            });
-
-            const toolbar = wrapper.instance.getByRole("toolbar", { name: /text formatting/i });
-            await expect.element(toolbar).toBeInTheDocument();
         });
 
         it("keyboard navigation works in toolbar", async () => {
