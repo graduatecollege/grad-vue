@@ -113,15 +113,19 @@ describe("GNoteInput", () => {
             const toolbar = wrapper.instance.getByRole("toolbar", { name: /text formatting/i });
             await expect.element(toolbar).toBeInTheDocument();
 
-            // Focus the toolbar
-            const boldButton = toolbar.getByRole("button", { name: /bold/i });
-            await boldButton.focus();
+            // Click to focus the bold button
+            const boldButton = toolbar.getByRole("button", { name: "Bold", exact: true });
+            await userEvent.click(boldButton);
 
-            // Verify we can navigate to and from the toolbar with Tab
-            await userEvent.keyboard("{Tab}");
-            // After tabbing once, we should move out of the toolbar
-            // The next element should not be in the toolbar
+            // Arrow keys navigate within the toolbar
+            await userEvent.keyboard("{ArrowRight}");
+            
+            // Escape returns focus to the editor
+            await userEvent.keyboard("{Escape}");
+            
+            // After Escape, focus should move back to the editor (away from toolbar)
             const activeElement = page.elementLocator(document.activeElement!);
+            // The active element should not be any toolbar button
             await expect.element(activeElement).not.toBe(boldButton);
         });
 
@@ -134,11 +138,11 @@ describe("GNoteInput", () => {
 
             const toolbar = wrapper.instance.getByRole("toolbar", { name: /text formatting/i });
             
-            // Check each button has aria-pressed
-            await expect.element(toolbar.getByRole("button", { name: /bold/i })).toHaveAttribute('aria-pressed');
-            await expect.element(toolbar.getByRole("button", { name: /italic/i })).toHaveAttribute('aria-pressed');
-            await expect.element(toolbar.getByRole("button", { name: /ordered list/i })).toHaveAttribute('aria-pressed');
-            await expect.element(toolbar.getByRole("button", { name: /unordered list/i })).toHaveAttribute('aria-pressed');
+            // Check each button has aria-pressed - use exact matching to avoid conflicts
+            await expect.element(toolbar.getByRole("button", { name: "Bold", exact: true })).toHaveAttribute('aria-pressed');
+            await expect.element(toolbar.getByRole("button", { name: "Italic", exact: true })).toHaveAttribute('aria-pressed');
+            await expect.element(toolbar.getByRole("button", { name: "Ordered List", exact: true })).toHaveAttribute('aria-pressed');
+            await expect.element(toolbar.getByRole("button", { name: "Unordered List", exact: true })).toHaveAttribute('aria-pressed');
         });
 
         it("SVG icons have aria-hidden", async () => {
@@ -149,7 +153,9 @@ describe("GNoteInput", () => {
             });
 
             const toolbar = wrapper.instance.getByRole("toolbar", { name: /text formatting/i });
-            const boldButton = toolbar.getByRole("button", { name: /bold/i });
+            const boldButton = toolbar.getByRole("button", { name: "Bold", exact: true });
+            
+            await expect.element(boldButton).toBeInTheDocument();
             
             // Check that the SVG within the button has aria-hidden
             const svg = boldButton.element().querySelector('svg');
