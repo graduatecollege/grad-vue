@@ -5,21 +5,22 @@ import { userEvent } from "vitest/browser";
 
 describe("GSearch", () => {
     describe("Functional Tests", () => {
-        it("renders with default props", () => {
-            const { container } = mnt(GSearch, {
+        it("renders with default props", async () => {
+            const { instance } = mnt(GSearch, {
                 props: {
                     modelValue: "",
                     results: [],
                 },
             });
 
-            expect(container.element().querySelector("input")).toBeTruthy();
+            const input = instance.getByRole("searchbox");
+            await expect.element(input).toBeInTheDocument();
         });
 
         it("with auto enabled, submit event should be fired with typing, after debounce", async () => {
             vi.useFakeTimers();
             const callback = vi.fn();
-            const { container } = mnt(GSearch, {
+            const { instance } = mnt(GSearch, {
                 props: {
                     results: [],
                     auto: true,
@@ -27,7 +28,7 @@ describe("GSearch", () => {
                 },
             });
 
-            const input = container.element().querySelector("input")!;
+            const input = instance.getByRole("searchbox");
             await userEvent.type(input, "test");
 
             // Should not have submitted immediately
@@ -43,7 +44,7 @@ describe("GSearch", () => {
         it("with auto enabled, typing and waiting for debounce, and then typing again, should submit again", async () => {
             vi.useFakeTimers();
             const callback = vi.fn();
-            const { container, app, setProps } = mnt(GSearch, {
+            const { instance, app, setProps } = mnt(GSearch, {
                 props: {
                     modelValue: "",
                     results: [],
@@ -52,7 +53,7 @@ describe("GSearch", () => {
                 },
             });
 
-            const input = container.element().querySelector("input")!;
+            const input = instance.getByRole("searchbox");
 
             // First type
             await userEvent.type(input, "test");
@@ -73,7 +74,7 @@ describe("GSearch", () => {
         it("with auto disabled, should not submit on typing", async () => {
             const callback = vi.fn();
             vi.useFakeTimers();
-            const { container } = mnt(GSearch, {
+            const { instance } = mnt(GSearch, {
                 props: {
                     modelValue: "",
                     results: [],
@@ -82,7 +83,7 @@ describe("GSearch", () => {
                 },
             });
 
-            const input = container.element().querySelector("input")!;
+            const input = instance.getByRole("searchbox");
             await userEvent.type(input, "test");
 
             await vi.advanceTimersByTimeAsync(1000);

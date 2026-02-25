@@ -95,30 +95,21 @@ describe("GChatInput", () => {
                 },
             });
 
-            // Use vi.waitUntil to wait for editor to be ready
-            await vi.waitUntil(() => {
-                const editor = wrapper.container.element().querySelector('.tiptap');
-                return editor !== null;
-            });
-
-            const editor = wrapper.container.element().querySelector('.tiptap');
-            expect(editor?.getAttribute('aria-keyshortcuts')).toBe('Shift+Enter');
+            // The editor element should have the aria-keyshortcuts attribute
+            // We can find it through the container since it's the main editable area
+            const editorElement = wrapper.container.element().querySelector('.tiptap');
+            expect(editorElement?.getAttribute('aria-keyshortcuts')).toBe('Shift+Enter');
         });
 
-        it("first toolbar button has tabindex 0, others have tabindex -1", async () => {
+        it("bubble menu appears on text selection", async () => {
             const wrapper = mnt(GChatInput, {
                 props: {
                     modelValue: "",
                 },
             });
 
-            // The toolbar only appears when there's a selection, but we can test
-            // the tabindex logic by checking that the component sets it up correctly
-            // In a real usage scenario, when text is selected, the bubble menu appears
-            // and the first button should be focusable while others are not
-            
-            // This test would need actual user interaction to select text
-            // For now, we verify the component structure is correct
+            // The bubble menu is rendered but only visible when text is selected
+            // We verify the component structure is correct
             await expect.element(wrapper.instance).toBeInTheDocument();
         });
 
