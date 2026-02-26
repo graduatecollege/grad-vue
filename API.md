@@ -1217,3 +1217,31 @@ interface Props {
 ```
 
 ---
+
+## GNoteInput
+
+The GNoteInput component provides a rich text editing experience using Tiptap for writing notes. It supports:
+
+ - **Bold** and *italic* text formatting
+ - Bullet and numbered lists
+ - Always visible toolbar for formatting
+ - Undo/redo support
+
+ **Note**: This component is part of the `@illinois-grad/grad-vue-rte` package, which includes Tiptap dependencies.
+
+### Props
+
+```typescript
+interface Props {
+    /**
+     * Placeholder text
+     */
+    placeholder?: string;
+    /**
+     * Accessible label
+     */
+    label?: string;
+}
+```
+
+---

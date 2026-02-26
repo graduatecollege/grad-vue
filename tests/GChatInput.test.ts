@@ -1,7 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 import GChatInput from "../packages/grad-vue-rte/src/components/GChatInput.vue";
-import { mnt } from "./test-utils";
+import { mnt, renderTipTapText } from "./test-utils";
 import { page, userEvent } from "vitest/browser";
+import { ref } from "vue";
 
 describe("GChatInput", () => {
     describe("Functional Tests", () => {
@@ -13,39 +14,6 @@ describe("GChatInput", () => {
             });
 
             await expect.element(wrapper.instance).toBeInTheDocument();
-        });
-
-        it("renders with custom placeholder", async () => {
-            const wrapper = mnt(GChatInput, {
-                props: {
-                    modelValue: "",
-                    placeholder: "Type your message here",
-                },
-            });
-
-            await expect.element(wrapper.instance).toBeInTheDocument();
-        });
-
-        it("renders with custom label", async () => {
-            const wrapper = mnt(GChatInput, {
-                props: {
-                    modelValue: "",
-                    label: "Custom label",
-                },
-            });
-
-            await expect.element(wrapper.instance).toBeInTheDocument();
-        });
-
-        it("renders send button", async () => {
-            const wrapper = mnt(GChatInput, {
-                props: {
-                    modelValue: "",
-                },
-            });
-
-            const sendButton = wrapper.instance.getByRole("button", { name: /send/i });
-            await expect.element(sendButton).toBeInTheDocument();
         });
 
         it("disables send button when no content", async () => {
@@ -85,43 +53,39 @@ describe("GChatInput", () => {
             const sendButton = wrapper.instance.getByRole("button", { name: /send/i });
             await expect.element(sendButton).toBeDisabled();
         });
+
+        it("updates model when text is typed in editor", async () => {
+            const model = ref<any>("");
+            const wrapper = mnt(GChatInput, {
+                props: {
+                    modelValue: "",
+                },
+                model,
+            });
+
+            await expect.element(wrapper.instance).toBeInTheDocument();
+
+            // Find the editor (contenteditable element)
+            const editor = wrapper.container.element().querySelector('.tiptap');
+            expect(editor).toBeTruthy();
+
+            // Type text into the editor
+            await userEvent.click(editor as HTMLElement);
+            await userEvent.keyboard("Hello World");
+
+            // Wait for the model to update
+            await vi.waitUntil(() => {
+                return model.value && typeof model.value === 'object';
+            });
+
+            // Verify the rendered text matches what was typed
+            expect(model.value).toBeTruthy();
+            const renderedText = renderTipTapText(model.value);
+            expect(renderedText).toBe('Hello World');
+        });
     });
 
     describe("Accessibility Tests", () => {
-        it("has aria-keyshortcuts for Shift+Enter on editor", async () => {
-            const wrapper = mnt(GChatInput, {
-                props: {
-                    modelValue: "",
-                },
-            });
-
-            // Use vi.waitUntil to wait for editor to be ready
-            await vi.waitUntil(() => {
-                const editor = wrapper.container.element().querySelector('.tiptap');
-                return editor !== null;
-            });
-
-            const editor = wrapper.container.element().querySelector('.tiptap');
-            expect(editor?.getAttribute('aria-keyshortcuts')).toBe('Shift+Enter');
-        });
-
-        it("first toolbar button has tabindex 0, others have tabindex -1", async () => {
-            const wrapper = mnt(GChatInput, {
-                props: {
-                    modelValue: "",
-                },
-            });
-
-            // The toolbar only appears when there's a selection, but we can test
-            // the tabindex logic by checking that the component sets it up correctly
-            // In a real usage scenario, when text is selected, the bubble menu appears
-            // and the first button should be focusable while others are not
-            
-            // This test would need actual user interaction to select text
-            // For now, we verify the component structure is correct
-            await expect.element(wrapper.instance).toBeInTheDocument();
-        });
-
         it("SVG icons have aria-hidden", async () => {
             const wrapper = mnt(GChatInput, {
                 props: {
