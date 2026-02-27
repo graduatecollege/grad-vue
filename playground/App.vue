@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, h, onMounted, provide, ref, useTemplateRef } from "vue";
 
-import DemoResult from "../demo/components/DemoResult.vue";
+import DemoResult from "./DemoResult.vue";
 
 const formData = ref<Record<string, any>>({});
 const submitResult = ref<string>("");
