@@ -6,7 +6,7 @@
  * All non-prop attributes are passed through to the input element, including
  * `id`.
  * 
- * Errors can be provided as an array of strings or computed values.
+ * Errors are provided as an array of strings or computed values.
  * Multiple errors will all be displayed.
  */
 
@@ -29,10 +29,6 @@ type Props = {
      * Disabled
      */
     disabled?: boolean;
-    /**
-     * Error message (deprecated - use errors array)
-     */
-    error?: string;
     /**
      * Error messages array (supports multiple validation errors)
      */
@@ -64,7 +60,6 @@ const props = withDefaults(defineProps<Props>(), {
     instructions: "",
     placeholder: "",
     disabled: false,
-    error: "",
     errors: () => [],
     prefix: "",
     suffix: "",
@@ -86,11 +81,6 @@ const displayErrors = computed(() => {
     // Add prop errors
     if (props.errors && props.errors.length > 0) {
         allErrors.push(...props.errors);
-    }
-    
-    // Add single error prop for backward compatibility
-    if (props.error) {
-        allErrors.push(props.error);
     }
     
     // Add field errors from reactive state

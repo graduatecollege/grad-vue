@@ -21,10 +21,6 @@ type Props = {
      */
     disabled?: boolean;
     /**
-     * Error message (deprecated - use errors array)
-     */
-    error?: string;
-    /**
      * Error messages array (supports multiple validation errors)
      */
     errors?: string[];
@@ -43,7 +39,6 @@ const props = withDefaults(defineProps<Props>(), {
     instructions: "",
     placeholder: "",
     disabled: false,
-    error: "",
     errors: () => [],
     name: undefined,
 });
@@ -58,7 +53,6 @@ const model = defineModel<string | null>({ type: String });
         :label="props.label"
         :placeholder="props.placeholder"
         :disabled="props.disabled"
-        :error="props.error"
         :errors="props.errors"
         :instructions="props.instructions"
         type="email"

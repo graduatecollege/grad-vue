@@ -27,10 +27,6 @@ type Props = {
      */
     disabled?: boolean;
     /**
-     * Error message (deprecated - use errors array)
-     */
-    error?: string;
-    /**
      * Error messages array (supports multiple validation errors)
      */
     errors?: string[];
@@ -50,7 +46,6 @@ const props = withDefaults(defineProps<Props>(), {
     endLabel: "End Date",
     instructions: "",
     disabled: false,
-    error: "",
     errors: () => [],
     name: undefined,
 });
@@ -77,11 +72,6 @@ const displayErrors = computed(() => {
     // Add prop errors
     if (props.errors && props.errors.length > 0) {
         allErrors.push(...props.errors);
-    }
-    
-    // Add single error prop for backward compatibility
-    if (props.error) {
-        allErrors.push(props.error);
     }
     
     // Add field errors from reactive state
