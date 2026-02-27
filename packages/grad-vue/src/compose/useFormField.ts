@@ -67,6 +67,8 @@ export function useFormField(options: UseFormFieldOptions): UseFormFieldReturn {
     // Register field with form if name is provided
     if (form && options.name) {
         onMounted(() => {
+            // Note: FormField interface requires name field for consistency,
+            // even though it's also used as the registration key
             form.registerField(options.name!, {
                 name: options.name!,
                 value: options.value,
