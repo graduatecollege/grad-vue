@@ -1,7 +1,7 @@
 {
-  "totalComponents": 35,
-  "totalTests": 272,
-  "passedTests": 272,
+  "totalComponents": 34,
+  "totalTests": 271,
+  "passedTests": 271,
   "failedTests": 0,
   "skippedTests": 0,
   "components": {
@@ -2088,21 +2088,6 @@
           "ancestors": [
             "Accessibility Tests"
           ]
-        }
-      ]
-    },
-    "shallowReactive approach test": {
-      "component": "shallowReactive approach test",
-      "total": 1,
-      "passed": 1,
-      "failed": 0,
-      "skipped": 0,
-      "status": "passed",
-      "tests": [
-        {
-          "title": "shallowReactive prevents deep unwrapping and maintains reactivity",
-          "status": "passed",
-          "ancestors": []
         }
       ]
     },
