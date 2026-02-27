@@ -7,7 +7,8 @@
  * `id`.
  */
 
-import { ref, useAttrs, useId, watch } from "vue";
+import { ref, useAttrs, useId, watch, inject, onMounted, onBeforeUnmount, computed } from "vue";
+import { UseFormReturn } from "../compose/useForm.ts";
 defineOptions({
     inheritAttrs: false,
 });
@@ -45,6 +46,10 @@ type Props = {
      * Debounce in milliseconds
      */
     debounce?: number;
+    /**
+     * Name for form registration
+     */
+    name?: string;
 };
 
 const props = withDefaults(defineProps<Props>(), {
@@ -56,10 +61,38 @@ const props = withDefaults(defineProps<Props>(), {
     prefix: "",
     suffix: "",
     debounce: 100,
+    name: undefined,
 });
 const model = defineModel<string | null>({ type: String });
 
 const id = useId();
+const form = inject<UseFormReturn | null>("form", null);
+
+const errorMessage = ref(props.error);
+
+const displayError = computed(() => errorMessage.value || props.error);
+
+if (form && props.name) {
+    onMounted(() => {
+        form.registerField(props.name!, {
+            name: props.name!,
+            value: model,
+            error: errorMessage,
+            setValue: (value: any) => {
+                model.value = value;
+            },
+            setError: (error: string) => {
+                errorMessage.value = error;
+            },
+        });
+    });
+
+    onBeforeUnmount(() => {
+        if (props.name) {
+            form.unregisterField(props.name);
+        }
+    });
+}
 
 const emit = defineEmits<{
     change: [
@@ -133,7 +166,7 @@ function onKeydown(e: KeyboardEvent) {
 <template>
     <div
         class="g-text-input-wrap"
-        :class="{ 'g-text-input-has-error': props.error }"
+        :class="{ 'g-text-input-has-error': displayError }"
     >
         <label
             v-if="props.label"
@@ -169,18 +202,18 @@ function onKeydown(e: KeyboardEvent) {
                         $slots.instructions || instructions
                             ? 'instructions-' + id
                             : undefined,
-                    'aria-errormessage': props.error
+                    'aria-errormessage': displayError
                         ? 'error-message-' + id
                         : undefined,
                 }"
-                :aria-invalid="props.error ? 'true' : 'false'"
+                :aria-invalid="displayError ? 'true' : 'false'"
             />
             <span v-if="props.suffix" class="g-text-input-suffix">{{
                 props.suffix
             }}</span>
         </div>
         <div
-            v-if="props.error"
+            v-if="displayError"
             class="error-message"
             :id="'error-message-' + id"
             role="alert"
@@ -192,7 +225,7 @@ function onKeydown(e: KeyboardEvent) {
                     d="M320 64C334.7 64 348.2 72.1 355.2 85L571.2 485C577.9 497.4 577.6 512.4 570.4 524.5C563.2 536.6 550.1 544 536 544L104 544C89.9 544 76.8 536.6 69.6 524.5C62.4 512.4 62.1 497.4 68.8 485L284.8 85C291.8 72.1 305.3 64 320 64zM320 416C302.3 416 288 430.3 288 448C288 465.7 302.3 480 320 480C337.7 480 352 465.7 352 448C352 430.3 337.7 416 320 416zM320 224C301.8 224 287.3 239.5 288.6 257.7L296 361.7C296.9 374.2 307.4 384 319.9 384C332.5 384 342.9 374.3 343.8 361.7L351.2 257.7C352.5 239.5 338.1 224 319.8 224z"
                 />
             </svg>
-            {{ props.error }}
+            {{ displayError }}
         </div>
     </div>
 </template>

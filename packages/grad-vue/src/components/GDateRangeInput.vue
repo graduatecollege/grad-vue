@@ -5,8 +5,9 @@
  * This component uses two GDateInput components laid out horizontally
  * to allow selecting a date range.
  */
-import { ref, watch } from "vue";
+import { ref, watch, inject, onMounted, onBeforeUnmount, computed } from "vue";
 import GDateInput from "./GDateInput.vue";
+import { UseFormReturn } from "../compose/useForm.ts";
 
 type Props = {
     /**
@@ -33,6 +34,10 @@ type Props = {
      * Instructions
      */
     instructions?: string;
+    /**
+     * Name for form registration
+     */
+    name?: string;
 };
 
 const props = withDefaults(defineProps<Props>(), {
@@ -42,6 +47,7 @@ const props = withDefaults(defineProps<Props>(), {
     instructions: "",
     disabled: false,
     error: "",
+    name: undefined,
 });
 
 type DateRange = {
@@ -55,6 +61,33 @@ const model = defineModel<DateRange>({
 
 const startDate = ref<string | null>(model.value.start || null);
 const endDate = ref<string | null>(model.value.end || null);
+
+const form = inject<UseFormReturn | null>("form", null);
+const errorMessage = ref(props.error);
+
+const displayError = computed(() => errorMessage.value || props.error);
+
+if (form && props.name) {
+    onMounted(() => {
+        form.registerField(props.name!, {
+            name: props.name!,
+            value: model,
+            error: errorMessage,
+            setValue: (value: any) => {
+                model.value = value;
+            },
+            setError: (error: string) => {
+                errorMessage.value = error;
+            },
+        });
+    });
+
+    onBeforeUnmount(() => {
+        if (props.name) {
+            form.unregisterField(props.name);
+        }
+    });
+}
 
 watch([startDate, endDate], () => {
     model.value = {
@@ -102,8 +135,8 @@ watch(
                 class="g-date-range-input__field"
             />
         </div>
-        <div v-if="props.error" class="g-date-range-input__error" role="alert">
-            {{ props.error }}
+        <div v-if="displayError" class="g-date-range-input__error" role="alert">
+            {{ displayError }}
         </div>
     </div>
 </template>

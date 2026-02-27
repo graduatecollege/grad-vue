@@ -28,6 +28,10 @@ type Props = {
      * Instructions
      */
     instructions?: string;
+    /**
+     * Name for form registration
+     */
+    name?: string;
 };
 
 const props = withDefaults(defineProps<Props>(), {
@@ -36,6 +40,7 @@ const props = withDefaults(defineProps<Props>(), {
     placeholder: "",
     disabled: false,
     error: "",
+    name: undefined,
 });
 
 const model = defineModel<string | null>({ type: String });
@@ -44,6 +49,7 @@ const model = defineModel<string | null>({ type: String });
 <template>
     <GTextInput
         v-model="model"
+        :name="props.name"
         :label="props.label"
         :placeholder="props.placeholder"
         :disabled="props.disabled"

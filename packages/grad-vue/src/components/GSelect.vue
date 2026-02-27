@@ -10,8 +10,9 @@
  * The `options` prop can be an array of strings or objects with `label`
  * and `value` properties.
  */
-import { computed, nextTick, onBeforeUnmount, ref, useId, watch } from "vue";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, useId, watch, inject } from "vue";
 import { useOverlayStack } from "../compose/useOverlayStack.ts";
+import { UseFormReturn } from "../compose/useForm.ts";
 
 interface OptionType {
     label: string;
@@ -74,6 +75,31 @@ const activeIndex = ref(0);
 const ignoreBlur = ref(false);
 const ignoreFocus = ref(false);
 const { push, pop, isTop } = useOverlayStack(baseId);
+
+const form = inject<UseFormReturn | null>("form", null);
+const errorMessage = ref("");
+
+if (form && props.name) {
+    onMounted(() => {
+        form.registerField(props.name!, {
+            name: props.name!,
+            value: model,
+            error: errorMessage,
+            setValue: (value: any) => {
+                model.value = value;
+            },
+            setError: (error: string) => {
+                errorMessage.value = error;
+            },
+        });
+    });
+
+    onBeforeUnmount(() => {
+        if (props.name) {
+            form.unregisterField(props.name);
+        }
+    });
+}
 
 const menuPlacement = ref<"below" | "above">("below");
 const menuMaxHeight = ref<number | null>(null);
