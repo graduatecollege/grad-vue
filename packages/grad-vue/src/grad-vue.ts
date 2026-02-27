@@ -28,6 +28,8 @@ import GCurrencyInput from "./components/GCurrencyInput.vue";
 import GEmailInput from "./components/GEmailInput.vue";
 import GDateInput from "./components/GDateInput.vue";
 import GDateRangeInput from "./components/GDateRangeInput.vue";
+import GForm from "./components/GForm.vue";
+import GSubmitButton from "./components/GSubmitButton.vue";
 
 import "./css/main.css";
 import VGtooltip from "./directives/v-gtooltip.ts";
@@ -64,6 +66,8 @@ export {
     GEmailInput,
     GDateInput,
     GDateRangeInput,
+    GForm,
+    GSubmitButton,
 };
 
 export { calculatePopoverPosition } from "./compose/popoverPosition";
@@ -76,6 +80,10 @@ export {
 
 export { useActiveLinkContent } from "./compose/useActiveLink";
 export { useSidebar } from "./compose/useSidebar";
+export { useForm } from "./compose/useForm";
+export type { UseFormReturn, FormField } from "./compose/useForm";
+export { useFormField } from "./compose/useFormField";
+export type { UseFormFieldReturn, UseFormFieldOptions } from "./compose/useFormField";
 export {
     useFiltering,
     filtersToQueryParams,

@@ -29,11 +29,6 @@ const textValue = ref("");
                     label: 'Disabled',
                     default: false
                 },
-                error: {
-                    type: 'string',
-                    label: 'Error message',
-                    default: ''
-                },
                 instructions: {
                     type: 'string',
                     label: 'Instructions',
@@ -56,10 +51,12 @@ const textValue = ref("");
                 }
             }"
         >
-            <template #docs><p>A text input with styling for a label, instructions, and an error message.</p>
+            <template #docs><p>A text input with styling for a label, instructions, and error messages.</p>
 <p>If <code>label</code> is omitted, an accessible label must be provided some other way.
 All non-prop attributes are passed through to the input element, including
 <code>id</code>.</p>
+<p>Errors are provided as an array of strings or computed values.
+Multiple errors will all be displayed.</p>
 </template>
             <template #default="{ props }">
                 <GTextInput

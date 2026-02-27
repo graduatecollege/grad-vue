@@ -8,7 +8,9 @@
  * In addition to `v-model`, a `change` event is emitted when the
  * option changes from user interaction.
  */
-import { computed, useId } from "vue";
+import { computed, useId, toRef } from "vue";
+import { useFormField } from "../compose/useFormField.ts";
+import GFormErrorMessages from "./form/GFormErrorMessages.vue";
 
 interface OptionType {
     label: string;
@@ -25,26 +27,35 @@ interface Props {
      * Size
      */
     size?: "small" | "medium" | "large";
-    /**
-     * Name
-     */
+    // Name for form registration
     name?: string;
     /**
      * Disabled
      */
     disabled?: boolean;
+
+    // Error messages array (supports multiple validation errors)
+    errors?: string[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
     size: "medium",
     name: undefined,
     disabled: false,
+    errors: () => [],
 });
 
 const emit = defineEmits(["change"]);
 const model = defineModel<string | number>({default: () => ""});
 
 const baseId = useId();
+
+// Use form field composable for form registration and error handling
+const { displayErrors, hasErrors } = useFormField({
+    name: props.name,
+    value: model,
+    errors: toRef(props, 'errors'),
+});
 
 const normalizedOptions = computed(() => {
     return props.options.map((opt) => {
@@ -78,7 +89,8 @@ function onChange(val: string | number) {
 <template>
     <fieldset :class="groupClasses" :disabled="props.disabled">
         <legend class="g-select-btn-legend">{{ props.label }}</legend>
-        <div class="g-select-btn-row">
+        <div class="g-select-btn-wrapper" :class="{ 'g-select-btn-has-error': hasErrors }">
+            <div class="g-select-btn-row">
             <template
                 v-for="(option, idx) in normalizedOptions"
                 :key="option.value"
@@ -101,6 +113,11 @@ function onChange(val: string | number) {
                 </label>
             </template>
         </div>
+        <GFormErrorMessages
+            :errors="displayErrors"
+            :id="'error-message-' + baseId"
+        />
+    </div>
     </fieldset>
 </template>
 
@@ -187,5 +204,14 @@ function onChange(val: string | number) {
     border-top-right-radius: var(--g-border-radius-m);
     border-bottom-right-radius: var(--g-border-radius-m);
     border-right-width: 2px;
+}
+
+.g-select-btn-has-error .g-select-btn-row {
+    border: 2px solid var(--g-danger-600);
+    border-radius: var(--g-border-radius-m);
+}
+
+.g-select-btn-has-error .g-select-btn {
+    background: var(--g-danger-100);
 }
 </style>

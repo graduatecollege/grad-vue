@@ -20,14 +20,15 @@ type Props = {
      * Disabled
      */
     disabled?: boolean;
-    /**
-     * Error message
-     */
-    error?: string;
+
+    // Error messages array (supports multiple validation errors)
+    errors?: string[];
     /**
      * Instructions
      */
     instructions?: string;
+    // Name for form registration
+    name?: string;
 };
 
 const props = withDefaults(defineProps<Props>(), {
@@ -35,7 +36,8 @@ const props = withDefaults(defineProps<Props>(), {
     instructions: "",
     placeholder: "",
     disabled: false,
-    error: "",
+    errors: () => [],
+    name: undefined,
 });
 
 const model = defineModel<string | null>({ type: String });
@@ -44,11 +46,12 @@ const model = defineModel<string | null>({ type: String });
 <template>
     <GTextInput
         v-model="model"
-        :label="props.label"
-        :placeholder="props.placeholder"
-        :disabled="props.disabled"
-        :error="props.error"
-        :instructions="props.instructions"
+        :name="name"
+        :label="label"
+        :placeholder="placeholder"
+        :disabled="disabled"
+        :errors="errors"
+        :instructions="instructions"
         type="email"
         v-bind="$attrs"
     />

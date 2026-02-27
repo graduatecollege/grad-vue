@@ -37,6 +37,7 @@ import GChatInputDemo from "~/components/demo/GChatInputDemo.vue";
 import GNoteInputDemo from "~/components/demo/GNoteInputDemo.vue";
 import { onMounted, provide } from "vue";
 import { useTemplateRef } from "#imports";
+import GFormDemo from "~/components/demo/GFormDemo.vue";
 
 const sidebar = useSidebar();
 provide("sidebar", sidebar);
@@ -61,6 +62,7 @@ const demoComponents = [
     { label: "Date Range Input", component: GDateRangeInputDemo },
     { label: "Detail List", component: GDetailListDemo },
     { label: "Email Input", component: GEmailInputDemo },
+    { label: "Form", component: GFormDemo },
     { label: "Hamburger Menu", component: GHamburgerMenuDemo },
     { label: "History Scroller", component: GHistoryScrollerDemo },
     { label: "Modal", component: GModalDemo },

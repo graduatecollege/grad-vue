@@ -177,14 +177,15 @@ interface Props {
      * Disabled
      */
     disabled?: boolean;
-    /**
-     * Error message
-     */
-    error?: string;
+
+    // Error messages array (supports multiple validation errors)
+    errors?: string[];
     /**
      * Instructions
      */
     instructions?: string;
+    // Name for form registration
+    name?: string;
 }
 ```
 
@@ -213,14 +214,15 @@ interface Props {
      * Disabled
      */
     disabled?: boolean;
-    /**
-     * Error message
-     */
-    error?: string;
+
+    // Error messages array (supports multiple validation errors)
+    errors?: string[];
     /**
      * Instructions
      */
     instructions?: string;
+    // Name for form registration
+    name?: string;
 }
 ```
 
@@ -253,14 +255,15 @@ interface Props {
      * Disabled
      */
     disabled?: boolean;
-    /**
-     * Error message
-     */
-    error?: string;
+
+    // Error messages array (supports multiple validation errors)
+    errors?: string[];
     /**
      * Instructions
      */
     instructions?: string;
+    // Name for form registration
+    name?: string;
 }
 ```
 
@@ -321,16 +324,64 @@ interface Props {
      * Disabled
      */
     disabled?: boolean;
-    /**
-     * Error message
-     */
-    error?: string;
+
+    // Error messages array (supports multiple validation errors)
+    errors?: string[];
     /**
      * Instructions
      */
     instructions?: string;
+    // Name for form registration
+    name?: string;
 }
 ```
+
+---
+
+## GForm
+
+A form wrapper component that automatically manages form state and
+connects to child input components.
+
+Child input components that have a `name` prop will automatically
+register with the form, and their values will be tracked in the form model.
+
+### Features
+
+- Automatic value tracking for child input components with the `name` prop
+- Reactive error handling by providing a computed list of errors
+- Optionally manage your own form state in a parent component by providing a
+  `form` injection
+
+### Basic example
+
+```vue-html
+<GForm v-model="formData" @submit="handleSubmit">
+  <template #default="{ isSubmitting, hasErrors }">
+    <GTextInput name="firstName" label="First Name" :errors="firstNameErrors" />
+    <GSubmitButton :disabled="hasErrors">Submit</GSubmitButton>
+  </template>
+</GForm>
+```
+
+### Props
+
+```typescript
+interface Props {
+    /**
+     * Action URL (optional, for native form submission)
+     */
+    action?: string;
+    /**
+     * HTTP method (optional, for native form submission)
+     */
+    method?: string;
+}
+```
+
+### Slots
+
+- `default`
 
 ---
 
@@ -716,9 +767,8 @@ interface Props {
      * Disabled
      */
     disabled?: boolean;
-    /**
-     * Name
-     */
+
+    // Name for form registration
     name?: string;
     /**
      * Searchable
@@ -732,6 +782,9 @@ interface Props {
      * Compact
      */
     compact?: boolean;
+
+    // Error messages array (supports multiple validation errors)
+    errors?: string[];
 }
 ```
 
@@ -764,14 +817,15 @@ interface Props {
      * Size
      */
     size?: "small" | "medium" | "large";
-    /**
-     * Name
-     */
+    // Name for form registration
     name?: string;
     /**
      * Disabled
      */
     disabled?: boolean;
+
+    // Error messages array (supports multiple validation errors)
+    errors?: string[];
 }
 ```
 
@@ -922,6 +976,45 @@ interface Props {
 
 ---
 
+## GSubmitButton
+
+A submit button that integrates with GForm.
+
+When used inside a GForm, the button will automatically:
+- Show a loading state during form submission
+- Be disabled when specified
+
+@example
+<GForm v-model="formData" @submit="handleSubmit">
+  <GTextInput name="email" label="Email" />
+  <GSubmitButton>Submit</GSubmitButton>
+</GForm>
+
+### Props
+
+```typescript
+interface Props {
+    /**
+     * Disabled state
+     */
+    disabled?: boolean;
+    /**
+     * Loading text to show during submission
+     */
+    loadingText?: string;
+    /**
+     * Variant
+     */
+    variant?: "primary" | "secondary" | "danger";
+}
+```
+
+### Slots
+
+- `default`
+
+---
+
 ## GTable
 
 A data table component with support for grouping, sorting, filtering, and pagination.
@@ -1028,11 +1121,14 @@ interface Props {
 
 ## GTextInput
 
-A text input with styling for a label, instructions, and an error message.
+A text input with styling for a label, instructions, and error messages.
 
 If `label` is omitted, an accessible label must be provided some other way.
 All non-prop attributes are passed through to the input element, including
 `id`.
+
+Errors are provided as an array of strings or computed values.
+Multiple errors will all be displayed.
 
 ### Props
 
@@ -1050,10 +1146,9 @@ interface Props {
      * Disabled
      */
     disabled?: boolean;
-    /**
-     * Error message
-     */
-    error?: string;
+
+    // Error messages array (supports multiple validation errors)
+    errors?: string[];
     /**
      * Instructions
      */
@@ -1070,6 +1165,9 @@ interface Props {
      * Debounce in milliseconds
      */
     debounce?: number;
+
+    // Name for form registration
+    name?: string;
 }
 ```
 

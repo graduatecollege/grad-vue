@@ -29,6 +29,8 @@ import {
     GEmailInput,
     GDateInput,
     GDateRangeInput,
+    GForm,
+    GSubmitButton,
     VGtooltip,
     VGtooltipDirective,
 } from "./grad-vue.ts";
@@ -66,6 +68,8 @@ export default {
         app.component("GEmailInput", GEmailInput);
         app.component("GDateInput", GDateInput);
         app.component("GDateRangeInput", GDateRangeInput);
+        app.component("GForm", GForm);
+        app.component("GSubmitButton", GSubmitButton);
     },
 };
 
@@ -93,6 +97,8 @@ declare module "vue" {
         GHamburgerMenu: typeof GHamburgerMenu;
         GDetailList: typeof GDetailList;
         GDetailListItem: typeof GDetailListItem;
+        GForm: typeof GForm;
+        GSubmitButton: typeof GSubmitButton;
     }
 
     export interface ComponentCustomProperties {
