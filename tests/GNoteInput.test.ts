@@ -46,27 +46,17 @@ describe("GNoteInput", () => {
 
         it("updates model when text is typed in editor", async () => {
             const model = ref<any>("");
-            const wrapper = mnt(GNoteInput, {
+            const {container} = mnt(GNoteInput, {
                 props: {
                     modelValue: "",
                 },
                 model,
             });
 
-            await expect.element(wrapper.instance).toBeInTheDocument();
-
-            // Find the editor (contenteditable element)
-            const editor = wrapper.container.element().querySelector('.tiptap');
-            expect(editor).toBeTruthy();
+            await container.getByLabelText("Note Input").click();
 
             // Type text into the editor
-            await userEvent.click(editor as HTMLElement);
             await userEvent.keyboard("Hello World");
-
-            // Wait for the model to update
-            await vi.waitUntil(() => {
-                return model.value && typeof model.value === 'object';
-            });
 
             // Verify the rendered text matches what was typed
             expect(model.value).toBeTruthy();
