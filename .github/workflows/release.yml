@@ -54,12 +54,13 @@ jobs:
       - name: Install dependencies
         run: npm ci --include=dev
 
-      - name: Build package
+      - name: Build packages
+        run: npm run build
+
+      - name: Publish packages
         run: |
-          npm run build
-          npm version ${{ env.VERSION }} --no-git-tag-version
-      - name: Publish to NPM
-        run: npm publish --access public
+          npm version ${{ env.VERSION }} --no-git-tag-version --workspaces
+          npm publish --workspaces --access public
 
   release:
     needs: build
