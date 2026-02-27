@@ -10,8 +10,8 @@
  * Multiple errors will all be displayed.
  */
 
-import { ref, useAttrs, useId, watch, inject, onMounted, onBeforeUnmount, computed } from "vue";
-import { UseFormReturn } from "../compose/useForm.ts";
+import { ref, useAttrs, useId, watch } from "vue";
+import { useFormField } from "../compose/useFormField.ts";
 defineOptions({
     inheritAttrs: false,
 });
@@ -69,45 +69,13 @@ const props = withDefaults(defineProps<Props>(), {
 const model = defineModel<string | null>({ type: String });
 
 const id = useId();
-const form = inject<UseFormReturn | null>("form", null);
 
-// Reactive errors state for this field
-const fieldErrors = ref<string[]>([]);
-
-// Combine all error sources
-const displayErrors = computed(() => {
-    const allErrors: string[] = [];
-    
-    // Add prop errors
-    if (props.errors && props.errors.length > 0) {
-        allErrors.push(...props.errors);
-    }
-    
-    // Add field errors from reactive state
-    if (fieldErrors.value.length > 0) {
-        allErrors.push(...fieldErrors.value);
-    }
-    
-    return allErrors;
+// Use form field composable for form registration and error handling
+const { displayErrors, hasErrors } = useFormField({
+    name: props.name,
+    value: model,
+    errors: props.errors,
 });
-
-const hasErrors = computed(() => displayErrors.value.length > 0);
-
-if (form && props.name) {
-    onMounted(() => {
-        form.registerField(props.name!, {
-            name: props.name!,
-            value: model,
-            errors: fieldErrors,
-        });
-    });
-
-    onBeforeUnmount(() => {
-        if (props.name) {
-            form.unregisterField(props.name);
-        }
-    });
-}
 
 const emit = defineEmits<{
     change: [

@@ -5,9 +5,9 @@
  * This component uses two GDateInput components laid out horizontally
  * to allow selecting a date range.
  */
-import { ref, watch, inject, onMounted, onBeforeUnmount, computed } from "vue";
+import { ref, watch } from "vue";
 import GDateInput from "./GDateInput.vue";
-import { UseFormReturn } from "../compose/useForm.ts";
+import { useFormField } from "../compose/useFormField.ts";
 
 type Props = {
     /**
@@ -62,41 +62,12 @@ const model = defineModel<DateRange>({
 const startDate = ref<string | null>(model.value.start || null);
 const endDate = ref<string | null>(model.value.end || null);
 
-const form = inject<UseFormReturn | null>("form", null);
-const fieldErrors = ref<string[]>([]);
-
-// Combine all error sources
-const displayErrors = computed(() => {
-    const allErrors: string[] = [];
-    
-    // Add prop errors
-    if (props.errors && props.errors.length > 0) {
-        allErrors.push(...props.errors);
-    }
-    
-    // Add field errors from reactive state
-    if (fieldErrors.value.length > 0) {
-        allErrors.push(...fieldErrors.value);
-    }
-    
-    return allErrors;
+// Use form field composable for form registration and error handling
+const { displayErrors } = useFormField({
+    name: props.name,
+    value: model,
+    errors: props.errors,
 });
-
-if (form && props.name) {
-    onMounted(() => {
-        form.registerField(props.name!, {
-            name: props.name!,
-            value: model,
-            errors: fieldErrors,
-        });
-    });
-
-    onBeforeUnmount(() => {
-        if (props.name) {
-            form.unregisterField(props.name);
-        }
-    });
-}
 
 watch([startDate, endDate], () => {
     model.value = {
