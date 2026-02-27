@@ -44,11 +44,8 @@ const isDisabled = computed(() => {
     return props.disabled || (form?.isSubmitting.value ?? false);
 });
 
-const buttonText = computed(() => {
-    if (form?.isSubmitting.value) {
-        return props.loadingText;
-    }
-    return undefined;
+const isSubmitting = computed(() => {
+    return form?.isSubmitting.value ?? false;
 });
 </script>
 
@@ -59,7 +56,8 @@ const buttonText = computed(() => {
         :variant="props.variant"
         class="g-submit-button"
     >
-        <slot>{{ buttonText || "Submit" }}</slot>
+        <template v-if="isSubmitting">{{ props.loadingText }}</template>
+        <slot v-else>Submit</slot>
     </GButton>
 </template>
 
