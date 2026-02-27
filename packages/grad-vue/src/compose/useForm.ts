@@ -33,7 +33,9 @@ export function useForm(): UseFormReturn {
     const values = computed(() => {
         const vals: Record<string, any> = {};
         fields.value.forEach((field, name) => {
-            vals[name] = field.value.value;
+            if (field && field.value) {
+                vals[name] = field.value.value;
+            }
         });
         return vals;
     });

@@ -44,14 +44,16 @@ const form = useForm();
 
 provide("form", form);
 
+// Sync form values to model
 watch(
     () => form.values.value,
     (newValues) => {
-        model.value = { ...model.value, ...newValues };
+        model.value = { ...newValues };
     },
     { deep: true },
 );
 
+// Emit error events
 watch(
     () => form.errors.value,
     (newErrors) => {
@@ -62,17 +64,20 @@ watch(
     { deep: true },
 );
 
+// Initialize fields from model value
 watch(
     () => model.value,
     (newModel) => {
-        Object.entries(newModel).forEach(([name, value]) => {
-            const field = form.fields.value.get(name);
-            if (field && field.value.value !== value) {
-                form.setFieldValue(name, value);
-            }
-        });
+        if (newModel) {
+            Object.entries(newModel).forEach(([name, value]) => {
+                const field = form.fields.value.get(name);
+                if (field && field.value.value !== value) {
+                    field.value.value = value;
+                }
+            });
+        }
     },
-    { deep: true },
+    { deep: true, immediate: true },
 );
 
 async function handleSubmit(e: Event) {

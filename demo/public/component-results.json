@@ -1,7 +1,7 @@
 {
-  "totalComponents": 30,
-  "totalTests": 258,
-  "passedTests": 258,
+  "totalComponents": 32,
+  "totalTests": 266,
+  "passedTests": 266,
   "failedTests": 0,
   "skippedTests": 0,
   "components": {
@@ -664,6 +664,37 @@
         }
       ]
     },
+    "GForm": {
+      "component": "GForm",
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed",
+      "tests": [
+        {
+          "title": "renders a form element",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "renders with child inputs",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "with basic props",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        }
+      ]
+    },
     "GHamburgerMenu": {
       "component": "GHamburgerMenu",
       "total": 13,
@@ -1306,6 +1337,51 @@
         },
         {
           "title": "activeId should add aria-current",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        }
+      ]
+    },
+    "GSubmitButton": {
+      "component": "GSubmitButton",
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed",
+      "tests": [
+        {
+          "title": "renders a submit button",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "can be disabled",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "shows custom text via slot",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "with basic props",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "when disabled",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
