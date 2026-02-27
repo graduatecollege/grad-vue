@@ -1,10 +1,13 @@
 <script lang="ts" setup>
 /**
- * A text input with styling for a label, instructions, and an error message.
+ * A text input with styling for a label, instructions, and error messages.
  *
  * If `label` is omitted, an accessible label must be provided some other way.
  * All non-prop attributes are passed through to the input element, including
  * `id`.
+ * 
+ * Errors can be provided as an array of strings or computed values.
+ * Multiple errors will all be displayed.
  */
 
 import { ref, useAttrs, useId, watch, inject, onMounted, onBeforeUnmount, computed } from "vue";
@@ -27,9 +30,13 @@ type Props = {
      */
     disabled?: boolean;
     /**
-     * Error message
+     * Error message (deprecated - use errors array)
      */
     error?: string;
+    /**
+     * Error messages array (supports multiple validation errors)
+     */
+    errors?: string[];
     /**
      * Instructions
      */
@@ -58,6 +65,7 @@ const props = withDefaults(defineProps<Props>(), {
     placeholder: "",
     disabled: false,
     error: "",
+    errors: () => [],
     prefix: "",
     suffix: "",
     debounce: 100,
@@ -68,22 +76,39 @@ const model = defineModel<string | null>({ type: String });
 const id = useId();
 const form = inject<UseFormReturn | null>("form", null);
 
-const errorMessage = ref(props.error);
+// Reactive errors state for this field
+const fieldErrors = ref<string[]>([]);
 
-const displayError = computed(() => errorMessage.value || props.error);
+// Combine all error sources
+const displayErrors = computed(() => {
+    const allErrors: string[] = [];
+    
+    // Add prop errors
+    if (props.errors && props.errors.length > 0) {
+        allErrors.push(...props.errors);
+    }
+    
+    // Add single error prop for backward compatibility
+    if (props.error) {
+        allErrors.push(props.error);
+    }
+    
+    // Add field errors from reactive state
+    if (fieldErrors.value.length > 0) {
+        allErrors.push(...fieldErrors.value);
+    }
+    
+    return allErrors;
+});
+
+const hasErrors = computed(() => displayErrors.value.length > 0);
 
 if (form && props.name) {
     onMounted(() => {
         form.registerField(props.name!, {
             name: props.name!,
             value: model,
-            error: errorMessage,
-            setValue: (value: any) => {
-                model.value = value;
-            },
-            setError: (error: string) => {
-                errorMessage.value = error;
-            },
+            errors: fieldErrors,
         });
     });
 
@@ -166,7 +191,7 @@ function onKeydown(e: KeyboardEvent) {
 <template>
     <div
         class="g-text-input-wrap"
-        :class="{ 'g-text-input-has-error': displayError }"
+        :class="{ 'g-text-input-has-error': hasErrors }"
     >
         <label
             v-if="props.label"
@@ -202,30 +227,36 @@ function onKeydown(e: KeyboardEvent) {
                         $slots.instructions || instructions
                             ? 'instructions-' + id
                             : undefined,
-                    'aria-errormessage': displayError
+                    'aria-errormessage': hasErrors
                         ? 'error-message-' + id
                         : undefined,
                 }"
-                :aria-invalid="displayError ? 'true' : 'false'"
+                :aria-invalid="hasErrors ? 'true' : 'false'"
             />
             <span v-if="props.suffix" class="g-text-input-suffix">{{
                 props.suffix
             }}</span>
         </div>
         <div
-            v-if="displayError"
-            class="error-message"
+            v-if="hasErrors"
+            class="error-messages"
             :id="'error-message-' + id"
             role="alert"
         >
-            <svg class="g-text-input-error-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
-                <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
-                <path
-                    fill="currentColor"
-                    d="M320 64C334.7 64 348.2 72.1 355.2 85L571.2 485C577.9 497.4 577.6 512.4 570.4 524.5C563.2 536.6 550.1 544 536 544L104 544C89.9 544 76.8 536.6 69.6 524.5C62.4 512.4 62.1 497.4 68.8 485L284.8 85C291.8 72.1 305.3 64 320 64zM320 416C302.3 416 288 430.3 288 448C288 465.7 302.3 480 320 480C337.7 480 352 465.7 352 448C352 430.3 337.7 416 320 416zM320 224C301.8 224 287.3 239.5 288.6 257.7L296 361.7C296.9 374.2 307.4 384 319.9 384C332.5 384 342.9 374.3 343.8 361.7L351.2 257.7C352.5 239.5 338.1 224 319.8 224z"
-                />
-            </svg>
-            {{ displayError }}
+            <div
+                v-for="(errorMsg, index) in displayErrors"
+                :key="index"
+                class="error-message"
+            >
+                <svg class="g-text-input-error-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+                    <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+                    <path
+                        fill="currentColor"
+                        d="M320 64C334.7 64 348.2 72.1 355.2 85L571.2 485C577.9 497.4 577.6 512.4 570.4 524.5C563.2 536.6 550.1 544 536 544L104 544C89.9 544 76.8 536.6 69.6 524.5C62.4 512.4 62.1 497.4 68.8 485L284.8 85C291.8 72.1 305.3 64 320 64zM320 416C302.3 416 288 430.3 288 448C288 465.7 302.3 480 320 480C337.7 480 352 465.7 352 448C352 430.3 337.7 416 320 416zM320 224C301.8 224 287.3 239.5 288.6 257.7L296 361.7C296.9 374.2 307.4 384 319.9 384C332.5 384 342.9 374.3 343.8 361.7L351.2 257.7C352.5 239.5 338.1 224 319.8 224z"
+                    />
+                </svg>
+                {{ errorMsg }}
+            </div>
         </div>
     </div>
 </template>
@@ -285,6 +316,11 @@ function onKeydown(e: KeyboardEvent) {
 }
 .g-text-input-field-wrapper:has(.g-text-input:disabled) {
     background: var(--g-surface-100);
+}
+.error-messages {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25em;
 }
 .error-message {
     background: var(--g-surface-0);

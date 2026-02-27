@@ -1,30 +1,25 @@
-import { ref, Ref, computed } from "vue";
+import { ref, Ref, computed, ComputedRef } from "vue";
 
 export interface FormField {
     name: string;
     value: Ref<any>;
-    error: Ref<string>;
-    setValue: (value: any) => void;
-    setError: (error: string) => void;
+    errors: Ref<string[]> | ComputedRef<string[]>;
 }
 
 export interface UseFormReturn {
     fields: Ref<Map<string, FormField>>;
     values: Ref<Record<string, any>>;
-    errors: Ref<Record<string, string>>;
+    errors: Ref<Record<string, string[]>>;
     isSubmitting: Ref<boolean>;
     hasErrors: Ref<boolean>;
     registerField: (name: string, field: FormField) => void;
     unregisterField: (name: string) => void;
-    setFieldValue: (name: string, value: any) => void;
-    setFieldError: (name: string, error: string) => void;
-    clearErrors: () => void;
-    setErrors: (errors: Record<string, string>) => void;
     submit: (handler: (values: Record<string, any>) => Promise<void> | void) => Promise<void>;
 }
 
 /**
  * Composable to manage form state and link form inputs together.
+ * Uses reactive state pattern - errors are provided as reactive props to input components.
  */
 export function useForm(): UseFormReturn {
     const fields: Ref<Map<string, FormField>> = ref(new Map());
@@ -41,10 +36,10 @@ export function useForm(): UseFormReturn {
     });
 
     const errors = computed(() => {
-        const errs: Record<string, string> = {};
+        const errs: Record<string, string[]> = {};
         fields.value.forEach((field, name) => {
-            const errorValue = field.error.value;
-            if (errorValue) {
+            const errorValue = field.errors.value;
+            if (errorValue && errorValue.length > 0) {
                 errs[name] = errorValue;
             }
         });
@@ -63,38 +58,10 @@ export function useForm(): UseFormReturn {
         fields.value.delete(name);
     }
 
-    function setFieldValue(name: string, value: any) {
-        const field = fields.value.get(name);
-        if (field) {
-            field.setValue(value);
-        }
-    }
-
-    function setFieldError(name: string, error: string) {
-        const field = fields.value.get(name);
-        if (field) {
-            field.setError(error);
-        }
-    }
-
-    function clearErrors() {
-        fields.value.forEach((field) => {
-            field.setError("");
-        });
-    }
-
-    function setErrors(errors: Record<string, string>) {
-        clearErrors();
-        Object.entries(errors).forEach(([name, error]) => {
-            setFieldError(name, error);
-        });
-    }
-
     async function submit(handler: (values: Record<string, any>) => Promise<void> | void) {
         if (isSubmitting.value) {
             return;
         }
-        clearErrors();
         isSubmitting.value = true;
         try {
             await handler(values.value);
@@ -111,10 +78,6 @@ export function useForm(): UseFormReturn {
         hasErrors,
         registerField,
         unregisterField,
-        setFieldValue,
-        setFieldError,
-        clearErrors,
-        setErrors,
         submit,
     };
 }

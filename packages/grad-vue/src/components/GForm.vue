@@ -6,16 +6,21 @@
  * Child input components that have a `name` prop will automatically
  * register with the form and their values will be tracked in the form model.
  *
+ * The form provides slot props for isSubmitting, hasErrors, values, and errors
+ * to allow the parent to use them in the UI.
+ *
  * @example
- * <GForm v-model="formData" @submit="handleSubmit" @error="handleError">
- *   <GTextInput name="firstName" label="First Name" />
- *   <GTextInput name="lastName" label="Last Name" />
- *   <GSubmitButton>Submit</GSubmitButton>
+ * <GForm v-model="formData" @submit="handleSubmit">
+ *   <template #default="{ isSubmitting, hasErrors }">
+ *     <GTextInput name="firstName" label="First Name" :errors="firstNameErrors" />
+ *     <GSubmitButton :disabled="hasErrors">Submit</GSubmitButton>
+ *     <div v-if="isSubmitting">Submitting...</div>
+ *   </template>
  * </GForm>
  */
 
-import { provide, watch } from "vue";
-import { useForm } from "../compose/useForm.ts";
+import { provide, watch, inject, computed } from "vue";
+import { useForm, UseFormReturn } from "../compose/useForm.ts";
 
 interface Props {
     /**
@@ -37,29 +42,24 @@ const model = defineModel<Record<string, any>>({ default: () => ({}) });
 
 const emit = defineEmits<{
     submit: [values: Record<string, any>];
-    error: [errors: Record<string, string>];
 }>();
 
-const form = useForm();
+// Check if a form is already injected from a parent
+const parentForm = inject<UseFormReturn | null>("form", null);
 
-provide("form", form);
+// Only create a new form if one wasn't already provided
+const form = parentForm || useForm();
+
+// Only provide the form if we created it (not if we're using a parent's form)
+if (!parentForm) {
+    provide("form", form);
+}
 
 // Sync form values to model
 watch(
     () => form.values.value,
     (newValues) => {
         model.value = { ...newValues };
-    },
-    { deep: true },
-);
-
-// Emit error events
-watch(
-    () => form.errors.value,
-    (newErrors) => {
-        if (Object.keys(newErrors).length > 0) {
-            emit("error", newErrors);
-        }
     },
     { deep: true },
 );
@@ -87,13 +87,9 @@ async function handleSubmit(e: Event) {
     });
 }
 
+// Expose form object for special cases where parent needs direct access
 defineExpose({
-    setErrors: form.setErrors,
-    clearErrors: form.clearErrors,
-    isSubmitting: form.isSubmitting,
-    hasErrors: form.hasErrors,
-    values: form.values,
-    errors: form.errors,
+    form,
 });
 </script>
 
@@ -105,7 +101,12 @@ defineExpose({
         class="g-form"
         novalidate
     >
-        <slot></slot>
+        <slot
+            :isSubmitting="form.isSubmitting.value"
+            :hasErrors="form.hasErrors.value"
+            :values="form.values.value"
+            :errors="form.errors.value"
+        ></slot>
     </form>
 </template>
 

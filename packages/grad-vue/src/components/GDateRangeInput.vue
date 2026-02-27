@@ -27,9 +27,13 @@ type Props = {
      */
     disabled?: boolean;
     /**
-     * Error message
+     * Error message (deprecated - use errors array)
      */
     error?: string;
+    /**
+     * Error messages array (supports multiple validation errors)
+     */
+    errors?: string[];
     /**
      * Instructions
      */
@@ -47,6 +51,7 @@ const props = withDefaults(defineProps<Props>(), {
     instructions: "",
     disabled: false,
     error: "",
+    errors: () => [],
     name: undefined,
 });
 
@@ -63,22 +68,36 @@ const startDate = ref<string | null>(model.value.start || null);
 const endDate = ref<string | null>(model.value.end || null);
 
 const form = inject<UseFormReturn | null>("form", null);
-const errorMessage = ref(props.error);
+const fieldErrors = ref<string[]>([]);
 
-const displayError = computed(() => errorMessage.value || props.error);
+// Combine all error sources
+const displayErrors = computed(() => {
+    const allErrors: string[] = [];
+    
+    // Add prop errors
+    if (props.errors && props.errors.length > 0) {
+        allErrors.push(...props.errors);
+    }
+    
+    // Add single error prop for backward compatibility
+    if (props.error) {
+        allErrors.push(props.error);
+    }
+    
+    // Add field errors from reactive state
+    if (fieldErrors.value.length > 0) {
+        allErrors.push(...fieldErrors.value);
+    }
+    
+    return allErrors;
+});
 
 if (form && props.name) {
     onMounted(() => {
         form.registerField(props.name!, {
             name: props.name!,
             value: model,
-            error: errorMessage,
-            setValue: (value: any) => {
-                model.value = value;
-            },
-            setError: (error: string) => {
-                errorMessage.value = error;
-            },
+            errors: fieldErrors,
         });
     });
 
@@ -135,8 +154,14 @@ watch(
                 class="g-date-range-input__field"
             />
         </div>
-        <div v-if="displayError" class="g-date-range-input__error" role="alert">
-            {{ displayError }}
+        <div v-if="displayErrors.length > 0" class="g-date-range-input__errors" role="alert">
+            <div
+                v-for="(errorMsg, index) in displayErrors"
+                :key="index"
+                class="g-date-range-input__error"
+            >
+                {{ errorMsg }}
+            </div>
         </div>
     </div>
 </template>
@@ -168,6 +193,12 @@ watch(
 .g-date-range-input__field {
     flex: 1;
     min-width: 0;
+}
+
+.g-date-range-input__errors {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25em;
 }
 
 .g-date-range-input__error {

@@ -77,20 +77,14 @@ const ignoreFocus = ref(false);
 const { push, pop, isTop } = useOverlayStack(baseId);
 
 const form = inject<UseFormReturn | null>("form", null);
-const errorMessage = ref("");
+const fieldErrors = ref<string[]>([]);
 
 if (form && props.name) {
     onMounted(() => {
         form.registerField(props.name!, {
             name: props.name!,
             value: model,
-            error: errorMessage,
-            setValue: (value: any) => {
-                model.value = value;
-            },
-            setError: (error: string) => {
-                errorMessage.value = error;
-            },
+            errors: fieldErrors,
         });
     });
 
