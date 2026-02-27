@@ -19,7 +19,7 @@
  * </GForm>
  */
 
-import { provide, watch, inject, computed } from "vue";
+import { provide, watch, inject, computed, toRaw } from "vue";
 import { useForm, UseFormReturn } from "../compose/useForm.ts";
 
 interface Props {
@@ -70,7 +70,8 @@ watch(
     (newModel) => {
         if (newModel) {
             Object.entries(newModel).forEach(([name, value]) => {
-                const field = form.fields.value.get(name);
+                // Use toRaw to prevent ref unwrapping issues
+                const field = toRaw(form.fields.value).get(name);
                 if (field && field.value.value !== value) {
                     field.value.value = value;
                 }

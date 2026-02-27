@@ -1,7 +1,7 @@
 {
-  "totalComponents": 32,
-  "totalTests": 268,
-  "passedTests": 268,
+  "totalComponents": 34,
+  "totalTests": 271,
+  "passedTests": 271,
   "failedTests": 0,
   "skippedTests": 0,
   "components": {
@@ -706,6 +706,26 @@
           "ancestors": [
             "Accessibility Tests"
           ]
+        }
+      ]
+    },
+    "GForm Value Updates": {
+      "component": "GForm Value Updates",
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed",
+      "tests": [
+        {
+          "title": "updates form.values when typing in GTextInput",
+          "status": "passed",
+          "ancestors": []
+        },
+        {
+          "title": "updates v-model when typing in multiple GTextInputs",
+          "status": "passed",
+          "ancestors": []
         }
       ]
     },
@@ -2068,6 +2088,21 @@
           "ancestors": [
             "Accessibility Tests"
           ]
+        }
+      ]
+    },
+    "useForm reactivity": {
+      "component": "useForm reactivity",
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed",
+      "tests": [
+        {
+          "title": "values computed updates when field value changes",
+          "status": "passed",
+          "ancestors": []
         }
       ]
     },

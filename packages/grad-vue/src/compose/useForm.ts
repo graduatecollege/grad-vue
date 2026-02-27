@@ -1,4 +1,4 @@
-import { ref, Ref, computed, ComputedRef } from "vue";
+import { ref, Ref, computed, ComputedRef, toRaw } from "vue";
 
 export interface FormField {
     name: string;
@@ -24,11 +24,18 @@ export interface UseFormReturn {
 export function useForm(): UseFormReturn {
     const fields: Ref<Map<string, FormField>> = ref(new Map());
     const isSubmitting = ref(false);
+    // Trigger to force reactivity when Map contents change
+    const fieldsTrigger = ref(0);
 
     const values = computed(() => {
+        // Access trigger to ensure reactivity when Map contents change
+        fieldsTrigger.value;
         const vals: Record<string, any> = {};
-        fields.value.forEach((field, name) => {
+        // Use toRaw to prevent Vue from unwrapping refs inside the Map
+        const rawFields = toRaw(fields.value);
+        rawFields.forEach((field, name) => {
             if (field && field.value) {
+                // Accessing .value of the ref creates a dependency
                 vals[name] = field.value.value;
             }
         });
@@ -36,8 +43,12 @@ export function useForm(): UseFormReturn {
     });
 
     const errors = computed(() => {
+        // Access trigger to ensure reactivity when Map contents change
+        fieldsTrigger.value;
         const errs: Record<string, string[]> = {};
-        fields.value.forEach((field, name) => {
+        // Use toRaw to prevent Vue from unwrapping refs inside the Map
+        const rawFields = toRaw(fields.value);
+        rawFields.forEach((field, name) => {
             const errorValue = field.errors.value;
             if (errorValue && errorValue.length > 0) {
                 errs[name] = errorValue;
@@ -52,10 +63,14 @@ export function useForm(): UseFormReturn {
 
     function registerField(name: string, field: FormField) {
         fields.value.set(name, field);
+        // Trigger reactivity when Map contents change
+        fieldsTrigger.value++;
     }
 
     function unregisterField(name: string) {
         fields.value.delete(name);
+        // Trigger reactivity when Map contents change
+        fieldsTrigger.value++;
     }
 
     async function submit(handler: (values: Record<string, any>) => Promise<void> | void) {
