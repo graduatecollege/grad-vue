@@ -1,4 +1,4 @@
-import { ref, Ref, computed, ComputedRef, toRaw } from "vue";
+import { ref, Ref, computed, ComputedRef, markRaw } from "vue";
 
 export interface FormField {
     name: string;
@@ -7,7 +7,7 @@ export interface FormField {
 }
 
 export interface UseFormReturn {
-    fields: Ref<Map<string, FormField>>;
+    fields: Ref<Record<string, FormField>>;
     values: Ref<Record<string, any>>;
     errors: Ref<Record<string, string[]>>;
     isSubmitting: Ref<boolean>;
@@ -22,20 +22,13 @@ export interface UseFormReturn {
  * Uses reactive state pattern - errors are provided as reactive props to input components.
  */
 export function useForm(): UseFormReturn {
-    const fields: Ref<Map<string, FormField>> = ref(new Map());
+    const fields: Ref<Record<string, FormField>> = ref({});
     const isSubmitting = ref(false);
-    // Trigger to force reactivity when Map contents change
-    const fieldsTrigger = ref(0);
 
     const values = computed(() => {
-        // Access trigger to ensure reactivity when Map contents change
-        fieldsTrigger.value;
         const vals: Record<string, any> = {};
-        // Use toRaw to prevent Vue from unwrapping refs inside the Map
-        const rawFields = toRaw(fields.value);
-        rawFields.forEach((field, name) => {
+        Object.entries(fields.value).forEach(([name, field]) => {
             if (field && field.value) {
-                // Accessing .value of the ref creates a dependency
                 vals[name] = field.value.value;
             }
         });
@@ -43,12 +36,8 @@ export function useForm(): UseFormReturn {
     });
 
     const errors = computed(() => {
-        // Access trigger to ensure reactivity when Map contents change
-        fieldsTrigger.value;
         const errs: Record<string, string[]> = {};
-        // Use toRaw to prevent Vue from unwrapping refs inside the Map
-        const rawFields = toRaw(fields.value);
-        rawFields.forEach((field, name) => {
+        Object.entries(fields.value).forEach(([name, field]) => {
             const errorValue = field.errors.value;
             if (errorValue && errorValue.length > 0) {
                 errs[name] = errorValue;
@@ -62,15 +51,13 @@ export function useForm(): UseFormReturn {
     });
 
     function registerField(name: string, field: FormField) {
-        fields.value.set(name, field);
-        // Trigger reactivity when Map contents change
-        fieldsTrigger.value++;
+        // Use markRaw to prevent Vue from making the field object reactive
+        // and auto-unwrapping the refs inside it
+        fields.value[name] = markRaw(field);
     }
 
     function unregisterField(name: string) {
-        fields.value.delete(name);
-        // Trigger reactivity when Map contents change
-        fieldsTrigger.value++;
+        delete fields.value[name];
     }
 
     async function submit(handler: (values: Record<string, any>) => Promise<void> | void) {
