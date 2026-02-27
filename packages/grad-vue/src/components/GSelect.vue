@@ -41,9 +41,8 @@ interface Props {
      * Disabled
      */
     disabled?: boolean;
-    /**
-     * Name
-     */
+
+    // Name for form registration
     name?: string;
     /**
      * Searchable
@@ -57,9 +56,8 @@ interface Props {
      * Compact
      */
     compact?: boolean;
-    /**
-     * Error messages array (supports multiple validation errors)
-     */
+
+    // Error messages array (supports multiple validation errors)
     errors?: string[];
 }
 

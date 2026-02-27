@@ -39,11 +39,6 @@ const selectOptions = ref([
                     label: 'Disabled',
                     default: false
                 },
-                name: {
-                    type: 'string',
-                    label: 'Name',
-                    default: null
-                },
                 searchable: {
                     type: 'boolean',
                     label: 'Searchable',

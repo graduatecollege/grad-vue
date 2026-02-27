@@ -24,6 +24,8 @@ const emailErrors = computed(() => {
 function handleSubmit(values: Record<string, any>) {
     submitResult.value = `Form submitted with: ${JSON.stringify(values, null, 2)}`;
 }
+
+const fname = ref("heh");
 </script>
 
 <template>
@@ -44,27 +46,28 @@ function handleSubmit(values: Record<string, any>) {
                 }
             }"
         >
-            <template #docs>
-                <p>A form wrapper component that automatically manages form state and connects to child input components using Vue.js reactive patterns.</p>
-                <p>Child input components that have a <code>name</code> prop will automatically register with the form and their values will be tracked in the form model.</p>
-                <h3>Features</h3>
-                <ul>
-                    <li>Automatic value tracking for all child inputs with <code>name</code> prop</li>
-                    <li>Reactive error handling with support for multiple errors per field</li>
-                    <li>Slot props for <code>isSubmitting</code>, <code>hasErrors</code>, <code>values</code>, and <code>errors</code></li>
-                    <li>Submit event with all form values</li>
-                    <li>Integration with GSubmitButton for loading states</li>
-                    <li>Optional form injection - only creates form if none exists in parent</li>
-                </ul>
-                <h3>Usage with Slot Props</h3>
-                <pre><code>&lt;GForm v-model="formData" @submit="handleSubmit"&gt;
-  &lt;template #default="{ isSubmitting, hasErrors }"&gt;
-    &lt;GTextInput name="email" label="Email" :errors="emailErrors" /&gt;
-    &lt;GSubmitButton :disabled="hasErrors"&gt;Submit&lt;/GSubmitButton&gt;
-    &lt;div v-if="isSubmitting"&gt;Submitting...&lt;/div&gt;
-  &lt;/template&gt;
-&lt;/GForm&gt;</code></pre>
-            </template>
+            <template #docs><p>A form wrapper component that automatically manages form state and
+connects to child input components.</p>
+<p>Child input components that have a <code>name</code> prop will automatically
+register with the form, and their values will be tracked in the form model.</p>
+<h3>Features</h3>
+<ul>
+<li>Automatic value tracking for child input components with the <code>name</code> prop</li>
+<li>Reactive error handling by providing a computed list of errors</li>
+<li>Optionally manage your own form state in a parent component by providing a
+<code>form</code> injection</li>
+</ul>
+<h3>Basic example</h3>
+<figure class="highlighted-code">
+<pre class="shiki light-plus" style="background-color:#FFFFFF;color:#000000" tabindex="0"><code><span class="line"><span style="color:#800000">&#x3C;</span><span style="color:#267F99">GForm</span><span style="color:#E50000"> v-model</span><span style="color:#000000">=</span><span style="color:#000000">"</span><span style="color:#001080">formData</span><span style="color:#000000">"</span><span style="color:#000000"> @</span><span style="color:#E50000">submit</span><span style="color:#000000">=</span><span style="color:#000000">"</span><span style="color:#001080">handleSubmit</span><span style="color:#000000">"</span><span style="color:#800000">></span></span>
+<span class="line"><span style="color:#800000">  &#x3C;template</span><span style="color:#000000"> #</span><span style="color:#E50000">default</span><span style="color:#000000">=</span><span style="color:#000000">"</span><span style="color:#000000">&lcub; </span><span style="color:#001080">isSubmitting</span><span style="color:#000000">, </span><span style="color:#001080">hasErrors</span><span style="color:#000000"> }</span><span style="color:#000000">"</span><span style="color:#800000">></span></span>
+<span class="line"><span style="color:#800000">    &#x3C;</span><span style="color:#267F99">GTextInput</span><span style="color:#E50000"> name</span><span style="color:#000000">=</span><span style="color:#0000FF">"firstName"</span><span style="color:#E50000"> label</span><span style="color:#000000">=</span><span style="color:#0000FF">"First Name"</span><span style="color:#000000"> :</span><span style="color:#E50000">errors</span><span style="color:#000000">=</span><span style="color:#000000">"</span><span style="color:#001080">firstNameErrors</span><span style="color:#000000">"</span><span style="color:#000000"> /</span><span style="color:#800000">></span></span>
+<span class="line"><span style="color:#800000">    &#x3C;</span><span style="color:#267F99">GSubmitButton</span><span style="color:#000000"> :</span><span style="color:#E50000">disabled</span><span style="color:#000000">=</span><span style="color:#000000">"</span><span style="color:#001080">hasErrors</span><span style="color:#000000">"</span><span style="color:#800000">></span><span style="color:#000000">Submit</span><span style="color:#800000">&#x3C;/</span><span style="color:#267F99">GSubmitButton</span><span style="color:#800000">></span></span>
+<span class="line"><span style="color:#800000">  &#x3C;/template></span></span>
+<span class="line"><span style="color:#800000">&#x3C;/</span><span style="color:#267F99">GForm</span><span style="color:#800000">></span></span></code></pre>
+</figure>
+
+</template>
             <template #default="{ props }">
                 <GForm
                     v-model="formData"
@@ -76,6 +79,7 @@ function handleSubmit(values: Record<string, any>) {
                             name="firstName"
                             label="First Name"
                             placeholder="Enter your first name"
+                            v-model="fname"
                         />
                         <GTextInput
                             name="lastName"

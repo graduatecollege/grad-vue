@@ -4,19 +4,25 @@
  * connects to child input components.
  *
  * Child input components that have a `name` prop will automatically
- * register with the form and their values will be tracked in the form model.
+ * register with the form, and their values will be tracked in the form model.
  *
- * The form provides slot props for isSubmitting, hasErrors, values, and errors
- * to allow the parent to use them in the UI.
+ * ### Features
  *
- * @example
+ * - Automatic value tracking for child input components with the `name` prop
+ * - Reactive error handling by providing a computed list of errors
+ * - Optionally manage your own form state in a parent component by providing a
+ *   `form` injection
+ *
+ * ### Basic example
+ *
+ * ```vue-html
  * <GForm v-model="formData" @submit="handleSubmit">
  *   <template #default="{ isSubmitting, hasErrors }">
  *     <GTextInput name="firstName" label="First Name" :errors="firstNameErrors" />
  *     <GSubmitButton :disabled="hasErrors">Submit</GSubmitButton>
- *     <div v-if="isSubmitting">Submitting...</div>
  *   </template>
  * </GForm>
+ * ```
  */
 
 import { provide, watch, inject, computed } from "vue";
@@ -87,10 +93,6 @@ async function handleSubmit(e: Event) {
     });
 }
 
-// Expose form object for special cases where parent needs direct access
-defineExpose({
-    form,
-});
 </script>
 
 <template>

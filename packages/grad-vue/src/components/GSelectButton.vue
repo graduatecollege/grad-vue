@@ -27,17 +27,14 @@ interface Props {
      * Size
      */
     size?: "small" | "medium" | "large";
-    /**
-     * Name
-     */
+    // Name for form registration
     name?: string;
     /**
      * Disabled
      */
     disabled?: boolean;
-    /**
-     * Error messages array (supports multiple validation errors)
-     */
+
+    // Error messages array (supports multiple validation errors)
     errors?: string[];
 }
 

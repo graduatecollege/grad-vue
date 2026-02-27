@@ -20,17 +20,14 @@ type Props = {
      * Disabled
      */
     disabled?: boolean;
-    /**
-     * Error messages array (supports multiple validation errors)
-     */
+
+    // Error messages array (supports multiple validation errors)
     errors?: string[];
     /**
      * Instructions
      */
     instructions?: string;
-    /**
-     * Name for form registration
-     */
+    // Name for form registration
     name?: string;
 };
 

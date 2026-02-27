@@ -34,11 +34,6 @@ const selectButtonOptions = ref([
                         'large'
                     ]
                 },
-                name: {
-                    type: 'string',
-                    label: 'Name',
-                    default: null
-                },
                 disabled: {
                     type: 'boolean',
                     label: 'Disabled',
