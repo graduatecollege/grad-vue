@@ -1,7 +1,7 @@
 {
   "totalComponents": 32,
-  "totalTests": 266,
-  "passedTests": 266,
+  "totalTests": 268,
+  "passedTests": 268,
   "failedTests": 0,
   "skippedTests": 0,
   "components": {
@@ -666,8 +666,8 @@
     },
     "GForm": {
       "component": "GForm",
-      "total": 3,
-      "passed": 3,
+      "total": 5,
+      "passed": 5,
       "failed": 0,
       "skipped": 0,
       "status": "passed",
@@ -681,6 +681,20 @@
         },
         {
           "title": "renders with child inputs",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "provides slot props for form state",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "supports multiple errors per field",
           "status": "passed",
           "ancestors": [
             "Functional Tests"
