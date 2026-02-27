@@ -1,4 +1,4 @@
-import { ref, Ref, computed, ComputedRef, markRaw } from "vue";
+import { ref, Ref, computed, ComputedRef, shallowReactive } from "vue";
 
 export interface FormField {
     name: string;
@@ -7,7 +7,7 @@ export interface FormField {
 }
 
 export interface UseFormReturn {
-    fields: Ref<Record<string, FormField>>;
+    fields: Record<string, FormField>;
     values: Ref<Record<string, any>>;
     errors: Ref<Record<string, string[]>>;
     isSubmitting: Ref<boolean>;
@@ -22,12 +22,12 @@ export interface UseFormReturn {
  * Uses reactive state pattern - errors are provided as reactive props to input components.
  */
 export function useForm(): UseFormReturn {
-    const fields: Ref<Record<string, FormField>> = ref({});
+    const fields: Record<string, FormField> = shallowReactive({});
     const isSubmitting = ref(false);
 
     const values = computed(() => {
         const vals: Record<string, any> = {};
-        Object.entries(fields.value).forEach(([name, field]) => {
+        Object.entries(fields).forEach(([name, field]) => {
             if (field && field.value) {
                 vals[name] = field.value.value;
             }
@@ -37,7 +37,7 @@ export function useForm(): UseFormReturn {
 
     const errors = computed(() => {
         const errs: Record<string, string[]> = {};
-        Object.entries(fields.value).forEach(([name, field]) => {
+        Object.entries(fields).forEach(([name, field]) => {
             const errorValue = field.errors.value;
             if (errorValue && errorValue.length > 0) {
                 errs[name] = errorValue;
@@ -51,13 +51,11 @@ export function useForm(): UseFormReturn {
     });
 
     function registerField(name: string, field: FormField) {
-        // Use markRaw to prevent Vue from making the field object reactive
-        // and auto-unwrapping the refs inside it
-        fields.value[name] = markRaw(field);
+        fields[name] = field;
     }
 
     function unregisterField(name: string) {
-        delete fields.value[name];
+        delete fields[name];
     }
 
     async function submit(handler: (values: Record<string, any>) => Promise<void> | void) {

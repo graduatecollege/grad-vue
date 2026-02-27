@@ -70,7 +70,7 @@ watch(
     (newModel) => {
         if (newModel) {
             Object.entries(newModel).forEach(([name, value]) => {
-                const field = form.fields.value[name];
+                const field = form.fields[name];
                 if (field && field.value.value !== value) {
                     field.value.value = value;
                 }
