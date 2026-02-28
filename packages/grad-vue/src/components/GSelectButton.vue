@@ -8,7 +8,7 @@
  * In addition to `v-model`, a `change` event is emitted when the
  * option changes from user interaction.
  */
-import { computed, useId } from "vue";
+import { computed, useId, toRef } from "vue";
 import { useFormField } from "../compose/useFormField.ts";
 import GFormErrorMessages from "./form/GFormErrorMessages.vue";
 
@@ -54,7 +54,7 @@ const baseId = useId();
 const { displayErrors, hasErrors } = useFormField({
     name: props.name,
     value: model,
-    errors: props.errors,
+    errors: toRef(props, 'errors'),
 });
 
 const normalizedOptions = computed(() => {

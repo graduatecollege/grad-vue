@@ -10,7 +10,7 @@
  * The `options` prop can be an array of strings or objects with `label`
  * and `value` properties.
  */
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, useId, watch } from "vue";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, useId, watch, toRef } from "vue";
 import { useOverlayStack } from "../compose/useOverlayStack.ts";
 import { useFormField } from "../compose/useFormField.ts";
 import GFormErrorMessages from "./form/GFormErrorMessages.vue";
@@ -84,7 +84,7 @@ const { push, pop, isTop } = useOverlayStack(baseId);
 const { displayErrors, hasErrors } = useFormField({
     name: props.name,
     value: model,
-    errors: props.errors,
+    errors: toRef(props, 'errors'),
 });
 
 const menuPlacement = ref<"below" | "above">("below");

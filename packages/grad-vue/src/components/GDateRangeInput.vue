@@ -5,7 +5,7 @@
  * This component uses two GDateInput components laid out horizontally
  * to allow selecting a date range.
  */
-import { ref, watch } from "vue";
+import { ref, watch, toRef } from "vue";
 import GDateInput from "./GDateInput.vue";
 import { useFormField } from "../compose/useFormField.ts";
 
@@ -63,7 +63,7 @@ const endDate = ref<string | null>(model.value.end || null);
 const { displayErrors } = useFormField({
     name: props.name,
     value: model,
-    errors: props.errors,
+    errors: toRef(props, 'errors'),
 });
 
 watch([startDate, endDate], () => {

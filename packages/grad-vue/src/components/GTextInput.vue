@@ -10,7 +10,7 @@
  * Multiple errors will all be displayed.
  */
 
-import { ref, useAttrs, useId, watch } from "vue";
+import { ref, useAttrs, useId, watch, toRef } from "vue";
 import { useFormField } from "../compose/useFormField.ts";
 import GFormErrorMessages from "./form/GFormErrorMessages.vue";
 defineOptions({
@@ -73,7 +73,7 @@ const id = useId();
 const { displayErrors, hasErrors } = useFormField({
     name: props.name,
     value: model,
-    errors: props.errors,
+    errors: toRef(props, 'errors'),
 });
 
 const emit = defineEmits<{

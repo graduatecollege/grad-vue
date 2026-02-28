@@ -1,4 +1,4 @@
-import { ref, Ref, computed, inject, onMounted, onBeforeUnmount } from "vue";
+import { ref, Ref, computed, inject, onMounted, onBeforeUnmount, ComputedRef } from "vue";
 import { UseFormReturn } from "./useForm";
 
 export interface UseFormFieldOptions {
@@ -11,9 +11,9 @@ export interface UseFormFieldOptions {
      */
     value: Ref<any>;
     /**
-     * Error messages from props (optional)
+     * Error messages from props (optional) - should be a reactive reference
      */
-    errors?: string[];
+    errors?: Ref<string[]> | ComputedRef<string[]>;
 }
 
 export interface UseFormFieldReturn {
@@ -36,9 +36,9 @@ export function useFormField(options: UseFormFieldOptions): UseFormFieldReturn {
     const displayErrors = computed(() => {
         const allErrors: string[] = [];
         
-        // Add prop errors
+        // Add prop errors (now reactive)
         if (options.errors) {
-            allErrors.push(...options.errors.filter(Boolean));
+            allErrors.push(...options.errors.value.filter(Boolean));
         }
         return allErrors;
     });
