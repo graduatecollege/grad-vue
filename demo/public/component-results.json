@@ -1,7 +1,7 @@
 {
-  "totalComponents": 30,
-  "totalTests": 258,
-  "passedTests": 258,
+  "totalComponents": 34,
+  "totalTests": 271,
+  "passedTests": 271,
   "failedTests": 0,
   "skippedTests": 0,
   "components": {
@@ -664,6 +664,71 @@
         }
       ]
     },
+    "GForm": {
+      "component": "GForm",
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed",
+      "tests": [
+        {
+          "title": "renders a form element",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "renders with child inputs",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "provides slot props for form state",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "supports multiple errors per field",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "with basic props",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        }
+      ]
+    },
+    "GForm Value Updates": {
+      "component": "GForm Value Updates",
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed",
+      "tests": [
+        {
+          "title": "updates form.values when typing in GTextInput",
+          "status": "passed",
+          "ancestors": []
+        },
+        {
+          "title": "updates v-model when typing in multiple GTextInputs",
+          "status": "passed",
+          "ancestors": []
+        }
+      ]
+    },
     "GHamburgerMenu": {
       "component": "GHamburgerMenu",
       "total": 13,
@@ -1306,6 +1371,51 @@
         },
         {
           "title": "activeId should add aria-current",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        }
+      ]
+    },
+    "GSubmitButton": {
+      "component": "GSubmitButton",
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed",
+      "tests": [
+        {
+          "title": "renders a submit button",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "can be disabled",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "shows custom text via slot",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "with basic props",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "when disabled",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
@@ -1978,6 +2088,21 @@
           "ancestors": [
             "Accessibility Tests"
           ]
+        }
+      ]
+    },
+    "useForm reactivity": {
+      "component": "useForm reactivity",
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed",
+      "tests": [
+        {
+          "title": "values computed updates when field value changes",
+          "status": "passed",
+          "ancestors": []
         }
       ]
     },

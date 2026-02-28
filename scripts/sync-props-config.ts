@@ -137,15 +137,17 @@ function parseProps(content: string) {
                 const dm = defaultsContent.match(defaultRegex);
                 if (dm) {
                     let valStr = dm[1].trim();
-                    let val: any = valStr.replace(/['"]/g, '');
-                    if (props[name].type === 'boolean') {
-                        val = val === 'true';
-                    } else if (props[name].type === 'number') {
-                        val = valStr === 'undefined' ? null : Number(val);
-                    } else if (valStr === 'undefined') {
-                        val = null;
+                    if (!valStr.startsWith('()')) {
+                        let val: any = valStr.replace(/['"]/g, "");
+                        if (props[name].type === "boolean") {
+                            val = val === "true";
+                        } else if (props[name].type === "number") {
+                            val = valStr === "undefined" ? null : Number(val);
+                        } else if (valStr === "undefined") {
+                            val = null;
+                        }
+                        props[name].default = val;
                     }
-                    props[name].default = val;
                 }
             }
         }

@@ -35,11 +35,6 @@ const dateRange = ref({ start: null, end: null });
                     label: 'Disabled',
                     default: false
                 },
-                error: {
-                    type: 'string',
-                    label: 'Error message',
-                    default: ''
-                },
                 instructions: {
                     type: 'string',
                     label: 'Instructions',

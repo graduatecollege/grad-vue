@@ -10,8 +10,10 @@
  * The `options` prop can be an array of strings or objects with `label`
  * and `value` properties.
  */
-import { computed, nextTick, onBeforeUnmount, ref, useId, watch } from "vue";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, useId, watch, toRef } from "vue";
 import { useOverlayStack } from "../compose/useOverlayStack.ts";
+import { useFormField } from "../compose/useFormField.ts";
+import GFormErrorMessages from "./form/GFormErrorMessages.vue";
 
 interface OptionType {
     label: string;
@@ -39,9 +41,8 @@ interface Props {
      * Disabled
      */
     disabled?: boolean;
-    /**
-     * Name
-     */
+
+    // Name for form registration
     name?: string;
     /**
      * Searchable
@@ -55,6 +56,9 @@ interface Props {
      * Compact
      */
     compact?: boolean;
+
+    // Error messages array (supports multiple validation errors)
+    errors?: string[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -62,6 +66,7 @@ const props = withDefaults(defineProps<Props>(), {
     name: undefined,
     searchable: false,
     compact: false,
+    errors: () => [],
 });
 const emit = defineEmits(["change"]);
 const model = defineModel<string | number | null>();
@@ -74,6 +79,13 @@ const activeIndex = ref(0);
 const ignoreBlur = ref(false);
 const ignoreFocus = ref(false);
 const { push, pop, isTop } = useOverlayStack(baseId);
+
+// Use form field composable for form registration and error handling
+const { displayErrors, hasErrors } = useFormField({
+    name: props.name,
+    value: model,
+    errors: toRef(props, 'errors'),
+});
 
 const menuPlacement = ref<"below" | "above">("below");
 const menuMaxHeight = ref<number | null>(null);
@@ -424,7 +436,7 @@ onBeforeUnmount(() => {
 <template>
     <div
         class="g-select-root g-select-combo"
-        :class="{ 'g-select-open': open, 'g-select-compact': compact }"
+        :class="{ 'g-select-open': open, 'g-select-compact': compact, 'g-select-has-error': hasErrors }"
     >
         <div
             v-if="!hiddenLabel"
@@ -624,6 +636,10 @@ onBeforeUnmount(() => {
                 </template>
             </div>
         </div>
+        <GFormErrorMessages
+            :errors="displayErrors"
+            :id="'error-message-' + baseId"
+        />
     </div>
 </template>
 
@@ -801,5 +817,10 @@ onBeforeUnmount(() => {
         background: var(--g-info-200);
         color: var(--g-primary-500);
     }
+}
+
+.g-select-has-error .g-select-control {
+    border-color: var(--g-danger-600);
+    background: var(--g-danger-100);
 }
 </style>

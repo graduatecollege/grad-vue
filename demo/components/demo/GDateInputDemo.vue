@@ -30,11 +30,6 @@ const dateValue = ref("");
                     label: 'Disabled',
                     default: false
                 },
-                error: {
-                    type: 'string',
-                    label: 'Error message',
-                    default: ''
-                },
                 instructions: {
                     type: 'string',
                     label: 'Instructions',

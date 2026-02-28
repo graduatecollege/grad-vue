@@ -34,7 +34,7 @@ describe("GDateRangeInput", () => {
             const wrapper = mnt(GDateRangeInput, {
                 props: {
                     label: "Date Range",
-                    error: "Invalid date range",
+                    errors: ["Invalid date range"],
                     modelValue: { start: null, end: null },
                 },
             });
@@ -54,7 +54,7 @@ describe("GDateRangeInput", () => {
         it("passes accessibility tests with error", async () => {
             await testAccessibility(GDateRangeInput, {
                 label: "Date Range",
-                error: "Invalid date range",
+                errors: ["Invalid date range"],
                 modelValue: { start: null, end: null },
             });
         });

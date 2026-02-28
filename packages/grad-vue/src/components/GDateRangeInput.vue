@@ -5,8 +5,9 @@
  * This component uses two GDateInput components laid out horizontally
  * to allow selecting a date range.
  */
-import { ref, watch } from "vue";
+import { ref, watch, toRef } from "vue";
 import GDateInput from "./GDateInput.vue";
+import { useFormField } from "../compose/useFormField.ts";
 
 type Props = {
     /**
@@ -25,14 +26,15 @@ type Props = {
      * Disabled
      */
     disabled?: boolean;
-    /**
-     * Error message
-     */
-    error?: string;
+
+    // Error messages array (supports multiple validation errors)
+    errors?: string[];
     /**
      * Instructions
      */
     instructions?: string;
+    // Name for form registration
+    name?: string;
 };
 
 const props = withDefaults(defineProps<Props>(), {
@@ -41,7 +43,8 @@ const props = withDefaults(defineProps<Props>(), {
     endLabel: "End Date",
     instructions: "",
     disabled: false,
-    error: "",
+    errors: () => [],
+    name: undefined,
 });
 
 type DateRange = {
@@ -55,6 +58,13 @@ const model = defineModel<DateRange>({
 
 const startDate = ref<string | null>(model.value.start || null);
 const endDate = ref<string | null>(model.value.end || null);
+
+// Use form field composable for form registration and error handling
+const { displayErrors } = useFormField({
+    name: props.name,
+    value: model,
+    errors: toRef(props, 'errors'),
+});
 
 watch([startDate, endDate], () => {
     model.value = {
@@ -102,8 +112,14 @@ watch(
                 class="g-date-range-input__field"
             />
         </div>
-        <div v-if="props.error" class="g-date-range-input__error" role="alert">
-            {{ props.error }}
+        <div v-if="displayErrors.length > 0" class="g-date-range-input__errors" role="alert">
+            <div
+                v-for="(errorMsg, index) in displayErrors"
+                :key="index"
+                class="g-date-range-input__error"
+            >
+                {{ errorMsg }}
+            </div>
         </div>
     </div>
 </template>
@@ -135,6 +151,12 @@ watch(
 .g-date-range-input__field {
     flex: 1;
     min-width: 0;
+}
+
+.g-date-range-input__errors {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25em;
 }
 
 .g-date-range-input__error {
