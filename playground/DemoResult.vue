@@ -22,9 +22,6 @@ withDefaults(defineProps<Props>(), {
     margin-top: 3rem;
 }
 
-.demo-result__label {
-}
-
 .demo-result__value {
     margin-left: 0.5rem;
     display: inline-block;
