@@ -2,12 +2,6 @@
 
 This is a collection of reusable Vue.js components for the Graduate College.
 
-Run this to see available documentation:
-
-```bash
-find docs/ -name "*.md" | sort
-```
-
 ## Code conventions
 
 - Avoid obvious comments when the code is self-explanatory.
@@ -23,5 +17,6 @@ find docs/ -name "*.md" | sort
 
 ## Development Commands
 
-- `npm run test:run`: run tests
+- `npm run test`: run tests
 - `npm run build`: build the components for production
+- `npm run dev`: start the development server for the playground
