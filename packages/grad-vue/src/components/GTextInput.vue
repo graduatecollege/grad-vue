@@ -163,7 +163,9 @@ function onKeydown(e: KeyboardEvent) {
         >
             <slot name="instructions">{{ instructions }}</slot>
         </div>
-        <div class="g-text-input-field-wrapper">
+        <div :class="[{
+            'g-text-input-field-wrapper': true,
+        }, `g-text-input-field-wrapper--${name || 'nameless'}`]">
             <span v-if="props.prefix" class="g-text-input-prefix">{{
                 props.prefix
             }}</span>
