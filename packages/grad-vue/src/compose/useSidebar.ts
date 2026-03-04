@@ -1,4 +1,4 @@
-import { onBeforeUnmount, Ref, ref, useId, watch } from "vue";
+import { onBeforeUnmount, onMounted, Ref, ref, useId, watch } from "vue";
 import { useMediaQuery } from "@vueuse/core";
 
 /**
@@ -53,7 +53,7 @@ export function useSidebar(
         }, 5);
     }
 
-    if (document) {
+    onMounted(() => {
         watch(
             isCollapsible,
             (val) => {
@@ -67,7 +67,7 @@ export function useSidebar(
             },
             { immediate: true },
         );
-    }
+    });
 
     onBeforeUnmount(() => {
         document.removeEventListener("mousedown", onDocumentClick);
