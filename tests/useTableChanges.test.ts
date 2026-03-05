@@ -38,7 +38,7 @@ describe("useTableChanges", () => {
             
             tracker.trackChange(createChange("row1", "name", "New Name", "Old Name"));
             
-            expect(tracker.hasChanges()).toBe(true);
+            expect(tracker.hasChanges.value).toBe(true);
             expect(tracker.hasChange("row1", "name")).toBe(true);
             expect(tracker.getChange("row1", "name")).toBe("New Name");
         });
@@ -49,7 +49,7 @@ describe("useTableChanges", () => {
             tracker.trackChange(createChange("row1", "name", "New Name", "Old Name"));
             tracker.trackChange(createChange("row1", "value", 100, 50));
             
-            expect(tracker.changeCount()).toBe(2);
+            expect(tracker.changeCount.value).toBe(2);
             expect(tracker.hasChange("row1", "name")).toBe(true);
             expect(tracker.hasChange("row1", "value")).toBe(true);
         });
@@ -60,7 +60,7 @@ describe("useTableChanges", () => {
             tracker.trackChange(createChange("row1", "name", "Name 1", "Old 1"));
             tracker.trackChange(createChange("row2", "name", "Name 2", "Old 2"));
             
-            expect(tracker.changeCount()).toBe(2);
+            expect(tracker.changeCount.value).toBe(2);
             expect(tracker.hasChange("row1", "name")).toBe(true);
             expect(tracker.hasChange("row2", "name")).toBe(true);
         });
@@ -74,7 +74,7 @@ describe("useTableChanges", () => {
             // Change back to original
             tracker.trackChange(createChange("row1", "name", "Old Name", "Old Name"));
             expect(tracker.hasChange("row1", "name")).toBe(false);
-            expect(tracker.hasChanges()).toBe(false);
+            expect(tracker.hasChanges.value).toBe(false);
         });
 
         it("should preserve original value through multiple edits", () => {
@@ -84,7 +84,7 @@ describe("useTableChanges", () => {
             tracker.trackChange(createChange("row1", "value", 150, 100));
             tracker.trackChange(createChange("row1", "value", 200, 150));
             
-            const changes = tracker.getChanges();
+            const changes = tracker.changes.value;
             expect(changes.length).toBe(1);
             expect(changes[0].previousValue).toBe(50);
             expect(changes[0].newValue).toBe(200);
@@ -98,7 +98,7 @@ describe("useTableChanges", () => {
             tracker.trackChange(createChange("row1", "name", "New 1", "Old 1"));
             tracker.trackChange(createChange("row2", "value", 100, 50));
             
-            const changes = tracker.getChanges();
+            const changes = tracker.changes.value;
             expect(changes.length).toBe(2);
             expect(changes[0].rowKey).toBe("row1");
             expect(changes[1].rowKey).toBe("row2");
@@ -128,8 +128,8 @@ describe("useTableChanges", () => {
         it("should return empty array when no changes", () => {
             const tracker = useTableChanges<TestRow>();
             
-            expect(tracker.getChanges()).toEqual([]);
-            expect(tracker.changeCount()).toBe(0);
+            expect(tracker.changes.value).toEqual([]);
+            expect(tracker.changeCount.value).toBe(0);
         });
     });
 
@@ -140,12 +140,12 @@ describe("useTableChanges", () => {
             tracker.trackChange(createChange("row1", "name", "New 1", "Old 1"));
             tracker.trackChange(createChange("row2", "value", 100, 50));
             
-            expect(tracker.hasChanges()).toBe(true);
+            expect(tracker.hasChanges.value).toBe(true);
             
             tracker.clearChanges();
             
-            expect(tracker.hasChanges()).toBe(false);
-            expect(tracker.changeCount()).toBe(0);
+            expect(tracker.hasChanges.value).toBe(false);
+            expect(tracker.changeCount.value).toBe(0);
         });
 
         it("should clear changes for specific row", () => {
@@ -158,7 +158,7 @@ describe("useTableChanges", () => {
             
             expect(tracker.hasChange("row1", "name")).toBe(false);
             expect(tracker.hasChange("row2", "value")).toBe(true);
-            expect(tracker.changeCount()).toBe(1);
+            expect(tracker.changeCount.value).toBe(1);
         });
     });
 
@@ -224,7 +224,7 @@ describe("useTableChanges", () => {
             tracker.trackChange(createChange("row1", "name", "New Value", undefined));
             
             expect(tracker.hasChange("row1", "name")).toBe(true);
-            const changes = tracker.getChanges();
+            const changes = tracker.changes.value;
             expect(changes[0].previousValue).toBeUndefined();
         });
 
@@ -326,14 +326,14 @@ describe("useTableChanges", () => {
             expect(tracker.hasError("row1", "value")).toBe(false);
         });
 
-        it("should include error in getChanges result", () => {
+        it("should include error in changes result", () => {
             const tracker = useTableChanges<TestRow>();
             
             tracker.trackChange(createChange("row1", "value", -5, 10));
             tracker.setError("row1", "value", "Value must be positive");
             tracker.trackChange(createChange("row2", "name", "Test", "Old"));
             
-            const changes = tracker.getChanges();
+            const changes = tracker.changes.value;
             
             expect(changes.length).toBe(2);
             const changeWithError = changes.find(c => c.rowKey === "row1");

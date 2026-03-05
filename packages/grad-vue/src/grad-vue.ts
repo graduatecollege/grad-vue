@@ -101,8 +101,10 @@ export type {
 export type {
     UseTableChangesReturn,
     CellChange,
+    CellChangeEvent,
     ChangeMap,
     CellChangePayload,
+    ColumnKey,
 } from "./compose/useTableChanges";
 export type {
     SelectColumnFilter,

@@ -221,11 +221,12 @@ function handleCellChange(change: { row: T; column: C; value: any }) {
     // Update the reactive data
     // Convert the value to the appropriate type based on input attributes
     let convertedValue: any = change.value;
-    let previousValue = toRaw(change.row[change.column.key as keyof T]);
+    const columnKey = change.column.key;
+    const previousValue = toRaw(change.row[columnKey]);
     if (change.column.editable?.inputAttributes?.type === "number") {
         convertedValue = change.value === "" ? null : Number(change.value);
     }
-    change.row[change.column.key as keyof T] = convertedValue;
+    change.row[columnKey] = convertedValue;
 
     const payload: CellChangePayload<T> = {
         row: change.row,
