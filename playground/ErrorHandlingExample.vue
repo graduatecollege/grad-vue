@@ -103,7 +103,7 @@ changeTracker.onChange((change) => {
 
         <div style="margin-top: 2rem">
             <h2>Changes:</h2>
-            <pre>{{ JSON.stringify(changeTracker.getChanges(), null, 2) }}</pre>
+            <pre>{{ JSON.stringify(changeTracker.changes.value, null, 2) }}</pre>
         </div>
     </div>
 </template>

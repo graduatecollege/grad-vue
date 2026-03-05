@@ -52,7 +52,9 @@ export interface EditableColumnConfig {
     labelKey?: string;
 }
 
-export interface TableColumn<T extends TableRow, K = keyof T> {
+type ColumnKey<T> = Extract<keyof T, string>;
+
+export interface TableColumn<T extends TableRow, K extends ColumnKey<T> = ColumnKey<T>> {
     key: K;
     label: string;
     sortable?: boolean;
