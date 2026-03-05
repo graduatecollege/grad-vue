@@ -10,6 +10,12 @@
  * ```
  *
  * Note that grad-vue doesn't include vue-router as a dependency.
+ *
+ * **Icons** can be added with either the `icon` prop or a named slot `icon`:
+ * - Use the `icon` prop to pass an icon class string, e.g., "fa-solid fa-plus".
+ * - If using the `icon` prop, the icon will be rendered as a span with the `aria-hidden` attribute set to `true`.
+ * - Use a named slot `icon` to provide custom icon content.
+ * - If both `icon` prop and named slot `icon` are provided, the named slot takes precedence.
  */
 import { computed, useAttrs } from "vue";
 
@@ -33,6 +39,11 @@ interface Props {
 
     to?: string | Record<string, any>;
     component?: string;
+
+    // Optional icon classes to render an icon span before the label.
+    // Example: "fa-solid fa-plus" or "material-symbols:add".
+    // If a named slot `icon` is provided, it takes precedence over this prop.
+    icon?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -42,7 +53,13 @@ const props = withDefaults(defineProps<Props>(), {
     text: false,
     to: undefined,
     component: undefined,
+    icon: undefined,
 });
+
+const slots = defineSlots<{
+    default(): any;
+    icon?: () => any;
+}>();
 
 defineEmits([
     "click",
@@ -67,6 +84,8 @@ const classes = computed(() => [
         "g-btn--primary": props.theme === "primary",
         "g-btn--accent": props.theme === "accent",
         "g-btn-has-text": props.text,
+        "g-btn-has-icon-class": props.icon,
+        "g-btn-has-icon-svg": !!slots.icon,
     },
 ]);
 </script>
@@ -88,7 +107,18 @@ const classes = computed(() => [
         @mouseenter="$emit('mouseenter', $event)"
         @mouseleave="$emit('mouseleave', $event)"
     >
-        <slot />
+        <template v-if="icon || slots.icon">
+            <span class="g-btn--icon">
+                <slot v-if="slots.icon" name="icon" />
+                <span v-else :class="icon + ' g-btn--icon-span'" aria-hidden="true"></span>
+            </span>
+            <span class="g-btn--label">
+                <slot />
+            </span>
+        </template>
+        <template v-else>
+            <slot />
+        </template>
     </component>
 </template>
 
@@ -99,8 +129,8 @@ const classes = computed(() => [
     justify-content: center;
     font-family: var(--il-font-sans);
     font-weight: 700;
-    font-size: 1.1875rem;
-    line-height: 1.1;
+    font-size: 19px;
+    line-height: 20px;
     border: 2px solid var(--ilw-color--background);
     background: var(--ilw-color--background);
     color: var(--ilw-color--heading);
@@ -128,6 +158,72 @@ const classes = computed(() => [
     }
 }
 
+
+.g-btn--small {
+    font-size: 14px;
+    padding: 6px 10px 7px;
+
+    --g-accent-500: var(--il-altgeld);
+}
+
+.g-btn--large {
+    font-size: 21px;
+    line-height: 24px;
+    padding: 16px 24px;
+}
+
+.g-btn-has-icon-class, .g-btn-has-icon-svg {
+    gap: 2px;
+    padding: 6px 20px 6px 6px;
+
+    &.g-btn--small {
+        padding: 0 14px 1px 0;
+    }
+    &.g-btn--large {
+        padding: 12px 24px 12px 10px;
+    }
+
+    &:hover {
+        text-decoration: none;
+
+        .g-btn--label {
+            text-decoration: underline;
+        }
+    }
+}
+
+.g-btn--icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    overflow: hidden;
+    text-decoration: none;
+
+    span.g-btn--icon-span {
+        max-width: 100%;
+        max-height: 100%;
+    }
+}
+
+.g-btn--label {
+    display: block;
+}
+
+/* Visually balance leading icon by slightly reducing left offset */
+.g-btn > .g-btn--icon:first-child {
+    margin-left: -0.1em;
+}
+
+.g-btn--icon > svg,
+.g-btn--icon > img {
+    width: 1em;
+    height: 1em;
+    display: block;
+    flex: 0 0 auto;
+}
+
 .g-btn--primary {
     --ilw-color--background: var(--g-primary-500);
     --ilw-color--heading: var(--g-primary-text);
@@ -135,25 +231,6 @@ const classes = computed(() => [
 .g-btn--accent {
     --ilw-color--background: var(--g-accent-500);
     --ilw-color--heading: var(--g-surface-0);
-}
-
-.g-btn--small {
-    font-size: 0.875rem;
-    padding: 0.4em 0.75em 0.25em;
-
-    --g-accent-500: var(--il-altgeld);
-
-    &.g-btn-has-text {
-        .fa,
-        svg {
-            margin-right: 0.75em;
-        }
-    }
-}
-
-.g-btn--large {
-    font-size: 1.1875rem;
-    padding: 0.75em 1.75em;
 }
 
 .g-btn--danger {
@@ -191,7 +268,7 @@ const classes = computed(() => [
     background: none;
     border: none;
     color: var(--ilw-color--background);
-    padding: 4px 8px;
+    padding: 0.25em 0.5em; /* lighter padding using ems for consistency */
     &:hover {
         color: var(--ilw-color--heading-link-hover);
         text-decoration: underline;

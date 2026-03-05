@@ -8,20 +8,20 @@ const textErrors = computed(() => {
     const errors: string[] = [];
     const text = formData.value.firstName;
     if (text && text.length < 5) {
-        errors.push('Text is too short');
+        errors.push("Text is too short");
     }
     return errors;
-})
+});
 
 // Example: reactive errors for validation
 const emailErrors = computed(() => {
     const errors: string[] = [];
     const email = formData.value.email;
-    if (email && !email.includes('@')) {
-        errors.push('Email must contain @');
+    if (email && !email.includes("@")) {
+        errors.push("Email must contain @");
     }
     if (email && email.length < 5) {
-        errors.push('Email is too short');
+        errors.push("Email is too short");
     }
     return errors;
 });
@@ -35,58 +35,92 @@ const fname = ref("heh");
 
 <template>
     <div class="playground">
-        <GAppHeader title="grad-vue playground" illinois>
-        </GAppHeader>
+        <GAppHeader title="grad-vue playground" illinois> </GAppHeader>
 
-        <div
-            class="wrap"
-        >
+        <div class="wrap">
             <main class="main" ref="main">
-                <section id="note-input">
-                    <GForm
-                        v-model="formData"
-                        @submit="handleSubmit"
-                    >
-                        <template
-                            #default="{ isSubmitting, hasErrors, errors }"
-                        >
-                            <GTextInput
-                                name="firstName"
-                                label="First Name"
-                                placeholder="Enter your first name"
-                                v-model="fname"
-                                :errors="textErrors"
-                            />
-                            <GTextInput
-                                name="lastName"
-                                label="Last Name"
-                                placeholder="Enter your last name"
-                            />
-                            <GEmailInput
-                                name="email"
-                                label="Email"
-                                placeholder="your@email.com"
-                                :errors="emailErrors"
-                            />
-                            <div
-                                v-if="hasErrors"
-                                style="
-                                    color: var(--g-danger-600);
-                                    padding: 0.5em;
-                                "
-                            >
-                                Form has errors. Please fix them before
-                                submitting.
-                            </div>
-                            <GSubmitButton :disabled="hasErrors">
-                                {{
-                                    isSubmitting
-                                        ? "Submitting..."
-                                        : "Submit Form"
-                                }}
-                            </GSubmitButton>
-                        </template>
-                    </GForm>
+                <section id="buttons">
+                    <h2>Buttons (with icons)</h2>
+                    <div>
+                        <GButton theme="primary"> Primary </GButton>
+                        <GButton theme="accent" outlined icon="demo-icon">
+                            Accent Outlined
+                        </GButton>
+                        <GButton theme="secondary" text icon="demo-icon">
+                            Secondary Text
+                        </GButton>
+
+                        <GButton theme="primary" outlined>
+                            <template #icon>
+                                <svg
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        stroke="currentColor"
+                                        fill="currentColor"
+                                        d="M19 11H13V5h-2v6H5v2h6v6h2v-6h6z"
+                                    />
+                                </svg>
+                            </template>
+                            With SVG Slot
+                        </GButton>
+                    </div>
+                    <div>
+                        <GButton size="small" theme="primary"> Primary </GButton>
+                        <GButton size="small" theme="accent" outlined icon="demo-icon">
+                            Accent Outlined
+                        </GButton>
+                        <GButton size="small" theme="secondary" text icon="demo-icon">
+                            Secondary Text
+                        </GButton>
+
+                        <GButton size="small" theme="primary" outlined>
+                            <template #icon>
+                                <svg
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 24 24"
+                                    fill="currentColor"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        d="M19 11H13V5h-2v6H5v2h6v6h2v-6h6z"
+                                    />
+                                </svg>
+                            </template>
+                            With SVG Slot
+                        </GButton>
+                    </div>
+                    <div>
+                        <GButton size="large" theme="primary"> Primary </GButton>
+                        <GButton size="large" theme="accent" outlined icon="demo-icon">
+                            Accent
+                        </GButton>
+                        <GButton size="large" theme="secondary" text icon="demo-icon">
+                            Secondary
+                        </GButton>
+
+                        <GButton size="large" theme="primary" outlined>
+                            <template #icon>
+                                <svg
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 24 24"
+                                    fill="currentColor"
+                                    stroke="currentColor"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        d="M19 11H13V5h-2v6H5v2h6v6h2v-6h6z"
+                                    />
+                                </svg>
+                            </template>
+                            With SVG
+                        </GButton>
+                    </div>
                 </section>
             </main>
         </div>
@@ -115,6 +149,31 @@ h2 {
 }
 section > *:not(h2) {
     margin-right: 0.5rem;
+}
+
+#buttons > div {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Playground-only icon class to visualize the icon prop
+   Use a UTF-8 star so it behaves like a font icon kit. */
+:deep(.demo-icon) {
+    line-height: 1;
+    color: currentColor;
+    -webkit-font-smoothing: antialiased;
+    display: inline-block;
+    font-style: normal;
+    font-variant: normal;
+    text-rendering: auto;
+}
+
+:deep(.demo-icon)::before {
+    content: "★"; /* simple UTF-8 icon glyph */
+    text-decoration: inherit;
+    vertical-align: inherit;
 }
 
 .history-scroller {
