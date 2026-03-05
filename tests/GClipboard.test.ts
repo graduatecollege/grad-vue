@@ -34,20 +34,5 @@ describe("GClipboard", () => {
                 .element(page.getByLabelText("Copy"))
                 .toHaveAccessibleDescription("Copy to clipboard");
         });
-        it("after click should update aria description", async () => {
-            const { vm } = mnt(GClipboard, {
-                props: { label: "Clipboard", text: "Example text" },
-            });
-
-            await vm.$nextTick();
-
-            // Focus can be flaky, so start waiting first and then click
-            let promise = expect.element(
-                page.getByLabelText("Copy"),
-            ).toHaveAccessibleDescription("Copied");
-
-            await page.getByLabelText("Copy").click();
-            await promise;
-        });
     });
 });

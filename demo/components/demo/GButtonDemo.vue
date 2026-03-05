@@ -60,6 +60,13 @@ a link or <code>router-link</code> component from vue-router. For example:</p>
 </figure>
 
 <p>Note that grad-vue doesn&#39;t include vue-router as a dependency.</p>
+<p><strong>Icons</strong> can be added with either the <code>icon</code> prop or a named slot <code>icon</code>:</p>
+<ul>
+<li>Use the <code>icon</code> prop to pass an icon class string, e.g., &quot;fa-solid fa-plus&quot;.</li>
+<li>If using the <code>icon</code> prop, the icon will be rendered as a span with the <code>aria-hidden</code> attribute set to <code>true</code>.</li>
+<li>Use a named slot <code>icon</code> to provide custom icon content.</li>
+<li>If both <code>icon</code> prop and named slot <code>icon</code> are provided, the named slot takes precedence.</li>
+</ul>
 </template>
             <template #default="{ props }">
                 <GButton v-bind="props" @click="handleClick">
@@ -90,6 +97,23 @@ a link or <code>router-link</code> component from vue-router. For example:</p>
                 <div class="demo-variants">
                     <GButton outlined>Outlined</GButton>
                     <GButton text>Text Button</GButton>
+                    <GButton>
+                        <template #icon>
+                            <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="currentColor"
+                                stroke="currentColor"
+                                role="none presentation"
+                            >
+                                <path
+                                    d="M19 11H13V5h-2v6H5v2h6v6h2v-6h6z"
+                                />
+                            </svg>
+                        </template>
+                        With SVG
+                    </GButton>
                 </div>
             </ComponentDemo>
         </div>

@@ -91,6 +91,12 @@ a link or `router-link` component from vue-router. For example:
 
 Note that grad-vue doesn't include vue-router as a dependency.
 
+**Icons** can be added with either the `icon` prop or a named slot `icon`:
+- Use the `icon` prop to pass an icon class string, e.g., "fa-solid fa-plus".
+- If using the `icon` prop, the icon will be rendered as a span with the `aria-hidden` attribute set to `true`.
+- Use a named slot `icon` to provide custom icon content.
+- If both `icon` prop and named slot `icon` are provided, the named slot takes precedence.
+
 ### Props
 
 ```typescript
@@ -114,11 +120,17 @@ interface Props {
 
     to?: string | Record<string, any>;
     component?: string;
+
+    // Optional icon classes to render an icon span before the label.
+    // Example: "fa-solid fa-plus" or "material-symbols:add".
+    // If a named slot `icon` is provided, it takes precedence over this prop.
+    icon?: string;
 }
 ```
 
 ### Slots
 
+- `icon`
 - `default`
 
 ---

@@ -27,6 +27,7 @@ test-results
 coverage
 .vitest
 tests/__screenshots__
+.playwright-cli/
 
 # Editor directories and files
 .vscode/*
