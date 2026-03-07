@@ -35,6 +35,7 @@ import GDateInputDemo from "~/components/demo/GDateInputDemo.vue";
 import GDateRangeInputDemo from "~/components/demo/GDateRangeInputDemo.vue";
 import GChatInputDemo from "~/components/demo/GChatInputDemo.vue";
 import GNoteInputDemo from "~/components/demo/GNoteInputDemo.vue";
+import GRichTextContentDemo from "~/components/demo/GRichTextContentDemo.vue";
 import { onMounted, provide } from "vue";
 import { useTemplateRef } from "#imports";
 import GFormDemo from "~/components/demo/GFormDemo.vue";
@@ -67,6 +68,7 @@ const demoComponents = [
     { label: "History Scroller", component: GHistoryScrollerDemo },
     { label: "Modal", component: GModalDemo },
     { label: "Note Input", component: GNoteInputDemo },
+    { label: "Rich Text Content", component: GRichTextContentDemo },
     { label: "Popover", component: GPopoverDemo },
     { label: "Progress", component: GProgressDemo },
     { label: "Search", component: GSearchDemo },
