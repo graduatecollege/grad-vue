@@ -1,7 +1,7 @@
 {
-  "totalComponents": 34,
-  "totalTests": 271,
-  "passedTests": 271,
+  "totalComponents": 35,
+  "totalTests": 281,
+  "passedTests": 281,
   "failedTests": 0,
   "skippedTests": 0,
   "components": {
@@ -97,8 +97,8 @@
     },
     "GButton": {
       "component": "GButton",
-      "total": 33,
-      "passed": 33,
+      "total": 36,
+      "passed": 36,
       "failed": 0,
       "skipped": 0,
       "status": "passed",
@@ -118,14 +118,28 @@
           ]
         },
         {
-          "title": "applies size classes correctly",
+          "title": "works with different sizes (renders and is clickable)",
           "status": "passed",
           "ancestors": [
             "Functional Tests"
           ]
         },
         {
-          "title": "applies theme classes correctly",
+          "title": "works with different themes (renders and is clickable)",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "renders leading icon when icon class prop is provided",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "renders leading SVG when provided via icon slot",
           "status": "passed",
           "ancestors": [
             "Functional Tests"
@@ -381,6 +395,13 @@
           "ancestors": [
             "Accessibility Tests"
           ]
+        },
+        {
+          "title": "with SVG icon",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
         }
       ]
     },
@@ -438,8 +459,8 @@
     },
     "GClipboard": {
       "component": "GClipboard",
-      "total": 4,
-      "passed": 4,
+      "total": 3,
+      "passed": 3,
       "failed": 0,
       "skipped": 0,
       "status": "passed",
@@ -460,13 +481,6 @@
         },
         {
           "title": "should have aria description",
-          "status": "passed",
-          "ancestors": [
-            "Accessibility Tests"
-          ]
-        },
-        {
-          "title": "after click should update aria description",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
@@ -1104,6 +1118,72 @@
         },
         {
           "title": "with custom aria-label",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        }
+      ]
+    },
+    "GRichTextContent": {
+      "component": "GRichTextContent",
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed",
+      "tests": [
+        {
+          "title": "renders content from a JSON string",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "renders nothing for an empty string",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "renders an error message for invalid JSON",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "renders bold",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "renders italic",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "renders a bullet list",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with content",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "error message uses role=alert",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
@@ -2276,7 +2356,7 @@
           ]
         },
         {
-          "title": "should include error in getChanges result",
+          "title": "should include error in changes result",
           "status": "passed",
           "ancestors": [
             "Error Tracking"

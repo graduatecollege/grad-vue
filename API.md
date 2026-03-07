@@ -1355,3 +1355,35 @@ interface Props {
 ```
 
 ---
+
+## GRichTextContent
+
+Renders a JSON string of tiptap content as HTML.
+Supports all formatting produced by GChatInput and GNoteInput:
+bold, italic, ordered lists, and bullet lists.
+
+- Empty content is handled gracefully (renders nothing).
+- Displays an error message when the content cannot be parsed or rendered.
+
+The rendering only happens in the client when used with Nuxt.js.
+
+**Security note**: rendered HTML is produced by tiptap's `generateHTML`, which only
+serializes recognized document nodes - it does not inject raw HTML from the JSON.
+
+**Note**: This component is part of the `@illinois-grad/grad-vue-rte` package, which includes Tiptap dependencies.
+
+### Props
+
+```typescript
+interface Props {
+    /**
+     * Error message when rendering fails
+     */
+    error?: string;
+
+    // JSON-encoded tiptap content string to render.
+    content: string;
+}
+```
+
+---
