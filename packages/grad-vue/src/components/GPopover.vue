@@ -54,7 +54,7 @@ const triggerRef = useTemplateRef<HTMLElement | null>("triggerRef");
 const popoverRef = useTemplateRef<HTMLElement | null>("popoverRef");
 
 const id = useId();
-const { push, pop, isTop, zIndex } = useOverlayStack(id);
+const { push, pop, isTop, zIndex } = useOverlayStack(id, true);
 const { activate, deactivate } = useOverlayFocus(popoverRef, isTop, true);
 useOverlayEscape([popoverRef, triggerRef], isTop, open, hide, pop);
 
@@ -153,7 +153,7 @@ onBeforeUnmount(() => {
         <div ref="triggerRef" class="g-popover-trigger" :id="`${id}-trigger`">
             <slot name="trigger" :toggle="toggle"></slot>
         </div>
-        <Teleport to="body">
+        <Teleport to="#modal-root">
             <transition name="g-popover-expand" appear>
                 <div
                     v-if="open"
