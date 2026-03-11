@@ -122,6 +122,18 @@ const fname = ref("heh");
                         </GButton>
                     </div>
                 </section>
+                <section id="modal-popovers">
+                    <h2>Modal and Popovers</h2>
+                    <GButton v-gtooltip="'Real Button'">Button</GButton>
+                    <GPopover>
+                        <template #trigger="{ toggle }">
+                            <GButton @click="toggle">Open Popover</GButton>
+                        </template>
+                        <p>This popover is inside a modal and should be positioned correctly.
+                            <GButton v-gtooltip="'Real Button 2'">Button</GButton>
+                        </p>
+                    </GPopover>
+                </section>
             </main>
         </div>
     </div>
