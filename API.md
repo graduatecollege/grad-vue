@@ -541,6 +541,10 @@ interface Props {
      * Modal size
      */
     size?: "small" | "medium" | "large" | "full";
+    /**
+     * Modal classes
+     */
+    classes?: string | string[];
 }
 ```
 

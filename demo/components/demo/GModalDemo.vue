@@ -39,6 +39,10 @@ const showModal = ref(false);
                         'large',
                         'full'
                     ]
+                },
+                classes: {
+                    type: 'string',
+                    label: 'Modal classes'
                 }
             }"
         >
