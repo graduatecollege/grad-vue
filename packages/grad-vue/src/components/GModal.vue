@@ -103,11 +103,11 @@ onBeforeMount(() => {
 });
 
 const useClasses = computed(() => {
-    let classes = ['g-modal--' + props.size]
+    let modalClasses = [`g-modal--${props.size}`];
     if (props.classes) {
-        classes = classes.concat(Array.isArray(props.classes) ? props.classes : [props.classes]);
+        modalClasses = modalClasses.concat(Array.isArray(props.classes) ? props.classes : [props.classes]);
     }
-    return classes;
+    return modalClasses;
 });
 </script>
 

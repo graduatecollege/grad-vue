@@ -27,7 +27,9 @@ function createTooltipEl(text: string, id: string) {
 function showTooltip(el: HTMLElement, tooltip: HTMLElement) {
     const anchorRect = el.getBoundingClientRect();
     const popoverRect = tooltip.getBoundingClientRect();
-    const viewportRect = new DOMRect(window.scrollX, window.scrollY, window.innerWidth, window.innerHeight);
+    // Use (0, 0) as origin since getBoundingClientRect() and position: fixed
+    // both use viewport-relative coordinates.
+    const viewportRect = new DOMRect(0, 0, window.innerWidth, window.innerHeight);
     const { top, left, placedAbove } = calculatePopoverPosition(anchorRect, popoverRect, viewportRect, {
         gap: 8,
         margin: 8,
@@ -77,12 +79,15 @@ const VGtooltip: VGtooltipDirective = {
         const ensureTooltip = () => {
             if (!tooltip.value) {
                 tooltip.value = createTooltipEl(tooltipText.value, tooltipId);
-                // Append after the target element in the DOM for stacking context
-                if (el.parentNode) {
-                    el.parentNode.insertBefore(tooltip.value, el.nextSibling);
-                } else {
-                    document.body.appendChild(tooltip.value);
-                }
+                // Append to document.body to avoid CSS transform stacking context issues
+                // when the trigger element is inside a transformed ancestor (e.g., GModal
+                // uses transform: translate(-50%, -50%) for centering, which makes
+                // position: fixed children position relative to the modal, not the viewport).
+                // Accessibility: DOM order does not affect tooltip accessibility. Screen
+                // readers follow the aria-describedby reference to find tooltip content
+                // regardless of where the element sits in the DOM. Tooltips never receive
+                // keyboard focus, so appending to body does not disrupt tab order.
+                document.body.appendChild(tooltip.value);
                 // Observe tooltip size changes to reposition
                 resizeObserver = new ResizeObserver(() => {
                     if (tooltip.value && (isHovered.value || isFocused.value)) {
