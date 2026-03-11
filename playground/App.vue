@@ -122,6 +122,15 @@ const fname = ref("heh");
                         </GButton>
                     </div>
                 </section>
+                <section id="modal-popovers">
+                    <h2>Modal and Popovers</h2>
+                    <GPopover>
+                        <template #trigger="{ toggle }">
+                            <GButton @click="toggle">Open Popover</GButton>
+                        </template>
+                        <p>This popover is inside a modal and should be positioned correctly.</p>
+                    </GPopover>
+                </section>
             </main>
         </div>
     </div>
