@@ -23,21 +23,16 @@ export function useRichTextRenderer(content: Ref<string>) {
     onMounted(() => {
         watch(content, () => {
             const value = toValue(content);
-            console.log("value", value);
-
             if (!value || value.trim() === "") {
                 return "";
             }
 
-
             try {
                 const parsed = JSON.parse(value);
-                console.log("parsed", parsed);
                 let html = generateHTML(
                     parsed,
                     extensions
                 );
-                console.log("html", html);
                 rendered.value = html;
             } catch (error) {
                 console.error("Failed to parse content:", value);

@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import ComponentSection from "../ComponentSection.vue";
 import ComponentDemo from "../ComponentDemo.vue";
-import { GModal } from "@illinois-grad/grad-vue";
+import { GModal, GPopover } from "@illinois-grad/grad-vue";
 import { GButton } from "@illinois-grad/grad-vue";
 
 const showModal = ref(false);
@@ -39,6 +39,10 @@ const showModal = ref(false);
                         'large',
                         'full'
                     ]
+                },
+                classes: {
+                    type: 'string',
+                    label: 'Modal classes'
                 }
             }"
         >
@@ -87,6 +91,13 @@ when <code>document</code> is defined. That makes it only load in the client.</p
                         It doesn't have default action buttons, giving you full
                         control over the content and interactions.
                     </p>
+                    <p>Popovers inside modals are positioned correctly:</p>
+                    <GPopover>
+                        <template #trigger="{ toggle }">
+                            <GButton @click="toggle">Open Popover</GButton>
+                        </template>
+                        <p>This popover is inside a modal and should be positioned correctly.</p>
+                    </GPopover>
                     <div
                         style="
                             height: 1500px;

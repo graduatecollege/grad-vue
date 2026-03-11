@@ -1,5 +1,9 @@
 import { computed, onBeforeUnmount, Ref, ref, useId } from "vue";
 
+const OVERLAY_Z_INDEX_BASE = 100;
+const MODAL_Z_INDEX_BASE = 200;
+const DEFAULT_TOOLTIP_Z_INDEX = 102;
+
 export type OverlayStack = {
     push: () => void;
     pop: () => void;
@@ -89,7 +93,7 @@ export function useOverlayStack(id: string, modal = false, lockScroll = false): 
     });
     const zIndex = computed(() => {
         const pos = stackRef.value.indexOf(id);
-        return pos === -1 ? 0 : (modal ? 200 : 100) + pos;
+        return pos === -1 ? 0 : (modal ? MODAL_Z_INDEX_BASE : OVERLAY_Z_INDEX_BASE) + pos;
     });
 
     onBeforeUnmount(pop);
@@ -119,4 +123,28 @@ export function useOverlayStackState(): OverlayStackState {
         return scrollLockStack.value.length > 0;
     });
     return { hasModal, hasOverlay, hasScrollLock };
+}
+
+/**
+ * Returns a z-index value that is above all currently open overlays.
+ * Uses the same base values as useOverlayStack: 100 + pos for non-modal,
+ * 200 + pos for modal. Falls back to DEFAULT_TOOLTIP_Z_INDEX when no
+ * overlays are open.
+ *
+ * This function can be called outside of a Vue component setup context,
+ * which makes it suitable for use in Vue directives.
+ */
+export function getTopZIndex(): number {
+    if (typeof window === "undefined" || !window._g_overlay_stack_state) {
+        return DEFAULT_TOOLTIP_Z_INDEX;
+    }
+    const { stack, modalStack } = window._g_overlay_stack_state;
+    let max = 0;
+    stack.value.forEach((_, idx) => {
+        max = Math.max(max, OVERLAY_Z_INDEX_BASE + idx);
+    });
+    modalStack.value.forEach((_, idx) => {
+        max = Math.max(max, MODAL_Z_INDEX_BASE + idx);
+    });
+    return max > 0 ? max + 1 : DEFAULT_TOOLTIP_Z_INDEX;
 }

@@ -35,7 +35,14 @@
  * > when `document` is defined. That makes it only load in the client.
  */
 
-import { onBeforeMount, onMounted, ref, useId, useTemplateRef } from "vue";
+import {
+    computed,
+    onBeforeMount,
+    onMounted,
+    ref,
+    useId,
+    useTemplateRef,
+} from "vue";
 import { useOverlayStack } from "../compose/useOverlayStack.ts";
 import { useOverlayFocus } from "../compose/useOverlayFocus.ts";
 import { useOverlayEscape } from "../compose/useOverlayEscape.ts";
@@ -57,6 +64,10 @@ interface Props {
      * Modal size
      */
     size?: "small" | "medium" | "large" | "full";
+    /**
+     * Modal classes
+     */
+    classes?: string | string[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -71,7 +82,7 @@ const dialog = useTemplateRef("dialog");
 const open = ref(true);
 
 const id = useId();
-const { pop, push, isTop, zIndex } = useOverlayStack(id,true, true);
+const { pop, push, isTop, zIndex } = useOverlayStack(id, true, true);
 
 const { deactivate, activate } = useOverlayFocus(dialog, isTop);
 
@@ -90,6 +101,14 @@ onBeforeMount(() => {
     pop();
     deactivate();
 });
+
+const useClasses = computed(() => {
+    let modalClasses = [`g-modal--${props.size}`];
+    if (props.classes) {
+        modalClasses = modalClasses.concat(Array.isArray(props.classes) ? props.classes : [props.classes]);
+    }
+    return modalClasses;
+});
 </script>
 
 <template>
@@ -98,7 +117,7 @@ onBeforeMount(() => {
             <div
                 :id="'modal-' + id"
                 class="g-modal"
-                :class="'g-modal--' + size"
+                :class="useClasses"
                 role="dialog"
                 aria-modal="true"
                 v-bind="{
