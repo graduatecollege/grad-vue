@@ -251,7 +251,7 @@ describe("GTable", () => {
             });
             await filterButton.click();
 
-            await container.getByRole("option", {
+            await page.getByRole("option", {
                 name: "No",
             }).click();
 
@@ -264,7 +264,7 @@ describe("GTable", () => {
                 name: "Filter",
             });
             await filterButton.click();
-            await container.getByRole("option", {
+            await page.getByRole("option", {
                 name: "No",
             }).click();
 
@@ -280,7 +280,7 @@ describe("GTable", () => {
             const clearFiltersButton = container.getByRole("button", {
                 name: "Clear Filters",
             });
-            await container
+            await page
                 .getByRole("option", {
                     name: "No",
                 })

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import GPopover from "../packages/grad-vue/src/components/GPopover.vue";
+import GModal from "../packages/grad-vue/src/components/GModal.vue";
 import { mnt, testAccessibility } from "./test-utils";
 import { h } from "vue";
 import { page } from "vitest/browser";
@@ -63,6 +64,31 @@ describe("GPopover", () => {
                 .toBeInView();
 
             content.remove();
+        });
+
+        it("remains in viewport when inside a modal", async () => {
+            mnt(GModal, {
+                props: { label: "Test Modal" },
+                slots: {
+                    default: () =>
+                        h(GPopover, null, {
+                            trigger: ({ toggle }: { toggle: () => void }) =>
+                                h(
+                                    "button",
+                                    { onClick: toggle },
+                                    "Open Popover",
+                                ),
+                            default: () => "Popover content",
+                        }),
+                },
+                teleport: true,
+            });
+
+            await page.getByRole("button", { name: "Open Popover" }).click();
+
+            await expect
+                .element(page.getByRole("dialog", { name: "Open Popover" }))
+                .toBeInView();
         });
     });
 
