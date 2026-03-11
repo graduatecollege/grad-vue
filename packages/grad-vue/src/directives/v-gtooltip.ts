@@ -1,6 +1,7 @@
 import type { Directive, DirectiveBinding } from "vue";
 import { ref, watchEffect } from "vue";
 import { calculatePopoverPosition } from "../compose/popoverPosition.ts";
+import { getTopZIndex } from "../compose/useOverlayStack.ts";
 
 let tooltipIdCounter = 1;
 
@@ -46,6 +47,7 @@ function showTooltip(el: HTMLElement, tooltip: HTMLElement) {
     }
     tooltip.style.left = `${left}px`;
     tooltip.style.top = `${top}px`;
+    tooltip.style.zIndex = `${getTopZIndex()}`;
     tooltip.style.opacity = "1";
 }
 
@@ -79,15 +81,17 @@ const VGtooltip: VGtooltipDirective = {
         const ensureTooltip = () => {
             if (!tooltip.value) {
                 tooltip.value = createTooltipEl(tooltipText.value, tooltipId);
-                // Append to document.body to avoid CSS transform stacking context issues
-                // when the trigger element is inside a transformed ancestor (e.g., GModal
-                // uses transform: translate(-50%, -50%) for centering, which makes
-                // position: fixed children position relative to the modal, not the viewport).
+                // Append to #modal-root (with document.body fallback) so the tooltip
+                // shares the same DOM container as GModal and GPopover. This ensures
+                // consistent z-index stacking context and avoids CSS transform issues
+                // when the trigger is inside a transformed ancestor (e.g., GModal uses
+                // transform: translate(-50%, -50%) for centering).
                 // Accessibility: DOM order does not affect tooltip accessibility. Screen
                 // readers follow the aria-describedby reference to find tooltip content
                 // regardless of where the element sits in the DOM. Tooltips never receive
-                // keyboard focus, so appending to body does not disrupt tab order.
-                document.body.appendChild(tooltip.value);
+                // keyboard focus, so appending here does not disrupt tab order.
+                const modalRoot = document.getElementById("modal-root");
+                (modalRoot ?? document.body).appendChild(tooltip.value);
                 // Observe tooltip size changes to reposition
                 resizeObserver = new ResizeObserver(() => {
                     if (tooltip.value && (isHovered.value || isFocused.value)) {
