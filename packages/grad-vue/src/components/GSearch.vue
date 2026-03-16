@@ -1,13 +1,4 @@
-<script
-    setup
-    lang="ts"
-    generic="
-        T extends {
-            id: string | number;
-            title: string;
-        }
-    "
->
+<script lang="ts">
 /**
  * A combobox-style search that shows a list of results as an auto
  * complete dropdown.
@@ -75,6 +66,19 @@
  * </template>
  * ```
  */
+export {};
+</script>
+
+<script
+    setup
+    lang="ts"
+    generic="
+        T extends {
+            id: string | number;
+            title: string;
+        }
+    "
+>
 import { computed, nextTick, ref, useId, watch } from "vue";
 import { useDebounceFn, useFocusWithin } from "@vueuse/core";
 import GProgress from "./GProgress.vue";

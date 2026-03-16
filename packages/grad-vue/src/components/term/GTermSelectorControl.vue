@@ -1,11 +1,16 @@
-<script setup lang="ts">/**
+<script lang="ts">
+/**
  * Prebuilt GSelect and GSelectButton components that can be used to
  * select a term.
  */
+export {};
+</script>
+
+<script setup lang="ts">
 import GSelect from "../GSelect.vue";
 import GSelectButton from "../GSelectButton.vue";
 
-interface Props {
+type Props = {
     /**
      * List of possible term years. Defaults to ["2026"].
      */

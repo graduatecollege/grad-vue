@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts">
 /**
  * User menu component for toolbars. Displays a button with the user's initials
  * inside a colored circle. When clicked, it opens a popover with the user's
@@ -28,11 +28,14 @@
  * </GUserMenu>
  * ```
  */
+export {};
+</script>
 
+<script setup lang="ts">
 import { getCurrentInstance, ref, useId, useSlots, useTemplateRef } from "vue";
 import GPopover from "./GPopover.vue";
 
-interface Props {
+type Props = {
     /**
      * User initial(s)
      */

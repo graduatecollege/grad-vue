@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts">
 /**
  * Generic modal component.
  *
@@ -34,7 +34,10 @@
  * > to store the state of the overlay stack is added to `window._g_overlay_stack_state`
  * > when `document` is defined. That makes it only load in the client.
  */
+export {};
+</script>
 
+<script setup lang="ts">
 import {
     computed,
     onBeforeMount,
@@ -47,7 +50,7 @@ import { useOverlayStack } from "../compose/useOverlayStack.ts";
 import { useOverlayFocus } from "../compose/useOverlayFocus.ts";
 import { useOverlayEscape } from "../compose/useOverlayEscape.ts";
 
-interface Props {
+type Props = {
     /**
      * Modal label
      */

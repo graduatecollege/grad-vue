@@ -1,4 +1,4 @@
-<script setup lang="ts" generic="T extends TableRow, C extends TableColumn<T>">
+<script lang="ts">
 /**
  * A data table component with support for grouping, sorting, filtering, and pagination.
  *
@@ -27,6 +27,10 @@
  *
  * Grouping can be enabled by passing a column key to `groupBy`.
  */
+export {};
+</script>
+
+<script setup lang="ts" generic="T extends TableRow, C extends TableColumn<T>">
 import GTableBody from "./table/GTableBody.vue";
 import GPopover from "./GPopover.vue";
 import { TableColumn, TableRow } from "./table/TableColumn.ts";

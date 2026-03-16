@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts">
 /**
  * This component acts like a radio button group condensed into a compact
  * element with the goal of making it easy to go over many of them at once.
@@ -15,9 +15,13 @@
  * Slots:
  * - `label`: Custom label content. Defaults to `label` prop if not provided.
  */
+export {};
+</script>
+
+<script setup lang="ts">
 import { ref, computed, watch, useId } from "vue";
 
-interface Props {
+type Props = {
     /**
      * Accessible label
      */

@@ -1,10 +1,14 @@
-<script setup lang="ts">
+<script lang="ts">
 /**
  * A date input component.
  * 
  * This component is a wrapper around GTextInput with type="date" for
  * proper date selection using the browser's native date picker.
  */
+export {};
+</script>
+
+<script setup lang="ts">
 import GTextInput from "./GTextInput.vue";
 
 type Props = {
