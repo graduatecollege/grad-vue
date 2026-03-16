@@ -11,30 +11,10 @@ import { GSidebar } from "@illinois-grad/grad-vue";
             component="GSidebar"
             padding="0"
             :props-config="{
-                backgroundColor: {
-                    type: 'string',
-                    label: 'Custom background color',
-                    default: ''
-                },
                 backgroundImage: {
                     type: 'string',
                     label: 'Custom background image',
                     default: 'none'
-                },
-                theme: {
-                    type: 'select',
-                    label: 'Sidebar theme',
-                    default: 'dark',
-                    options: [
-                        'light',
-                        'dark'
-                    ]
-                },
-                width: {
-                    type: 'string',
-                    label: 'Width',
-                    default: '300px',
-                    instructions: 'Width of the sidebar'
                 }
             }"
         >

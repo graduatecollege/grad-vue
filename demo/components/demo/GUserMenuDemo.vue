@@ -20,16 +20,6 @@ import { computed, ref } from "vue";
                     type: 'string',
                     label: 'User email',
                     default: 'j@example.org'
-                },
-                color: {
-                    type: 'string',
-                    label: 'Background color',
-                    default: 'var(--g-surface-700)'
-                },
-                label: {
-                    type: 'string',
-                    label: 'Accessible label',
-                    default: 'User menu'
                 }
             }"
         >

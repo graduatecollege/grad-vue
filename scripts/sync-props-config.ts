@@ -11,14 +11,25 @@ import { codeToHtml } from "shiki";
 // It also updates the demo docs from a JSDoc comment at the top of the script tag.
 // Run this script after updating the component's props.
 //
-// Props can include a JSDoc @demo tag to specify the default value shown in
-// the interactive demo. For example:
+// Only props with a JSDoc @demo tag are included in the demo config.
+// The @demo tag can optionally specify the default value shown in the interactive demo:
 //
 //   /**
 //    * Modal label
-//    * @demo Basic Modal
+//    * @demo Basic Modal   <- included in demo, pre-filled with "Basic Modal"
 //    */
 //   label: string;
+//
+//   /**
+//    * Placeholder text
+//    * @demo               <- included in demo, no pre-filled value
+//    */
+//   placeholder?: string;
+//
+//   /**
+//    * Internal option
+//    */
+//   internal?: string;    <- NOT included in demo (no @demo tag)
 
 const packagesDir = 'packages';
 const demosDir = 'demo/components/demo';
@@ -100,8 +111,9 @@ function parseProps(content: string) {
                 (ts.isInterfaceDeclaration(node) && node.name.text === 'Props');
 
             if (isPropsDecl) {
-                // Strip @demo tags from the raw source text - they are only used by sync-props
-                rawProps = node.getText(setupSource).replace(/^\s*\*\s+@demo\s.*\n/gm, '');
+                // Strip @demo tags (with or without a value) from the raw source text
+                // since they are only used by sync-props and not part of the public API docs.
+                rawProps = node.getText(setupSource).replace(/^\s*\*\s+@demo\b.*\n/gm, '');
 
                 const members: ts.NodeArray<ts.TypeElement> =
                     ts.isTypeAliasDeclaration(node) && ts.isTypeLiteralNode(node.type)
@@ -116,18 +128,21 @@ function parseProps(content: string) {
                     const name = member.name.getText(setupSource);
                     if (name === 'modelValue') continue;
 
-                    const jsDocs = ts.getJSDocCommentsAndTags(member);
-                    if (!jsDocs.length || !ts.isJSDoc(jsDocs[0])) continue;
-
-                    const commentText = getJSDocCommentText(jsDocs[0].comment);
-                    const { label, instructions } = splitJSDocText(commentText);
-                    if (!label) continue;
-
-                    // Read @demo tag for the demo default value
+                    // Only include props that have a @demo tag in their JSDoc.
                     const demoTag = ts.getJSDocTags(member).find((t) => t.tagName.text === 'demo');
-                    const demoDefault = demoTag
-                        ? getJSDocCommentText(demoTag.comment).trim() || undefined
-                        : undefined;
+                    if (!demoTag) continue;
+
+                    const jsDocs = ts.getJSDocCommentsAndTags(member);
+                    const commentText = jsDocs.length && ts.isJSDoc(jsDocs[0])
+                        ? getJSDocCommentText(jsDocs[0].comment)
+                        : '';
+                    const { label, instructions } = splitJSDocText(commentText);
+
+                    // A non-empty @demo value is used as the pre-filled demo default.
+                    // An empty @demo tag means the prop is shown in the demo without any
+                    // pre-filled value (null), bypassing the withDefaults fallback.
+                    const demoValue = getJSDocCommentText(demoTag.comment).trim();
+                    const demoDefault: string | null = demoValue.length > 0 ? demoValue : null;
 
                     const typeStr = member.type?.getText(setupSource) ?? 'unknown';
                     let type = 'string';
@@ -170,41 +185,6 @@ function parseProps(content: string) {
         }
 
         visitForProps(setupSource);
-
-        // --- Pass 2: fill in defaults from withDefaults() ---
-        function visitForDefaults(node: ts.Node): void {
-            if (
-                ts.isCallExpression(node) &&
-                ts.isIdentifier(node.expression) &&
-                node.expression.text === 'withDefaults'
-            ) {
-                const defaultsArg = node.arguments[1];
-                if (defaultsArg && ts.isObjectLiteralExpression(defaultsArg)) {
-                    for (const prop of defaultsArg.properties) {
-                        if (!ts.isPropertyAssignment(prop)) continue;
-                        const key = prop.name.getText(setupSource);
-                        if (!(key in props) || props[key].default !== undefined) continue;
-
-                        const valStr = prop.initializer.getText(setupSource).trim();
-                        // Skip factory functions used for array/object defaults
-                        if (valStr.startsWith('()') || valStr.startsWith('function')) continue;
-
-                        let val: any = valStr.replace(/['"]/g, '');
-                        if (props[key].type === 'boolean') {
-                            val = val === 'true';
-                        } else if (props[key].type === 'number') {
-                            val = valStr === 'undefined' ? null : Number(val);
-                        } else if (valStr === 'undefined') {
-                            val = null;
-                        }
-                        props[key].default = val;
-                    }
-                }
-            }
-            ts.forEachChild(node, visitForDefaults);
-        }
-
-        visitForDefaults(setupSource);
     }
 
     // Parse slots from the template block

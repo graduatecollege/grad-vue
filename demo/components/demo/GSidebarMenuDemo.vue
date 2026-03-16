@@ -24,20 +24,6 @@ const demoItems = [
                     type: 'string',
                     label: 'Title and accessible name',
                     default: 'Sidebar Menu'
-                },
-                theme: {
-                    type: 'select',
-                    label: 'Sidebar theme',
-                    default: 'light',
-                    options: [
-                        'light',
-                        'dark'
-                    ]
-                },
-                compact: {
-                    type: 'boolean',
-                    label: 'Use compact layout',
-                    default: false
                 }
             }"
         >

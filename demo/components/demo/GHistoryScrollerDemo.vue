@@ -31,10 +31,6 @@ const historyEntries = ref([
                     type: 'string',
                     label: 'Accessible label',
                     default: 'History'
-                },
-                entries: {
-                    type: 'string',
-                    label: 'History entries passed to default slot'
                 }
             }"
         >

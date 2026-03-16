@@ -13,14 +13,6 @@ import ComponentDemo from "../ComponentDemo.vue";
                     type: 'string',
                     label: 'Accessible label',
                     default: 'Three-way toggle'
-                },
-                error: {
-                    type: 'string',
-                    label: 'Error message'
-                },
-                disabled: {
-                    type: 'boolean',
-                    label: 'Disabled'
                 }
             }"
         >

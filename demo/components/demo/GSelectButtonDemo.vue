@@ -23,21 +23,6 @@ const selectButtonOptions = ref([
                     type: 'string',
                     label: 'Accessible label',
                     default: 'Select Option'
-                },
-                size: {
-                    type: 'select',
-                    label: 'Size',
-                    default: 'medium',
-                    options: [
-                        'small',
-                        'medium',
-                        'large'
-                    ]
-                },
-                disabled: {
-                    type: 'boolean',
-                    label: 'Disabled',
-                    default: false
                 }
             }"
         >
