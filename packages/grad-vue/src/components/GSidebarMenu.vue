@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts">
 /**
  * A sidebar menu component for use with `GSidebar`. Displays a title and
  * a list of links.
@@ -67,7 +67,10 @@
  * </template>
  * ```
  */
+export {};
+</script>
 
+<script setup lang="ts">
 import {
     computed,
     getCurrentInstance,
@@ -84,7 +87,7 @@ type MenuItem = {
     to?: string;
 };
 
-interface Props {
+type Props = {
     /**
      * Title and accessible name
      */

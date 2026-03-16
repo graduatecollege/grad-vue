@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts">
 /**
  * By default, this component behaves like a normal select element with
  * custom styling.
@@ -10,17 +10,21 @@
  * The `options` prop can be an array of strings or objects with `label`
  * and `value` properties.
  */
+export {};
+</script>
+
+<script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, useId, watch, toRef } from "vue";
 import { useOverlayStack } from "../compose/useOverlayStack.ts";
 import { useFormField } from "../compose/useFormField.ts";
 import GFormErrorMessages from "./form/GFormErrorMessages.vue";
 
-interface OptionType {
+type OptionType = {
     label: string;
     value: string | number;
 }
 
-interface Props {
+type Props = {
     // List of options to choose from
     options: Array<string | OptionType>;
     /**

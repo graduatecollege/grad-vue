@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts">
 /**
  * A hamburger menu button that toggles a sidebar, intended for the
  * GAppHeader and GSidebar components.
@@ -27,11 +27,14 @@
  * > [!NOTE]
  * > This button hides itself automatically according to the useSidebar media query.
  */
+export {};
+</script>
 
+<script setup lang="ts">
 import { useSidebar } from "../compose/useSidebar.ts";
 import { inject, useId } from "vue";
 
-interface Props {
+type Props = {
     /**
      * Accessible label
      */

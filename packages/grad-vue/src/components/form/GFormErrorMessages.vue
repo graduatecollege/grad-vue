@@ -1,10 +1,14 @@
-<script setup lang="ts">
+<script lang="ts">
 /**
  * Internal component for displaying form field error messages.
  * This component is used by form input components to display validation errors
  * in a consistent way across all form fields.
  */
-interface Props {
+export {};
+</script>
+
+<script setup lang="ts">
+type Props = {
     /**
      * Array of error messages to display
      */

@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<script lang="ts">
 /**
  * A form wrapper component that automatically manages form state and
  * connects to child input components.
@@ -24,11 +24,14 @@
  * </GForm>
  * ```
  */
+export {};
+</script>
 
+<script lang="ts" setup>
 import { provide, watch, inject, computed } from "vue";
 import { useForm, UseFormReturn } from "../compose/useForm.ts";
 
-interface Props {
+type Props = {
     /**
      * Action URL (optional, for native form submission)
      */

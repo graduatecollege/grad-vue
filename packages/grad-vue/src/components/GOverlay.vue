@@ -1,10 +1,14 @@
-<script setup lang="ts">
+<script lang="ts">
 /**
  * Client-side overlay for behind modal dialogs.
  */
+export {};
+</script>
+
+<script setup lang="ts">
 import { useOverlayStackState } from "../compose/useOverlayStack.ts";
 
-interface Props {
+type Props = {
 
 }
 

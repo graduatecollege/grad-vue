@@ -1,10 +1,14 @@
-<script setup lang="ts">
+<script lang="ts">
 /**
  * An email input component.
  * 
  * This component is a wrapper around GTextInput with type="email" for
  * proper email validation and mobile keyboard optimization.
  */
+export {};
+</script>
+
+<script setup lang="ts">
 import GTextInput from "./GTextInput.vue";
 
 type Props = {

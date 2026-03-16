@@ -1,10 +1,14 @@
-<script setup lang="ts">
+<script lang="ts">
 /**
  * A date range input component with start and end dates.
  * 
  * This component uses two GDateInput components laid out horizontally
  * to allow selecting a date range.
  */
+export {};
+</script>
+
+<script setup lang="ts">
 import { ref, watch, toRef } from "vue";
 import GDateInput from "./GDateInput.vue";
 import { useFormField } from "../compose/useFormField.ts";

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts">
 /**
  * The element or component can be set with the `component` prop, so it can be
  * a link or `router-link` component from vue-router. For example:
@@ -17,9 +17,13 @@
  * - Use a named slot `icon` to provide custom icon content.
  * - If both `icon` prop and named slot `icon` are provided, the named slot takes precedence.
  */
+export {};
+</script>
+
+<script setup lang="ts">
 import { computed, useAttrs } from "vue";
 
-interface Props {
+type Props = {
     /**
      * Button size
      */

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts">
 /**
  * Popover that appears next to or over a trigger element, staying visible
  * in the viewport as much as possible.
@@ -23,7 +23,10 @@
  * </GPopover>
  * ```
  */
+export {};
+</script>
 
+<script setup lang="ts">
 import {
     nextTick,
     onBeforeUnmount,
@@ -37,7 +40,7 @@ import { useOverlayFocus } from "../compose/useOverlayFocus.ts";
 import { useOverlayEscape } from "../compose/useOverlayEscape.ts";
 import { calculatePopoverPosition } from "../compose/popoverPosition.ts";
 
-interface Props {
+type Props = {
     /**
      * Render without padding
      */

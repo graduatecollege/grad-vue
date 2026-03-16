@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts">
 /**
  * A simple sidebar that's fixed to the left side of the viewport.
  *
@@ -13,10 +13,14 @@
  * object from `useSidebar`. See the [Hamburger Menu Documentation](#use-sidebar)
  * for details.
  */
+export {};
+</script>
+
+<script setup lang="ts">
 import { computed, inject, useId } from "vue";
 import { useSidebar } from "../compose/useSidebar.ts";
 
-interface Props {
+type Props = {
     /**
      * Custom background color
      */
