@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<script lang="ts">
 /**
  * The GChatInput component provides a rich text editing experience using Tiptap. It supports:
  *
@@ -10,6 +10,10 @@
  *
  *  **Note**: This component is part of the `@illinois-grad/grad-vue-rte` package, which includes Tiptap dependencies.
  */
+export default {};
+</script>
+
+<script lang="ts" setup>
 import { computed } from "vue";
 import { EditorContent } from "@tiptap/vue-3";
 import { BubbleMenu } from "@tiptap/vue-3/menus";

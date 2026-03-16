@@ -59,8 +59,8 @@ function parseProps(content: string) {
     const props: Record<string, any> = {};
     const slots: string[] = [];
 
-    // Match component documentation
-    const docMatch = content.match(/<script.*>\s+\/\*\*\s*\*\s*([\s\S]*?)\s*\*\//s);
+    // Match component documentation (JSDoc immediately preceding `export default {}`)
+    const docMatch = content.match(/\/\*\*([\s\S]*?)\*\/\s*export default\s*\{\s*\};?/);
     const componentDocs = docMatch ? docMatch[1].replace(/^\s*\* ?/gm, '').trim() : null;
 
     // Match interface or type Props

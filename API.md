@@ -475,6 +475,10 @@ interface Props {
      * Accessible label
      */
     label?: string; // Demo: History
+
+    /**
+     * History entries passed to default slot
+     */
     entries: T[];
 }
 ```
