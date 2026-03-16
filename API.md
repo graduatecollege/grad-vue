@@ -1301,10 +1301,20 @@ type Props = {
 
 ## GChatInput
 
+The GChatInput component provides a rich text editing experience using Tiptap. It supports:
+
+ - **Bold** and *italic* text formatting
+ - Bullet and numbered lists
+ - Bubble menu for formatting (appears when text is selected)
+ - Press <kbd>Enter</kbd> to send, <kbd>Shift+Enter</kbd> for new line
+ - Undo/redo support
+
+ **Note**: This component is part of the `@illinois-grad/grad-vue-rte` package, which includes Tiptap dependencies.
+
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Placeholder text
      */
@@ -1328,10 +1338,19 @@ interface Props {
 
 ## GNoteInput
 
+The GNoteInput component provides a rich text editing experience using Tiptap for writing notes. It supports:
+
+ - **Bold** and *italic* text formatting
+ - Bullet and numbered lists
+ - Always visible toolbar for formatting
+ - Undo/redo support
+
+ **Note**: This component is part of the `@illinois-grad/grad-vue-rte` package, which includes Tiptap dependencies.
+
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Placeholder text
      */
@@ -1347,10 +1366,24 @@ interface Props {
 
 ## GRichTextContent
 
+Renders a JSON string of tiptap content as HTML.
+Supports all formatting produced by GChatInput and GNoteInput:
+bold, italic, ordered lists, and bullet lists.
+
+- Empty content is handled gracefully (renders nothing).
+- Displays an error message when the content cannot be parsed or rendered.
+
+The rendering only happens in the client when used with Nuxt.js.
+
+**Security note**: rendered HTML is produced by tiptap's `generateHTML`, which only
+serializes recognized document nodes - it does not inject raw HTML from the JSON.
+
+**Note**: This component is part of the `@illinois-grad/grad-vue-rte` package, which includes Tiptap dependencies.
+
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Error message when rendering fails
      */

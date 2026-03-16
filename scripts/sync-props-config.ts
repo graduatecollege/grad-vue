@@ -49,7 +49,7 @@ function toLabel(name: string) {
 function getJSDocCommentText(comment: ts.JSDoc['comment']): string {
     if (!comment) return '';
     if (typeof comment === 'string') return comment;
-    return comment.map((c) => (ts.isJSDocText(c) ? c.text : '')).join('');
+    return comment.map((c) => (c.kind === ts.SyntaxKind.JSDocText ? c.text : '')).join('');
 }
 
 function splitJSDocText(text: string): { label: string | null; instructions: string | null } {
@@ -108,7 +108,7 @@ function parseProps(content: string) {
                         ? node.type.members
                         : ts.isInterfaceDeclaration(node)
                             ? node.members
-                            : ([] as ts.NodeArray<ts.TypeElement>);
+                            : ([] as unknown as ts.NodeArray<ts.TypeElement>);
 
                 for (const member of members) {
                     if (!ts.isPropertySignature(member)) continue;
