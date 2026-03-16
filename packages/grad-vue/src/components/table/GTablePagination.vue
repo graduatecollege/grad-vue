@@ -1,3 +1,9 @@
+<script lang="ts">
+/**
+ * Pagination component for GTable.
+ */
+export default {};
+</script>
 <script setup lang="ts">
 import { computed } from "vue";
 

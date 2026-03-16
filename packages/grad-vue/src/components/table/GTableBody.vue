@@ -1,3 +1,10 @@
+<script lang="ts">
+/**
+ * Internal component for rendering the table body.
+ */
+export default {};
+</script>
+
 <script setup lang="ts" generic="T extends TableRow, C extends TableColumn<T>">
 import { computed, ref, type VNode } from "vue";
 import { TableColumn, TableRow } from "./TableColumn.ts";
