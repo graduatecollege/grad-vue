@@ -38,12 +38,14 @@ import GPopover from "./GPopover.vue";
 type Props = {
     /**
      * User initial(s)
+     * @demo J
      */
-    initials: string; // Demo: J
+    initials: string;
     /**
      * User email
+     * @demo j@example.org
      */
-    email: string; // Demo: j@example.org
+    email: string;
     /**
      * Background color
      */

@@ -22,7 +22,7 @@ the ARIA description of the alert.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Dialog label
      */
@@ -58,7 +58,7 @@ brand header would be too large.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     illinois?: boolean;
     /**
      * Top-left corner text
@@ -66,7 +66,7 @@ interface Props {
      * You can customize this text element with the "left" slot.
      */
     brand?: string;
-}
+};
 ```
 
 ### Slots
@@ -100,7 +100,7 @@ Note that grad-vue doesn't include vue-router as a dependency.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Button size
      */
@@ -146,11 +146,11 @@ the tooltip will indicate that when they try to copy.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Text
      */
-    text: string; // Demo: This is some text to get copied
+    text: string;
 
     /**
      * Hide the visible text
@@ -176,7 +176,7 @@ appropriate input type for currency values.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Label
      */
@@ -198,7 +198,7 @@ interface Props {
     instructions?: string;
     // Name for form registration
     name?: string;
-}
+};
 ```
 
 ---
@@ -213,7 +213,7 @@ proper date selection using the browser's native date picker.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Label
      */
@@ -235,7 +235,7 @@ interface Props {
     instructions?: string;
     // Name for form registration
     name?: string;
-}
+};
 ```
 
 ---
@@ -250,7 +250,7 @@ to allow selecting a date range.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Label for the component
      */
@@ -276,7 +276,7 @@ interface Props {
     instructions?: string;
     // Name for form registration
     name?: string;
-}
+};
 ```
 
 ---
@@ -299,7 +299,7 @@ For example:
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Layout style for the items.
      */
@@ -323,7 +323,7 @@ proper email validation and mobile keyboard optimization.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Label
      */
@@ -345,7 +345,7 @@ interface Props {
     instructions?: string;
     // Name for form registration
     name?: string;
-}
+};
 ```
 
 ---
@@ -379,7 +379,7 @@ register with the form, and their values will be tracked in the form model.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Action URL (optional, for native form submission)
      */
@@ -429,7 +429,7 @@ provides the sidebar, they will be able to communicate with each other.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Accessible label
      */
@@ -470,13 +470,17 @@ the label as the `aria-label`.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Accessible label
      */
-    label?: string; // Demo: History
+    label?: string;
+
+    /**
+     * History entries passed to default slot
+     */
     entries: T[];
-}
+};
 ```
 
 ### Slots
@@ -524,11 +528,11 @@ at the end of the page structure.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Modal label
      */
-    label: string; // Demo: Basic Modal
+    label: string;
     /**
      * ID for aria-describedby
      */
@@ -561,7 +565,7 @@ Client-side overlay for behind modal dialogs.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
 
 }
 ```
@@ -596,7 +600,7 @@ Example:
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Render without padding
      */
@@ -630,7 +634,7 @@ If no value is provided, the element will have the ARIA role `status`.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Accessible label
      */
@@ -643,7 +647,7 @@ interface Props {
      * Progress circle size
      */
     size?: "tiny" | "small" | "medium" | "large";
-}
+};
 ```
 
 ---
@@ -719,7 +723,7 @@ function selected(item: SearchResult) {
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     results: GSearchGroup<T>[] | T[];
     /**
      * Placeholder
@@ -737,7 +741,7 @@ interface Props {
      * Show search loading indicator
      */
     loading?: boolean;
-}
+};
 ```
 
 ### Slots
@@ -762,13 +766,13 @@ and `value` properties.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     // List of options to choose from
     options: Array<string | OptionType>;
     /**
      * Accessible label
      */
-    label: string; // Demo: Select Option
+    label: string;
     /**
      * Hide the label visually
      */
@@ -823,12 +827,12 @@ option changes from user interaction.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     options: Array<string | OptionType>;
     /**
      * Accessible label
      */
-    label: string; // Demo: Select Option
+    label: string;
     /**
      * Size
      */
@@ -865,7 +869,7 @@ for details.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Custom background color
      */
@@ -873,7 +877,7 @@ interface Props {
     /**
      * Custom background image
      */
-    backgroundImage?: string; // Demo: none
+    backgroundImage?: string;
     /**
      * Sidebar theme
      */
@@ -969,11 +973,11 @@ onMounted(() => {
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Title and accessible name
      */
-    title?: string; // Demo: Sidebar Menu
+    title?: string;
     items: MenuItem[];
     // Offset for tracking active position to account for toolbars
     offset?: number;
@@ -1009,7 +1013,7 @@ When used inside a GForm, the button will automatically:
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Disabled state
      */
@@ -1063,11 +1067,11 @@ Grouping can be enabled by passing a column key to `groupBy`.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Accessible label
      */
-    label: string; // Demo: Colleges
+    label: string;
     data: T[];
     columns: C[];
     resultCount?: number;
@@ -1092,7 +1096,7 @@ interface Props {
      * Explicitly show the pagination bar even if the slot is empty
      */
     showPagination?: boolean;
-}
+};
 ```
 
 ### Slots
@@ -1109,21 +1113,21 @@ that allows jumping to a different term.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Title for the popover.
      */
-    title?: string; // Demo: Period Selection
+    title?: string;
 
     /**
      * Label for year select.
      */
-    yearLabel?: string; // Demo: Select Year
+    yearLabel?: string;
 
     /**
      * Label for period select.
      */
-    periodLabel?: string; // Demo: Term
+    periodLabel?: string;
 
     // list of possible term years
     termYears?: string[];
@@ -1149,11 +1153,11 @@ Multiple errors will all be displayed.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Label
      */
-    label?: string; // Demo: Example Label
+    label?: string;
     /**
      * Placeholder text
      */
@@ -1184,7 +1188,7 @@ interface Props {
 
     // Name for form registration
     name?: string;
-}
+};
 ```
 
 ### Slots
@@ -1213,11 +1217,11 @@ Slots:
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Accessible label
      */
-    label: string; // Demo: Three-way toggle
+    label: string;
 
     // ID of an element that describes the input
     describedby?: string;
@@ -1273,15 +1277,15 @@ Example:
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * User initial(s)
      */
-    initials: string; // Demo: J
+    initials: string;
     /**
      * User email
      */
-    email: string; // Demo: j@example.org
+    email: string;
     /**
      * Background color
      */
@@ -1296,16 +1300,6 @@ interface Props {
 ---
 
 ## GChatInput
-
-The GChatInput component provides a rich text editing experience using Tiptap. It supports:
-
- - **Bold** and *italic* text formatting
- - Bullet and numbered lists
- - Bubble menu for formatting (appears when text is selected)
- - Press <kbd>Enter</kbd> to send, <kbd>Shift+Enter</kbd> for new line
- - Undo/redo support
-
- **Note**: This component is part of the `@illinois-grad/grad-vue-rte` package, which includes Tiptap dependencies.
 
 ### Props
 
@@ -1334,15 +1328,6 @@ interface Props {
 
 ## GNoteInput
 
-The GNoteInput component provides a rich text editing experience using Tiptap for writing notes. It supports:
-
- - **Bold** and *italic* text formatting
- - Bullet and numbered lists
- - Always visible toolbar for formatting
- - Undo/redo support
-
- **Note**: This component is part of the `@illinois-grad/grad-vue-rte` package, which includes Tiptap dependencies.
-
 ### Props
 
 ```typescript
@@ -1361,20 +1346,6 @@ interface Props {
 ---
 
 ## GRichTextContent
-
-Renders a JSON string of tiptap content as HTML.
-Supports all formatting produced by GChatInput and GNoteInput:
-bold, italic, ordered lists, and bullet lists.
-
-- Empty content is handled gracefully (renders nothing).
-- Displays an error message when the content cannot be parsed or rendered.
-
-The rendering only happens in the client when used with Nuxt.js.
-
-**Security note**: rendered HTML is produced by tiptap's `generateHTML`, which only
-serializes recognized document nodes - it does not inject raw HTML from the JSON.
-
-**Note**: This component is part of the `@illinois-grad/grad-vue-rte` package, which includes Tiptap dependencies.
 
 ### Props
 

@@ -71,8 +71,9 @@ export interface BulkAction {
 type Props = {
     /**
      * Accessible label
+     * @demo Colleges
      */
-    label: string; // Demo: Colleges
+    label: string;
     data: T[];
     columns: C[];
     resultCount?: number;

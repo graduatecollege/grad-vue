@@ -17,7 +17,7 @@ const textValue = ref("");
                 label: {
                     type: 'string',
                     label: 'Label',
-                    default: null
+                    default: 'Example Label'
                 },
                 placeholder: {
                     type: 'string',

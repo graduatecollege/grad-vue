@@ -90,8 +90,9 @@ type MenuItem = {
 type Props = {
     /**
      * Title and accessible name
+     * @demo Sidebar Menu
      */
-    title?: string; // Demo: Sidebar Menu
+    title?: string;
     items: MenuItem[];
     // Offset for tracking active position to account for toolbars
     offset?: number;

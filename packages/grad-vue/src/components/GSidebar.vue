@@ -27,8 +27,9 @@ type Props = {
     backgroundColor?: string;
     /**
      * Custom background image
+     * @demo none
      */
-    backgroundImage?: string; // Demo: none
+    backgroundImage?: string;
     /**
      * Sidebar theme
      */

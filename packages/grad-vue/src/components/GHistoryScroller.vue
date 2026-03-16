@@ -39,8 +39,9 @@ import GButton from "./GButton.vue";
 type Props = {
     /**
      * Accessible label
+     * @demo History
      */
-    label?: string; // Demo: History
+    label?: string;
 
     /**
      * History entries passed to default slot

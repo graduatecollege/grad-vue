@@ -23,8 +23,9 @@ defineOptions({
 type Props = {
     /**
      * Label
+     * @demo Example Label
      */
-    label?: string; // Demo: Example Label
+    label?: string;
     /**
      * Placeholder text
      */

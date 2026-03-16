@@ -29,8 +29,9 @@ type Props = {
     options: Array<string | OptionType>;
     /**
      * Accessible label
+     * @demo Select Option
      */
-    label: string; // Demo: Select Option
+    label: string;
     /**
      * Hide the label visually
      */
