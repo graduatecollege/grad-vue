@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts">
 /**
  * Displays text with a clipboard button that copies the text to the clipboard.
  * The text can be hidden in cases where it's already displayed differently.
@@ -6,12 +6,15 @@
  * If for some reason the user's browser doesn't support a clipboard,
  * the tooltip will indicate that when they try to copy.
  */
+export {};
+</script>
 
+<script setup lang="ts">
 import { useClipboard } from "@vueuse/core";
 import { ref } from "vue";
 import VGtooltip from "../directives/v-gtooltip.ts";
 
-interface Props {
+type Props = {
     /**
      * Text
      */

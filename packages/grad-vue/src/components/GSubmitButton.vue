@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<script lang="ts">
 /**
  * A submit button that integrates with GForm.
  *
@@ -12,12 +12,15 @@
  *   <GSubmitButton>Submit</GSubmitButton>
  * </GForm>
  */
+export {};
+</script>
 
+<script lang="ts" setup>
 import { inject, computed } from "vue";
 import { UseFormReturn } from "../compose/useForm.ts";
 import GButton from "./GButton.vue";
 
-interface Props {
+type Props = {
     /**
      * Disabled state
      */

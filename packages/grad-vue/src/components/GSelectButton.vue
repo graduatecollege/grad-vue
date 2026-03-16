@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts">
 /**
  * This component is just a radio button group with special styling.
  *
@@ -8,16 +8,20 @@
  * In addition to `v-model`, a `change` event is emitted when the
  * option changes from user interaction.
  */
+export {};
+</script>
+
+<script setup lang="ts">
 import { computed, useId, toRef } from "vue";
 import { useFormField } from "../compose/useFormField.ts";
 import GFormErrorMessages from "./form/GFormErrorMessages.vue";
 
-interface OptionType {
+type OptionType = {
     label: string;
     value: string | number;
 }
 
-interface Props {
+type Props = {
     options: Array<string | OptionType>;
     /**
      * Accessible label

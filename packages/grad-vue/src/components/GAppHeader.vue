@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts">
 /**
  * This is a minimal header meant for web apps where a full Illinois
  * brand header would be too large.
@@ -9,7 +9,10 @@
  *
  * **Slot** `app-controls` is the remaining area to the right.
  */
+export {};
+</script>
 
+<script setup lang="ts">
 type Props = {
     illinois?: boolean;
     /**

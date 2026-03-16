@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts">
 /**
  * This component is used with the `GDetailListItem` component to display
  * a list of key-value pairs in a grid or vertical layout.
@@ -13,7 +13,11 @@
  * </GDetailList>
  * ```
  */
-interface Props {
+export {};
+</script>
+
+<script setup lang="ts">
+type Props = {
     /**
      * Layout style for the items.
      */

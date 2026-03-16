@@ -1,10 +1,14 @@
-<script setup lang="ts">
+<script lang="ts">
 /**
  * A currency input component for US dollars.
  * 
  * This component is a wrapper around a text input with a prefix and
  * appropriate input type for currency values.
  */
+export {};
+</script>
+
+<script setup lang="ts">
 import GTextInput from "./GTextInput.vue";
 
 type Props = {

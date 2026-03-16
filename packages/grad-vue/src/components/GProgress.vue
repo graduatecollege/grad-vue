@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts">
 /**
  * A component that can show progress from 1 to 100 or an indeterminate spinner.
  * If a value is omitted, the progress will be indeterminate.
@@ -14,6 +14,10 @@
  * > This element announces to assistive technologies, so make sure to
  * > limit its use to cases where that's appropriate.
  */
+export {};
+</script>
+
+<script setup lang="ts">
 import { computed } from "vue";
 
 type Props = {

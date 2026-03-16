@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts">
 /**
  * Alert dialog for confirming or canceling actions.
  *
@@ -15,14 +15,17 @@
  * **Slot** `default` is used as the content of the alert, and also becomes
  * the ARIA description of the alert.
  */
+export {};
+</script>
 
+<script setup lang="ts">
 import { onBeforeMount, onMounted, ref, useId } from "vue";
 import { useOverlayStack } from "../compose/useOverlayStack.ts";
 import { useOverlayFocus } from "../compose/useOverlayFocus.ts";
 import { useOverlayEscape } from "../compose/useOverlayEscape.ts";
 import GButton from "./GButton.vue";
 
-interface Props {
+type Props = {
     /**
      * Dialog label
      */

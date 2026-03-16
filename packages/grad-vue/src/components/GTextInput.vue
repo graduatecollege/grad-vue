@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<script lang="ts">
 /**
  * A text input with styling for a label, instructions, and error messages.
  *
@@ -9,7 +9,10 @@
  * Errors are provided as an array of strings or computed values.
  * Multiple errors will all be displayed.
  */
+export {};
+</script>
 
+<script lang="ts" setup>
 import { ref, useAttrs, useId, watch, toRef } from "vue";
 import { useFormField } from "../compose/useFormField.ts";
 import GFormErrorMessages from "./form/GFormErrorMessages.vue";
