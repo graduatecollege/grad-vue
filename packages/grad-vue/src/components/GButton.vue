@@ -26,27 +26,40 @@ import { computed, useAttrs } from "vue";
 type Props = {
     /**
      * Button size
+     * @demo
      */
     size?: "small" | "medium" | "large";
     /**
      * Button color theme
+     * @demo
      */
     theme?: "primary" | "secondary" | "accent" | "danger" | "none";
     /**
      * Use outlined style
+     * @demo
      */
     outlined?: boolean;
     /**
      * Use text style
+     * @demo
      */
     text?: boolean;
 
+    /**
+     * The to target for when using the button as a router-link
+     */
     to?: string | Record<string, any>;
+
+    /**
+     * The component to use for the button
+     */
     component?: string;
 
-    // Optional icon classes to render an icon span before the label.
-    // Example: "fa-solid fa-plus" or "material-symbols:add".
-    // If a named slot `icon` is provided, it takes precedence over this prop.
+    /**
+     * Optional icon classes to render an icon span before the label.
+     * Example: "fa-solid fa-plus" or "material-symbols:add".
+     * If a named slot `icon` is provided, it takes precedence over this prop.
+     */
     icon?: string;
 }
 

@@ -23,24 +23,32 @@ import { useSidebar } from "../compose/useSidebar.ts";
 type Props = {
     /**
      * Custom background color
+     * @demo
      */
     backgroundColor?: string;
     /**
      * Custom background image
+     * @demo none
      */
-    backgroundImage?: string; // Demo: none
+    backgroundImage?: string;
     /**
      * Sidebar theme
+     * @demo
      */
     theme?: "light" | "dark";
-    // Offset from the top of the viewport
+    /**
+     * Offset from the top of the viewport
+     */
     topOffset?: string;
-    // Top offset variable to use instead of topOffset
+    /**
+     * Top offset variable to use instead of topOffset
+     */
     topOffsetVar?: string;
     /**
      * Width
      *
      * Width of the sidebar
+     * @demo
      */
     width?: string;
 }

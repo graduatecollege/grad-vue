@@ -8,9 +8,21 @@ export default {};
 import { computed } from "vue";
 
 const props = defineProps<{
+    /**
+     * The index of the first item
+     */
     start: number;
+    /**
+     * The value of the page size control
+     */
     pageSize: number;
+    /**
+     * The total number of items
+     */
     total: number;
+    /**
+     * Available page sizes for the dropdown
+     */
     pageSizes?: number[];
 }>();
 

@@ -20,6 +20,7 @@ export default {};
 type Props = {
     /**
      * Layout style for the items.
+     * @demo
      */
     variant?: "grid" | "vertical";
 }
@@ -48,18 +49,18 @@ const props = withDefaults(defineProps<Props>(), {
     grid-template-columns: repeat(auto-fill, minmax(var(--g-detail-list-item-min-width, 10rem), var(--g-detail-list-item-max-width, 1fr)));
     column-gap: 2.5rem;
     row-gap: 1.5rem;
+    align-items: start;
 }
 
 .g-detail-list--grid :deep(.g-detail-list-item) {
     display: flex;
     flex-direction: column;
-    gap: 0.375rem;
+    border-left: 2px solid var(--g-accent-500);
+    padding-left: 0.75rem;
 }
 
 .g-detail-list--grid :deep(.g-detail-list-item__label) {
     font-size: 0.875rem;
-    padding-bottom: 0.375rem;
-    border-bottom: 2px solid var(--g-accent-500);
 }
 
 .g-detail-list--vertical {

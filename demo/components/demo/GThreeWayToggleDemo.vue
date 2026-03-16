@@ -16,11 +16,13 @@ import ComponentDemo from "../ComponentDemo.vue";
                 },
                 error: {
                     type: 'string',
-                    label: 'Error message'
+                    label: 'Error message',
+                    default: null
                 },
                 disabled: {
                     type: 'boolean',
-                    label: 'Disabled'
+                    label: 'Disabled',
+                    default: null
                 }
             }"
         >

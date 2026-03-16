@@ -14,23 +14,30 @@ import GPopover from "./GPopover.vue";
 type Props = {
     /**
      * Title for the popover.
+     * @demo Period Selection
      */
-    title?: string; // Demo: Period Selection
+    title?: string;
 
     /**
      * Label for year select.
+     * @demo Select Year
      */
-    yearLabel?: string; // Demo: Select Year
+    yearLabel?: string;
 
     /**
      * Label for period select.
+     * @demo Term
      */
-    periodLabel?: string; // Demo: Term
+    periodLabel?: string;
 
-    // list of possible term years
+    /**
+     * List of possible term years
+     */
     termYears?: string[];
 
-    // list of possible term names
+    /**
+     * List of possible term names
+     */
     termNames?: string[];
 }
 

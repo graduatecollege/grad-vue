@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<script lang="ts">
 /**
  * The GNoteInput component provides a rich text editing experience using Tiptap for writing notes. It supports:
  *
@@ -9,6 +9,10 @@
  *
  *  **Note**: This component is part of the `@illinois-grad/grad-vue-rte` package, which includes Tiptap dependencies.
  */
+export default {};
+</script>
+
+<script lang="ts" setup>
 import { computed } from "vue";
 import { EditorContent } from "@tiptap/vue-3";
 import { useRichTextEditor } from "../composables/useRichTextEditor";
@@ -16,13 +20,15 @@ import GRichTextToolbar from "./editor/GRichTextToolbar.vue";
 
 defineOptions({ inheritAttrs: false });
 
-interface Props {
+type Props = {
     /**
      * Placeholder text
+     * @demo
      */
     placeholder?: string;
     /**
      * Accessible label
+     * @demo
      */
     label?: string;
 }

@@ -37,6 +37,7 @@ import { inject, useId } from "vue";
 type Props = {
     /**
      * Accessible label
+     * @demo
      */
     label?: string;
 }

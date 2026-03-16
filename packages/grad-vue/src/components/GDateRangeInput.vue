@@ -16,28 +16,37 @@ import { useFormField } from "../compose/useFormField.ts";
 type Props = {
     /**
      * Label for the component
+     * @demo
      */
     label?: string;
     /**
      * Label for the start date input
+     * @demo
      */
     startLabel?: string;
     /**
      * Label for the end date input
+     * @demo
      */
     endLabel?: string;
     /**
      * Disabled
+     * @demo
      */
     disabled?: boolean;
 
-    // Error messages array (supports multiple validation errors)
+    /**
+     * Error messages array (supports multiple validation errors)
+     */
     errors?: string[];
     /**
      * Instructions
+     * @demo
      */
     instructions?: string;
-    // Name for form registration
+    /**
+     * Name for form registration
+     */
     name?: string;
 };
 

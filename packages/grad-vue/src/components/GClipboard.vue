@@ -17,16 +17,19 @@ import VGtooltip from "../directives/v-gtooltip.ts";
 type Props = {
     /**
      * Text
+     * @demo This is some text to get copied
      */
-    text: string; // Demo: This is some text to get copied
+    text: string;
 
     /**
      * Hide the visible text
+     * @demo
      */
     hideText?: boolean;
 
     /**
      * Copy button label
+     * @demo
      */
     copyLabel?: string;
 }

@@ -97,11 +97,26 @@ npm run sync-props
 
 Some notes on this process:
 
-- The `docs` section is generated from a jsdoc immediately after the opening `<script setup` tag. It supports markdown formatting.
-- The `props-config` section is generated from the `Props` interface or type in the component script, with default
-  values from the `withDefaults` function call.
-- The `Props` interface can have a `// Demo: <value>` comment to override the default value for the prop in the demo.
-- Props without a jsdoc will not be included in the demo.
+- The `docs` section is generated from a JSDoc comment at the top of the non-setup `<script>` block. It supports markdown formatting.
+- The `props-config` section is generated from the `Props` interface or type in the component script.
+- **Only props with a `@demo` tag in their JSDoc are included in the demo config.** This lets you write full JSDoc on every prop for IDE/documentation purposes without all of them appearing in the interactive demo panel.
+- A non-empty `@demo` value is used as the pre-filled default shown in the demo input:
+  ```typescript
+  /**
+   * Modal label
+   * @demo Basic Modal
+   */
+  label: string;
+  ```
+- An empty `@demo` tag (no value) includes the prop in the demo but with no pre-filled value:
+  ```typescript
+  /**
+   * Placeholder text
+   * @demo
+   */
+  placeholder?: string;
+  ```
+- Props without a `@demo` tag will not be included in the demo, regardless of whether they have a JSDoc comment.
 
 > [!TIP]
 > The markdown docs at the top of the component file cannot have a `</script>` because of how Vue.js parses the file.

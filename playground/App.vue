@@ -39,6 +39,14 @@ const fname = ref("heh");
 
         <div class="wrap">
             <main class="main" ref="main">
+                <div style="max-width: 500px;">
+                    <GDetailList v-bind="props">
+                        <GDetailListItem label="Description">Engineering: Energy Systems</GDetailListItem>
+                        <GDetailListItem label="Major">Engineering</GDetailListItem>
+                        <GDetailListItem label="Department Code">123</GDetailListItem>
+                        <GDetailListItem label="College Name">Grainger Engineering</GDetailListItem>
+                    </GDetailList>
+                </div>
                 <section id="buttons">
                     <h2>Buttons (with icons)</h2>
                     <div>

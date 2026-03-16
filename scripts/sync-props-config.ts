@@ -1,5 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import ts from 'typescript';
+import { parse as parseSFC } from '@vue/compiler-sfc';
 import { Marked } from "marked";
 import markedAlert from "marked-alert";
 import markedShiki from "marked-shiki";
@@ -8,6 +10,26 @@ import { codeToHtml } from "shiki";
 // This script updates the demo component props config with the component's props.
 // It also updates the demo docs from a JSDoc comment at the top of the script tag.
 // Run this script after updating the component's props.
+//
+// Only props with a JSDoc @demo tag are included in the demo config.
+// The @demo tag can optionally specify the default value shown in the interactive demo:
+//
+//   /**
+//    * Modal label
+//    * @demo Basic Modal   <- included in demo, pre-filled with "Basic Modal"
+//    */
+//   label: string;
+//
+//   /**
+//    * Placeholder text
+//    * @demo               <- included in demo; falls back to withDefaults value if available
+//    */
+//   placeholder?: string;
+//
+//   /**
+//    * Internal option
+//    */
+//   internal?: string;    <- NOT included in demo (no @demo tag)
 
 const packagesDir = 'packages';
 const demosDir = 'demo/components/demo';
@@ -35,121 +57,182 @@ function toLabel(name: string) {
         .trim();
 }
 
-function parseJsDoc(jsDocRaw: string) {
-    const cleaned = jsDocRaw.replace(/^\s*\* ?/gm, '').trim();
-    if (!cleaned) {
-        return { label: null as string | null, instructions: null as string | null };
-    }
+function getJSDocCommentText(comment: ts.JSDoc['comment']): string {
+    if (!comment) return '';
+    if (typeof comment === 'string') return comment;
+    return comment.map((c) => (c.kind === ts.SyntaxKind.JSDocText ? c.text : '')).join('');
+}
 
-    const lines = cleaned.split(/\r?\n/);
-    const firstLineIndex = lines.findIndex((line) => line.trim().length > 0);
-    if (firstLineIndex < 0) {
-        return { label: null as string | null, instructions: null as string | null };
+function splitJSDocText(text: string): { label: string | null; instructions: string | null } {
+    const lines = text.trim().split('\n');
+    const firstNonEmpty = lines.findIndex((line) => line.trim().length > 0);
+    if (firstNonEmpty < 0) {
+        return { label: null, instructions: null };
     }
-
-    const label = lines[firstLineIndex].trim();
-    const rest = lines.slice(firstLineIndex + 1).join('\n').trim();
-    return {
-        label: label || null,
-        instructions: rest || null,
-    };
+    const label = lines[firstNonEmpty].trim() || null;
+    const rest = lines.slice(firstNonEmpty + 1).join('\n').trim() || null;
+    return { label, instructions: rest };
 }
 
 function parseProps(content: string) {
     const props: Record<string, any> = {};
-    const slots: string[] = [];
 
-    // Match component documentation
-    const docMatch = content.match(/<script.*>\s+\/\*\*\s*\*\s*([\s\S]*?)\s*\*\//s);
-    const componentDocs = docMatch ? docMatch[1].replace(/^\s*\* ?/gm, '').trim() : null;
+    const { descriptor } = parseSFC(content);
 
-    // Match interface or type Props
-    const propsMatch = content.match(/(?:interface|type) Props\s*(?:=)?\s*{([\s\S]*?)}/);
-    const rawProps = propsMatch ? `interface Props {${propsMatch[1]}}` : null;
-    
-    // Parse slots from template
-    const slotRegex = /<slot\s+[^>]*name=["']([^"']+)["'][^>]*>|<slot(?:\s+|>)/g;
-    let sm;
-    while ((sm = slotRegex.exec(content)) !== null) {
-        const slotName = sm[1] || 'default';
-        if (!slots.includes(slotName)) {
-            slots.push(slotName);
+    // Extract component docs from the non-setup script block.
+    // We use raw text extraction (not the TS AST) to preserve @ symbols
+    // inside code blocks that the TS JSDoc parser would misinterpret as tags.
+    let componentDocs: string | null = null;
+    if (descriptor.script?.content) {
+        const firstJSDoc = descriptor.script.content.match(/\/\*\*([\s\S]*?)\*\//);
+        if (firstJSDoc) {
+            const text = firstJSDoc[1].replace(/^\s*\* ?/gm, '').trim();
+            if (text) componentDocs = text;
         }
     }
 
-    if (propsMatch) {
-        const propsContent = propsMatch[1];
-        const propRegex = /(\/\*\*\s*\*\s*([\s\S]*?)\*\/)?\s*(\w+)\??\s*:\s*([^;]+);\s*(\/\/\s*Demo: ([^\n\r]+))?/g;
-        let m;
+    // Extract Props declaration text for the API reference
+    let rawProps: string | null = null;
 
-        while ((m = propRegex.exec(propsContent)) !== null) {
-            const jsDoc = m[2]?.trim();
-            const name = m[3];
-            let typeStr = m[4].trim();
-            const demoDefault = m[6];
+    // Parse the setup script block using the TypeScript AST
+    if (descriptor.scriptSetup?.content) {
+        const setupCode = descriptor.scriptSetup.content;
+        const setupSource = ts.createSourceFile(
+            'setup.ts',
+            setupCode,
+            ts.ScriptTarget.Latest,
+            true,
+        );
 
-            if (!jsDoc) continue;
+        // --- Pass 1: collect withDefaults defaults ---
+        const withDefaultsMap: Record<string, string | boolean | number> = {};
 
-            if (name === 'modelValue') continue;
-
-            let type = 'string';
-            let options: string[] | undefined = undefined;
-
-            if (typeStr === 'boolean') {
-                type = 'boolean';
-            } else if (typeStr.includes('|')) {
-                const parts = typeStr.split('|').map(s => s.trim().replace(/['"]/g, ''));
-                if (parts.every(p => p === 'true' || p === 'false')) {
-                    type = 'boolean';
-                } else if (parts.every(p => !p.includes('<') && !p.includes('['))) {
-                    type = 'select';
-                    options = parts.filter(p => p !== 'undefined' && p !== 'null');
-                }
-            } else if (typeStr.includes('boolean')) {
-                type = 'boolean';
-            } else if (typeStr.includes('number')) {
-                type = 'number';
-            } else if (typeStr.includes('string')) {
-                type = 'string';
-            }
-
-            const { label, instructions } = parseJsDoc(jsDoc);
-
-            props[name] = {
-                type,
-                label: label || toLabel(name),
-                default: demoDefault,
-            };
-            if (instructions) {
-                props[name].instructions = instructions;
-            }
-            if (options && options.length > 0) {
-                props[name].options = options;
-            }
-        }
-
-        // Parse defaults
-        const defaultsMatch = content.match(/withDefaults\(defineProps<Props>\(\),\s*{([\s\S]*?)}\)/);
-        if (defaultsMatch) {
-            const defaultsContent = defaultsMatch[1];
-            for (const name in props) {
-                const defaultRegex = new RegExp(`${name}\\s*:\\s*([^,}\\n]+)`);
-                const dm = defaultsContent.match(defaultRegex);
-                if (dm) {
-                    let valStr = dm[1].trim();
-                    if (!valStr.startsWith('()')) {
-                        let val: any = valStr.replace(/['"]/g, "");
-                        if (props[name].type === "boolean") {
-                            val = val === "true";
-                        } else if (props[name].type === "number") {
-                            val = valStr === "undefined" ? null : Number(val);
-                        } else if (valStr === "undefined") {
-                            val = null;
+        function visitForWithDefaults(node: ts.Node): void {
+            if (
+                ts.isCallExpression(node) &&
+                ts.isIdentifier(node.expression) &&
+                node.expression.text === 'withDefaults' &&
+                node.arguments.length >= 2 &&
+                ts.isObjectLiteralExpression(node.arguments[1])
+            ) {
+                const defaults = node.arguments[1] as ts.ObjectLiteralExpression;
+                for (const prop of defaults.properties) {
+                    if (ts.isPropertyAssignment(prop) && ts.isIdentifier(prop.name)) {
+                        const propName = prop.name.text;
+                        const init = prop.initializer;
+                        if (ts.isStringLiteral(init)) {
+                            withDefaultsMap[propName] = init.text;
+                        } else if (ts.isNumericLiteral(init)) {
+                            withDefaultsMap[propName] = Number(init.text);
+                        } else if (init.kind === ts.SyntaxKind.TrueKeyword) {
+                            withDefaultsMap[propName] = true;
+                        } else if (init.kind === ts.SyntaxKind.FalseKeyword) {
+                            withDefaultsMap[propName] = false;
                         }
-                        props[name].default = val;
+                        // Skip undefined, arrow functions, and other non-literal values.
                     }
                 }
+                return;
             }
+            ts.forEachChild(node, visitForWithDefaults);
+        }
+
+        visitForWithDefaults(setupSource);
+
+        // --- Pass 2: collect props from the Props type/interface ---
+        function visitForProps(node: ts.Node): void {
+            const isPropsDecl =
+                (ts.isTypeAliasDeclaration(node) && node.name.text === 'Props') ||
+                (ts.isInterfaceDeclaration(node) && node.name.text === 'Props');
+
+            if (isPropsDecl) {
+                // Strip @demo tags (with or without a value) from the raw source text
+                // since they are only used by sync-props and not part of the public API docs.
+                rawProps = node.getText(setupSource).replace(/^\s*\*\s+@demo\b.*\n/gm, '');
+
+                const members: ts.NodeArray<ts.TypeElement> =
+                    ts.isTypeAliasDeclaration(node) && ts.isTypeLiteralNode(node.type)
+                        ? node.type.members
+                        : ts.isInterfaceDeclaration(node)
+                            ? node.members
+                            : ([] as unknown as ts.NodeArray<ts.TypeElement>);
+
+                for (const member of members) {
+                    if (!ts.isPropertySignature(member)) continue;
+
+                    const name = member.name.getText(setupSource);
+                    if (name === 'modelValue') continue;
+
+                    // Only include props that have a @demo tag in their JSDoc.
+                    const demoTag = ts.getJSDocTags(member).find((t) => t.tagName.text === 'demo');
+                    if (!demoTag) continue;
+
+                    const jsDocs = ts.getJSDocCommentsAndTags(member);
+                    const commentText = jsDocs.length && ts.isJSDoc(jsDocs[0])
+                        ? getJSDocCommentText(jsDocs[0].comment)
+                        : '';
+                    const { label, instructions } = splitJSDocText(commentText);
+
+                    // A non-empty @demo value is used as the pre-filled demo default.
+                    // An empty @demo tag falls back to the withDefaults value if one exists,
+                    // otherwise the prop is shown with no pre-filled value (null).
+                    const demoValue = getJSDocCommentText(demoTag.comment).trim();
+                    const demoDefault: string | boolean | number | null =
+                        demoValue.length > 0
+                            ? demoValue
+                            : (name in withDefaultsMap ? withDefaultsMap[name] : null);
+
+                    const typeStr = member.type?.getText(setupSource) ?? 'unknown';
+                    let type = 'string';
+                    let options: string[] | undefined;
+
+                    if (typeStr === 'boolean') {
+                        type = 'boolean';
+                    } else if (typeStr.includes('|')) {
+                        const parts = typeStr.split('|').map((s) => s.trim().replace(/['"]/g, ''));
+                        if (parts.every((p) => p === 'true' || p === 'false')) {
+                            type = 'boolean';
+                        } else if (parts.every((p) => !p.includes('<') && !p.includes('['))) {
+                            type = 'select';
+                            options = parts.filter((p) => p !== 'undefined' && p !== 'null');
+                        }
+                    } else if (typeStr.includes('boolean')) {
+                        type = 'boolean';
+                    } else if (typeStr.includes('number')) {
+                        type = 'number';
+                    } else if (typeStr.includes('string')) {
+                        type = 'string';
+                    }
+
+                    props[name] = {
+                        type,
+                        label: label || toLabel(name),
+                        default: demoDefault,
+                    };
+                    if (instructions) {
+                        props[name].instructions = instructions;
+                    }
+                    if (options && options.length > 0) {
+                        props[name].options = options;
+                    }
+                }
+                return; // Don't recurse into the Props declaration itself
+            }
+
+            ts.forEachChild(node, visitForProps);
+        }
+
+        visitForProps(setupSource);
+    }
+
+    // Parse slots from the template block
+    const slots: string[] = [];
+    if (descriptor.template?.content) {
+        const slotRegex = /<slot\s+[^>]*name=["']([^"']+)["'][^>]*>|<slot(?:\s+|>)/g;
+        let sm;
+        while ((sm = slotRegex.exec(descriptor.template.content)) !== null) {
+            const slotName = sm[1] || 'default';
+            if (!slots.includes(slotName)) slots.push(slotName);
         }
     }
 

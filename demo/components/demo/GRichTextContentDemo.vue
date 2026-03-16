@@ -19,7 +19,8 @@ const exampleJson = ref(JSON.stringify({
             :props-config="{
                 error: {
                     type: 'string',
-                    label: 'Error message when rendering fails'
+                    label: 'Error message when rendering fails',
+                    default: null
                 }
             }"
         >

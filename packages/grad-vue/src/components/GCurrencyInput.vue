@@ -14,24 +14,32 @@ import GTextInput from "./GTextInput.vue";
 type Props = {
     /**
      * Label
+     * @demo
      */
     label?: string;
     /**
      * Placeholder text
+     * @demo
      */
     placeholder?: string;
     /**
      * Disabled
+     * @demo
      */
     disabled?: boolean;
 
-    // Error messages array (supports multiple validation errors)
+    /**
+     * Error messages array (supports multiple validation errors)
+     */
     errors?: string[];
     /**
      * Instructions
+     * @demo
      */
     instructions?: string;
-    // Name for form registration
+    /**
+     * Name for form registration
+     */
     name?: string;
 };
 
