@@ -1,4 +1,4 @@
-<script lang="ts" setup generic="T extends { id: string | number }">
+<script lang="ts">
 /**
  * A scroller that is used for content that's typically shown like a chat log,
  * meaning it starts at the bottom, and you scroll up for older entries.
@@ -26,6 +26,11 @@
  * </GHistoryScroller>
  * ```
  */
+export default {};
+</script>
+
+<script lang="ts" setup generic="T extends { id: string | number }">
+
 
 import { computed, nextTick, onMounted, ref, watch } from "vue";
 import { useResizeObserver } from "@vueuse/core";
@@ -36,6 +41,10 @@ type Props = {
      * Accessible label
      */
     label?: string; // Demo: History
+
+    /**
+     * History entries passed to default slot
+     */
     entries: T[];
 };
 
