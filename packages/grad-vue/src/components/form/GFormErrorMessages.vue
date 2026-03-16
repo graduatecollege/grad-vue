@@ -4,7 +4,7 @@
  * This component is used by form input components to display validation errors
  * in a consistent way across all form fields.
  */
-export {};
+export default {};
 </script>
 
 <script setup lang="ts">

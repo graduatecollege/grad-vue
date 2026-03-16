@@ -5,7 +5,7 @@
  * This component is a wrapper around GTextInput with type="email" for
  * proper email validation and mobile keyboard optimization.
  */
-export {};
+export default {};
 </script>
 
 <script setup lang="ts">

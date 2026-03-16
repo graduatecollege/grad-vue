@@ -13,7 +13,7 @@
  * object from `useSidebar`. See the [Hamburger Menu Documentation](#use-sidebar)
  * for details.
  */
-export {};
+export default {};
 </script>
 
 <script setup lang="ts">

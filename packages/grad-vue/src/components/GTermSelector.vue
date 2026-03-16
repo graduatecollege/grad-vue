@@ -3,7 +3,7 @@
  * A button that shows the selected term. Clicking it opens a popover
  * that allows jumping to a different term.
  */
-export {};
+export default {};
 </script>
 
 <script setup lang="ts">

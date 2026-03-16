@@ -27,7 +27,7 @@
  *
  * Grouping can be enabled by passing a column key to `groupBy`.
  */
-export {};
+export default {};
 </script>
 
 <script setup lang="ts" generic="T extends TableRow, C extends TableColumn<T>">

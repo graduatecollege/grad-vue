@@ -23,7 +23,7 @@
  * </GPopover>
  * ```
  */
-export {};
+export default {};
 </script>
 
 <script setup lang="ts">

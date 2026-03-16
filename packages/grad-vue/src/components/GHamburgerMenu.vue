@@ -27,7 +27,7 @@
  * > [!NOTE]
  * > This button hides itself automatically according to the useSidebar media query.
  */
-export {};
+export default {};
 </script>
 
 <script setup lang="ts">

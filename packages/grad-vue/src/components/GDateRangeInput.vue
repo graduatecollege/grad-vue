@@ -5,7 +5,7 @@
  * This component uses two GDateInput components laid out horizontally
  * to allow selecting a date range.
  */
-export {};
+export default {};
 </script>
 
 <script setup lang="ts">

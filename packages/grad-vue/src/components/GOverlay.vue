@@ -2,7 +2,7 @@
 /**
  * Client-side overlay for behind modal dialogs.
  */
-export {};
+export default {};
 </script>
 
 <script setup lang="ts">

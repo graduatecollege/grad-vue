@@ -9,7 +9,7 @@
  * Errors are provided as an array of strings or computed values.
  * Multiple errors will all be displayed.
  */
-export {};
+export default {};
 </script>
 
 <script lang="ts" setup>

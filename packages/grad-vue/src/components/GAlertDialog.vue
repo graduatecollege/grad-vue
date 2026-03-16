@@ -15,7 +15,7 @@
  * **Slot** `default` is used as the content of the alert, and also becomes
  * the ARIA description of the alert.
  */
-export {};
+export default {};
 </script>
 
 <script setup lang="ts">

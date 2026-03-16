@@ -6,7 +6,7 @@
  * If for some reason the user's browser doesn't support a clipboard,
  * the tooltip will indicate that when they try to copy.
  */
-export {};
+export default {};
 </script>
 
 <script setup lang="ts">

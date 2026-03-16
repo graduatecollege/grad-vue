@@ -5,7 +5,7 @@
  * This component is a wrapper around a text input with a prefix and
  * appropriate input type for currency values.
  */
-export {};
+export default {};
 </script>
 
 <script setup lang="ts">

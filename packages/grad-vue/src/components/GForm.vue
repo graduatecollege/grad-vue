@@ -24,7 +24,7 @@
  * </GForm>
  * ```
  */
-export {};
+export default {};
 </script>
 
 <script lang="ts" setup>

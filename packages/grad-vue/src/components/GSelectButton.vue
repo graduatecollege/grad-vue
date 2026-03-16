@@ -8,7 +8,7 @@
  * In addition to `v-model`, a `change` event is emitted when the
  * option changes from user interaction.
  */
-export {};
+export default {};
 </script>
 
 <script setup lang="ts">

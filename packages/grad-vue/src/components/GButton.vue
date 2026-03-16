@@ -17,7 +17,7 @@
  * - Use a named slot `icon` to provide custom icon content.
  * - If both `icon` prop and named slot `icon` are provided, the named slot takes precedence.
  */
-export {};
+export default {};
 </script>
 
 <script setup lang="ts">

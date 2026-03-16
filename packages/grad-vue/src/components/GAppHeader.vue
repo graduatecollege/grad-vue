@@ -9,7 +9,7 @@
  *
  * **Slot** `app-controls` is the remaining area to the right.
  */
-export {};
+export default {};
 </script>
 
 <script setup lang="ts">

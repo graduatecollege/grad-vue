@@ -3,7 +3,7 @@
  * Prebuilt GSelect and GSelectButton components that can be used to
  * select a term.
  */
-export {};
+export default {};
 </script>
 
 <script setup lang="ts">

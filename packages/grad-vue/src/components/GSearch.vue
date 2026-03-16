@@ -66,7 +66,7 @@
  * </template>
  * ```
  */
-export {};
+export default {};
 </script>
 
 <script

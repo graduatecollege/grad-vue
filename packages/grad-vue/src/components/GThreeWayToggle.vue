@@ -15,7 +15,7 @@
  * Slots:
  * - `label`: Custom label content. Defaults to `label` prop if not provided.
  */
-export {};
+export default {};
 </script>
 
 <script setup lang="ts">

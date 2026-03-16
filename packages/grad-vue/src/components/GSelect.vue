@@ -10,7 +10,7 @@
  * The `options` prop can be an array of strings or objects with `label`
  * and `value` properties.
  */
-export {};
+export default {};
 </script>
 
 <script setup lang="ts">

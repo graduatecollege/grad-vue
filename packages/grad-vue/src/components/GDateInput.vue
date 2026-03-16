@@ -5,7 +5,7 @@
  * This component is a wrapper around GTextInput with type="date" for
  * proper date selection using the browser's native date picker.
  */
-export {};
+export default {};
 </script>
 
 <script setup lang="ts">

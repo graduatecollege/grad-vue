@@ -14,7 +14,7 @@
  * > This element announces to assistive technologies, so make sure to
  * > limit its use to cases where that's appropriate.
  */
-export {};
+export default {};
 </script>
 
 <script setup lang="ts">
