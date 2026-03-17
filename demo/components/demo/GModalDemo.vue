@@ -42,7 +42,8 @@ const showModal = ref(false);
                 },
                 classes: {
                     type: 'string',
-                    label: 'Modal classes'
+                    label: 'Modal classes',
+                    default: null
                 }
             }"
         >

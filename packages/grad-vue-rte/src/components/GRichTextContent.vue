@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts">
 /**
  * Renders a JSON string of tiptap content as HTML.
  * Supports all formatting produced by GChatInput and GNoteInput:
@@ -14,16 +14,23 @@
  *
  * **Note**: This component is part of the `@illinois-grad/grad-vue-rte` package, which includes Tiptap dependencies.
  */
+export default {};
+</script>
+
+<script setup lang="ts">
 import { toRef } from "vue";
 import { useRichTextRenderer } from "../composables/useRichTextRenderer";
 
-interface Props {
+type Props = {
     /**
      * Error message when rendering fails
+     * @demo
      */
     error?: string;
 
-    // JSON-encoded tiptap content string to render.
+    /**
+     * JSON-encoded tiptap content string to render.
+     */
     content: string;
 }
 

@@ -34,10 +34,12 @@ import { useForm, UseFormReturn } from "../compose/useForm.ts";
 type Props = {
     /**
      * Action URL (optional, for native form submission)
+     * @demo
      */
     action?: string;
     /**
      * HTTP method (optional, for native form submission)
+     * @demo
      */
     method?: string;
 }

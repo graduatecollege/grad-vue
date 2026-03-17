@@ -65,7 +65,8 @@ function selected(item: SearchResult) {
                 },
                 loading: {
                     type: 'boolean',
-                    label: 'Show search loading indicator'
+                    label: 'Show search loading indicator',
+                    default: null
                 }
             }"
         >

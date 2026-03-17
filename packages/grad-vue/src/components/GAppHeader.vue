@@ -14,11 +14,15 @@ export default {};
 
 <script setup lang="ts">
 type Props = {
+    /**
+     * Whether to show the Illinois logo
+     */
     illinois?: boolean;
     /**
      * Top-left corner text
      *
      * You can customize this text element with the "left" slot.
+     * @demo
      */
     brand?: string;
 };

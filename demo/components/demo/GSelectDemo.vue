@@ -27,11 +27,13 @@ const selectOptions = ref([
                 },
                 hiddenLabel: {
                     type: 'boolean',
-                    label: 'Hide the label visually'
+                    label: 'Hide the label visually',
+                    default: null
                 },
                 placeholder: {
                     type: 'string',
                     label: 'Placeholder',
+                    default: null,
                     instructions: 'Only used if the component is searchable.'
                 },
                 disabled: {
@@ -46,7 +48,8 @@ const selectOptions = ref([
                 },
                 clearButton: {
                     type: 'boolean',
-                    label: 'Show clear button'
+                    label: 'Show clear button',
+                    default: null
                 },
                 compact: {
                     type: 'boolean',

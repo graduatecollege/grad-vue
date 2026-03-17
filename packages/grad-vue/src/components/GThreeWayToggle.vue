@@ -24,19 +24,24 @@ import { ref, computed, watch, useId } from "vue";
 type Props = {
     /**
      * Accessible label
+     * @demo Three-way toggle
      */
-    label: string; // Demo: Three-way toggle
+    label: string;
 
-    // ID of an element that describes the input
+    /**
+     * ID of an element that describes the input
+     */
     describedby?: string;
 
     /**
      * Error message
+     * @demo
      */
     error?: string;
 
     /**
      * Disabled
+     * @demo
      */
     disabled?: boolean;
 }

@@ -93,18 +93,22 @@ type Props = {
     results: GSearchGroup<T>[] | T[];
     /**
      * Placeholder
+     * @demo
      */
     placeholder?: string;
     /**
      * Accessible label
+     * @demo
      */
     label?: string;
     /**
      * Automatic search
+     * @demo
      */
     auto?: boolean;
     /**
      * Show search loading indicator
+     * @demo
      */
     loading?: boolean;
 };

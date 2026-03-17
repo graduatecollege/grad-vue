@@ -53,22 +53,27 @@ import { useOverlayEscape } from "../compose/useOverlayEscape.ts";
 type Props = {
     /**
      * Modal label
+     * @demo Basic Modal
      */
-    label: string; // Demo: Basic Modal
+    label: string;
     /**
      * ID for aria-describedby
+     * @demo
      */
     describedby?: string;
     /**
      * Hide label
+     * @demo
      */
     hiddenLabel?: boolean;
     /**
      * Modal size
+     * @demo
      */
     size?: "small" | "medium" | "large" | "full";
     /**
      * Modal classes
+     * @demo
      */
     classes?: string | string[];
 }

@@ -22,7 +22,7 @@ the ARIA description of the alert.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Dialog label
      */
@@ -58,7 +58,7 @@ brand header would be too large.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     illinois?: boolean;
     /**
      * Top-left corner text
@@ -66,7 +66,7 @@ interface Props {
      * You can customize this text element with the "left" slot.
      */
     brand?: string;
-}
+};
 ```
 
 ### Slots
@@ -100,7 +100,7 @@ Note that grad-vue doesn't include vue-router as a dependency.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Button size
      */
@@ -121,9 +121,11 @@ interface Props {
     to?: string | Record<string, any>;
     component?: string;
 
-    // Optional icon classes to render an icon span before the label.
-    // Example: "fa-solid fa-plus" or "material-symbols:add".
-    // If a named slot `icon` is provided, it takes precedence over this prop.
+    /**
+     * Optional icon classes to render an icon span before the label.
+     * Example: "fa-solid fa-plus" or "material-symbols:add".
+     * If a named slot `icon` is provided, it takes precedence over this prop.
+     */
     icon?: string;
 }
 ```
@@ -146,11 +148,11 @@ the tooltip will indicate that when they try to copy.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Text
      */
-    text: string; // Demo: This is some text to get copied
+    text: string;
 
     /**
      * Hide the visible text
@@ -176,7 +178,7 @@ appropriate input type for currency values.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Label
      */
@@ -190,15 +192,19 @@ interface Props {
      */
     disabled?: boolean;
 
-    // Error messages array (supports multiple validation errors)
+    /**
+     * Error messages array (supports multiple validation errors)
+     */
     errors?: string[];
     /**
      * Instructions
      */
     instructions?: string;
-    // Name for form registration
+    /**
+     * Name for form registration
+     */
     name?: string;
-}
+};
 ```
 
 ---
@@ -213,7 +219,7 @@ proper date selection using the browser's native date picker.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Label
      */
@@ -227,15 +233,19 @@ interface Props {
      */
     disabled?: boolean;
 
-    // Error messages array (supports multiple validation errors)
+    /**
+     * Error messages array (supports multiple validation errors)
+     */
     errors?: string[];
     /**
      * Instructions
      */
     instructions?: string;
-    // Name for form registration
+    /**
+     * Name for form registration
+     */
     name?: string;
-}
+};
 ```
 
 ---
@@ -250,7 +260,7 @@ to allow selecting a date range.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Label for the component
      */
@@ -268,15 +278,19 @@ interface Props {
      */
     disabled?: boolean;
 
-    // Error messages array (supports multiple validation errors)
+    /**
+     * Error messages array (supports multiple validation errors)
+     */
     errors?: string[];
     /**
      * Instructions
      */
     instructions?: string;
-    // Name for form registration
+    /**
+     * Name for form registration
+     */
     name?: string;
-}
+};
 ```
 
 ---
@@ -299,7 +313,7 @@ For example:
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Layout style for the items.
      */
@@ -323,7 +337,7 @@ proper email validation and mobile keyboard optimization.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Label
      */
@@ -337,15 +351,19 @@ interface Props {
      */
     disabled?: boolean;
 
-    // Error messages array (supports multiple validation errors)
+    /**
+     * Error messages array (supports multiple validation errors)
+     */
     errors?: string[];
     /**
      * Instructions
      */
     instructions?: string;
-    // Name for form registration
+    /**
+     * Name for form registration
+     */
     name?: string;
-}
+};
 ```
 
 ---
@@ -379,7 +397,7 @@ register with the form, and their values will be tracked in the form model.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Action URL (optional, for native form submission)
      */
@@ -429,7 +447,7 @@ provides the sidebar, they will be able to communicate with each other.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Accessible label
      */
@@ -470,13 +488,17 @@ the label as the `aria-label`.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Accessible label
      */
-    label?: string; // Demo: History
+    label?: string;
+
+    /**
+     * History entries passed to default slot
+     */
     entries: T[];
-}
+};
 ```
 
 ### Slots
@@ -524,11 +546,11 @@ at the end of the page structure.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Modal label
      */
-    label: string; // Demo: Basic Modal
+    label: string;
     /**
      * ID for aria-describedby
      */
@@ -561,7 +583,7 @@ Client-side overlay for behind modal dialogs.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
 
 }
 ```
@@ -596,7 +618,7 @@ Example:
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Render without padding
      */
@@ -630,7 +652,7 @@ If no value is provided, the element will have the ARIA role `status`.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Accessible label
      */
@@ -643,7 +665,7 @@ interface Props {
      * Progress circle size
      */
     size?: "tiny" | "small" | "medium" | "large";
-}
+};
 ```
 
 ---
@@ -719,7 +741,7 @@ function selected(item: SearchResult) {
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     results: GSearchGroup<T>[] | T[];
     /**
      * Placeholder
@@ -737,7 +759,7 @@ interface Props {
      * Show search loading indicator
      */
     loading?: boolean;
-}
+};
 ```
 
 ### Slots
@@ -762,13 +784,15 @@ and `value` properties.
 ### Props
 
 ```typescript
-interface Props {
-    // List of options to choose from
+type Props = {
+    /**
+     * List of options to choose from
+     */
     options: Array<string | OptionType>;
     /**
      * Accessible label
      */
-    label: string; // Demo: Select Option
+    label: string;
     /**
      * Hide the label visually
      */
@@ -784,7 +808,9 @@ interface Props {
      */
     disabled?: boolean;
 
-    // Name for form registration
+    /**
+     * Name for form registration
+     */
     name?: string;
     /**
      * Searchable
@@ -799,7 +825,9 @@ interface Props {
      */
     compact?: boolean;
 
-    // Error messages array (supports multiple validation errors)
+    /**
+     * Error messages array (supports multiple validation errors)
+     */
     errors?: string[];
 }
 ```
@@ -823,24 +851,28 @@ option changes from user interaction.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     options: Array<string | OptionType>;
     /**
      * Accessible label
      */
-    label: string; // Demo: Select Option
+    label: string;
     /**
      * Size
      */
     size?: "small" | "medium" | "large";
-    // Name for form registration
+    /**
+     * Name for form registration
+     */
     name?: string;
     /**
      * Disabled
      */
     disabled?: boolean;
 
-    // Error messages array (supports multiple validation errors)
+    /**
+     * Error messages array (supports multiple validation errors)
+     */
     errors?: string[];
 }
 ```
@@ -865,7 +897,7 @@ for details.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Custom background color
      */
@@ -873,14 +905,18 @@ interface Props {
     /**
      * Custom background image
      */
-    backgroundImage?: string; // Demo: none
+    backgroundImage?: string;
     /**
      * Sidebar theme
      */
     theme?: "light" | "dark";
-    // Offset from the top of the viewport
+    /**
+     * Offset from the top of the viewport
+     */
     topOffset?: string;
-    // Top offset variable to use instead of topOffset
+    /**
+     * Top offset variable to use instead of topOffset
+     */
     topOffsetVar?: string;
     /**
      * Width
@@ -969,15 +1005,19 @@ onMounted(() => {
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Title and accessible name
      */
-    title?: string; // Demo: Sidebar Menu
+    title?: string;
     items: MenuItem[];
-    // Offset for tracking active position to account for toolbars
+    /**
+     * Offset for tracking active position to account for toolbars
+     */
     offset?: number;
-    // Track active position for in-page links
+    /**
+     * Track active position for in-page links
+     */
     spy?: boolean;
     /**
      * Sidebar theme
@@ -1009,7 +1049,7 @@ When used inside a GForm, the button will automatically:
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Disabled state
      */
@@ -1063,11 +1103,11 @@ Grouping can be enabled by passing a column key to `groupBy`.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Accessible label
      */
-    label: string; // Demo: Colleges
+    label: string;
     data: T[];
     columns: C[];
     resultCount?: number;
@@ -1081,18 +1121,22 @@ interface Props {
      * Enable bulk selection with checkboxes
      */
     bulkSelectionEnabled?: boolean;
-    // Array of actions to show in the sticky toolbar when rows are selected
+    /**
+     * Array of actions to show in the sticky toolbar when rows are selected
+     */
     bulkActions?: BulkAction[];
 
-    // Optional change tracker for editable tables
-    // Pass a composable from useTableChanges() to track user edits
+    /**
+     * Optional change tracker for editable tables.
+     * Pass a composable from useTableChanges() to track user edits.
+     */
     changeTracker?: UseTableChangesReturn<T>;
 
     /**
      * Explicitly show the pagination bar even if the slot is empty
      */
     showPagination?: boolean;
-}
+};
 ```
 
 ### Slots
@@ -1109,26 +1153,30 @@ that allows jumping to a different term.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Title for the popover.
      */
-    title?: string; // Demo: Period Selection
+    title?: string;
 
     /**
      * Label for year select.
      */
-    yearLabel?: string; // Demo: Select Year
+    yearLabel?: string;
 
     /**
      * Label for period select.
      */
-    periodLabel?: string; // Demo: Term
+    periodLabel?: string;
 
-    // list of possible term years
+    /**
+     * List of possible term years
+     */
     termYears?: string[];
 
-    // list of possible term names
+    /**
+     * List of possible term names
+     */
     termNames?: string[];
 }
 ```
@@ -1149,11 +1197,11 @@ Multiple errors will all be displayed.
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Label
      */
-    label?: string; // Demo: Example Label
+    label?: string;
     /**
      * Placeholder text
      */
@@ -1163,7 +1211,9 @@ interface Props {
      */
     disabled?: boolean;
 
-    // Error messages array (supports multiple validation errors)
+    /**
+     * Error messages array (supports multiple validation errors)
+     */
     errors?: string[];
     /**
      * Instructions
@@ -1182,9 +1232,11 @@ interface Props {
      */
     debounce?: number;
 
-    // Name for form registration
+    /**
+     * Name for form registration
+     */
     name?: string;
-}
+};
 ```
 
 ### Slots
@@ -1213,13 +1265,15 @@ Slots:
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Accessible label
      */
-    label: string; // Demo: Three-way toggle
+    label: string;
 
-    // ID of an element that describes the input
+    /**
+     * ID of an element that describes the input
+     */
     describedby?: string;
 
     /**
@@ -1273,15 +1327,15 @@ Example:
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * User initial(s)
      */
-    initials: string; // Demo: J
+    initials: string;
     /**
      * User email
      */
-    email: string; // Demo: j@example.org
+    email: string;
     /**
      * Background color
      */
@@ -1310,7 +1364,7 @@ The GChatInput component provides a rich text editing experience using Tiptap. I
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Placeholder text
      */
@@ -1346,7 +1400,7 @@ The GNoteInput component provides a rich text editing experience using Tiptap fo
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Placeholder text
      */
@@ -1379,13 +1433,15 @@ serializes recognized document nodes - it does not inject raw HTML from the JSON
 ### Props
 
 ```typescript
-interface Props {
+type Props = {
     /**
      * Error message when rendering fails
      */
     error?: string;
 
-    // JSON-encoded tiptap content string to render.
+    /**
+     * JSON-encoded tiptap content string to render.
+     */
     content: string;
 }
 ```
