@@ -15,23 +15,14 @@ import { ref } from "vue";
 import VGtooltip from "../directives/v-gtooltip.ts";
 
 type Props = {
-    /**
-     * Text
-     * @demo This is some text to get copied
-     */
-    text: string;
+    /** Text */
+    text: string; // @demo This is some text to get copied
 
-    /**
-     * Hide the visible text
-     * @demo
-     */
-    hideText?: boolean;
+    /** Hide the visible text */
+    hideText?: boolean; // @demo
 
-    /**
-     * Copy button label
-     * @demo
-     */
-    copyLabel?: string;
+    /** Copy button label */
+    copyLabel?: string; // @demo
 }
 
 const props = defineProps<Props>();

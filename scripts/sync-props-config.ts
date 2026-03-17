@@ -11,28 +11,26 @@ import { codeToHtml } from "shiki";
 // It also updates the demo docs from a JSDoc comment at the top of the script tag.
 // Run this script after updating the component's props.
 //
-// Only props with a JSDoc @demo tag are included in the demo config.
-// The @demo tag can optionally specify the default value shown in the interactive demo:
+// Only props with a trailing // @demo comment are included in the demo config.
+// The comment can optionally specify the default value shown in the interactive demo:
 //
-//   /**
-//    * Modal label
-//    * @demo Basic Modal   <- included in demo, pre-filled with "Basic Modal"
-//    */
-//   label: string;
+//   /** Modal label */
+//   label: string; // @demo Basic Modal   <- included in demo, pre-filled with "Basic Modal"
 //
-//   /**
-//    * Placeholder text
-//    * @demo               <- included in demo; falls back to withDefaults value if available
-//    */
-//   placeholder?: string;
+//   /** Placeholder text */
+//   placeholder?: string; // @demo        <- included in demo; falls back to withDefaults value if available
 //
-//   /**
-//    * Internal option
-//    */
-//   internal?: string;    <- NOT included in demo (no @demo tag)
+//   /** Internal option */
+//   internal?: string;                    <- NOT included in demo (no // @demo comment)
 
 const packagesDir = 'packages';
 const demosDir = 'demo/components/demo';
+
+// Matches a trailing "// @demo [optional value]" comment on a prop declaration line.
+// The capture group contains the demo value (may be empty).
+const DEMO_COMMENT_RE = /\/\/\s*@demo\s*(.*)/;
+// Strip variant: also removes leading whitespace before the comment.
+const DEMO_COMMENT_STRIP_RE = /[ \t]*\/\/\s*@demo\b[^\n]*/g;
 
 const marked = new Marked();
 marked.use(markedAlert()).use(
@@ -146,9 +144,9 @@ function parseProps(content: string) {
                 (ts.isInterfaceDeclaration(node) && node.name.text === 'Props');
 
             if (isPropsDecl) {
-                // Strip @demo tags (with or without a value) from the raw source text
-                // since they are only used by sync-props and not part of the public API docs.
-                rawProps = node.getText(setupSource).replace(/^\s*\*\s+@demo\b.*\n/gm, '');
+                // Strip trailing // @demo comments from the raw source text since they are
+                // only used by sync-props and not part of the public API docs.
+                rawProps = node.getText(setupSource).replace(DEMO_COMMENT_STRIP_RE, '');
 
                 const members: ts.NodeArray<ts.TypeElement> =
                     ts.isTypeAliasDeclaration(node) && ts.isTypeLiteralNode(node.type)
@@ -163,9 +161,13 @@ function parseProps(content: string) {
                     const name = member.name.getText(setupSource);
                     if (name === 'modelValue') continue;
 
-                    // Only include props that have a @demo tag in their JSDoc.
-                    const demoTag = ts.getJSDocTags(member).find((t) => t.tagName.text === 'demo');
-                    if (!demoTag) continue;
+                    // Only include props that have a trailing // @demo comment on their line.
+                    // Look at the source text on the same line, after the member's closing token.
+                    const memberEnd = member.getEnd();
+                    const lineEnd = setupCode.indexOf('\n', memberEnd);
+                    const afterMember = lineEnd >= 0 ? setupCode.slice(memberEnd, lineEnd) : setupCode.slice(memberEnd);
+                    const demoMatch = afterMember.match(DEMO_COMMENT_RE);
+                    if (!demoMatch) continue;
 
                     const jsDocs = ts.getJSDocCommentsAndTags(member);
                     const commentText = jsDocs.length && ts.isJSDoc(jsDocs[0])
@@ -173,10 +175,10 @@ function parseProps(content: string) {
                         : '';
                     const { label, instructions } = splitJSDocText(commentText);
 
-                    // A non-empty @demo value is used as the pre-filled demo default.
-                    // An empty @demo tag falls back to the withDefaults value if one exists,
+                    // A non-empty // @demo value is used as the pre-filled demo default.
+                    // An empty // @demo falls back to the withDefaults value if one exists,
                     // otherwise the prop is shown with no pre-filled value (null).
-                    const demoValue = getJSDocCommentText(demoTag.comment).trim();
+                    const demoValue = demoMatch[1].trim();
                     const demoDefault: string | boolean | number | null =
                         demoValue.length > 0
                             ? demoValue

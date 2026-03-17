@@ -12,31 +12,19 @@ export default {};
 import GTextInput from "./GTextInput.vue";
 
 type Props = {
-    /**
-     * Label
-     * @demo
-     */
-    label?: string;
-    /**
-     * Placeholder text
-     * @demo
-     */
-    placeholder?: string;
-    /**
-     * Disabled
-     * @demo
-     */
-    disabled?: boolean;
+    /** Label */
+    label?: string; // @demo
+    /** Placeholder text */
+    placeholder?: string; // @demo
+    /** Disabled */
+    disabled?: boolean; // @demo
 
     /**
      * Error messages array (supports multiple validation errors)
      */
     errors?: string[];
-    /**
-     * Instructions
-     * @demo
-     */
-    instructions?: string;
+    /** Instructions */
+    instructions?: string; // @demo
     /**
      * Name for form registration
      */

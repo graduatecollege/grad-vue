@@ -21,21 +21,12 @@ export default {};
 import { computed } from "vue";
 
 type Props = {
-    /**
-     * Accessible label
-     * @demo
-     */
-    label?: string;
-    /**
-     * Progress 1-100 or blank
-     * @demo
-     */
-    value?: number;
-    /**
-     * Progress circle size
-     * @demo
-     */
-    size?: "tiny" | "small" | "medium" | "large";
+    /** Accessible label */
+    label?: string; // @demo
+    /** Progress 1-100 or blank */
+    value?: number; // @demo
+    /** Progress circle size */
+    size?: "tiny" | "small" | "medium" | "large"; // @demo
 };
 
 const props = withDefaults(defineProps<Props>(), {

@@ -21,21 +21,12 @@ import { computed, inject, useId } from "vue";
 import { useSidebar } from "../compose/useSidebar.ts";
 
 type Props = {
-    /**
-     * Custom background color
-     * @demo
-     */
-    backgroundColor?: string;
-    /**
-     * Custom background image
-     * @demo none
-     */
-    backgroundImage?: string;
-    /**
-     * Sidebar theme
-     * @demo
-     */
-    theme?: "light" | "dark";
+    /** Custom background color */
+    backgroundColor?: string; // @demo
+    /** Custom background image */
+    backgroundImage?: string; // @demo none
+    /** Sidebar theme */
+    theme?: "light" | "dark"; // @demo
     /**
      * Offset from the top of the viewport
      */
@@ -48,9 +39,8 @@ type Props = {
      * Width
      *
      * Width of the sidebar
-     * @demo
      */
-    width?: string;
+    width?: string; // @demo
 }
 
 const props = withDefaults(defineProps<Props>(), {

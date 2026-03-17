@@ -35,11 +35,8 @@ import { useSidebar } from "../compose/useSidebar.ts";
 import { inject, useId } from "vue";
 
 type Props = {
-    /**
-     * Accessible label
-     * @demo
-     */
-    label?: string;
+    /** Accessible label */
+    label?: string; // @demo
 }
 
 const props = withDefaults(defineProps<Props>(), {

@@ -23,25 +23,16 @@ type OptionType = {
 
 type Props = {
     options: Array<string | OptionType>;
-    /**
-     * Accessible label
-     * @demo Select Option
-     */
-    label: string;
-    /**
-     * Size
-     * @demo
-     */
-    size?: "small" | "medium" | "large";
+    /** Accessible label */
+    label: string; // @demo Select Option
+    /** Size */
+    size?: "small" | "medium" | "large"; // @demo
     /**
      * Name for form registration
      */
     name?: string;
-    /**
-     * Disabled
-     * @demo
-     */
-    disabled?: boolean;
+    /** Disabled */
+    disabled?: boolean; // @demo
 
     /**
      * Error messages array (supports multiple validation errors)

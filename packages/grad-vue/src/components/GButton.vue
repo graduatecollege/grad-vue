@@ -24,26 +24,14 @@ export default {};
 import { computed, useAttrs } from "vue";
 
 type Props = {
-    /**
-     * Button size
-     * @demo
-     */
-    size?: "small" | "medium" | "large";
-    /**
-     * Button color theme
-     * @demo
-     */
-    theme?: "primary" | "secondary" | "accent" | "danger" | "none";
-    /**
-     * Use outlined style
-     * @demo
-     */
-    outlined?: boolean;
-    /**
-     * Use text style
-     * @demo
-     */
-    text?: boolean;
+    /** Button size */
+    size?: "small" | "medium" | "large"; // @demo
+    /** Button color theme */
+    theme?: "primary" | "secondary" | "accent" | "danger" | "none"; // @demo
+    /** Use outlined style */
+    outlined?: boolean; // @demo
+    /** Use text style */
+    text?: boolean; // @demo
 
     to?: string | Record<string, any>;
     component?: string;

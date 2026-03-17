@@ -12,23 +12,14 @@ import GButton from "./GButton.vue";
 import GPopover from "./GPopover.vue";
 
 type Props = {
-    /**
-     * Title for the popover.
-     * @demo Period Selection
-     */
-    title?: string;
+    /** Title for the popover. */
+    title?: string; // @demo Period Selection
 
-    /**
-     * Label for year select.
-     * @demo Select Year
-     */
-    yearLabel?: string;
+    /** Label for year select. */
+    yearLabel?: string; // @demo Select Year
 
-    /**
-     * Label for period select.
-     * @demo Term
-     */
-    periodLabel?: string;
+    /** Label for period select. */
+    periodLabel?: string; // @demo Term
 
     /**
      * List of possible term years

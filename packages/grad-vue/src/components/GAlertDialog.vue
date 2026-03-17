@@ -26,21 +26,12 @@ import { useOverlayEscape } from "../compose/useOverlayEscape.ts";
 import GButton from "./GButton.vue";
 
 type Props = {
-    /**
-     * Dialog label
-     * @demo
-     */
-    label?: string;
-    /**
-     * Accept button text
-     * @demo
-     */
-    buttonText?: string;
-    /**
-     * Accept button color
-     * @demo
-     */
-    buttonColor?: "primary" | "secondary" | "danger";
+    /** Dialog label */
+    label?: string; // @demo
+    /** Accept button text */
+    buttonText?: string; // @demo
+    /** Accept button color */
+    buttonColor?: "primary" | "secondary" | "danger"; // @demo
 }
 
 const props = withDefaults(defineProps<Props>(), {

@@ -36,26 +36,14 @@ import { getCurrentInstance, ref, useId, useSlots, useTemplateRef } from "vue";
 import GPopover from "./GPopover.vue";
 
 type Props = {
-    /**
-     * User initial(s)
-     * @demo J
-     */
-    initials: string;
-    /**
-     * User email
-     * @demo j@example.org
-     */
-    email: string;
-    /**
-     * Background color
-     * @demo
-     */
-    color?: string;
-    /**
-     * Accessible label
-     * @demo
-     */
-    label?: string;
+    /** User initial(s) */
+    initials: string; // @demo J
+    /** User email */
+    email: string; // @demo j@example.org
+    /** Background color */
+    color?: string; // @demo
+    /** Accessible label */
+    label?: string; // @demo
 }
 
 const props = withDefaults(defineProps<Props>(), {

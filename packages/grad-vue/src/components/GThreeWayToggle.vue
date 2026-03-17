@@ -22,28 +22,19 @@ export default {};
 import { ref, computed, watch, useId } from "vue";
 
 type Props = {
-    /**
-     * Accessible label
-     * @demo Three-way toggle
-     */
-    label: string;
+    /** Accessible label */
+    label: string; // @demo Three-way toggle
 
     /**
      * ID of an element that describes the input
      */
     describedby?: string;
 
-    /**
-     * Error message
-     * @demo
-     */
-    error?: string;
+    /** Error message */
+    error?: string; // @demo
 
-    /**
-     * Disabled
-     * @demo
-     */
-    disabled?: boolean;
+    /** Disabled */
+    disabled?: boolean; // @demo
 }
 
 const props = defineProps<Props>();

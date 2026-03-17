@@ -51,31 +51,16 @@ import { useOverlayFocus } from "../compose/useOverlayFocus.ts";
 import { useOverlayEscape } from "../compose/useOverlayEscape.ts";
 
 type Props = {
-    /**
-     * Modal label
-     * @demo Basic Modal
-     */
-    label: string;
-    /**
-     * ID for aria-describedby
-     * @demo
-     */
-    describedby?: string;
-    /**
-     * Hide label
-     * @demo
-     */
-    hiddenLabel?: boolean;
-    /**
-     * Modal size
-     * @demo
-     */
-    size?: "small" | "medium" | "large" | "full";
-    /**
-     * Modal classes
-     * @demo
-     */
-    classes?: string | string[];
+    /** Modal label */
+    label: string; // @demo Basic Modal
+    /** ID for aria-describedby */
+    describedby?: string; // @demo
+    /** Hide label */
+    hiddenLabel?: boolean; // @demo
+    /** Modal size */
+    size?: "small" | "medium" | "large" | "full"; // @demo
+    /** Modal classes */
+    classes?: string | string[]; // @demo
 }
 
 const props = withDefaults(defineProps<Props>(), {

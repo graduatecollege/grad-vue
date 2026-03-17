@@ -14,36 +14,21 @@ import GDateInput from "./GDateInput.vue";
 import { useFormField } from "../compose/useFormField.ts";
 
 type Props = {
-    /**
-     * Label for the component
-     * @demo
-     */
-    label?: string;
-    /**
-     * Label for the start date input
-     * @demo
-     */
-    startLabel?: string;
-    /**
-     * Label for the end date input
-     * @demo
-     */
-    endLabel?: string;
-    /**
-     * Disabled
-     * @demo
-     */
-    disabled?: boolean;
+    /** Label for the component */
+    label?: string; // @demo
+    /** Label for the start date input */
+    startLabel?: string; // @demo
+    /** Label for the end date input */
+    endLabel?: string; // @demo
+    /** Disabled */
+    disabled?: boolean; // @demo
 
     /**
      * Error messages array (supports multiple validation errors)
      */
     errors?: string[];
-    /**
-     * Instructions
-     * @demo
-     */
-    instructions?: string;
+    /** Instructions */
+    instructions?: string; // @demo
     /**
      * Name for form registration
      */

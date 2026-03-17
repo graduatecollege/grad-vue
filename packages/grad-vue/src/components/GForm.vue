@@ -32,16 +32,10 @@ import { provide, watch, inject, computed } from "vue";
 import { useForm, UseFormReturn } from "../compose/useForm.ts";
 
 type Props = {
-    /**
-     * Action URL (optional, for native form submission)
-     * @demo
-     */
-    action?: string;
-    /**
-     * HTTP method (optional, for native form submission)
-     * @demo
-     */
-    method?: string;
+    /** Action URL (optional, for native form submission) */
+    action?: string; // @demo
+    /** HTTP method (optional, for native form submission) */
+    method?: string; // @demo
 }
 
 const props = withDefaults(defineProps<Props>(), {

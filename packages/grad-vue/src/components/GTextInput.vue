@@ -21,46 +21,25 @@ defineOptions({
 });
 
 type Props = {
-    /**
-     * Label
-     * @demo Example Label
-     */
-    label?: string;
-    /**
-     * Placeholder text
-     * @demo
-     */
-    placeholder?: string;
-    /**
-     * Disabled
-     * @demo
-     */
-    disabled?: boolean;
+    /** Label */
+    label?: string; // @demo Example Label
+    /** Placeholder text */
+    placeholder?: string; // @demo
+    /** Disabled */
+    disabled?: boolean; // @demo
 
     /**
      * Error messages array (supports multiple validation errors)
      */
     errors?: string[];
-    /**
-     * Instructions
-     * @demo
-     */
-    instructions?: string;
-    /**
-     * Prefix text (displayed before input)
-     * @demo
-     */
-    prefix?: string;
-    /**
-     * Suffix text (displayed after input)
-     * @demo
-     */
-    suffix?: string;
-    /**
-     * Debounce in milliseconds
-     * @demo
-     */
-    debounce?: number;
+    /** Instructions */
+    instructions?: string; // @demo
+    /** Prefix text (displayed before input) */
+    prefix?: string; // @demo
+    /** Suffix text (displayed after input) */
+    suffix?: string; // @demo
+    /** Debounce in milliseconds */
+    debounce?: number; // @demo
 
     /**
      * Name for form registration

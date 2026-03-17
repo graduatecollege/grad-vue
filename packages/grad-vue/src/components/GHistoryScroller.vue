@@ -37,17 +37,11 @@ import { useResizeObserver } from "@vueuse/core";
 import GButton from "./GButton.vue";
 
 type Props = {
-    /**
-     * Accessible label
-     * @demo History
-     */
-    label?: string;
+    /** Accessible label */
+    label?: string; // @demo History
 
-    /**
-     * History entries passed to default slot
-     * @demo
-     */
-    entries: T[];
+    /** History entries passed to default slot */
+    entries: T[]; // @demo
 };
 
 const props = withDefaults(defineProps<Props>(), {

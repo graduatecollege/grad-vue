@@ -91,26 +91,14 @@ export interface GSearchGroup<R> {
 
 type Props = {
     results: GSearchGroup<T>[] | T[];
-    /**
-     * Placeholder
-     * @demo
-     */
-    placeholder?: string;
-    /**
-     * Accessible label
-     * @demo
-     */
-    label?: string;
-    /**
-     * Automatic search
-     * @demo
-     */
-    auto?: boolean;
-    /**
-     * Show search loading indicator
-     * @demo
-     */
-    loading?: boolean;
+    /** Placeholder */
+    placeholder?: string; // @demo
+    /** Accessible label */
+    label?: string; // @demo
+    /** Automatic search */
+    auto?: boolean; // @demo
+    /** Show search loading indicator */
+    loading?: boolean; // @demo
 };
 
 const modelValue = defineModel<string | null>({ default: () => "" });

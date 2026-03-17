@@ -88,11 +88,8 @@ type MenuItem = {
 };
 
 type Props = {
-    /**
-     * Title and accessible name
-     * @demo Sidebar Menu
-     */
-    title?: string;
+    /** Title and accessible name */
+    title?: string; // @demo Sidebar Menu
     items: MenuItem[];
     /**
      * Offset for tracking active position to account for toolbars
@@ -102,16 +99,10 @@ type Props = {
      * Track active position for in-page links
      */
     spy?: boolean;
-    /**
-     * Sidebar theme
-     * @demo
-     */
-    theme?: "light" | "dark";
-    /**
-     * Use compact layout
-     * @demo
-     */
-    compact?: boolean;
+    /** Sidebar theme */
+    theme?: "light" | "dark"; // @demo
+    /** Use compact layout */
+    compact?: boolean; // @demo
 }
 
 const props = withDefaults(defineProps<Props>(), {

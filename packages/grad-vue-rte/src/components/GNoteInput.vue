@@ -21,16 +21,10 @@ import GRichTextToolbar from "./editor/GRichTextToolbar.vue";
 defineOptions({ inheritAttrs: false });
 
 type Props = {
-    /**
-     * Placeholder text
-     * @demo
-     */
-    placeholder?: string;
-    /**
-     * Accessible label
-     * @demo
-     */
-    label?: string;
+    /** Placeholder text */
+    placeholder?: string; // @demo
+    /** Accessible label */
+    label?: string; // @demo
 }
 
 const props = withDefaults(defineProps<Props>(), {

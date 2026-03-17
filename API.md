@@ -23,17 +23,11 @@ the ARIA description of the alert.
 
 ```typescript
 type Props = {
-    /**
-     * Dialog label
-     */
+    /** Dialog label */
     label?: string;
-    /**
-     * Accept button text
-     */
+    /** Accept button text */
     buttonText?: string;
-    /**
-     * Accept button color
-     */
+    /** Accept button color */
     buttonColor?: "primary" | "secondary" | "danger";
 }
 ```
@@ -101,21 +95,13 @@ Note that grad-vue doesn't include vue-router as a dependency.
 
 ```typescript
 type Props = {
-    /**
-     * Button size
-     */
+    /** Button size */
     size?: "small" | "medium" | "large";
-    /**
-     * Button color theme
-     */
+    /** Button color theme */
     theme?: "primary" | "secondary" | "accent" | "danger" | "none";
-    /**
-     * Use outlined style
-     */
+    /** Use outlined style */
     outlined?: boolean;
-    /**
-     * Use text style
-     */
+    /** Use text style */
     text?: boolean;
 
     to?: string | Record<string, any>;
@@ -149,19 +135,13 @@ the tooltip will indicate that when they try to copy.
 
 ```typescript
 type Props = {
-    /**
-     * Text
-     */
+    /** Text */
     text: string;
 
-    /**
-     * Hide the visible text
-     */
+    /** Hide the visible text */
     hideText?: boolean;
 
-    /**
-     * Copy button label
-     */
+    /** Copy button label */
     copyLabel?: string;
 }
 ```
@@ -179,26 +159,18 @@ appropriate input type for currency values.
 
 ```typescript
 type Props = {
-    /**
-     * Label
-     */
+    /** Label */
     label?: string;
-    /**
-     * Placeholder text
-     */
+    /** Placeholder text */
     placeholder?: string;
-    /**
-     * Disabled
-     */
+    /** Disabled */
     disabled?: boolean;
 
     /**
      * Error messages array (supports multiple validation errors)
      */
     errors?: string[];
-    /**
-     * Instructions
-     */
+    /** Instructions */
     instructions?: string;
     /**
      * Name for form registration
@@ -220,26 +192,18 @@ proper date selection using the browser's native date picker.
 
 ```typescript
 type Props = {
-    /**
-     * Label
-     */
+    /** Label */
     label?: string;
-    /**
-     * Placeholder text
-     */
+    /** Placeholder text */
     placeholder?: string;
-    /**
-     * Disabled
-     */
+    /** Disabled */
     disabled?: boolean;
 
     /**
      * Error messages array (supports multiple validation errors)
      */
     errors?: string[];
-    /**
-     * Instructions
-     */
+    /** Instructions */
     instructions?: string;
     /**
      * Name for form registration
@@ -261,30 +225,20 @@ to allow selecting a date range.
 
 ```typescript
 type Props = {
-    /**
-     * Label for the component
-     */
+    /** Label for the component */
     label?: string;
-    /**
-     * Label for the start date input
-     */
+    /** Label for the start date input */
     startLabel?: string;
-    /**
-     * Label for the end date input
-     */
+    /** Label for the end date input */
     endLabel?: string;
-    /**
-     * Disabled
-     */
+    /** Disabled */
     disabled?: boolean;
 
     /**
      * Error messages array (supports multiple validation errors)
      */
     errors?: string[];
-    /**
-     * Instructions
-     */
+    /** Instructions */
     instructions?: string;
     /**
      * Name for form registration
@@ -314,9 +268,7 @@ For example:
 
 ```typescript
 type Props = {
-    /**
-     * Layout style for the items.
-     */
+    /** Layout style for the items. */
     variant?: "grid" | "vertical";
 }
 ```
@@ -338,26 +290,18 @@ proper email validation and mobile keyboard optimization.
 
 ```typescript
 type Props = {
-    /**
-     * Label
-     */
+    /** Label */
     label?: string;
-    /**
-     * Placeholder text
-     */
+    /** Placeholder text */
     placeholder?: string;
-    /**
-     * Disabled
-     */
+    /** Disabled */
     disabled?: boolean;
 
     /**
      * Error messages array (supports multiple validation errors)
      */
     errors?: string[];
-    /**
-     * Instructions
-     */
+    /** Instructions */
     instructions?: string;
     /**
      * Name for form registration
@@ -398,13 +342,9 @@ register with the form, and their values will be tracked in the form model.
 
 ```typescript
 type Props = {
-    /**
-     * Action URL (optional, for native form submission)
-     */
+    /** Action URL (optional, for native form submission) */
     action?: string;
-    /**
-     * HTTP method (optional, for native form submission)
-     */
+    /** HTTP method (optional, for native form submission) */
     method?: string;
 }
 ```
@@ -448,9 +388,7 @@ provides the sidebar, they will be able to communicate with each other.
 
 ```typescript
 type Props = {
-    /**
-     * Accessible label
-     */
+    /** Accessible label */
     label?: string;
 }
 ```
@@ -489,14 +427,10 @@ the label as the `aria-label`.
 
 ```typescript
 type Props = {
-    /**
-     * Accessible label
-     */
+    /** Accessible label */
     label?: string;
 
-    /**
-     * History entries passed to default slot
-     */
+    /** History entries passed to default slot */
     entries: T[];
 };
 ```
@@ -547,25 +481,15 @@ at the end of the page structure.
 
 ```typescript
 type Props = {
-    /**
-     * Modal label
-     */
+    /** Modal label */
     label: string;
-    /**
-     * ID for aria-describedby
-     */
+    /** ID for aria-describedby */
     describedby?: string;
-    /**
-     * Hide label
-     */
+    /** Hide label */
     hiddenLabel?: boolean;
-    /**
-     * Modal size
-     */
+    /** Modal size */
     size?: "small" | "medium" | "large" | "full";
-    /**
-     * Modal classes
-     */
+    /** Modal classes */
     classes?: string | string[];
 }
 ```
@@ -619,9 +543,7 @@ Example:
 
 ```typescript
 type Props = {
-    /**
-     * Render without padding
-     */
+    /** Render without padding */
     minimal?: boolean;
 }
 ```
@@ -653,17 +575,11 @@ If no value is provided, the element will have the ARIA role `status`.
 
 ```typescript
 type Props = {
-    /**
-     * Accessible label
-     */
+    /** Accessible label */
     label?: string;
-    /**
-     * Progress 1-100 or blank
-     */
+    /** Progress 1-100 or blank */
     value?: number;
-    /**
-     * Progress circle size
-     */
+    /** Progress circle size */
     size?: "tiny" | "small" | "medium" | "large";
 };
 ```
@@ -743,21 +659,13 @@ function selected(item: SearchResult) {
 ```typescript
 type Props = {
     results: GSearchGroup<T>[] | T[];
-    /**
-     * Placeholder
-     */
+    /** Placeholder */
     placeholder?: string;
-    /**
-     * Accessible label
-     */
+    /** Accessible label */
     label?: string;
-    /**
-     * Automatic search
-     */
+    /** Automatic search */
     auto?: boolean;
-    /**
-     * Show search loading indicator
-     */
+    /** Show search loading indicator */
     loading?: boolean;
 };
 ```
@@ -789,13 +697,9 @@ type Props = {
      * List of options to choose from
      */
     options: Array<string | OptionType>;
-    /**
-     * Accessible label
-     */
+    /** Accessible label */
     label: string;
-    /**
-     * Hide the label visually
-     */
+    /** Hide the label visually */
     hiddenLabel?: boolean;
     /**
      * Placeholder
@@ -803,26 +707,18 @@ type Props = {
      * Only used if the component is searchable.
      */
     placeholder?: string;
-    /**
-     * Disabled
-     */
+    /** Disabled */
     disabled?: boolean;
 
     /**
      * Name for form registration
      */
     name?: string;
-    /**
-     * Searchable
-     */
+    /** Searchable */
     searchable?: boolean;
-    /**
-     * Show clear button
-     */
+    /** Show clear button */
     clearButton?: boolean;
-    /**
-     * Compact
-     */
+    /** Compact */
     compact?: boolean;
 
     /**
@@ -853,21 +749,15 @@ option changes from user interaction.
 ```typescript
 type Props = {
     options: Array<string | OptionType>;
-    /**
-     * Accessible label
-     */
+    /** Accessible label */
     label: string;
-    /**
-     * Size
-     */
+    /** Size */
     size?: "small" | "medium" | "large";
     /**
      * Name for form registration
      */
     name?: string;
-    /**
-     * Disabled
-     */
+    /** Disabled */
     disabled?: boolean;
 
     /**
@@ -898,17 +788,11 @@ for details.
 
 ```typescript
 type Props = {
-    /**
-     * Custom background color
-     */
+    /** Custom background color */
     backgroundColor?: string;
-    /**
-     * Custom background image
-     */
+    /** Custom background image */
     backgroundImage?: string;
-    /**
-     * Sidebar theme
-     */
+    /** Sidebar theme */
     theme?: "light" | "dark";
     /**
      * Offset from the top of the viewport
@@ -1006,9 +890,7 @@ onMounted(() => {
 
 ```typescript
 type Props = {
-    /**
-     * Title and accessible name
-     */
+    /** Title and accessible name */
     title?: string;
     items: MenuItem[];
     /**
@@ -1019,13 +901,9 @@ type Props = {
      * Track active position for in-page links
      */
     spy?: boolean;
-    /**
-     * Sidebar theme
-     */
+    /** Sidebar theme */
     theme?: "light" | "dark";
-    /**
-     * Use compact layout
-     */
+    /** Use compact layout */
     compact?: boolean;
 }
 ```
@@ -1050,17 +928,11 @@ When used inside a GForm, the button will automatically:
 
 ```typescript
 type Props = {
-    /**
-     * Disabled state
-     */
+    /** Disabled state */
     disabled?: boolean;
-    /**
-     * Loading text to show during submission
-     */
+    /** Loading text to show during submission */
     loadingText?: string;
-    /**
-     * Variant
-     */
+    /** Variant */
     variant?: "primary" | "secondary" | "danger";
 }
 ```
@@ -1104,9 +976,7 @@ Grouping can be enabled by passing a column key to `groupBy`.
 
 ```typescript
 type Props = {
-    /**
-     * Accessible label
-     */
+    /** Accessible label */
     label: string;
     data: T[];
     columns: C[];
@@ -1117,9 +987,7 @@ type Props = {
     rowClickable?: boolean;
     rowClass?: (row: T) => string | string[] | undefined;
     startIndex: number;
-    /**
-     * Enable bulk selection with checkboxes
-     */
+    /** Enable bulk selection with checkboxes */
     bulkSelectionEnabled?: boolean;
     /**
      * Array of actions to show in the sticky toolbar when rows are selected
@@ -1132,9 +1000,7 @@ type Props = {
      */
     changeTracker?: UseTableChangesReturn<T>;
 
-    /**
-     * Explicitly show the pagination bar even if the slot is empty
-     */
+    /** Explicitly show the pagination bar even if the slot is empty */
     showPagination?: boolean;
 };
 ```
@@ -1154,19 +1020,13 @@ that allows jumping to a different term.
 
 ```typescript
 type Props = {
-    /**
-     * Title for the popover.
-     */
+    /** Title for the popover. */
     title?: string;
 
-    /**
-     * Label for year select.
-     */
+    /** Label for year select. */
     yearLabel?: string;
 
-    /**
-     * Label for period select.
-     */
+    /** Label for period select. */
     periodLabel?: string;
 
     /**
@@ -1198,38 +1058,24 @@ Multiple errors will all be displayed.
 
 ```typescript
 type Props = {
-    /**
-     * Label
-     */
+    /** Label */
     label?: string;
-    /**
-     * Placeholder text
-     */
+    /** Placeholder text */
     placeholder?: string;
-    /**
-     * Disabled
-     */
+    /** Disabled */
     disabled?: boolean;
 
     /**
      * Error messages array (supports multiple validation errors)
      */
     errors?: string[];
-    /**
-     * Instructions
-     */
+    /** Instructions */
     instructions?: string;
-    /**
-     * Prefix text (displayed before input)
-     */
+    /** Prefix text (displayed before input) */
     prefix?: string;
-    /**
-     * Suffix text (displayed after input)
-     */
+    /** Suffix text (displayed after input) */
     suffix?: string;
-    /**
-     * Debounce in milliseconds
-     */
+    /** Debounce in milliseconds */
     debounce?: number;
 
     /**
@@ -1266,9 +1112,7 @@ Slots:
 
 ```typescript
 type Props = {
-    /**
-     * Accessible label
-     */
+    /** Accessible label */
     label: string;
 
     /**
@@ -1276,14 +1120,10 @@ type Props = {
      */
     describedby?: string;
 
-    /**
-     * Error message
-     */
+    /** Error message */
     error?: string;
 
-    /**
-     * Disabled
-     */
+    /** Disabled */
     disabled?: boolean;
 }
 ```
@@ -1328,21 +1168,13 @@ Example:
 
 ```typescript
 type Props = {
-    /**
-     * User initial(s)
-     */
+    /** User initial(s) */
     initials: string;
-    /**
-     * User email
-     */
+    /** User email */
     email: string;
-    /**
-     * Background color
-     */
+    /** Background color */
     color?: string;
-    /**
-     * Accessible label
-     */
+    /** Accessible label */
     label?: string;
 }
 ```
@@ -1365,21 +1197,13 @@ The GChatInput component provides a rich text editing experience using Tiptap. I
 
 ```typescript
 type Props = {
-    /**
-     * Placeholder text
-     */
+    /** Placeholder text */
     placeholder?: string;
-    /**
-     * Disabled
-     */
+    /** Disabled */
     disabled?: boolean;
-    /**
-     * Maximum number of rows
-     */
+    /** Maximum number of rows */
     maxRows?: number;
-    /**
-     * Accessible label
-     */
+    /** Accessible label */
     label?: string;
 }
 ```
@@ -1401,13 +1225,9 @@ The GNoteInput component provides a rich text editing experience using Tiptap fo
 
 ```typescript
 type Props = {
-    /**
-     * Placeholder text
-     */
+    /** Placeholder text */
     placeholder?: string;
-    /**
-     * Accessible label
-     */
+    /** Accessible label */
     label?: string;
 }
 ```
@@ -1434,9 +1254,7 @@ serializes recognized document nodes - it does not inject raw HTML from the JSON
 
 ```typescript
 type Props = {
-    /**
-     * Error message when rendering fails
-     */
+    /** Error message when rendering fails */
     error?: string;
 
     /**

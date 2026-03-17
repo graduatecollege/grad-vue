@@ -21,21 +21,12 @@ import { UseFormReturn } from "../compose/useForm.ts";
 import GButton from "./GButton.vue";
 
 type Props = {
-    /**
-     * Disabled state
-     * @demo
-     */
-    disabled?: boolean;
-    /**
-     * Loading text to show during submission
-     * @demo
-     */
-    loadingText?: string;
-    /**
-     * Variant
-     * @demo
-     */
-    variant?: "primary" | "secondary" | "danger";
+    /** Disabled state */
+    disabled?: boolean; // @demo
+    /** Loading text to show during submission */
+    loadingText?: string; // @demo
+    /** Variant */
+    variant?: "primary" | "secondary" | "danger"; // @demo
 }
 
 const props = withDefaults(defineProps<Props>(), {

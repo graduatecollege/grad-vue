@@ -69,11 +69,8 @@ export interface BulkAction {
 }
 
 type Props = {
-    /**
-     * Accessible label
-     * @demo Colleges
-     */
-    label: string;
+    /** Accessible label */
+    label: string; // @demo Colleges
     data: T[];
     columns: C[];
     resultCount?: number;
@@ -83,11 +80,8 @@ type Props = {
     rowClickable?: boolean;
     rowClass?: (row: T) => string | string[] | undefined;
     startIndex: number;
-    /**
-     * Enable bulk selection with checkboxes
-     * @demo
-     */
-    bulkSelectionEnabled?: boolean;
+    /** Enable bulk selection with checkboxes */
+    bulkSelectionEnabled?: boolean; // @demo
     /**
      * Array of actions to show in the sticky toolbar when rows are selected
      */
@@ -99,11 +93,8 @@ type Props = {
      */
     changeTracker?: UseTableChangesReturn<T>;
 
-    /**
-     * Explicitly show the pagination bar even if the slot is empty
-     * @demo
-     */
-    showPagination?: boolean;
+    /** Explicitly show the pagination bar even if the slot is empty */
+    showPagination?: boolean; // @demo
 };
 
 const sortField = defineModel<keyof T>("sortField");

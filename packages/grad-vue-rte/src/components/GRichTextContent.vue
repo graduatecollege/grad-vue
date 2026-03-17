@@ -22,11 +22,8 @@ import { toRef } from "vue";
 import { useRichTextRenderer } from "../composables/useRichTextRenderer";
 
 type Props = {
-    /**
-     * Error message when rendering fails
-     * @demo
-     */
-    error?: string;
+    /** Error message when rendering fails */
+    error?: string; // @demo
 
     /**
      * JSON-encoded tiptap content string to render.

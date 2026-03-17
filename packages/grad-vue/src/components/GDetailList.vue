@@ -18,11 +18,8 @@ export default {};
 
 <script setup lang="ts">
 type Props = {
-    /**
-     * Layout style for the items.
-     * @demo
-     */
-    variant?: "grid" | "vertical";
+    /** Layout style for the items. */
+    variant?: "grid" | "vertical"; // @demo
 }
 
 const props = withDefaults(defineProps<Props>(), {

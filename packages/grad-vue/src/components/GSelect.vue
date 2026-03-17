@@ -29,48 +29,29 @@ type Props = {
      * List of options to choose from
      */
     options: Array<string | OptionType>;
-    /**
-     * Accessible label
-     * @demo Select Option
-     */
-    label: string;
-    /**
-     * Hide the label visually
-     * @demo
-     */
-    hiddenLabel?: boolean;
+    /** Accessible label */
+    label: string; // @demo Select Option
+    /** Hide the label visually */
+    hiddenLabel?: boolean; // @demo
     /**
      * Placeholder
      *
      * Only used if the component is searchable.
-     * @demo
      */
-    placeholder?: string;
-    /**
-     * Disabled
-     * @demo
-     */
-    disabled?: boolean;
+    placeholder?: string; // @demo
+    /** Disabled */
+    disabled?: boolean; // @demo
 
     /**
      * Name for form registration
      */
     name?: string;
-    /**
-     * Searchable
-     * @demo
-     */
-    searchable?: boolean;
-    /**
-     * Show clear button
-     * @demo
-     */
-    clearButton?: boolean;
-    /**
-     * Compact
-     * @demo
-     */
-    compact?: boolean;
+    /** Searchable */
+    searchable?: boolean; // @demo
+    /** Show clear button */
+    clearButton?: boolean; // @demo
+    /** Compact */
+    compact?: boolean; // @demo
 
     /**
      * Error messages array (supports multiple validation errors)

@@ -41,11 +41,8 @@ import { useOverlayEscape } from "../compose/useOverlayEscape.ts";
 import { calculatePopoverPosition } from "../compose/popoverPosition.ts";
 
 type Props = {
-    /**
-     * Render without padding
-     * @demo
-     */
-    minimal?: boolean;
+    /** Render without padding */
+    minimal?: boolean; // @demo
 }
 
 const props = withDefaults(defineProps<Props>(), {

@@ -23,26 +23,14 @@ import GRichTextToolbar from "./editor/GRichTextToolbar.vue";
 defineOptions({ inheritAttrs: false });
 
 type Props = {
-    /**
-     * Placeholder text
-     * @demo
-     */
-    placeholder?: string;
-    /**
-     * Disabled
-     * @demo
-     */
-    disabled?: boolean;
-    /**
-     * Maximum number of rows
-     * @demo
-     */
-    maxRows?: number;
-    /**
-     * Accessible label
-     * @demo
-     */
-    label?: string;
+    /** Placeholder text */
+    placeholder?: string; // @demo
+    /** Disabled */
+    disabled?: boolean; // @demo
+    /** Maximum number of rows */
+    maxRows?: number; // @demo
+    /** Accessible label */
+    label?: string; // @demo
 }
 
 const props = withDefaults(defineProps<Props>(), {
