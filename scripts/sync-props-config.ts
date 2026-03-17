@@ -12,24 +12,7 @@ import { codeToHtml } from "shiki";
 // Run this script after updating the component's props.
 //
 // Only props with a JSDoc @demo tag are included in the demo config.
-// The @demo tag can optionally specify the default value shown in the interactive demo:
-//
-//   /**
-//    * Modal label
-//    * @demo Basic Modal   <- included in demo, pre-filled with "Basic Modal"
-//    */
-//   label: string;
-//
-//   /**
-//    * Placeholder text
-//    * @demo               <- included in demo; falls back to withDefaults value if available
-//    */
-//   placeholder?: string;
-//
-//   /**
-//    * Internal option
-//    */
-//   internal?: string;    <- NOT included in demo (no @demo tag)
+// The @demo tag can optionally specify the default value shown in the interactive demo.
 
 const packagesDir = 'packages';
 const demosDir = 'demo/components/demo';
