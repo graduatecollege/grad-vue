@@ -14,7 +14,7 @@ import { GProgress } from "@illinois-grad/grad-vue";
                 label: {
                     type: 'string',
                     label: 'Accessible label',
-                    default: null
+                    default: 'Loading'
                 },
                 value: {
                     type: 'number',
@@ -24,7 +24,7 @@ import { GProgress } from "@illinois-grad/grad-vue";
                 size: {
                     type: 'select',
                     label: 'Progress circle size',
-                    default: null,
+                    default: 'medium',
                     options: [
                         'tiny',
                         'small',

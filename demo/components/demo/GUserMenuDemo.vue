@@ -24,12 +24,12 @@ import { computed, ref } from "vue";
                 color: {
                     type: 'string',
                     label: 'Background color',
-                    default: null
+                    default: 'var(--g-surface-700)'
                 },
                 label: {
                     type: 'string',
                     label: 'Accessible label',
-                    default: null
+                    default: 'User menu'
                 }
             }"
         >

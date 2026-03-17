@@ -13,7 +13,7 @@ import ComponentDemo from "../ComponentDemo.vue";
                 label: {
                     type: 'string',
                     label: 'Accessible label',
-                    default: null
+                    default: 'Main Navigation'
                 }
             }"
         >

@@ -27,7 +27,7 @@ const selectButtonOptions = ref([
                 size: {
                     type: 'select',
                     label: 'Size',
-                    default: null,
+                    default: 'medium',
                     options: [
                         'small',
                         'medium',
@@ -37,7 +37,7 @@ const selectButtonOptions = ref([
                 disabled: {
                     type: 'boolean',
                     label: 'Disabled',
-                    default: null
+                    default: false
                 }
             }"
         >

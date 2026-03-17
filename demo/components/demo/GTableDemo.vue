@@ -348,12 +348,12 @@ function handleCellChange(payload: CellChangePayload<ProductRow>) {
                 bulkSelectionEnabled: {
                     type: 'boolean',
                     label: 'Enable bulk selection with checkboxes',
-                    default: null
+                    default: false
                 },
                 showPagination: {
                     type: 'boolean',
                     label: 'Explicitly show the pagination bar even if the slot is empty',
-                    default: null
+                    default: false
                 }
             }"
         >

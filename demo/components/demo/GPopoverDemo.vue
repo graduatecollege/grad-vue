@@ -13,7 +13,7 @@ import { GButton, GPopover } from "@illinois-grad/grad-vue";
                 minimal: {
                     type: 'boolean',
                     label: 'Render without padding',
-                    default: null
+                    default: false
                 }
             }"
         >

@@ -39,12 +39,12 @@ const selectOptions = ref([
                 disabled: {
                     type: 'boolean',
                     label: 'Disabled',
-                    default: null
+                    default: false
                 },
                 searchable: {
                     type: 'boolean',
                     label: 'Searchable',
-                    default: null
+                    default: false
                 },
                 clearButton: {
                     type: 'boolean',
@@ -54,7 +54,7 @@ const selectOptions = ref([
                 compact: {
                     type: 'boolean',
                     label: 'Compact',
-                    default: null
+                    default: false
                 }
             }"
         >

@@ -27,12 +27,12 @@ const showModal = ref(false);
                 hiddenLabel: {
                     type: 'boolean',
                     label: 'Hide label',
-                    default: null
+                    default: false
                 },
                 size: {
                     type: 'select',
                     label: 'Modal size',
-                    default: null,
+                    default: 'medium',
                     options: [
                         'small',
                         'medium',

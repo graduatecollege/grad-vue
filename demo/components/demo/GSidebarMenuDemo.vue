@@ -28,7 +28,7 @@ const demoItems = [
                 theme: {
                     type: 'select',
                     label: 'Sidebar theme',
-                    default: null,
+                    default: 'light',
                     options: [
                         'light',
                         'dark'
@@ -37,7 +37,7 @@ const demoItems = [
                 compact: {
                     type: 'boolean',
                     label: 'Use compact layout',
-                    default: null
+                    default: false
                 }
             }"
         >

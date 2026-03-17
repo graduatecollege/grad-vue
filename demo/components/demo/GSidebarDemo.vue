@@ -14,7 +14,7 @@ import { GSidebar } from "@illinois-grad/grad-vue";
                 backgroundColor: {
                     type: 'string',
                     label: 'Custom background color',
-                    default: null
+                    default: ''
                 },
                 backgroundImage: {
                     type: 'string',
@@ -24,7 +24,7 @@ import { GSidebar } from "@illinois-grad/grad-vue";
                 theme: {
                     type: 'select',
                     label: 'Sidebar theme',
-                    default: null,
+                    default: 'dark',
                     options: [
                         'light',
                         'dark'
@@ -33,7 +33,7 @@ import { GSidebar } from "@illinois-grad/grad-vue";
                 width: {
                     type: 'string',
                     label: 'Width',
-                    default: null,
+                    default: '300px',
                     instructions: 'Width of the sidebar'
                 }
             }"

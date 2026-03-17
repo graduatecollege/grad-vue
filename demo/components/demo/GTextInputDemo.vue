@@ -22,32 +22,32 @@ const textValue = ref("");
                 placeholder: {
                     type: 'string',
                     label: 'Placeholder text',
-                    default: null
+                    default: ''
                 },
                 disabled: {
                     type: 'boolean',
                     label: 'Disabled',
-                    default: null
+                    default: false
                 },
                 instructions: {
                     type: 'string',
                     label: 'Instructions',
-                    default: null
+                    default: ''
                 },
                 prefix: {
                     type: 'string',
                     label: 'Prefix text (displayed before input)',
-                    default: null
+                    default: ''
                 },
                 suffix: {
                     type: 'string',
                     label: 'Suffix text (displayed after input)',
-                    default: null
+                    default: ''
                 },
                 debounce: {
                     type: 'number',
                     label: 'Debounce in milliseconds',
-                    default: null
+                    default: 100
                 }
             }"
         >

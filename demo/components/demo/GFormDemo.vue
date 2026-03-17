@@ -42,7 +42,7 @@ const fname = ref("heh");
                 method: {
                     type: 'string',
                     label: 'HTTP method (optional, for native form submission)',
-                    default: null
+                    default: 'post'
                 }
             }"
         >

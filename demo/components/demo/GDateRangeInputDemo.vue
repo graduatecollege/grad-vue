@@ -23,22 +23,22 @@ const dateRange = ref({ start: null, end: null });
                 startLabel: {
                     type: 'string',
                     label: 'Label for the start date input',
-                    default: null
+                    default: 'Start Date'
                 },
                 endLabel: {
                     type: 'string',
                     label: 'Label for the end date input',
-                    default: null
+                    default: 'End Date'
                 },
                 disabled: {
                     type: 'boolean',
                     label: 'Disabled',
-                    default: null
+                    default: false
                 },
                 instructions: {
                     type: 'string',
                     label: 'Instructions',
-                    default: null
+                    default: ''
                 }
             }"
         >

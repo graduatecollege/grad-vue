@@ -12,7 +12,7 @@ import ComponentDemo from "../ComponentDemo.vue";
                 variant: {
                     type: 'select',
                     label: 'Layout style for the items.',
-                    default: null,
+                    default: 'grid',
                     options: [
                         'grid',
                         'vertical'

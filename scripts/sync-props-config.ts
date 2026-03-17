@@ -22,7 +22,7 @@ import { codeToHtml } from "shiki";
 //
 //   /**
 //    * Placeholder text
-//    * @demo               <- included in demo, no pre-filled value
+//    * @demo               <- included in demo; falls back to withDefaults value if available
 //    */
 //   placeholder?: string;
 //
@@ -104,7 +104,42 @@ function parseProps(content: string) {
             true,
         );
 
-        // --- Pass 1: collect props from the Props type/interface ---
+        // --- Pass 1: collect withDefaults defaults ---
+        const withDefaultsMap: Record<string, string | boolean | number> = {};
+
+        function visitForWithDefaults(node: ts.Node): void {
+            if (
+                ts.isCallExpression(node) &&
+                ts.isIdentifier(node.expression) &&
+                node.expression.text === 'withDefaults' &&
+                node.arguments.length >= 2 &&
+                ts.isObjectLiteralExpression(node.arguments[1])
+            ) {
+                const defaults = node.arguments[1] as ts.ObjectLiteralExpression;
+                for (const prop of defaults.properties) {
+                    if (ts.isPropertyAssignment(prop) && ts.isIdentifier(prop.name)) {
+                        const propName = prop.name.text;
+                        const init = prop.initializer;
+                        if (ts.isStringLiteral(init)) {
+                            withDefaultsMap[propName] = init.text;
+                        } else if (ts.isNumericLiteral(init)) {
+                            withDefaultsMap[propName] = Number(init.text);
+                        } else if (init.kind === ts.SyntaxKind.TrueKeyword) {
+                            withDefaultsMap[propName] = true;
+                        } else if (init.kind === ts.SyntaxKind.FalseKeyword) {
+                            withDefaultsMap[propName] = false;
+                        }
+                        // Skip undefined, arrow functions, and other non-literal values.
+                    }
+                }
+                return;
+            }
+            ts.forEachChild(node, visitForWithDefaults);
+        }
+
+        visitForWithDefaults(setupSource);
+
+        // --- Pass 2: collect props from the Props type/interface ---
         function visitForProps(node: ts.Node): void {
             const isPropsDecl =
                 (ts.isTypeAliasDeclaration(node) && node.name.text === 'Props') ||
@@ -139,10 +174,13 @@ function parseProps(content: string) {
                     const { label, instructions } = splitJSDocText(commentText);
 
                     // A non-empty @demo value is used as the pre-filled demo default.
-                    // An empty @demo tag means the prop is shown in the demo without any
-                    // pre-filled value (null), bypassing the withDefaults fallback.
+                    // An empty @demo tag falls back to the withDefaults value if one exists,
+                    // otherwise the prop is shown with no pre-filled value (null).
                     const demoValue = getJSDocCommentText(demoTag.comment).trim();
-                    const demoDefault: string | null = demoValue.length > 0 ? demoValue : null;
+                    const demoDefault: string | boolean | number | null =
+                        demoValue.length > 0
+                            ? demoValue
+                            : (name in withDefaultsMap ? withDefaultsMap[name] : null);
 
                     const typeStr = member.type?.getText(setupSource) ?? 'unknown';
                     let type = 'string';
