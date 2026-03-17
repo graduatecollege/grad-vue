@@ -23,11 +23,13 @@ type Props = {
 
     /**
      * Hide the visible text
+     * @demo
      */
     hideText?: boolean;
 
     /**
      * Copy button label
+     * @demo
      */
     copyLabel?: string;
 }

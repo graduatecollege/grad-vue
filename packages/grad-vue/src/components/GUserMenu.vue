@@ -48,10 +48,12 @@ type Props = {
     email: string;
     /**
      * Background color
+     * @demo
      */
     color?: string;
     /**
      * Accessible label
+     * @demo
      */
     label?: string;
 }

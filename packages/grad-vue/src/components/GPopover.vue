@@ -43,6 +43,7 @@ import { calculatePopoverPosition } from "../compose/popoverPosition.ts";
 type Props = {
     /**
      * Render without padding
+     * @demo
      */
     minimal?: boolean;
 }

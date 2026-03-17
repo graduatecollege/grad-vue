@@ -18,6 +18,36 @@ const textValue = ref("");
                     type: 'string',
                     label: 'Label',
                     default: 'Example Label'
+                },
+                placeholder: {
+                    type: 'string',
+                    label: 'Placeholder text',
+                    default: null
+                },
+                disabled: {
+                    type: 'boolean',
+                    label: 'Disabled',
+                    default: null
+                },
+                instructions: {
+                    type: 'string',
+                    label: 'Instructions',
+                    default: null
+                },
+                prefix: {
+                    type: 'string',
+                    label: 'Prefix text (displayed before input)',
+                    default: null
+                },
+                suffix: {
+                    type: 'string',
+                    label: 'Suffix text (displayed after input)',
+                    default: null
+                },
+                debounce: {
+                    type: 'number',
+                    label: 'Debounce in milliseconds',
+                    default: null
                 }
             }"
         >

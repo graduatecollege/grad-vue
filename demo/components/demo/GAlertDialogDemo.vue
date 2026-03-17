@@ -25,17 +25,17 @@ const handleCancel = () => {
                 label: {
                     type: 'string',
                     label: 'Dialog label',
-                    default: 'Confirmation'
+                    default: null
                 },
                 buttonText: {
                     type: 'string',
                     label: 'Accept button text',
-                    default: 'Continue'
+                    default: null
                 },
                 buttonColor: {
                     type: 'select',
                     label: 'Accept button color',
-                    default: 'primary',
+                    default: null,
                     options: [
                         'primary',
                         'secondary',

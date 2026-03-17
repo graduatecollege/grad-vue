@@ -13,6 +13,16 @@ import ComponentDemo from "../ComponentDemo.vue";
                     type: 'string',
                     label: 'Text',
                     default: 'This is some text to get copied'
+                },
+                hideText: {
+                    type: 'boolean',
+                    label: 'Hide the visible text',
+                    default: null
+                },
+                copyLabel: {
+                    type: 'string',
+                    label: 'Copy button label',
+                    default: null
                 }
             }"
         >

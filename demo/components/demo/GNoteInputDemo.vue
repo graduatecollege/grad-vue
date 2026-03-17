@@ -15,12 +15,12 @@ const note = ref<object | "">("");
                 placeholder: {
                     type: 'string',
                     label: 'Placeholder text',
-                    default: 'Write a note...'
+                    default: null
                 },
                 label: {
                     type: 'string',
                     label: 'Accessible label',
-                    default: 'Note input'
+                    default: null
                 }
             }"
         >

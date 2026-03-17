@@ -30,10 +30,14 @@ type Props = {
      */
     periodLabel?: string;
 
-    // list of possible term years
+    /**
+     * List of possible term years
+     */
     termYears?: string[];
 
-    // list of possible term names
+    /**
+     * List of possible term names
+     */
     termNames?: string[];
 }
 

@@ -24,6 +24,37 @@ const selectOptions = ref([
                     type: 'string',
                     label: 'Accessible label',
                     default: 'Select Option'
+                },
+                hiddenLabel: {
+                    type: 'boolean',
+                    label: 'Hide the label visually',
+                    default: null
+                },
+                placeholder: {
+                    type: 'string',
+                    label: 'Placeholder',
+                    default: null,
+                    instructions: 'Only used if the component is searchable.'
+                },
+                disabled: {
+                    type: 'boolean',
+                    label: 'Disabled',
+                    default: null
+                },
+                searchable: {
+                    type: 'boolean',
+                    label: 'Searchable',
+                    default: null
+                },
+                clearButton: {
+                    type: 'boolean',
+                    label: 'Show clear button',
+                    default: null
+                },
+                compact: {
+                    type: 'boolean',
+                    label: 'Compact',
+                    default: null
                 }
             }"
         >

@@ -94,16 +94,22 @@ type Props = {
      */
     title?: string;
     items: MenuItem[];
-    // Offset for tracking active position to account for toolbars
+    /**
+     * Offset for tracking active position to account for toolbars
+     */
     offset?: number;
-    // Track active position for in-page links
+    /**
+     * Track active position for in-page links
+     */
     spy?: boolean;
     /**
      * Sidebar theme
+     * @demo
      */
     theme?: "light" | "dark";
     /**
      * Use compact layout
+     * @demo
      */
     compact?: boolean;
 }

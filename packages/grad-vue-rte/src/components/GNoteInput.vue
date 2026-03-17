@@ -23,10 +23,12 @@ defineOptions({ inheritAttrs: false });
 type Props = {
     /**
      * Placeholder text
+     * @demo
      */
     placeholder?: string;
     /**
      * Accessible label
+     * @demo
      */
     label?: string;
 }

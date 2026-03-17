@@ -28,16 +28,20 @@ type Props = {
      */
     label: string;
 
-    // ID of an element that describes the input
+    /**
+     * ID of an element that describes the input
+     */
     describedby?: string;
 
     /**
      * Error message
+     * @demo
      */
     error?: string;
 
     /**
      * Disabled
+     * @demo
      */
     disabled?: boolean;
 }

@@ -25,18 +25,22 @@ defineOptions({ inheritAttrs: false });
 type Props = {
     /**
      * Placeholder text
+     * @demo
      */
     placeholder?: string;
     /**
      * Disabled
+     * @demo
      */
     disabled?: boolean;
     /**
      * Maximum number of rows
+     * @demo
      */
     maxRows?: number;
     /**
      * Accessible label
+     * @demo
      */
     label?: string;
 }

@@ -28,14 +28,17 @@ import GButton from "./GButton.vue";
 type Props = {
     /**
      * Dialog label
+     * @demo
      */
     label?: string;
     /**
      * Accept button text
+     * @demo
      */
     buttonText?: string;
     /**
      * Accept button color
+     * @demo
      */
     buttonColor?: "primary" | "secondary" | "danger";
 }

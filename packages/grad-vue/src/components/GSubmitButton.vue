@@ -23,14 +23,17 @@ import GButton from "./GButton.vue";
 type Props = {
     /**
      * Disabled state
+     * @demo
      */
     disabled?: boolean;
     /**
      * Loading text to show during submission
+     * @demo
      */
     loadingText?: string;
     /**
      * Variant
+     * @demo
      */
     variant?: "primary" | "secondary" | "danger";
 }

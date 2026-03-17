@@ -18,6 +18,32 @@ const showModal = ref(false);
                     type: 'string',
                     label: 'Modal label',
                     default: 'Basic Modal'
+                },
+                describedby: {
+                    type: 'string',
+                    label: 'ID for aria-describedby',
+                    default: null
+                },
+                hiddenLabel: {
+                    type: 'boolean',
+                    label: 'Hide label',
+                    default: null
+                },
+                size: {
+                    type: 'select',
+                    label: 'Modal size',
+                    default: null,
+                    options: [
+                        'small',
+                        'medium',
+                        'large',
+                        'full'
+                    ]
+                },
+                classes: {
+                    type: 'string',
+                    label: 'Modal classes',
+                    default: null
                 }
             }"
         >

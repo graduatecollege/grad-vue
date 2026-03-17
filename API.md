@@ -121,9 +121,11 @@ type Props = {
     to?: string | Record<string, any>;
     component?: string;
 
-    // Optional icon classes to render an icon span before the label.
-    // Example: "fa-solid fa-plus" or "material-symbols:add".
-    // If a named slot `icon` is provided, it takes precedence over this prop.
+    /**
+     * Optional icon classes to render an icon span before the label.
+     * Example: "fa-solid fa-plus" or "material-symbols:add".
+     * If a named slot `icon` is provided, it takes precedence over this prop.
+     */
     icon?: string;
 }
 ```
@@ -190,13 +192,17 @@ type Props = {
      */
     disabled?: boolean;
 
-    // Error messages array (supports multiple validation errors)
+    /**
+     * Error messages array (supports multiple validation errors)
+     */
     errors?: string[];
     /**
      * Instructions
      */
     instructions?: string;
-    // Name for form registration
+    /**
+     * Name for form registration
+     */
     name?: string;
 };
 ```
@@ -227,13 +233,17 @@ type Props = {
      */
     disabled?: boolean;
 
-    // Error messages array (supports multiple validation errors)
+    /**
+     * Error messages array (supports multiple validation errors)
+     */
     errors?: string[];
     /**
      * Instructions
      */
     instructions?: string;
-    // Name for form registration
+    /**
+     * Name for form registration
+     */
     name?: string;
 };
 ```
@@ -268,13 +278,17 @@ type Props = {
      */
     disabled?: boolean;
 
-    // Error messages array (supports multiple validation errors)
+    /**
+     * Error messages array (supports multiple validation errors)
+     */
     errors?: string[];
     /**
      * Instructions
      */
     instructions?: string;
-    // Name for form registration
+    /**
+     * Name for form registration
+     */
     name?: string;
 };
 ```
@@ -337,13 +351,17 @@ type Props = {
      */
     disabled?: boolean;
 
-    // Error messages array (supports multiple validation errors)
+    /**
+     * Error messages array (supports multiple validation errors)
+     */
     errors?: string[];
     /**
      * Instructions
      */
     instructions?: string;
-    // Name for form registration
+    /**
+     * Name for form registration
+     */
     name?: string;
 };
 ```
@@ -767,7 +785,9 @@ and `value` properties.
 
 ```typescript
 type Props = {
-    // List of options to choose from
+    /**
+     * List of options to choose from
+     */
     options: Array<string | OptionType>;
     /**
      * Accessible label
@@ -788,7 +808,9 @@ type Props = {
      */
     disabled?: boolean;
 
-    // Name for form registration
+    /**
+     * Name for form registration
+     */
     name?: string;
     /**
      * Searchable
@@ -803,7 +825,9 @@ type Props = {
      */
     compact?: boolean;
 
-    // Error messages array (supports multiple validation errors)
+    /**
+     * Error messages array (supports multiple validation errors)
+     */
     errors?: string[];
 }
 ```
@@ -837,14 +861,18 @@ type Props = {
      * Size
      */
     size?: "small" | "medium" | "large";
-    // Name for form registration
+    /**
+     * Name for form registration
+     */
     name?: string;
     /**
      * Disabled
      */
     disabled?: boolean;
 
-    // Error messages array (supports multiple validation errors)
+    /**
+     * Error messages array (supports multiple validation errors)
+     */
     errors?: string[];
 }
 ```
@@ -882,9 +910,13 @@ type Props = {
      * Sidebar theme
      */
     theme?: "light" | "dark";
-    // Offset from the top of the viewport
+    /**
+     * Offset from the top of the viewport
+     */
     topOffset?: string;
-    // Top offset variable to use instead of topOffset
+    /**
+     * Top offset variable to use instead of topOffset
+     */
     topOffsetVar?: string;
     /**
      * Width
@@ -979,9 +1011,13 @@ type Props = {
      */
     title?: string;
     items: MenuItem[];
-    // Offset for tracking active position to account for toolbars
+    /**
+     * Offset for tracking active position to account for toolbars
+     */
     offset?: number;
-    // Track active position for in-page links
+    /**
+     * Track active position for in-page links
+     */
     spy?: boolean;
     /**
      * Sidebar theme
@@ -1085,11 +1121,15 @@ type Props = {
      * Enable bulk selection with checkboxes
      */
     bulkSelectionEnabled?: boolean;
-    // Array of actions to show in the sticky toolbar when rows are selected
+    /**
+     * Array of actions to show in the sticky toolbar when rows are selected
+     */
     bulkActions?: BulkAction[];
 
-    // Optional change tracker for editable tables
-    // Pass a composable from useTableChanges() to track user edits
+    /**
+     * Optional change tracker for editable tables.
+     * Pass a composable from useTableChanges() to track user edits.
+     */
     changeTracker?: UseTableChangesReturn<T>;
 
     /**
@@ -1129,10 +1169,14 @@ type Props = {
      */
     periodLabel?: string;
 
-    // list of possible term years
+    /**
+     * List of possible term years
+     */
     termYears?: string[];
 
-    // list of possible term names
+    /**
+     * List of possible term names
+     */
     termNames?: string[];
 }
 ```
@@ -1167,7 +1211,9 @@ type Props = {
      */
     disabled?: boolean;
 
-    // Error messages array (supports multiple validation errors)
+    /**
+     * Error messages array (supports multiple validation errors)
+     */
     errors?: string[];
     /**
      * Instructions
@@ -1186,7 +1232,9 @@ type Props = {
      */
     debounce?: number;
 
-    // Name for form registration
+    /**
+     * Name for form registration
+     */
     name?: string;
 };
 ```
@@ -1223,7 +1271,9 @@ type Props = {
      */
     label: string;
 
-    // ID of an element that describes the input
+    /**
+     * ID of an element that describes the input
+     */
     describedby?: string;
 
     /**
@@ -1389,7 +1439,9 @@ type Props = {
      */
     error?: string;
 
-    // JSON-encoded tiptap content string to render.
+    /**
+     * JSON-encoded tiptap content string to render.
+     */
     content: string;
 }
 ```

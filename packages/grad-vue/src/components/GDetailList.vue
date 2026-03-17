@@ -20,6 +20,7 @@ export default {};
 type Props = {
     /**
      * Layout style for the items.
+     * @demo
      */
     variant?: "grid" | "vertical";
 }

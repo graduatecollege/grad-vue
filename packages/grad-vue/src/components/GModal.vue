@@ -58,18 +58,22 @@ type Props = {
     label: string;
     /**
      * ID for aria-describedby
+     * @demo
      */
     describedby?: string;
     /**
      * Hide label
+     * @demo
      */
     hiddenLabel?: boolean;
     /**
      * Modal size
+     * @demo
      */
     size?: "small" | "medium" | "large" | "full";
     /**
      * Modal classes
+     * @demo
      */
     classes?: string | string[];
 }

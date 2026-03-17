@@ -26,22 +26,22 @@ function handleSend(content: object) {
                 placeholder: {
                     type: 'string',
                     label: 'Placeholder text',
-                    default: 'Type a comment'
+                    default: null
                 },
                 disabled: {
                     type: 'boolean',
                     label: 'Disabled',
-                    default: false
+                    default: null
                 },
                 maxRows: {
                     type: 'number',
                     label: 'Maximum number of rows',
-                    default: 5
+                    default: null
                 },
                 label: {
                     type: 'string',
                     label: 'Accessible label',
-                    default: 'Comment input'
+                    default: null
                 }
             }"
         >

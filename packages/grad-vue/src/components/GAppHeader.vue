@@ -19,6 +19,7 @@ type Props = {
      * Top-left corner text
      *
      * You can customize this text element with the "left" slot.
+     * @demo
      */
     brand?: string;
 };

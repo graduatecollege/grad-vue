@@ -45,6 +45,7 @@ type Props = {
 
     /**
      * History entries passed to default slot
+     * @demo
      */
     entries: T[];
 };

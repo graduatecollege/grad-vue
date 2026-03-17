@@ -24,10 +24,13 @@ import { useRichTextRenderer } from "../composables/useRichTextRenderer";
 type Props = {
     /**
      * Error message when rendering fails
+     * @demo
      */
     error?: string;
 
-    // JSON-encoded tiptap content string to render.
+    /**
+     * JSON-encoded tiptap content string to render.
+     */
     content: string;
 }
 

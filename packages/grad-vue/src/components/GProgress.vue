@@ -23,14 +23,17 @@ import { computed } from "vue";
 type Props = {
     /**
      * Accessible label
+     * @demo
      */
     label?: string;
     /**
      * Progress 1-100 or blank
+     * @demo
      */
     value?: number;
     /**
      * Progress circle size
+     * @demo
      */
     size?: "tiny" | "small" | "medium" | "large";
 };

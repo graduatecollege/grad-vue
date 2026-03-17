@@ -13,7 +13,7 @@ import { GAppHeader, GButton } from "@illinois-grad/grad-vue";
                 brand: {
                     type: 'string',
                     label: 'Top-left corner text',
-                    default: 'GRAD',
+                    default: null,
                     instructions: 'You can customize this text element with the \'left\' slot.'
                 }
             }"

@@ -19,7 +19,7 @@ const handleClick = () => {
                 size: {
                     type: 'select',
                     label: 'Button size',
-                    default: 'medium',
+                    default: null,
                     options: [
                         'small',
                         'medium',
@@ -29,7 +29,7 @@ const handleClick = () => {
                 theme: {
                     type: 'select',
                     label: 'Button color theme',
-                    default: 'primary',
+                    default: null,
                     options: [
                         'primary',
                         'secondary',
@@ -41,12 +41,12 @@ const handleClick = () => {
                 outlined: {
                     type: 'boolean',
                     label: 'Use outlined style',
-                    default: false
+                    default: null
                 },
                 text: {
                     type: 'boolean',
                     label: 'Use text style',
-                    default: false
+                    default: null
                 }
             }"
             docs=""

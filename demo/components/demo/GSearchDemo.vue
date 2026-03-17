@@ -51,21 +51,22 @@ function selected(item: SearchResult) {
                 placeholder: {
                     type: 'string',
                     label: 'Placeholder',
-                    default: 'Search...'
+                    default: null
                 },
                 label: {
                     type: 'string',
                     label: 'Accessible label',
-                    default: 'Search'
+                    default: null
                 },
                 auto: {
                     type: 'boolean',
                     label: 'Automatic search',
-                    default: true
+                    default: null
                 },
                 loading: {
                     type: 'boolean',
-                    label: 'Show search loading indicator'
+                    label: 'Show search loading indicator',
+                    default: null
                 }
             }"
         >

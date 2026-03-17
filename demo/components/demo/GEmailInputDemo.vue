@@ -23,17 +23,17 @@ const emailValue = ref("");
                 placeholder: {
                     type: 'string',
                     label: 'Placeholder text',
-                    default: ''
+                    default: null
                 },
                 disabled: {
                     type: 'boolean',
                     label: 'Disabled',
-                    default: false
+                    default: null
                 },
                 instructions: {
                     type: 'string',
                     label: 'Instructions',
-                    default: ''
+                    default: null
                 }
             }"
         >

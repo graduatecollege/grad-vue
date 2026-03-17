@@ -28,33 +28,43 @@ type Props = {
     label?: string;
     /**
      * Placeholder text
+     * @demo
      */
     placeholder?: string;
     /**
      * Disabled
+     * @demo
      */
     disabled?: boolean;
 
-    // Error messages array (supports multiple validation errors)
+    /**
+     * Error messages array (supports multiple validation errors)
+     */
     errors?: string[];
     /**
      * Instructions
+     * @demo
      */
     instructions?: string;
     /**
      * Prefix text (displayed before input)
+     * @demo
      */
     prefix?: string;
     /**
      * Suffix text (displayed after input)
+     * @demo
      */
     suffix?: string;
     /**
      * Debounce in milliseconds
+     * @demo
      */
     debounce?: number;
 
-    // Name for form registration
+    /**
+     * Name for form registration
+     */
     name?: string;
 };
 

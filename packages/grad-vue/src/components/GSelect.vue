@@ -25,7 +25,9 @@ type OptionType = {
 }
 
 type Props = {
-    // List of options to choose from
+    /**
+     * List of options to choose from
+     */
     options: Array<string | OptionType>;
     /**
      * Accessible label
@@ -34,35 +36,45 @@ type Props = {
     label: string;
     /**
      * Hide the label visually
+     * @demo
      */
     hiddenLabel?: boolean;
     /**
      * Placeholder
      *
      * Only used if the component is searchable.
+     * @demo
      */
     placeholder?: string;
     /**
      * Disabled
+     * @demo
      */
     disabled?: boolean;
 
-    // Name for form registration
+    /**
+     * Name for form registration
+     */
     name?: string;
     /**
      * Searchable
+     * @demo
      */
     searchable?: boolean;
     /**
      * Show clear button
+     * @demo
      */
     clearButton?: boolean;
     /**
      * Compact
+     * @demo
      */
     compact?: boolean;
 
-    // Error messages array (supports multiple validation errors)
+    /**
+     * Error messages array (supports multiple validation errors)
+     */
     errors?: string[];
 }
 
