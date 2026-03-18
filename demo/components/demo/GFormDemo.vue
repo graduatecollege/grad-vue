@@ -46,6 +46,20 @@ const fname = ref("heh");
                 }
             }"
         >
+            <template #props><figure class="highlighted-code">
+<pre class="shiki light-plus" style="background-color:#FFFFFF;color:#000000" tabindex="0"><code><span class="line"><span style="color:#0000FF">type</span><span style="color:#267F99"> Props</span><span style="color:#000000"> = &lcub;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Action URL (optional, for native form submission)</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    action</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * HTTP method (optional, for native form submission)</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    method</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#000000">}</span></span></code></pre>
+</figure>
+
+</template>
             <template #docs><p>A form wrapper component that automatically manages form state and
 connects to child input components.</p>
 <p>Child input components that have a <code>name</code> prop will automatically

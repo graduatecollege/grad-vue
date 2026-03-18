@@ -38,6 +38,38 @@ import { GSidebar } from "@illinois-grad/grad-vue";
                 }
             }"
         >
+            <template #props><figure class="highlighted-code">
+<pre class="shiki light-plus" style="background-color:#FFFFFF;color:#000000" tabindex="0"><code><span class="line"><span style="color:#0000FF">type</span><span style="color:#267F99"> Props</span><span style="color:#000000"> = &lcub;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Custom background color</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    backgroundColor</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Custom background image</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    backgroundImage</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Sidebar theme</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    theme</span><span style="color:#000000">?: </span><span style="color:#A31515">"light"</span><span style="color:#000000"> | </span><span style="color:#A31515">"dark"</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Offset from the top of the viewport</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    topOffset</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Top offset variable to use instead of topOffset</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    topOffsetVar</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Width</span></span>
+<span class="line"><span style="color:#008000">     *</span></span>
+<span class="line"><span style="color:#008000">     * Width of the sidebar</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    width</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#000000">}</span></span></code></pre>
+</figure>
+
+</template>
             <template #docs><p>A simple sidebar that&#39;s fixed to the left side of the viewport.</p>
 <p>This includes the CSS for the <code>fixed</code> position and sizing, so the element
 should be fairly high in the DOM tree.</p>

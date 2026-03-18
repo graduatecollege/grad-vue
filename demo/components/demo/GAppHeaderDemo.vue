@@ -18,6 +18,22 @@ import { GAppHeader, GButton } from "@illinois-grad/grad-vue";
                 }
             }"
         >
+            <template #props><figure class="highlighted-code">
+<pre class="shiki light-plus" style="background-color:#FFFFFF;color:#000000" tabindex="0"><code><span class="line"><span style="color:#0000FF">type</span><span style="color:#267F99"> Props</span><span style="color:#000000"> = &lcub;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Whether to show the Illinois logo</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    illinois</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Top-left corner text</span></span>
+<span class="line"><span style="color:#008000">     *</span></span>
+<span class="line"><span style="color:#008000">     * You can customize this text element with the "left" slot.</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    brand</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#000000">};</span></span></code></pre>
+</figure>
+
+</template>
             <template #docs><p>This is a minimal header meant for web apps where a full Illinois
 brand header would be too large.</p>
 <p><strong>Slot</strong> <code>left</code> allows replacing the link element in the top-left corner.</p>

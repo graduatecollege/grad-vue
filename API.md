@@ -59,6 +59,9 @@ brand header would be too large.
 
 ```typescript
 type Props = {
+    /**
+     * Whether to show the Illinois logo
+     */
     illinois?: boolean;
     /**
      * Top-left corner text
@@ -118,7 +121,14 @@ type Props = {
      */
     text?: boolean;
 
+    /**
+     * The to target for when using the button as a router-link
+     */
     to?: string | Record<string, any>;
+
+    /**
+     * The component to use for the button
+     */
     component?: string;
 
     /**
@@ -557,6 +567,8 @@ type Props = {
     describedby?: string;
     /**
      * Hide label
+     * 
+     * The label is still used as the `aria-label` for accessibility, but it will not be visible in the UI.
      */
     hiddenLabel?: boolean;
     /**
@@ -852,6 +864,9 @@ option changes from user interaction.
 
 ```typescript
 type Props = {
+    /**
+     * List of options to select from
+     */
     options: Array<string | OptionType>;
     /**
      * Accessible label
@@ -1010,6 +1025,9 @@ type Props = {
      * Title and accessible name
      */
     title?: string;
+    /**
+     * Items for the menu
+     */
     items: MenuItem[];
     /**
      * Offset for tracking active position to account for toolbars
@@ -1108,14 +1126,59 @@ type Props = {
      * Accessible label
      */
     label: string;
+    /**
+     * The data to display in the table
+     *
+     * The data should be an array of objects, each representing a row in the table.
+     * Each object should have a unique `key` property that can be used to identify the row.
+     */
     data: T[];
+    /**
+     * The columns to display in the table
+     *
+     * Each column's key needs to match the key of a property in the data objects,
+     * which determines the data to display in that column by default. You can also
+     * provide a custom display function to customize the data display.
+     */
     columns: C[];
+    /**
+     * Result count for all of the possible results (not just the current page)
+     *
+     * This is shown in the toolbar.
+     */
     resultCount?: number;
+    /**
+     * A column key to group the data by
+     *
+     * If provided, the `groupRender` render function will be used to render the group header.
+     */
     groupBy?: keyof T;
-    filtering?: UseFilteringReturn<any>;
+    /**
+     * A render function to customize the display of the group header.
+     *
+     * @param groupValue The value of the group key for the current row
+     * @param row The row object for the first row in the group
+     */
     groupRender?: (groupValue: any, row: T) => VNode;
+    /**
+     * Filtering object created with useFiltering()
+     */
+    filtering?: UseFilteringReturn<any>;
+    /**
+     * Make the table rows clickable
+     */
     rowClickable?: boolean;
+    /**
+     * A function to customize the classes applied to table rows
+     * @param row The row object
+     */
     rowClass?: (row: T) => string | string[] | undefined;
+    /**
+     * The starting index for this page
+     *
+     * This is used for the ARIA rowindex attribute, and is VERY important
+     * to not get wrong.
+     */
     startIndex: number;
     /**
      * Enable bulk selection with checkboxes

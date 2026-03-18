@@ -51,6 +51,43 @@ const handleClick = () => {
             }"
             docs=""
         >
+            <template #props><figure class="highlighted-code">
+<pre class="shiki light-plus" style="background-color:#FFFFFF;color:#000000" tabindex="0"><code><span class="line"><span style="color:#0000FF">type</span><span style="color:#267F99"> Props</span><span style="color:#000000"> = &lcub;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Button size</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    size</span><span style="color:#000000">?: </span><span style="color:#A31515">"small"</span><span style="color:#000000"> | </span><span style="color:#A31515">"medium"</span><span style="color:#000000"> | </span><span style="color:#A31515">"large"</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Button color theme</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    theme</span><span style="color:#000000">?: </span><span style="color:#A31515">"primary"</span><span style="color:#000000"> | </span><span style="color:#A31515">"secondary"</span><span style="color:#000000"> | </span><span style="color:#A31515">"accent"</span><span style="color:#000000"> | </span><span style="color:#A31515">"danger"</span><span style="color:#000000"> | </span><span style="color:#A31515">"none"</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Use outlined style</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    outlined</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Use text style</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    text</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * The to target for when using the button as a router-link</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    to</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000"> | </span><span style="color:#267F99">Record</span><span style="color:#000000">&#x3C;</span><span style="color:#267F99">string</span><span style="color:#000000">, </span><span style="color:#267F99">any</span><span style="color:#000000">>;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * The component to use for the button</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    component</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Optional icon classes to render an icon span before the label. Example: "fa-solid fa-plus" or "material-symbols:add". If a named slot `icon` is provided, it takes precedence over this prop.</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    icon</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#000000">}</span></span></code></pre>
+</figure>
+
+</template>
             <template #docs><p>The element or component can be set with the <code>component</code> prop, so it can be
 a link or <code>router-link</code> component from vue-router. For example:</p>
 <figure class="highlighted-code">

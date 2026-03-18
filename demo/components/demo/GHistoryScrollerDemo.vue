@@ -39,6 +39,21 @@ const historyEntries = ref([
                 }
             }"
         >
+            <template #props><figure class="highlighted-code">
+<pre class="shiki light-plus" style="background-color:#FFFFFF;color:#000000" tabindex="0"><code><span class="line"><span style="color:#0000FF">type</span><span style="color:#267F99"> Props</span><span style="color:#000000"> = &lcub;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Accessible label</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    label</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * History entries passed to default slot</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    entries</span><span style="color:#000000">: </span><span style="color:#267F99">T</span><span style="color:#000000">[];</span></span>
+<span class="line"><span style="color:#000000">};</span></span></code></pre>
+</figure>
+
+</template>
             <template #docs><p>A scroller that is used for content that&#39;s typically shown like a chat log,
 meaning it starts at the bottom, and you scroll up for older entries.</p>
 <p>The scroller automatically starts at the bottom. When scrolled up, a button

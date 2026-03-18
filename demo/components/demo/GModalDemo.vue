@@ -27,7 +27,8 @@ const showModal = ref(false);
                 hiddenLabel: {
                     type: 'boolean',
                     label: 'Hide label',
-                    default: false
+                    default: false,
+                    instructions: 'The label is still used as the `aria-label` for accessibility, but it will not be visible in the UI.'
                 },
                 size: {
                     type: 'select',
@@ -47,6 +48,34 @@ const showModal = ref(false);
                 }
             }"
         >
+            <template #props><figure class="highlighted-code">
+<pre class="shiki light-plus" style="background-color:#FFFFFF;color:#000000" tabindex="0"><code><span class="line"><span style="color:#0000FF">type</span><span style="color:#267F99"> Props</span><span style="color:#000000"> = &lcub;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Modal label</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    label</span><span style="color:#000000">: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * ID for aria-describedby</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    describedby</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Hide label</span></span>
+<span class="line"><span style="color:#008000">     *</span></span>
+<span class="line"><span style="color:#008000">     * The label is still used as the `aria-label` for accessibility, but it will not be visible in the UI.</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    hiddenLabel</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Modal size</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    size</span><span style="color:#000000">?: </span><span style="color:#A31515">"small"</span><span style="color:#000000"> | </span><span style="color:#A31515">"medium"</span><span style="color:#000000"> | </span><span style="color:#A31515">"large"</span><span style="color:#000000"> | </span><span style="color:#A31515">"full"</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Modal classes</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    classes</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000"> | </span><span style="color:#267F99">string</span><span style="color:#000000">[];</span></span>
+<span class="line"><span style="color:#000000">}</span></span></code></pre>
+</figure>
+
+</template>
             <template #docs><p>Generic modal component.</p>
 <p>Clicking on the outside or pressing the escape key will close the modal.</p>
 <div class="markdown-alert markdown-alert-important">

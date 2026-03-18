@@ -23,6 +23,7 @@ interface Props {
     name?: string;
     description?: string;
     propsConfig?: Propped;
+    propsType?: string;
     component?: string;
     additional?: boolean;
     padding?: string;
@@ -40,6 +41,7 @@ interface PropConfig {
 const props = withDefaults(defineProps<Props>(), {
     description: "",
     propsConfig: () => ({}) as TypeForProps<T>,
+    propsType: "",
     component: "",
     additional: false,
 });
@@ -79,12 +81,24 @@ const componentResult = computed<ComponentResult | null>(() => {
             </p>
             <div class="component-demo__collapsibles">
                 <div v-if="$slots.docs" class="component-demo__docs">
-                    <details class="component-demo__docs-details">
-                        <summary class="component-demo__docs-summary">
+                    <details class="component-demo__collapsible-details">
+                        <summary class="component-demo__collapsible-summary">
                             Additional Documentation
                         </summary>
 
                         <slot name="docs" />
+                    </details>
+                </div>
+
+                <div v-if="$slots.props || props.propsType" class="component-demo__props">
+                    <details class="component-demo__collapsible-details">
+                        <summary class="component-demo__collapsible-summary">
+                            Props
+                        </summary>
+
+                        <slot name="props">
+                            <pre class="component-demo__props-type"><code>{{ props.propsType }}</code></pre>
+                        </slot>
                     </details>
                 </div>
             </div>
@@ -266,11 +280,11 @@ const componentResult = computed<ComponentResult | null>(() => {
 }
 
 .component-demo__collapsibles {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    display: flex;
+    flex-direction: column;
     gap: 1rem;
 }
-.component-demo__docs-details {
+.component-demo__collapsible-details {
     margin-top: 1rem;
     max-width: 50rem;
     font-size: 1.125rem;
@@ -289,7 +303,7 @@ const componentResult = computed<ComponentResult | null>(() => {
         padding: 0.5rem;
     }
 }
-.component-demo__docs-summary {
+.component-demo__collapsible-summary {
     font-size: 1.25rem;
     margin: 0.25rem 0;
     cursor: pointer;
@@ -298,8 +312,12 @@ const componentResult = computed<ComponentResult | null>(() => {
         color: var(--g-accent-700);
         text-decoration: underline;
     }
+}
 
-    &::marker {
-    }
+.component-demo__props-type {
+    overflow-x: auto;
+    white-space: pre;
+    margin: 0;
+    font-family: var(--il-font-mono);
 }
 </style>

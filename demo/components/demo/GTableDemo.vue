@@ -357,6 +357,82 @@ function handleCellChange(payload: CellChangePayload<ProductRow>) {
                 }
             }"
         >
+            <template #props><figure class="highlighted-code">
+<pre class="shiki light-plus" style="background-color:#FFFFFF;color:#000000" tabindex="0"><code><span class="line"><span style="color:#0000FF">type</span><span style="color:#267F99"> Props</span><span style="color:#000000"> = &lcub;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Accessible label</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    label</span><span style="color:#000000">: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * The data to display in the table</span></span>
+<span class="line"><span style="color:#008000">     *</span></span>
+<span class="line"><span style="color:#008000">     * The data should be an array of objects, each representing a row in the table. Each object should have a unique `key` property that can be used to identify the row.</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    data</span><span style="color:#000000">: </span><span style="color:#267F99">T</span><span style="color:#000000">[];</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * The columns to display in the table</span></span>
+<span class="line"><span style="color:#008000">     *</span></span>
+<span class="line"><span style="color:#008000">     * Each column's key needs to match the key of a property in the data objects, which determines the data to display in that column by default. You can also provide a custom display function to customize the data display.</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    columns</span><span style="color:#000000">: </span><span style="color:#267F99">C</span><span style="color:#000000">[];</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Result count for all of the possible results (not just the current page)</span></span>
+<span class="line"><span style="color:#008000">     *</span></span>
+<span class="line"><span style="color:#008000">     * This is shown in the toolbar.</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    resultCount</span><span style="color:#000000">?: </span><span style="color:#267F99">number</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * A column key to group the data by</span></span>
+<span class="line"><span style="color:#008000">     *</span></span>
+<span class="line"><span style="color:#008000">     * If provided, the `groupRender` render function will be used to render the group header.</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    groupBy</span><span style="color:#000000">?: </span><span style="color:#0000FF">keyof</span><span style="color:#267F99"> T</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * A render function to customize the display of the group header.</span></span>
+<span class="line"><span style="color:#008000">     *</span></span>
+<span class="line"><span style="color:#008000">     * </span><span style="color:#0000FF">@param</span><span style="color:#001080"> groupValue</span><span style="color:#008000"> The value of the group key for the current row </span><span style="color:#0000FF">@param</span><span style="color:#001080"> row</span><span style="color:#008000"> The row object for the first row in the group</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#795E26">    groupRender</span><span style="color:#000000">?: (</span><span style="color:#001080">groupValue</span><span style="color:#000000">: </span><span style="color:#267F99">any</span><span style="color:#000000">, </span><span style="color:#001080">row</span><span style="color:#000000">: </span><span style="color:#267F99">T</span><span style="color:#000000">) </span><span style="color:#0000FF">=></span><span style="color:#267F99"> VNode</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Filtering object created with useFiltering()</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    filtering</span><span style="color:#000000">?: </span><span style="color:#267F99">UseFilteringReturn</span><span style="color:#000000">&#x3C;</span><span style="color:#267F99">any</span><span style="color:#000000">>;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Make the table rows clickable</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    rowClickable</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * A function to customize the classes applied to table rows </span><span style="color:#0000FF">@param</span><span style="color:#001080"> row</span><span style="color:#008000"> The row object</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#795E26">    rowClass</span><span style="color:#000000">?: (</span><span style="color:#001080">row</span><span style="color:#000000">: </span><span style="color:#267F99">T</span><span style="color:#000000">) </span><span style="color:#0000FF">=></span><span style="color:#267F99"> string</span><span style="color:#000000"> | </span><span style="color:#267F99">string</span><span style="color:#000000">[] | </span><span style="color:#267F99">undefined</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * The starting index for this page</span></span>
+<span class="line"><span style="color:#008000">     *</span></span>
+<span class="line"><span style="color:#008000">     * This is used for the ARIA rowindex attribute, and is VERY important to not get wrong.</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    startIndex</span><span style="color:#000000">: </span><span style="color:#267F99">number</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Enable bulk selection with checkboxes</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    bulkSelectionEnabled</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Array of actions to show in the sticky toolbar when rows are selected</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    bulkActions</span><span style="color:#000000">?: </span><span style="color:#267F99">BulkAction</span><span style="color:#000000">[];</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Optional change tracker for editable tables. Pass a composable from useTableChanges() to track user edits.</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    changeTracker</span><span style="color:#000000">?: </span><span style="color:#267F99">UseTableChangesReturn</span><span style="color:#000000">&#x3C;</span><span style="color:#267F99">T</span><span style="color:#000000">>;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Explicitly show the pagination bar even if the slot is empty</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    showPagination</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#000000">};</span></span></code></pre>
+</figure>
+
+</template>
             <template #docs><p>A data table component with support for grouping, sorting, filtering, and pagination.</p>
 <p>A heavy focus has been on performance. The table body doesn&#39;t use any
 Vue components, it&#39;s pure render functions. We&#39;ve used it with

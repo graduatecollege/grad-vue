@@ -46,6 +46,48 @@ function getJSDocCommentText(comment: ts.JSDoc['comment']): string {
     return comment.map((c) => (c.kind === ts.SyntaxKind.JSDocText ? c.text : '')).join('');
 }
 
+function normalizeJSDocParagraphs(rawProps: string): string {
+    return rawProps.replace(/^[ \t]*\/\*\*[\s\S]*?^[ \t]*\*\/$/gm, (block) => {
+        const openingIndentMatch = block.match(/^([ \t]*)\/\*\*/);
+        const indent = openingIndentMatch ? openingIndentMatch[1] : '';
+        const innerLinePrefix = `${indent} *`;
+
+        const inner = block
+            .replace(/^[ \t]*\/\*\*\s*\n?/, '')
+            .replace(/\n?[ \t]*\*\/\s*$/, '');
+
+        const sourceLines = inner.split('\n');
+        const outputLines: string[] = [];
+        let paragraph: string[] = [];
+
+        const flushParagraph = () => {
+            if (paragraph.length === 0) return;
+            outputLines.push(`${innerLinePrefix} ${paragraph.join(' ').replace(/\s+/g, ' ').trim()}`);
+            paragraph = [];
+        };
+
+        for (const sourceLine of sourceLines) {
+            const line = sourceLine.replace(/^\s*\*\s?/, '').trim();
+            if (!line) {
+                flushParagraph();
+                if (outputLines[outputLines.length - 1] !== innerLinePrefix) {
+                    outputLines.push(innerLinePrefix);
+                }
+                continue;
+            }
+            paragraph.push(line);
+        }
+
+        flushParagraph();
+
+        while (outputLines[outputLines.length - 1] === innerLinePrefix) {
+            outputLines.pop();
+        }
+
+        return [`${indent}/**`, ...outputLines, `${indent} */`].join('\n');
+    });
+}
+
 function splitJSDocText(text: string): { label: string | null; instructions: string | null } {
     const lines = text.trim().split('\n');
     const firstNonEmpty = lines.findIndex((line) => line.trim().length > 0);
@@ -222,7 +264,44 @@ function parseProps(content: string) {
     return { props, docs: componentDocs, rawProps, slots };
 }
 
-async function updateDemo(componentName: string, propsConfig: Record<string, any>, docs: string | null) {
+function upsertNamedTemplateSlot(
+    content: string,
+    slotName: string,
+    slotHtml: string,
+    insertBeforeSlotName?: string,
+): string {
+    const slotRegex = new RegExp(`<template\\s+#${slotName}\\s*>[\\s\\S]*?<\\/template>`, 's');
+    const slotTemplate = `<template #${slotName}>${slotHtml}</template>`;
+
+    if (slotRegex.test(content)) {
+        return content.replace(slotRegex, slotTemplate);
+    }
+
+    if (insertBeforeSlotName) {
+        const beforeRegex = new RegExp(`^(\\s*)(<template\\s+#${insertBeforeSlotName}\\s*>)`, 'm');
+        if (beforeRegex.test(content)) {
+            return content.replace(beforeRegex, (_, indent: string, tag: string) => {
+                return `${indent}${slotTemplate}\n${indent}${tag}`;
+            });
+        }
+    }
+
+    const closeRegex = /^(\s*)<\/ComponentDemo>/m;
+    if (closeRegex.test(content)) {
+        return content.replace(closeRegex, (_, indent: string) => {
+            return `${indent}${slotTemplate}\n${indent}</ComponentDemo>`;
+        });
+    }
+
+    return content;
+}
+
+async function updateDemo(
+    componentName: string,
+    propsConfig: Record<string, any>,
+    docs: string | null,
+    rawProps: string | null,
+) {
     const demoPath = path.join(demosDir, `${componentName}Demo.vue`);
     if (!fs.existsSync(demoPath)) return;
 
@@ -230,14 +309,18 @@ async function updateDemo(componentName: string, propsConfig: Record<string, any
 
     const config: Record<string, any> = { ...propsConfig };
 
-    const propsConfigStr = JSON.stringify(config, null, 4)
-        .replace(/"([^"]+)":/g, '$1:') // remove quotes from keys
-        .replace(/"/g, "'"); // use single quotes
+    let newContent = content;
 
-    // Indent the config string
-    const indentedConfig = propsConfigStr.split('\n').map((line, i) => i === 0 ? line : '            ' + line).join('\n');
+    if (Object.keys(config).length > 0) {
+        const propsConfigStr = JSON.stringify(config, null, 4)
+            .replace(/"([^"]+)":/g, '$1:') // remove quotes from keys
+            .replace(/"/g, "'"); // use single quotes
 
-    let newContent = content.replace(/:props-config="\{[\s\S]*?\}"/, `:props-config="${indentedConfig}"`);
+        // Indent the config string
+        const indentedConfig = propsConfigStr.split('\n').map((line, i) => i === 0 ? line : '            ' + line).join('\n');
+
+        newContent = newContent.replace(/:props-config="\{[\s\S]*?\}"/, `:props-config="${indentedConfig}"`);
+    }
     
     if (docs) {
         // Some characters cause problems with the way we're inserting this into the demo.
@@ -247,10 +330,14 @@ async function updateDemo(componentName: string, propsConfig: Record<string, any
         const html = (await marked.parse(docs.replace(/&lt;/g, "<")))
             .replace(/{/g, "&lcub;");
 
-        newContent = newContent.replace(
-            /<template #docs\s*>.*?<\/template>/s,
-            `<template #docs>${html}</template>`,
-        );
+        newContent = upsertNamedTemplateSlot(newContent, 'docs', html);
+    }
+
+    if (rawProps) {
+        const normalizedRawProps = normalizeJSDocParagraphs(rawProps);
+        const propsMarkdown = `\`\`\`typescript\n${normalizedRawProps}\n\`\`\``;
+        const propsHtml = (await marked.parse(propsMarkdown)).replace(/{/g, '&lcub;');
+        newContent = upsertNamedTemplateSlot(newContent, 'props', propsHtml, 'docs');
     }
 
     if (content !== newContent) {
@@ -311,9 +398,7 @@ function generateApiMarkdown(apiData: any[]) {
                 const content = fs.readFileSync(componentPath, 'utf8');
                 const { props, docs, rawProps, slots } = parseProps(content);
                 
-                if (Object.keys(props).length > 0) {
-                    await updateDemo(componentName, props, docs);
-                }
+                await updateDemo(componentName, props, docs, rawProps);
                 
                 apiData.push({
                     name: componentName,

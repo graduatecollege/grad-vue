@@ -63,6 +63,8 @@ type Props = {
     describedby?: string;
     /**
      * Hide label
+     * 
+     * The label is still used as the `aria-label` for accessibility, but it will not be visible in the UI.
      * @demo
      */
     hiddenLabel?: boolean;

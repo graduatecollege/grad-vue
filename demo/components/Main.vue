@@ -363,6 +363,10 @@ pre.shiki {
     overflow-x: auto;
 }
 
+.component-demo__props pre.shiki {
+    overflow-x: hidden;
+}
+
 pre.shiki code {
     display: block;
     padding: 0 1.5rem;
@@ -371,5 +375,12 @@ pre.shiki code {
     @media screen and (max-width: 768px) {
         padding: 0 0.5rem;
     }
+}
+
+.component-demo__props pre.shiki code {
+    
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 </style>
