@@ -16,10 +16,10 @@
  * <GPopover>
  *     <template #trigger="{ toggle }">
  *         <GButton @click="toggle">
- *             Can Popovers' Popovers have Popovers?
+ *             Can Popovers have Popovers?
  *         </GButton>
  *     </template>
- *     <div>Even if they can, should they?</div>
+ *     <div>In theory, but I wouldn't recommend it.</div>
  * </GPopover>
  * ```
  */

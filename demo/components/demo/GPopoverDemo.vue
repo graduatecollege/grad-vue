@@ -39,10 +39,10 @@ that toggles the popover&#39;s open state.</p>
 <pre class="shiki light-plus" style="background-color:#FFFFFF;color:#000000" tabindex="0"><code><span class="line"><span style="color:#800000">&#x3C;</span><span style="color:#267F99">GPopover</span><span style="color:#800000">></span></span>
 <span class="line"><span style="color:#800000">    &#x3C;template</span><span style="color:#000000"> #</span><span style="color:#E50000">trigger</span><span style="color:#000000">=</span><span style="color:#000000">"</span><span style="color:#000000">&lcub; </span><span style="color:#001080">toggle</span><span style="color:#000000"> }</span><span style="color:#000000">"</span><span style="color:#800000">></span></span>
 <span class="line"><span style="color:#800000">        &#x3C;</span><span style="color:#267F99">GButton</span><span style="color:#000000"> @</span><span style="color:#E50000">click</span><span style="color:#000000">=</span><span style="color:#000000">"</span><span style="color:#001080">toggle</span><span style="color:#000000">"</span><span style="color:#800000">></span></span>
-<span class="line"><span style="color:#000000">            Can Popovers' Popovers have Popovers?</span></span>
+<span class="line"><span style="color:#000000">            Can Popovers have Popovers?</span></span>
 <span class="line"><span style="color:#800000">        &#x3C;/</span><span style="color:#267F99">GButton</span><span style="color:#800000">></span></span>
 <span class="line"><span style="color:#800000">    &#x3C;/template></span></span>
-<span class="line"><span style="color:#800000">    &#x3C;div></span><span style="color:#000000">Even if they can, should they?</span><span style="color:#800000">&#x3C;/div></span></span>
+<span class="line"><span style="color:#800000">    &#x3C;div></span><span style="color:#000000">In theory, but I wouldn't recommend it.</span><span style="color:#800000">&#x3C;/div></span></span>
 <span class="line"><span style="color:#800000">&#x3C;/</span><span style="color:#267F99">GPopover</span><span style="color:#800000">></span></span></code></pre>
 </figure>
 
@@ -54,25 +54,6 @@ that toggles the popover&#39;s open state.</p>
                     </template>
                     <div>
                         <p>This is popover content!</p>
-                        <GPopover>
-                            <template #trigger="{ toggle }">
-                                <GButton @click="toggle">
-                                    Can Popovers have Popovers?
-                                </GButton>
-                            </template>
-                            <div>
-                                <p>This is popover content 2!</p>
-                                <GPopover>
-                                    <template #trigger="{ toggle }">
-                                        <GButton @click="toggle">
-                                            Can Popovers' Popovers have
-                                            Popovers?
-                                        </GButton>
-                                    </template>
-                                    <div>Even if they can, should they?</div>
-                                </GPopover>
-                            </div>
-                        </GPopover>
                     </div>
                 </GPopover>
             </template>
