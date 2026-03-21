@@ -99,12 +99,10 @@ function updatePopoverPosition() {
         return;
     }
     const triggerRect = triggerRef.value.getBoundingClientRect();
-    const popoverRect = popoverRef.value.getBoundingClientRect();
-    // Account for possible vertical scrollbar reducing viewport width
-    const scrollbarWidth =
-        window.innerWidth - document.documentElement.clientWidth;
-    const viewportWidth = window.innerWidth - scrollbarWidth;
-    const viewportRect = new DOMRect(0, 0, viewportWidth, window.innerHeight);
+    // Use offsetWidth/offsetHeight for popover dimensions to avoid getting
+    // scaled values during the CSS scale() enter transition.
+    const popoverRect = new DOMRect(0, 0, popoverRef.value.offsetWidth, popoverRef.value.offsetHeight);
+    const viewportRect = new DOMRect(0, 0, window.innerWidth, window.innerHeight);
 
     const { top, left, xOffset, placedAbove, overlay } =
         calculatePopoverPosition(triggerRect, popoverRect, viewportRect, {
@@ -125,6 +123,7 @@ watch(open, (val) => {
         nextTick(() => {
             updatePopoverPosition();
             window.addEventListener("resize", updatePopoverPosition);
+            window.addEventListener("scroll", updatePopoverPosition, { capture: true });
             if (popoverRef.value) {
                 if (resizeObserver) {
                     resizeObserver.disconnect();
@@ -137,6 +136,7 @@ watch(open, (val) => {
         });
     } else {
         window.removeEventListener("resize", updatePopoverPosition);
+        window.removeEventListener("scroll", updatePopoverPosition, { capture: true });
         if (resizeObserver) {
             resizeObserver.disconnect();
         }
@@ -145,6 +145,7 @@ watch(open, (val) => {
 
 onBeforeUnmount(() => {
     window.removeEventListener("resize", updatePopoverPosition);
+    window.removeEventListener("scroll", updatePopoverPosition, { capture: true });
     if (resizeObserver) {
         resizeObserver.disconnect();
     }

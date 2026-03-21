@@ -68,13 +68,13 @@ const VGtooltip: VGtooltipDirective = {
         const isFocused = ref(false);
         const tooltipText = ref(binding.value);
         let resizeObserver: ResizeObserver | null = null;
+        let scrollListenerActive = false;
         // Generate unique id for tooltip
         let tooltipId: string;
         if (el.getAttribute("aria-describedby")) {
             tooltipId = el.getAttribute("aria-describedby")!;
         } else {
             tooltipId = `v-gtooltip-${++tooltipIdCounter}`;
-            // Set aria-describedby on the element
             el.setAttribute("aria-describedby", tooltipId);
         }
 
@@ -86,13 +86,8 @@ const VGtooltip: VGtooltipDirective = {
                 // consistent z-index stacking context and avoids CSS transform issues
                 // when the trigger is inside a transformed ancestor (e.g., GModal uses
                 // transform: translate(-50%, -50%) for centering).
-                // Accessibility: DOM order does not affect tooltip accessibility. Screen
-                // readers follow the aria-describedby reference to find tooltip content
-                // regardless of where the element sits in the DOM. Tooltips never receive
-                // keyboard focus, so appending here does not disrupt tab order.
                 const modalRoot = document.getElementById("modal-root");
                 (modalRoot ?? document.body).appendChild(tooltip.value);
-                // Observe tooltip size changes to reposition
                 resizeObserver = new ResizeObserver(() => {
                     if (tooltip.value && (isHovered.value || isFocused.value)) {
                         showTooltip(el, tooltip.value);
@@ -110,13 +105,27 @@ const VGtooltip: VGtooltipDirective = {
 
         // Watch for changes in hover and focus states,
         // and show/hide the tooltip accordingly
+        const onScroll = () => {
+            if (tooltip.value && (isHovered.value || isFocused.value)) {
+                showTooltip(el, tooltip.value);
+            }
+        };
+
         watchEffect(() => {
             if (isHovered.value || isFocused.value) {
                 ensureTooltip();
                 if (tooltip.value) {
                     showTooltip(el, tooltip.value);
                 }
+                if (!scrollListenerActive) {
+                    window.addEventListener("scroll", onScroll, { capture: true });
+                    scrollListenerActive = true;
+                }
             } else {
+                if (scrollListenerActive) {
+                    window.removeEventListener("scroll", onScroll, { capture: true });
+                    scrollListenerActive = false;
+                }
                 if (tooltip.value) {
                     hideTooltip(tooltip.value);
 
@@ -163,6 +172,7 @@ const VGtooltip: VGtooltipDirective = {
             onFocus,
             onBlur,
             onKeyDown,
+            onScroll,
             tooltip,
             tooltipText,
             isHovered,
@@ -186,12 +196,14 @@ const VGtooltip: VGtooltipDirective = {
             data.tooltip.value.remove();
             data.tooltip.value = null;
         }
+        if (data && data.onScroll) {
+            window.removeEventListener("scroll", data.onScroll, { capture: true });
+        }
         el.removeEventListener("mouseenter", data.onMouseEnter);
         el.removeEventListener("mouseleave", data.onMouseLeave);
         el.removeEventListener("focus", data.onFocus);
         el.removeEventListener("blur", data.onBlur);
         el.removeEventListener("keydown", data.onKeyDown);
-        // Remove aria-describedby
         el.removeAttribute("aria-describedby");
     },
 };
