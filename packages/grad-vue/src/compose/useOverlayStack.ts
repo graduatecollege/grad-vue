@@ -1,4 +1,4 @@
-import { computed, onBeforeUnmount, Ref, ref, useId } from "vue";
+import { computed, onBeforeUnmount, Ref, ref } from "vue";
 
 const OVERLAY_Z_INDEX_BASE = 100;
 const MODAL_Z_INDEX_BASE = 200;
@@ -11,59 +11,39 @@ export type OverlayStack = {
     zIndex: Ref<number>;
 }
 
-// add _g_state to window typescript type
-declare global {
-    interface Window {
-        _g_overlay_stack_state: {
-            stack: Ref<string[]>;
-            modalStack: Ref<string[]>;
-            scrollLockStack: Ref<string[]>;
-            updateBodyScrollLock: () => void;
-        };
+export type OverlayStackState = {
+    hasModal: Ref<boolean>;
+    hasOverlay: Ref<boolean>;
+    hasScrollLock: Ref<boolean>;
+};
+
+const stack = ref<string[]>([]);
+const modalStack = ref<string[]>([]);
+const scrollLockStack = ref<string[]>([]);
+
+function updateBodyScrollLock() {
+    if (typeof document === "undefined") return;
+    if (scrollLockStack.value.length > 0) {
+        // Account for possible vertical scrollbar reducing viewport width
+        const scrollbarWidth =
+            window.innerWidth - document.documentElement.clientWidth;
+        document.body.classList.add("g-scroll-lock");
+        document.body.style.paddingRight = `${scrollbarWidth}px`;
+        document.body.style.setProperty("--g-scrollbar-width", `${scrollbarWidth}px`);
+    } else {
+        document.body.style.paddingRight = "0";
+        document.body.classList.remove("g-scroll-lock");
+        document.body.style.removeProperty("--g-scrollbar-width");
     }
-}
-
-function setupStackState() {
-    if (!window._g_overlay_stack_state) {
-        window._g_overlay_stack_state = {
-            stack: ref<string[]>([]),
-            modalStack: ref<string[]>([]),
-            scrollLockStack: ref<string[]>([]),
-            updateBodyScrollLock() {
-                if (typeof document !== "undefined") {
-                    if (scrollLockStack.value.length > 0) {
-                        // Account for possible vertical scrollbar reducing viewport width
-                        const scrollbarWidth =
-                            window.innerWidth -
-                            document.documentElement.clientWidth;
-                        document.body.classList.add("g-scroll-lock");
-                        document.body.style.paddingRight = `${scrollbarWidth}px`;
-                        document.body.style.setProperty('--g-scrollbar-width', `${scrollbarWidth}px`);
-                    } else {
-                        document.body.style.paddingRight = `0`;
-                        document.body.classList.remove("g-scroll-lock");
-                        document.body.style.removeProperty('--g-scrollbar-width');
-                    }
-                }
-            },
-        };
-    }
-
-    const { stack, modalStack, scrollLockStack, updateBodyScrollLock } =
-        window._g_overlay_stack_state;
-
-    return { stack, modalStack, scrollLockStack, updateBodyScrollLock };
 }
 
 export function useOverlayStack(id: string, modal = false, lockScroll = false): OverlayStack {
-    if (!document) {
-        return {} as any;
+    if (typeof document === "undefined") {
+        return {} as OverlayStack;
     }
 
-    const { stack, modalStack, scrollLockStack, updateBodyScrollLock } =
-        setupStackState();
-
     const stackRef = modal ? modalStack : stack;
+
     function push() {
         stackRef.value.push(id);
         if (lockScroll && !scrollLockStack.value.includes(id)) {
@@ -71,6 +51,7 @@ export function useOverlayStack(id: string, modal = false, lockScroll = false): 
             updateBodyScrollLock();
         }
     }
+
     function pop() {
         const idx = stackRef.value.lastIndexOf(id);
         if (idx !== -1) {
@@ -82,6 +63,7 @@ export function useOverlayStack(id: string, modal = false, lockScroll = false): 
             updateBodyScrollLock();
         }
     }
+
     const isTop = computed(() => {
         if (!modal && modalStack.value.length > 0) {
             return false;
@@ -91,6 +73,7 @@ export function useOverlayStack(id: string, modal = false, lockScroll = false): 
             stackRef.value[stackRef.value.length - 1] === id
         );
     });
+
     const zIndex = computed(() => {
         const pos = stackRef.value.indexOf(id);
         return pos === -1 ? 0 : (modal ? MODAL_Z_INDEX_BASE : OVERLAY_Z_INDEX_BASE) + pos;
@@ -101,27 +84,17 @@ export function useOverlayStack(id: string, modal = false, lockScroll = false): 
     return { push, pop, isTop, zIndex };
 }
 
-export type OverlayStackState = {
-    hasModal: Ref<boolean>;
-    hasOverlay: Ref<boolean>;
-    hasScrollLock: Ref<boolean>;
-};
-
 export function useOverlayStackState(): OverlayStackState {
-    if (!document) {
-        return {} as any;
+    if (typeof document === "undefined") {
+        return {} as OverlayStackState;
     }
-
-    const { stack, modalStack, scrollLockStack, updateBodyScrollLock } =
-        setupStackState();
 
     const hasModal = computed(() => modalStack.value.length > 0);
     const hasOverlay = computed(
         () => stack.value.length > 0 || modalStack.value.length > 0,
     );
-    const hasScrollLock = computed(() => {
-        return scrollLockStack.value.length > 0;
-    });
+    const hasScrollLock = computed(() => scrollLockStack.value.length > 0);
+
     return { hasModal, hasOverlay, hasScrollLock };
 }
 
@@ -135,10 +108,6 @@ export function useOverlayStackState(): OverlayStackState {
  * which makes it suitable for use in Vue directives.
  */
 export function getTopZIndex(): number {
-    if (typeof window === "undefined" || !window._g_overlay_stack_state) {
-        return DEFAULT_TOOLTIP_Z_INDEX;
-    }
-    const { stack, modalStack } = window._g_overlay_stack_state;
     let max = 0;
     stack.value.forEach((_, idx) => {
         max = Math.max(max, OVERLAY_Z_INDEX_BASE + idx);
