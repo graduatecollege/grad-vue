@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, h, onMounted, provide, ref, useTemplateRef } from "vue";
+import type { TreeMenuItem } from "../packages/grad-vue/src/grad-vue";
 
 const formData = ref<Record<string, any>>({});
 const submitResult = ref<string>("");
@@ -31,6 +32,58 @@ function handleSubmit(values: Record<string, any>) {
 }
 
 const fname = ref("heh");
+
+const linkedParentItems: TreeMenuItem[] = [
+    {
+        label: "Chapter 1",
+        href: "#ch1",
+        children: [
+            { label: "Section 1.1", href: "#ch1-s1" },
+            { label: "Section 1.2", href: "#ch1-s2" },
+        ],
+    },
+    {
+        label: "Chapter 2",
+        href: "#ch2",
+        children: [
+            { label: "Section 2.1", href: "#ch2-s1" },
+            { label: "Section 2.2", href: "#ch2-s2" },
+        ],
+    },
+    { label: "References", href: "#refs" },
+];
+
+const bookItems: TreeMenuItem[] = [
+    {
+        label: "Chapter 1: Introduction",
+        children: [
+            { label: "1.1 Background", href: "#ch1-background" },
+            { label: "1.2 Motivation", href: "#ch1-motivation" },
+            {
+                label: "1.3 Overview",
+                children: [
+                    { label: "1.3.1 Part One", href: "#ch1-part1" },
+                    { label: "1.3.2 Part Two", href: "#ch1-part2" },
+                ],
+            },
+        ],
+    },
+    {
+        label: "Chapter 2: Methods",
+        children: [
+            { label: "2.1 Data Collection", href: "#ch2-data" },
+            { label: "2.2 Analysis", href: "#ch2-analysis" },
+        ],
+    },
+    {
+        label: "Chapter 3: Results",
+        children: [
+            { label: "3.1 Findings", href: "#ch3-findings" },
+            { label: "3.2 Discussion", href: "#ch3-discussion" },
+        ],
+    },
+    { label: "Appendix", href: "#appendix" },
+];
 </script>
 
 <template>
@@ -39,8 +92,21 @@ const fname = ref("heh");
 
         <div class="wrap">
             <main class="main" ref="main">
+                <div style="max-width: 320px">
+                    <GTreeMenu
+                        title="With Linked Parents"
+                        :items="linkedParentItems"
+                        style="min-height: 240px;"
+                    />
+                    <GTreeMenu
+                        title="Numbered Chapters"
+                        list-type="ol"
+                        :items="bookItems"
+                        style="min-height: 200px;"
+                    />
+                </div>
                 <div style="max-width: 500px;">
-                    <GDetailList v-bind="props">
+                    <GDetailList>
                         <GDetailListItem label="Description">Engineering: Energy Systems</GDetailListItem>
                         <GDetailListItem label="Major">Engineering</GDetailListItem>
                         <GDetailListItem label="Department Code">123</GDetailListItem>

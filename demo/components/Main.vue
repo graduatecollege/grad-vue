@@ -27,6 +27,7 @@ import GModalDemo from "~/components/demo/GModalDemo.vue";
 import GHamburgerMenuDemo from "~/components/demo/GHamburgerMenuDemo.vue";
 import GDetailListDemo from "~/components/demo/GDetailListDemo.vue";
 import GTermSelectorDemo from "~/components/demo/GTermSelectorDemo.vue";
+import GTreeMenuDemo from "~/components/demo/GTreeMenuDemo.vue";
 
 import GUserMenuDemo from "~/components/demo/GUserMenuDemo.vue";
 import GCurrencyInputDemo from "~/components/demo/GCurrencyInputDemo.vue";
@@ -80,6 +81,7 @@ const demoComponents = [
     { label: "Term Selector", component: GTermSelectorDemo },
     { label: "Text Input", component: GTextInputDemo },
     { label: "Three Way Toggle", component: GThreeWayToggleDemo },
+    { label: "Tree Menu", component: GTreeMenuDemo },
     { label: "User Menu", component: GUserMenuDemo },
 ];
 
