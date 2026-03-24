@@ -1,4 +1,5 @@
 import GButton from "./components/GButton.vue";
+import GTreeMenu from "./components/GTreeMenu.vue";
 import GTextInput from "./components/GTextInput.vue";
 import GPopover from "./components/GPopover.vue";
 import GSelectButton from "./components/GSelectButton.vue";
@@ -68,6 +69,7 @@ export {
     GDateRangeInput,
     GForm,
     GSubmitButton,
+    GTreeMenu,
 };
 
 export { calculatePopoverPosition } from "./compose/popoverPosition";
@@ -115,3 +117,4 @@ export type {
     TableRow,
 } from "./components/table/TableColumn";
 export type { BulkAction } from "./components/GTable.vue";
+export type { TreeMenuItem } from "./components/GTreeMenu.vue";
