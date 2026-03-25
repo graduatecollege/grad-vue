@@ -1357,6 +1357,57 @@ type Props = {
 
 ---
 
+## GTreeMenu
+
+A hierarchical sidebar menu component suitable for book-like or nested-section
+navigation. Items with children start collapsed and can be expanded/collapsed
+individually.
+
+**Props**:
+
+- `title` — optional heading and accessible name for the nav landmark.
+- `items` — array of `TreeMenuItem` objects. Each item may have:
+  - `label` — display text (required).
+  - `href` or `to` — link destination. When `to` is provided and `vue-router`
+    is present the link is rendered as a `<router-link>`.
+  - `children` — nested `TreeMenuItem[]` for sub-levels (unlimited depth).
+- `listType` — `ul` (default) or `ol`. Use `ol` for numbered
+  hierarchies such as book chapters.
+- `theme` — `light` (default) or `dark`.
+
+**Keyboard navigation** (tree-view style):
+
+- `↑` / `↓` — move between visible menu items.
+- `→` — expand a collapsed item; if already expanded, move to its first child.
+- `←` — collapse an expanded item; if already collapsed, move focus to its
+  parent.
+- `Home` / `End` — jump to the first or last visible item.
+
+### Props
+
+```typescript
+type Props = {
+    /**
+     * Title and accessible name for the nav landmark
+     */
+    title?: string;
+    /**
+     * Items for the menu
+     */
+    items: TreeMenuItem[];
+    /**
+     * List element type — use `ol` for numbered hierarchies like book chapters
+     */
+    listType?: "ul" | "ol";
+    /**
+     * Theme
+     */
+    theme?: "light" | "dark";
+};
+```
+
+---
+
 ## GUserMenu
 
 User menu component for toolbars. Displays a button with the user's initials

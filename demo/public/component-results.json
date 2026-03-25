@@ -1,7 +1,7 @@
 {
-  "totalComponents": 35,
-  "totalTests": 281,
-  "passedTests": 281,
+  "totalComponents": 36,
+  "totalTests": 307,
+  "passedTests": 307,
   "failedTests": 0,
   "skippedTests": 0,
   "components": {
@@ -1051,8 +1051,8 @@
     },
     "GPopover": {
       "component": "GPopover",
-      "total": 4,
-      "passed": 4,
+      "total": 5,
+      "passed": 5,
       "failed": 0,
       "skipped": 0,
       "status": "passed",
@@ -1073,6 +1073,13 @@
         },
         {
           "title": "remains in viewport when large",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "remains in viewport when inside a modal",
           "status": "passed",
           "ancestors": [
             "Functional Tests"
@@ -2112,6 +2119,191 @@
         },
         {
           "title": "should have an accessible description when set",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        }
+      ]
+    },
+    "GTreeMenu": {
+      "component": "GTreeMenu",
+      "total": 25,
+      "passed": 25,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed",
+      "tests": [
+        {
+          "title": "renders with a title and flat items",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "renders nested items collapsed by default",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "expanding an item reveals its children",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "button aria-expanded updates on toggle",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "multiple items can be expanded simultaneously",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "collapsing hides children again",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "supports arbitrary depth — nested expand works",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "renders as <ol> when listType='ol'",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "renders as <ul> by default",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "parent items with href render both a toggle button and a link",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "clicking chevron toggle expands a linked parent item",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "ArrowDown moves focus to the next item",
+          "status": "passed",
+          "ancestors": [
+            "Keyboard Navigation Tests"
+          ]
+        },
+        {
+          "title": "ArrowUp moves focus to the previous item",
+          "status": "passed",
+          "ancestors": [
+            "Keyboard Navigation Tests"
+          ]
+        },
+        {
+          "title": "ArrowRight expands a collapsed item",
+          "status": "passed",
+          "ancestors": [
+            "Keyboard Navigation Tests"
+          ]
+        },
+        {
+          "title": "ArrowRight on an expanded item moves to its first child",
+          "status": "passed",
+          "ancestors": [
+            "Keyboard Navigation Tests"
+          ]
+        },
+        {
+          "title": "ArrowLeft collapses an expanded item",
+          "status": "passed",
+          "ancestors": [
+            "Keyboard Navigation Tests"
+          ]
+        },
+        {
+          "title": "ArrowLeft on a collapsed item moves focus to its parent",
+          "status": "passed",
+          "ancestors": [
+            "Keyboard Navigation Tests"
+          ]
+        },
+        {
+          "title": "Home moves focus to the first item",
+          "status": "passed",
+          "ancestors": [
+            "Keyboard Navigation Tests"
+          ]
+        },
+        {
+          "title": "End moves focus to the last visible item",
+          "status": "passed",
+          "ancestors": [
+            "Keyboard Navigation Tests"
+          ]
+        },
+        {
+          "title": "flat list passes axe",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "nested list (collapsed) passes axe",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "nested list (expanded) passes axe",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "linked parent items pass axe",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "ol list type passes axe",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "dark theme passes axe",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
