@@ -12,9 +12,9 @@
  *   - `href` or `to` — link destination. When `to` is provided and `vue-router`
  *     is present the link is rendered as a `<router-link>`.
  *   - `children` — nested `TreeMenuItem[]` for sub-levels (unlimited depth).
- * - `listType` — `'ul'` (default) or `'ol'`. Use `'ol'` for numbered
+ * - `listType` — `ul` (default) or `ol`. Use `ol` for numbered
  *   hierarchies such as book chapters.
- * - `theme` — `'light'` (default) or `'dark'`.
+ * - `theme` — `light` (default) or `dark`.
  *
  * **Keyboard navigation** (tree-view style):
  *
@@ -44,7 +44,7 @@ type Props = {
      */
     items: TreeMenuItem[];
     /**
-     * List element type — use 'ol' for numbered hierarchies like book chapters
+     * List element type — use `ol` for numbered hierarchies like book chapters
      * @demo
      */
     listType?: "ul" | "ol";
@@ -64,13 +64,11 @@ const id = useId();
 const expandedItems = ref(new Set<string>());
 
 function toggleItem(key: string) {
-    const next = new Set(expandedItems.value);
-    if (next.has(key)) {
-        next.delete(key);
+    if (expandedItems.value.has(key)) {
+        expandedItems.value.delete(key);
     } else {
-        next.add(key);
+        expandedItems.value.add(key);
     }
-    expandedItems.value = next;
 }
 
 function getParentKey(key: string): string | null {
@@ -94,7 +92,6 @@ function handleKeydown(event: KeyboardEvent) {
 
     const handled = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Home", "End"];
     if (!handled.includes(event.key)) return;
-    event.preventDefault();
 
     // Locate the <li> ancestor that owns the focused element.
     const currentLi = focused.closest<HTMLElement>("[data-tree-item-key]");
@@ -125,13 +122,6 @@ function handleKeydown(event: KeyboardEvent) {
             if (!expandedItems.value.has(currentItemKey)) {
                 // Expand and move focus to the first child.
                 toggleItem(currentItemKey);
-                nextTick(() => {
-                    // After the DOM updates, the first child is right after the
-                    // current item in the updated primaries list.
-                    const updated = getPrimaryItems(nav);
-                    const next = updated[primaryIdx + 1];
-                    if (next) next.focus();
-                });
             } else {
                 // Already expanded — move focus to first child.
                 const next = primaries[primaryIdx + 1];
@@ -168,6 +158,8 @@ function handleKeydown(event: KeyboardEvent) {
             break;
         }
     }
+
+    event.preventDefault();
 }
 </script>
 
@@ -220,116 +212,6 @@ function handleKeydown(event: KeyboardEvent) {
 
 .g-tree-menu__content {
     margin-top: 1rem;
-}
-
-/* ---- Lists ---- */
-
-:deep(.g-tree-menu__list) {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-:deep(.g-tree-menu__list .g-tree-menu__list) {
-    padding-left: 1.25rem;
-}
-
-:deep(.g-tree-menu__item) {
-    display: block;
-    margin: 0;
-}
-
-/* ---- Row layout ---- */
-
-:deep(.g-tree-menu__row) {
-    display: flex;
-    align-items: center;
-}
-
-/* ---- Toggle button (parent items without a link) ---- */
-
-:deep(.g-tree-menu__row--toggle) {
-    width: 100%;
-    background: none;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    padding: 0.5rem calc(2rem - 8px);
-    border-left: 8px solid transparent;
-    text-align: left;
-    font-size: 1.125rem;
-    font-weight: bold;
-    font-family: inherit;
-}
-
-/* ---- Small chevron-only toggle button (parent items with a link) ---- */
-
-:deep(.g-tree-menu__toggle-btn) {
-    flex-shrink: 0;
-    background: none;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.25rem;
-    margin-left: calc(2rem - 8px);
-    border-radius: 2px;
-}
-
-/* ---- Links ---- */
-
-:deep(.g-tree-menu__link) {
-    display: block;
-    flex: 1;
-    padding: 0.5rem 0.5rem 0.5rem 0.25rem;
-    text-decoration: none;
-    font-size: 1.125rem;
-    font-weight: bold;
-
-    &:hover {
-        text-decoration: underline;
-    }
-
-    /* When the row has no toggle button, add the left indent */
-    .g-tree-menu__row--leaf & {
-        padding-left: calc(2rem - 8px);
-        border-left: 8px solid transparent;
-    }
-}
-
-/* ---- Plain label (non-interactive item) ---- */
-
-:deep(.g-tree-menu__label) {
-    display: block;
-    padding: 0.5rem calc(2rem - 8px);
-    font-size: 1.125rem;
-}
-
-/* ---- Chevron icon ---- */
-
-:deep(.g-tree-menu__chevron) {
-    width: 1em;
-    height: 1em;
-    flex-shrink: 0;
-    transform: rotate(0deg);
-    transition: transform 0.15s ease;
-}
-
-:deep(.g-tree-menu__chevron--expanded) {
-    transform: rotate(90deg);
-}
-
-/* ---- Focus styles ---- */
-
-:deep(.g-tree-menu__row--toggle:focus),
-:deep(.g-tree-menu__toggle-btn:focus),
-:deep(.g-tree-menu__link:focus) {
-    outline: none;
-    background: var(--ilw-color--focus--background, #ffd700);
-    color: var(--ilw-color--focus--text, #000);
 }
 
 /* ================================================================

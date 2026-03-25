@@ -67,20 +67,26 @@ const linkedParentItems: TreeMenuItem[] = [
             :props-config="{
                 title: {
                     type: 'string',
-                    label: 'Title and accessible name',
-                    default: 'Contents'
+                    label: 'Title and accessible name for the nav landmark',
+                    default: 'Tree Menu'
                 },
                 listType: {
                     type: 'select',
-                    label: 'List element type',
+                    label: 'List element type — use `ol` for numbered hierarchies like book chapters',
                     default: 'ul',
-                    options: ['ul', 'ol']
+                    options: [
+                        'ul',
+                        'ol'
+                    ]
                 },
                 theme: {
                     type: 'select',
                     label: 'Theme',
                     default: 'light',
-                    options: ['light', 'dark']
+                    options: [
+                        'light',
+                        'dark'
+                    ]
                 }
             }"
         >
@@ -89,6 +95,54 @@ const linkedParentItems: TreeMenuItem[] = [
                     <GTreeMenu v-bind="props" :items="bookItems" style="min-height: 420px;" />
                 </div>
             </template>
+        <template #props><figure class="highlighted-code">
+<pre class="shiki light-plus" style="background-color:#FFFFFF;color:#000000" tabindex="0"><code><span class="line"><span style="color:#0000FF">type</span><span style="color:#267F99"> Props</span><span style="color:#000000"> = &lcub;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Title and accessible name for the nav landmark</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    title</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Items for the menu</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    items</span><span style="color:#000000">: </span><span style="color:#267F99">TreeMenuItem</span><span style="color:#000000">[];</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * List element type — use `ol` for numbered hierarchies like book chapters</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    listType</span><span style="color:#000000">?: </span><span style="color:#A31515">"ul"</span><span style="color:#000000"> | </span><span style="color:#A31515">"ol"</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Theme</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    theme</span><span style="color:#000000">?: </span><span style="color:#A31515">"light"</span><span style="color:#000000"> | </span><span style="color:#A31515">"dark"</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#000000">};</span></span></code></pre>
+</figure>
+
+</template>
+        <template #docs><p>A hierarchical sidebar menu component suitable for book-like or nested-section
+navigation. Items with children start collapsed and can be expanded/collapsed
+individually.</p>
+<p><strong>Props</strong>:</p>
+<ul>
+<li><code>title</code> — optional heading and accessible name for the nav landmark.</li>
+<li><code>items</code> — array of <code>TreeMenuItem</code> objects. Each item may have:<ul>
+<li><code>label</code> — display text (required).</li>
+<li><code>href</code> or <code>to</code> — link destination. When <code>to</code> is provided and <code>vue-router</code>
+is present the link is rendered as a <code>&lt;router-link&gt;</code>.</li>
+<li><code>children</code> — nested <code>TreeMenuItem[]</code> for sub-levels (unlimited depth).</li>
+</ul>
+</li>
+<li><code>listType</code> — <code>ul</code> (default) or <code>ol</code>. Use <code>ol</code> for numbered
+hierarchies such as book chapters.</li>
+<li><code>theme</code> — <code>light</code> (default) or <code>dark</code>.</li>
+</ul>
+<p><strong>Keyboard navigation</strong> (tree-view style):</p>
+<ul>
+<li><code>↑</code> / <code>↓</code> — move between visible menu items.</li>
+<li><code>→</code> — expand a collapsed item; if already expanded, move to its first child.</li>
+<li><code>←</code> — collapse an expanded item; if already collapsed, move focus to its
+parent.</li>
+<li><code>Home</code> / <code>End</code> — jump to the first or last visible item.</li>
+</ul>
+</template>
         </ComponentDemo>
 
         <ComponentDemo
