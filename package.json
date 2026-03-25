@@ -18,6 +18,7 @@
         "build": "npm run build --workspaces",
         "build:grad-vue": "npm run build --workspace=@illinois-grad/grad-vue",
         "build:grad-vue-rte": "npm run build --workspace=@illinois-grad/grad-vue-rte",
+        "build:elements": "npm run build:elements --workspace=@illinois-grad/grad-vue",
         "watch": "vue-tsc --watch & vite build --watch",
         "preview": "vite preview",
         "test": "vitest run --browser.headless",
