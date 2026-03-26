@@ -29,6 +29,7 @@ npm install @illinois-grad/grad-vue-rte
 - **Vue 3**: Built with Vue.js version 3 and the Composition API.
 - **Accessibility-First**: All components are built with consideration for all users.
 - **Minimal Dependencies**: Main library only depends on Vue.js, VueUse and focus-trap.
+- **Web Components**: Use our components outside of Vue.js apps as standard Custom Elements. See [WEB_COMPONENTS.md](./WEB_COMPONENTS.md) for more details.
 - **Modular**: Choose the packages you need.
 
 ## Demo Site
