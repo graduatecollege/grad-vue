@@ -28,6 +28,8 @@ export default {};
 
 <script setup lang="ts">
 import {
+    computed,
+    getCurrentInstance,
     nextTick,
     onBeforeUnmount,
     ref,
@@ -47,11 +49,12 @@ type Props = {
      */
     minimal?: boolean;
     /**
-     * Disable teleporting the popover to `#modal-root`.
+     * Disable teleporting the popover entirely.
      *
-     * Use this when embedding the component as a Web Component (custom element),
-     * where the shadow DOM prevents teleport from working correctly with
-     * slotted content.
+     * Normally not needed: when used as a Web Component the component
+     * automatically detects the shadow DOM via `instance.ce.shadowRoot`
+     * and teleports within it, keeping `<slot>` accessible and maintaining
+     * correct overlay stacking.
      */
     noTeleport?: boolean;
 }
@@ -68,6 +71,14 @@ const popoverRef = useTemplateRef<HTMLElement | null>("popoverRef");
 
 const id = useId();
 const { push, pop, isTop, zIndex } = useOverlayStack(id, true);
+
+// When rendered inside a Web Component, teleport within the shadow DOM so that
+// the native <slot> element stays accessible for slotted content projection.
+// Falls back to '#modal-root' in regular Vue app contexts.
+// We access instance.ce directly (same property useShadowRoot() uses internally)
+// to avoid a dev warning when the component is used in a regular Vue app.
+const _ce = (getCurrentInstance() as any)?.ce as Element | undefined;
+const teleportTarget: string | ShadowRoot = _ce?.shadowRoot ?? "#modal-root";
 const { activate, deactivate } = useOverlayFocus(popoverRef, isTop, true);
 useOverlayEscape([popoverRef, triggerRef], isTop, open, hide, pop);
 
@@ -167,7 +178,7 @@ onBeforeUnmount(() => {
         <div ref="triggerRef" class="g-popover-trigger" :id="`${id}-trigger`">
             <slot name="trigger" :toggle="toggle"></slot>
         </div>
-        <Teleport to="#modal-root" :disabled="noTeleport">
+        <Teleport :to="(teleportTarget as any)" :disabled="noTeleport">
             <transition name="g-popover-expand" appear>
                 <div
                     v-if="open"

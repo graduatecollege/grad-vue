@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Web Components Test – no-teleport</title>
+    <title>Web Components Test – Shadow DOM + Teleport</title>
     <style>
         body {
             margin: 2rem;
@@ -42,134 +42,212 @@
             border-radius: 4px;
             cursor: pointer;
             font-size: 1rem;
+            margin: 0.25rem;
         }
         button:hover { background: #154080; }
-        .note {
-            background: #fff8e1;
-            border-left: 4px solid #f9a825;
+        .success {
+            background: #e8f5e9;
+            border-left: 4px solid #388e3c;
             padding: 0.75rem 1rem;
             border-radius: 0 4px 4px 0;
             margin-bottom: 1rem;
             font-size: 0.9rem;
         }
-        #modal-root { position: relative; z-index: 0; }
+        .info {
+            background: #e3f2fd;
+            border-left: 4px solid #1976d2;
+            padding: 0.75rem 1rem;
+            border-radius: 0 4px 4px 0;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body>
-    <h1>Web Components – <code>no-teleport</code> Test</h1>
+    <h1>Web Components – Shadow DOM + Teleport</h1>
     <p class="subtitle">
-        Demonstrates the <code>no-teleport</code> prop that fixes slotted content
-        in Shadow DOM / Web Component contexts.
+        Demonstrates that <code>GModal</code>, <code>GAlertDialog</code>, and
+        <code>GPopover</code> work correctly as Web Components (custom elements)
+        <strong>without any extra props</strong>. Slotted content is visible and
+        overlay stacking is correct because Teleport automatically targets the
+        shadow root when inside a custom element.
     </p>
 
-    <!-- ─── Issue Demonstration ─────────────────────────────────── -->
+    <!-- ─── How it works ─────────────────────────────────────────── -->
     <section>
-        <h2>The Problem</h2>
+        <h2>How it works</h2>
         <p>
-            Without <code>no-teleport</code>, the modal's internal DOM is
-            teleported out to <code>#modal-root</code> in the light DOM. Slotted
-            content stays inside the custom element's shadow DOM and is never
-            rendered because there is no longer a <code>&lt;slot&gt;</code>
-            inside the shadow DOM.
+            By default these components teleport their content to
+            <code>#modal-root</code> in the light DOM. Inside a Web Component,
+            this would move the native <code>&lt;slot&gt;</code> out of the
+            shadow DOM, orphaning any slotted content.
         </p>
-        <div class="note">
-            Click the button below. The modal opens but shows <strong>no content</strong>
-            (only the header/close button) because the slot is orphaned.
-        </div>
-        <button onclick="document.getElementById('broken-modal').removeAttribute('hidden')">
-            Open Modal (broken – no slotted content)
-        </button>
-
-        <!--
-            Without no-teleport the internal <slot /> is teleported out to
-            #modal-root, leaving the slotted div with no parent slot to render in.
-        -->
-        <g-modal id="broken-modal" label="Broken Modal (no no-teleport)" hidden
-                 onclose="this.setAttribute('hidden','')">
-            <div>
-                <p>This content should appear inside the modal, but it won't
-                   because the slot was teleported away.</p>
-            </div>
-        </g-modal>
+        <p>
+            The fix: each component calls
+            <code>(getCurrentInstance() as any)?.ce?.shadowRoot</code> during
+            setup. When running inside a <code>defineCustomElement</code>-based
+            custom element, <code>instance.ce</code> is the host element and
+            <code>instance.ce.shadowRoot</code> is its shadow root. That shadow
+            root is used as the Teleport target instead of
+            <code>#modal-root</code>. This keeps the <code>&lt;slot&gt;</code>
+            inside the shadow DOM so slotted content is correctly distributed,
+            while still using <code>position: fixed</code> and the shared
+            z-index stack for correct overlay ordering.
+        </p>
+        <pre>// In each component (GModal / GAlertDialog / GPopover):
+const _ce = (getCurrentInstance() as any)?.ce as Element | undefined;
+const teleportTarget = _ce?.shadowRoot ?? '#modal-root';</pre>
+        <p>
+            In a regular Vue.js app, <code>instance.ce</code> is
+            <code>undefined</code> so the target falls back to
+            <code>#modal-root</code> — the original behavior is unchanged.
+        </p>
     </section>
 
-    <!-- ─── Fix Demonstration ────────────────────────────────────── -->
+    <!-- ─── GModal demo ──────────────────────────────────────────── -->
     <section>
-        <h2>The Fix – <code>no-teleport</code></h2>
-        <p>
-            Adding <code>no-teleport</code> (or <code>:no-teleport="true"</code>
-            in a Vue template) disables the teleport so that the modal renders
-            inline, keeping the <code>&lt;slot&gt;</code> inside the shadow DOM
-            where the slotted content can be distributed into it.
-        </p>
-        <div class="note">
-            Click the button below. The modal opens <strong>with its slotted
-            content visible</strong>.
+        <h2>GModal with slotted content</h2>
+        <div class="success">
+            Both modals below open with their slotted content fully visible —
+            no extra props needed.
         </div>
-        <button onclick="document.getElementById('fixed-modal').removeAttribute('hidden')">
-            Open Modal (fixed – with no-teleport)
+        <button onclick="document.getElementById('modal-1').removeAttribute('hidden')">
+            Open GModal
+        </button>
+        <button onclick="document.getElementById('modal-2').removeAttribute('hidden')">
+            Open GModal (large)
         </button>
 
-        <!--
-            With no-teleport the modal renders inline. The <slot /> stays inside
-            the shadow DOM and the slotted <div> is correctly distributed into it.
-        -->
-        <g-modal id="fixed-modal" label="Fixed Modal (no-teleport)" no-teleport hidden
+        <g-modal id="modal-1" label="Web Component Modal" hidden
                  onclose="this.setAttribute('hidden','')">
             <div>
-                <p>Hello sir! This slotted content is visible because
-                   <code>no-teleport</code> keeps the modal's DOM (and its
-                   <code>&lt;slot&gt;</code>) inside the shadow root.</p>
+                <p>Hello sir! This slotted content is visible because Teleport
+                   now targets the shadow root automatically.</p>
                 <ul>
                     <li>Slotted content works ✓</li>
                     <li>Close button works ✓</li>
                     <li>Escape key closes the modal ✓</li>
+                    <li>No <code>no-teleport</code> prop required ✓</li>
                 </ul>
+            </div>
+        </g-modal>
+
+        <g-modal id="modal-2" label="Large Modal" size="large" hidden
+                 onclose="this.setAttribute('hidden','')">
+            <div>
+                <p>A larger modal — size prop works as expected.</p>
+                <p>This content is slotted and renders correctly.</p>
             </div>
         </g-modal>
     </section>
 
-    <!-- ─── GAlertDialog no-teleport ─────────────────────────────── -->
+    <!-- ─── Stacking demo ────────────────────────────────────────── -->
     <section>
-        <h2>GAlertDialog with <code>no-teleport</code></h2>
-        <button onclick="document.getElementById('alert-dialog').removeAttribute('hidden')">
-            Open Alert Dialog
+        <h2>Overlay stacking (z-index)</h2>
+        <div class="info">
+            Open the overlay first, then the modal. The modal (z-index 200)
+            should appear <strong>above</strong> the overlay (z-index 199).
+            Both use the shared <code>useOverlayStack</code> global state stored
+            in <code>window._g_overlay_stack_state</code>.
+        </div>
+        <button id="overlay-btn" onclick="toggleOverlay()">Show GOverlay</button>
+        <button onclick="document.getElementById('modal-stack').removeAttribute('hidden')">
+            Open modal on top of overlay
         </button>
 
-        <g-alert-dialog id="alert-dialog" label="Confirm Action" no-teleport hidden
+        <g-overlay id="the-overlay" style="display:none"></g-overlay>
+
+        <g-modal id="modal-stack" label="Stacking Test" hidden
+                 onclose="this.setAttribute('hidden','')">
+            <div>
+                <p>This modal should appear above the dimming overlay.</p>
+                <p>useOverlayStack assigns z-index 200 to modals and 199 to overlays.</p>
+            </div>
+        </g-modal>
+
+        <script>
+            function toggleOverlay() {
+                const el = document.getElementById('the-overlay');
+                const btn = document.getElementById('overlay-btn');
+                if (el.style.display === 'none') {
+                    el.style.display = '';
+                    btn.textContent = 'Hide GOverlay';
+                } else {
+                    el.style.display = 'none';
+                    btn.textContent = 'Show GOverlay';
+                }
+            }
+        </script>
+    </section>
+
+    <!-- ─── GAlertDialog demo ────────────────────────────────────── -->
+    <section>
+        <h2>GAlertDialog with slotted content</h2>
+        <button onclick="document.getElementById('alert-1').removeAttribute('hidden')">
+            Open GAlertDialog
+        </button>
+
+        <g-alert-dialog id="alert-1" label="Confirm Action" hidden
                         oncancel="this.setAttribute('hidden','')"
                         onconfirm="this.setAttribute('hidden',''); alert('Confirmed!')">
-            <div>Are you sure you want to proceed? This slotted content is
-                 visible thanks to <code>no-teleport</code>.</div>
+            <div>
+                Are you sure you want to proceed?
+                This slotted content renders correctly without any extra props.
+            </div>
         </g-alert-dialog>
+    </section>
+
+    <!-- ─── noTeleport prop ──────────────────────────────────────── -->
+    <section>
+        <h2>The <code>no-teleport</code> prop (edge-case opt-out)</h2>
+        <p>
+            The <code>no-teleport</code> prop is still available as an escape
+            hatch for cases where even shadow-root teleport isn't appropriate.
+            When set, the modal renders fully inline (no Teleport at all).
+        </p>
+        <button onclick="document.getElementById('modal-noteleport').removeAttribute('hidden')">
+            Open modal with <code>no-teleport</code>
+        </button>
+
+        <g-modal id="modal-noteleport" label="no-teleport Modal" no-teleport hidden
+                 onclose="this.setAttribute('hidden','')">
+            <div>
+                <p>This modal uses <code>no-teleport</code> — it renders fully
+                   inline inside the shadow DOM without any Teleport at all.</p>
+                <p>Useful as an escape hatch for edge cases.</p>
+            </div>
+        </g-modal>
     </section>
 
     <!-- ─── Vue.js Usage Note ─────────────────────────────────────── -->
     <section>
         <h2>Usage in a Vue.js App</h2>
         <p>
-            In a regular Vue.js application the behavior is <strong>unchanged</strong>.
-            Teleport continues to work normally by default. The <code>no-teleport</code>
-            prop only needs to be added when using the components as Web Components
-            (custom elements) where shadow DOM prevents teleport from working
-            with slotted content.
+            Regular Vue.js app behavior is <strong>completely unchanged</strong>.
+            When not inside a custom element, <code>instance.ce</code> is
+            <code>undefined</code>, so the Teleport target falls back to
+            <code>#modal-root</code> exactly as before.
         </p>
-        <pre>&lt;!-- Vue.js app – works as before (no change needed) --&gt;
+        <pre>&lt;!-- Vue.js app – unchanged, no new props needed --&gt;
 &lt;GModal label="My Modal"&gt;
     &lt;p&gt;Content here&lt;/p&gt;
 &lt;/GModal&gt;
 
-&lt;!-- Web Component / custom element context --&gt;
-&lt;g-modal label="My Modal" no-teleport&gt;
+&lt;!-- Web Component – also works with no extra props --&gt;
+&lt;g-modal label="My Modal"&gt;
     &lt;p&gt;Content here&lt;/p&gt;
 &lt;/g-modal&gt;</pre>
     </section>
 
-    <!-- Required for non-no-teleport modals to teleport into -->
+    <!--
+        #modal-root is still needed for non-custom-element contexts.
+        In this test page the components use shadow-root teleport, but if any
+        component falls back (e.g. no shadow root detected), it targets this div.
+    -->
     <div id="modal-root"></div>
 
     <!--
-        Dev server: import from source (styles may not be injected into shadow DOM).
+        Dev server: import from source (styles not injected into shadow DOM in dev mode).
         Production: replace with the built artifact:
             <script type="module" src="/packages/grad-vue/dist/grad-vue-elements.js"></script>
     -->
