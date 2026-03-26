@@ -27,6 +27,9 @@
         "./web-components": {
             "import": "./dist/grad-vue-elements.js"
         },
+        "./web-components.css": {
+            "import": "./dist/grad-vue-elements.css"
+        },
         "./grad-vue.css": {
             "import": "./dist/grad-vue.css"
         }

@@ -15,5 +15,10 @@ export default defineConfig({
             fileName: () => "grad-vue-elements.js",
             name: "GradVueElements",
         },
+        rollupOptions: {
+            output: {
+                assetFileNames: "grad-vue-elements.[ext]",
+            },
+        },
     },
 });

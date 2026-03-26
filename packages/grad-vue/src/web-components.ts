@@ -1,6 +1,5 @@
-/// <reference types="vite/client" />
 import { defineCustomElement } from "vue";
-import globalCSS from "./css/main.css?inline";
+import "./css/main.css";
 
 import GAlertDialog from "./components/GAlertDialog.vue";
 import GAppHeader from "./components/GAppHeader.vue";
@@ -34,16 +33,6 @@ import GTextInput from "./components/GTextInput.vue";
 import GThreeWayToggle from "./components/GThreeWayToggle.vue";
 import GTreeMenu from "./components/GTreeMenu.vue";
 import GUserMenu from "./components/GUserMenu.vue";
-
-// Inject global CSS (design tokens, fonts, utility classes) into document head.
-// CSS custom properties defined here cascade into each component's shadow DOM.
-const styleId = "grad-vue-global-styles";
-if (typeof document !== "undefined" && !document.getElementById(styleId)) {
-    const style = document.createElement("style");
-    style.id = styleId;
-    style.textContent = globalCSS;
-    document.head.appendChild(style);
-}
 
 customElements.define("g-alert-dialog", defineCustomElement(GAlertDialog));
 customElements.define("g-app-header", defineCustomElement(GAppHeader));
