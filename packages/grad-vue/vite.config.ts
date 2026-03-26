@@ -5,7 +5,7 @@ import dts from 'vite-plugin-dts'
 import { resolve } from "path";
 
 export default defineConfig({
-    plugins: [vue(), dts({ exclude: ['**/custom-elements.ts'] })],
+    plugins: [vue(), dts({ exclude: ['**/grad-vue-elements.ts'] })],
     build: {
         sourcemap: true,
         lib: {

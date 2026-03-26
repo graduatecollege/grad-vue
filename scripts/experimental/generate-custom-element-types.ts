@@ -20,7 +20,7 @@ const REPO_ROOT = path.resolve(SCRIPT_DIR, '../..');
 const PACKAGE_DIR = path.join(REPO_ROOT, 'packages/grad-vue');
 const SRC_DIR = path.join(PACKAGE_DIR, 'src');
 const WEB_COMPONENTS_SRC = path.join(SRC_DIR, 'web-components.ts');
-const OUTPUT_TYPES = path.join(SRC_DIR, 'custom-elements.ts');
+const OUTPUT_TYPES = path.join(SRC_DIR, 'grad-vue-elements.ts');
 const OUTPUT_MANIFEST = path.join(PACKAGE_DIR, 'custom-elements.json');
 
 // ── Types ─────────────────────────────────────────────────────────────────────
