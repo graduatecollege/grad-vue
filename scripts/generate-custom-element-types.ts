@@ -127,6 +127,11 @@ function getJSDocText(node: ts.Node): string | undefined {
     return raw.trim() || undefined;
 }
 
+/** Escape a string for use as a literal pattern inside a RegExp. */
+function escapeRegex(s: string): string {
+    return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 /** Split a comma-separated generic parameter list, respecting angle-bracket depth. */
 function splitOnTopLevelCommas(s: string): string[] {
     const result: string[] = [];
@@ -163,7 +168,7 @@ function parseGenericSubstitutions(generic: string): Record<string, string> {
             let constraint = m[2].trim();
             // Apply already-resolved substitutions so C can reference T
             for (const [k, v] of Object.entries(subs)) {
-                constraint = constraint.replace(new RegExp(`\\b${k}\\b`, 'g'), v);
+                constraint = constraint.replace(new RegExp(`\\b${escapeRegex(k)}\\b`, 'g'), v);
             }
             subs[m[1]] = constraint;
         }
@@ -175,7 +180,7 @@ function applySubstitutions(typeStr: string, subs: Record<string, string>): stri
     const keys = Object.keys(subs).sort((a, b) => b.length - a.length);
     let result = typeStr;
     for (const key of keys) {
-        result = result.replace(new RegExp(`\\b${key}\\b`, 'g'), subs[key]);
+        result = result.replace(new RegExp(`\\b${escapeRegex(key)}\\b`, 'g'), subs[key]);
     }
     return result;
 }
@@ -198,7 +203,7 @@ const KNOWN_EXTERNAL_TYPES: Record<string, string> = {
 
 function detectNeededImports(typeStr: string): Array<{ name: string; from: string }> {
     return Object.entries(KNOWN_EXTERNAL_TYPES)
-        .filter(([name]) => new RegExp(`\\b${name}\\b`).test(typeStr))
+        .filter(([name]) => new RegExp(`\\b${escapeRegex(name)}\\b`).test(typeStr))
         .map(([name, from]) => ({ name, from }));
 }
 
