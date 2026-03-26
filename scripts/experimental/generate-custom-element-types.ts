@@ -16,7 +16,7 @@ import ts from 'typescript';
 import { parse as parseSFC } from '@vue/compiler-sfc';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
-const REPO_ROOT = path.resolve(SCRIPT_DIR, '..');
+const REPO_ROOT = path.resolve(SCRIPT_DIR, '../..');
 const PACKAGE_DIR = path.join(REPO_ROOT, 'packages/grad-vue');
 const SRC_DIR = path.join(PACKAGE_DIR, 'src');
 const WEB_COMPONENTS_SRC = path.join(SRC_DIR, 'web-components.ts');

@@ -43,7 +43,7 @@
         "custom-elements.json"
     ],
     "scripts": {
-        "build": "node --experimental-strip-types ../../scripts/generate-custom-element-types.ts && vite build && vite build --config vite.web-components.config.ts && vue-tsc --emitDeclarationOnly",
+        "build": "node --experimental-strip-types ../../scripts/experimental/generate-custom-element-types.ts && vite build && vite build --config vite.web-components.config.ts && vue-tsc --emitDeclarationOnly",
         "build:elements": "vite build --config vite.web-components.config.ts"
     },
     "dependencies": {

@@ -4,7 +4,13 @@ import vue from "@vitejs/plugin-vue";
 import { resolve } from "path";
 
 export default defineConfig({
-    plugins: [vue({ customElement: true })],
+    plugins: [
+        vue({
+            features: {
+                customElement: true,
+            },
+        }),
+    ],
     define: {
         "process.env.NODE_ENV": JSON.stringify("production"),
     },
