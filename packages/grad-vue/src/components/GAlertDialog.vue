@@ -14,6 +14,12 @@
  *
  * **Slot** `default` is used as the content of the alert, and also becomes
  * the ARIA description of the alert.
+ *
+ * **Props**:
+ *
+ * - `noTeleport`: Disable teleporting the dialog to `#modal-root`. Use this in
+ *   Web Component (custom element) contexts where the shadow DOM prevents
+ *   teleport from working correctly with slotted content.
  */
 export default {};
 </script>
@@ -41,12 +47,21 @@ type Props = {
      * @demo
      */
     buttonColor?: "primary" | "secondary" | "danger";
+    /**
+     * Disable teleporting the dialog to `#modal-root`.
+     *
+     * Use this when embedding the component as a Web Component (custom element),
+     * where the shadow DOM prevents teleport from working correctly with
+     * slotted content.
+     */
+    noTeleport?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
     label: "Confirmation",
     buttonText: "Continue",
     buttonColor: "primary",
+    noTeleport: false,
 });
 
 const emit = defineEmits(["cancel", "confirm"]);
@@ -77,7 +92,7 @@ onBeforeMount(() => {
 </script>
 
 <template>
-    <Teleport to="#modal-root">
+    <Teleport to="#modal-root" :disabled="noTeleport">
         <Transition name="g-fade" appear>
             <div
                 :id="'alertdialog-' + id"

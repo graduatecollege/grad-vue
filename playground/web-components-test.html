@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Web Components Test – no-teleport</title>
+    <style>
+        body {
+            margin: 2rem;
+            font-family: sans-serif;
+            background: #f5f5f5;
+        }
+        h1 { margin-bottom: 0.25rem; }
+        p.subtitle { color: #555; margin-top: 0; }
+        section {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        section h2 { margin-top: 0; }
+        code {
+            background: #eee;
+            border-radius: 3px;
+            padding: 0.1rem 0.4rem;
+            font-size: 0.9em;
+        }
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 0.85rem;
+        }
+        button {
+            padding: 0.5rem 1rem;
+            background: #1d58a7;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        button:hover { background: #154080; }
+        .note {
+            background: #fff8e1;
+            border-left: 4px solid #f9a825;
+            padding: 0.75rem 1rem;
+            border-radius: 0 4px 4px 0;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        #modal-root { position: relative; z-index: 0; }
+    </style>
+</head>
+<body>
+    <h1>Web Components – <code>no-teleport</code> Test</h1>
+    <p class="subtitle">
+        Demonstrates the <code>no-teleport</code> prop that fixes slotted content
+        in Shadow DOM / Web Component contexts.
+    </p>
+
+    <!-- ─── Issue Demonstration ─────────────────────────────────── -->
+    <section>
+        <h2>The Problem</h2>
+        <p>
+            Without <code>no-teleport</code>, the modal's internal DOM is
+            teleported out to <code>#modal-root</code> in the light DOM. Slotted
+            content stays inside the custom element's shadow DOM and is never
+            rendered because there is no longer a <code>&lt;slot&gt;</code>
+            inside the shadow DOM.
+        </p>
+        <div class="note">
+            Click the button below. The modal opens but shows <strong>no content</strong>
+            (only the header/close button) because the slot is orphaned.
+        </div>
+        <button onclick="document.getElementById('broken-modal').removeAttribute('hidden')">
+            Open Modal (broken – no slotted content)
+        </button>
+
+        <!--
+            Without no-teleport the internal <slot /> is teleported out to
+            #modal-root, leaving the slotted div with no parent slot to render in.
+        -->
+        <g-modal id="broken-modal" label="Broken Modal (no no-teleport)" hidden
+                 onclose="this.setAttribute('hidden','')">
+            <div>
+                <p>This content should appear inside the modal, but it won't
+                   because the slot was teleported away.</p>
+            </div>
+        </g-modal>
+    </section>
+
+    <!-- ─── Fix Demonstration ────────────────────────────────────── -->
+    <section>
+        <h2>The Fix – <code>no-teleport</code></h2>
+        <p>
+            Adding <code>no-teleport</code> (or <code>:no-teleport="true"</code>
+            in a Vue template) disables the teleport so that the modal renders
+            inline, keeping the <code>&lt;slot&gt;</code> inside the shadow DOM
+            where the slotted content can be distributed into it.
+        </p>
+        <div class="note">
+            Click the button below. The modal opens <strong>with its slotted
+            content visible</strong>.
+        </div>
+        <button onclick="document.getElementById('fixed-modal').removeAttribute('hidden')">
+            Open Modal (fixed – with no-teleport)
+        </button>
+
+        <!--
+            With no-teleport the modal renders inline. The <slot /> stays inside
+            the shadow DOM and the slotted <div> is correctly distributed into it.
+        -->
+        <g-modal id="fixed-modal" label="Fixed Modal (no-teleport)" no-teleport hidden
+                 onclose="this.setAttribute('hidden','')">
+            <div>
+                <p>Hello sir! This slotted content is visible because
+                   <code>no-teleport</code> keeps the modal's DOM (and its
+                   <code>&lt;slot&gt;</code>) inside the shadow root.</p>
+                <ul>
+                    <li>Slotted content works ✓</li>
+                    <li>Close button works ✓</li>
+                    <li>Escape key closes the modal ✓</li>
+                </ul>
+            </div>
+        </g-modal>
+    </section>
+
+    <!-- ─── GAlertDialog no-teleport ─────────────────────────────── -->
+    <section>
+        <h2>GAlertDialog with <code>no-teleport</code></h2>
+        <button onclick="document.getElementById('alert-dialog').removeAttribute('hidden')">
+            Open Alert Dialog
+        </button>
+
+        <g-alert-dialog id="alert-dialog" label="Confirm Action" no-teleport hidden
+                        oncancel="this.setAttribute('hidden','')"
+                        onconfirm="this.setAttribute('hidden',''); alert('Confirmed!')">
+            <div>Are you sure you want to proceed? This slotted content is
+                 visible thanks to <code>no-teleport</code>.</div>
+        </g-alert-dialog>
+    </section>
+
+    <!-- ─── Vue.js Usage Note ─────────────────────────────────────── -->
+    <section>
+        <h2>Usage in a Vue.js App</h2>
+        <p>
+            In a regular Vue.js application the behavior is <strong>unchanged</strong>.
+            Teleport continues to work normally by default. The <code>no-teleport</code>
+            prop only needs to be added when using the components as Web Components
+            (custom elements) where shadow DOM prevents teleport from working
+            with slotted content.
+        </p>
+        <pre>&lt;!-- Vue.js app – works as before (no change needed) --&gt;
+&lt;GModal label="My Modal"&gt;
+    &lt;p&gt;Content here&lt;/p&gt;
+&lt;/GModal&gt;
+
+&lt;!-- Web Component / custom element context --&gt;
+&lt;g-modal label="My Modal" no-teleport&gt;
+    &lt;p&gt;Content here&lt;/p&gt;
+&lt;/g-modal&gt;</pre>
+    </section>
+
+    <!-- Required for non-no-teleport modals to teleport into -->
+    <div id="modal-root"></div>
+
+    <!--
+        Dev server: import from source (styles may not be injected into shadow DOM).
+        Production: replace with the built artifact:
+            <script type="module" src="/packages/grad-vue/dist/grad-vue-elements.js"></script>
+    -->
+    <script type="module" src="/web-components-test.ts"></script>
+</body>
+</html>

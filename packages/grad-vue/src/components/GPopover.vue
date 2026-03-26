@@ -46,10 +46,19 @@ type Props = {
      * @demo
      */
     minimal?: boolean;
+    /**
+     * Disable teleporting the popover to `#modal-root`.
+     *
+     * Use this when embedding the component as a Web Component (custom element),
+     * where the shadow DOM prevents teleport from working correctly with
+     * slotted content.
+     */
+    noTeleport?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
     minimal: false,
+    noTeleport: false,
 });
 const emit = defineEmits(["show", "hide"]);
 const open = defineModel<boolean>({ default: false });
@@ -158,7 +167,7 @@ onBeforeUnmount(() => {
         <div ref="triggerRef" class="g-popover-trigger" :id="`${id}-trigger`">
             <slot name="trigger" :toggle="toggle"></slot>
         </div>
-        <Teleport to="#modal-root">
+        <Teleport to="#modal-root" :disabled="noTeleport">
             <transition name="g-popover-expand" appear>
                 <div
                     v-if="open"

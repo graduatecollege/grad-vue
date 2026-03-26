@@ -18,6 +18,9 @@
  *   specific important text to describe the modal.
  * - `hiddenLabel`: Hide label visually. It will still be used as `aria-label`.
  * - `size`: Modal size
+ * - `noTeleport`: Disable teleporting the modal to `#modal-root`. Use this in
+ *   Web Component (custom element) contexts where the shadow DOM prevents
+ *   teleport from working correctly with slotted content.
  *
  * **Slot** `default` is used as the content of the modal.
  *
@@ -78,12 +81,21 @@ type Props = {
      * @demo
      */
     classes?: string | string[];
+    /**
+     * Disable teleporting the modal to `#modal-root`.
+     *
+     * Use this when embedding the component as a Web Component (custom element),
+     * where the shadow DOM prevents teleport from working correctly with
+     * slotted content.
+     */
+    noTeleport?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
     describedby: undefined,
     hiddenLabel: false,
     size: "medium",
+    noTeleport: false,
 });
 
 const emit = defineEmits(["close"]);
@@ -122,7 +134,7 @@ const useClasses = computed(() => {
 </script>
 
 <template>
-    <Teleport to="#modal-root">
+    <Teleport to="#modal-root" :disabled="noTeleport">
         <Transition name="g-fade" appear>
             <div
                 :id="'modal-' + id"
