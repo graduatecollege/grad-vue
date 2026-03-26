@@ -5,6 +5,9 @@ import { resolve } from "path";
 
 export default defineConfig({
     plugins: [vue({ customElement: true })],
+    define: {
+        "process.env.NODE_ENV": JSON.stringify("production"),
+    },
     build: {
         sourcemap: true,
         outDir: "dist",
