@@ -28,8 +28,6 @@ export default {};
 
 <script setup lang="ts">
 import {
-    computed,
-    getCurrentInstance,
     nextTick,
     onBeforeUnmount,
     ref,
@@ -41,6 +39,7 @@ import { useOverlayStack } from "../compose/useOverlayStack.ts";
 import { useOverlayFocus } from "../compose/useOverlayFocus.ts";
 import { useOverlayEscape } from "../compose/useOverlayEscape.ts";
 import { calculatePopoverPosition } from "../compose/popoverPosition.ts";
+import { useIsCustomElement } from "../compose/useIsCustomElement.ts";
 
 type Props = {
     /**
@@ -49,12 +48,15 @@ type Props = {
      */
     minimal?: boolean;
     /**
-     * Disable teleporting the popover entirely.
+     * Disable teleporting the popover to `#modal-root`.
      *
-     * Normally not needed: when used as a Web Component the component
-     * automatically detects the shadow DOM via `instance.ce.shadowRoot`
-     * and teleports within it, keeping `<slot>` accessible and maintaining
-     * correct overlay stacking.
+     * The default behaviour teleports the popover into the shared `#modal-root`
+     * container in the light DOM. This keeps all overlays as siblings so that
+     * z-index stacking works correctly across the whole page, including when
+     * the component is used as a Web Component (custom element).
+     *
+     * Set this only when `#modal-root` is unavailable or inline rendering is
+     * explicitly preferred.
      */
     noTeleport?: boolean;
 }
@@ -72,13 +74,11 @@ const popoverRef = useTemplateRef<HTMLElement | null>("popoverRef");
 const id = useId();
 const { push, pop, isTop, zIndex } = useOverlayStack(id, true);
 
-// When rendered inside a Web Component, teleport within the shadow DOM so that
-// the native <slot> element stays accessible for slotted content projection.
-// Falls back to '#modal-root' in regular Vue app contexts.
-// We access instance.ce directly (same property useShadowRoot() uses internally)
-// to avoid a dev warning when the component is used in a regular Vue app.
-const _ce = (getCurrentInstance() as any)?.ce as Element | undefined;
-const teleportTarget: string | ShadowRoot = _ce?.shadowRoot ?? "#modal-root";
+// When compiled as a Web Component (customElement: true), Vue compiles <slot>
+// into a native <slot> element. Teleporting that element out of the shadow DOM
+// breaks slot distribution. Detect the CE context so the template can render
+// slot content via $slots.default?() directly instead.
+const isCE = useIsCustomElement();
 const { activate, deactivate } = useOverlayFocus(popoverRef, isTop, true);
 useOverlayEscape([popoverRef, triggerRef], isTop, open, hide, pop);
 
@@ -178,7 +178,7 @@ onBeforeUnmount(() => {
         <div ref="triggerRef" class="g-popover-trigger" :id="`${id}-trigger`">
             <slot name="trigger" :toggle="toggle"></slot>
         </div>
-        <Teleport :to="(teleportTarget as any)" :disabled="noTeleport">
+        <Teleport to="#modal-root" :disabled="noTeleport">
             <transition name="g-popover-expand" appear>
                 <div
                     v-if="open"
@@ -205,7 +205,8 @@ onBeforeUnmount(() => {
                         :style="arrowPosition"
                         aria-hidden="true"
                     ></div>
-                    <slot></slot>
+                    <slot v-if="!isCE"></slot>
+                    <component v-else :is="() => $slots.default?.()" />
                     <button
                         v-if="!minimal"
                         class="g-popover-close"

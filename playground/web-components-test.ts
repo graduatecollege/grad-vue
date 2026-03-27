@@ -1,14 +1,16 @@
 /**
  * Entry point for the web components test page.
  *
- * Registers a subset of grad-vue components as custom elements to demonstrate
- * that Teleport works correctly in Web Component / Shadow DOM contexts — no
- * extra props required.
+ * Registers grad-vue components as custom elements to verify that:
+ *  - Teleport to #modal-root works in web component contexts
+ *  - Slotted content renders correctly (via $slots.default?.()), and
+ *  - Overlay stacking is correct because all overlays are siblings in #modal-root.
  *
- * NOTE: When imported via the playground dev server (vite playground), styles
- * are not injected into the shadow DOM because the dev server does not use the
+ * NOTE: When served by the playground dev server (vite playground), styles are
+ * not injected into shadow DOM because the dev server does not enable the
  * customElement compiler mode.  For a production-accurate test, use the built
- * `dist/grad-vue-elements.js` file instead (run `npm run build:elements` first).
+ * artifact (run `npm run build:elements` first):
+ *     <script type="module" src="/packages/grad-vue/dist/grad-vue-elements.js"></script>
  */
 import { defineCustomElement } from "vue";
 import GModal from "../packages/grad-vue/src/components/GModal.vue";

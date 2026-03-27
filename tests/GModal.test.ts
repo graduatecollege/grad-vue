@@ -120,6 +120,21 @@ describe("GModal", () => {
                 .element(instance.getByRole("button", { name: "Focus Me" }))
                 .toHaveFocus();
         });
+        it("slotted content is visible when teleported", async () => {
+            mnt(GModal, {
+                props: {
+                    label: "Teleport Modal",
+                },
+                slots: {
+                    default: () => h("p", "Hello via teleport!"),
+                },
+                teleport: true,
+            });
+
+            await expect
+                .element(page.getByText("Hello via teleport!"))
+                .toBeInTheDocument();
+        });
     });
 
     describe("noTeleport Tests", () => {

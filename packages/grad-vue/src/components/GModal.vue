@@ -18,10 +18,9 @@
  *   specific important text to describe the modal.
  * - `hiddenLabel`: Hide label visually. It will still be used as `aria-label`.
  * - `size`: Modal size
- * - `noTeleport`: Opt out of teleporting entirely. Normally not needed: when
- *   the component is rendered inside a Web Component, it automatically detects
- *   the shadow DOM and teleports within it so that slotted content and
- *   overlay stacking both work correctly.
+ * - `noTeleport`: Disable teleporting the modal to `#modal-root`. Only needed
+ *   in unusual layouts where `#modal-root` is unavailable or inline rendering
+ *   is explicitly preferred.
  *
  * **Slot** `default` is used as the content of the modal.
  *
@@ -44,7 +43,6 @@ export default {};
 <script setup lang="ts">
 import {
     computed,
-    getCurrentInstance,
     onBeforeMount,
     onMounted,
     ref,
@@ -54,6 +52,7 @@ import {
 import { useOverlayStack } from "../compose/useOverlayStack.ts";
 import { useOverlayFocus } from "../compose/useOverlayFocus.ts";
 import { useOverlayEscape } from "../compose/useOverlayEscape.ts";
+import { useIsCustomElement } from "../compose/useIsCustomElement.ts";
 
 type Props = {
     /**
@@ -84,12 +83,15 @@ type Props = {
      */
     classes?: string | string[];
     /**
-     * Disable teleporting the modal entirely.
+     * Disable teleporting the modal to `#modal-root`.
      *
-     * Normally not needed: when used as a Web Component the component
-     * automatically detects the shadow DOM via `instance.ce.shadowRoot`
-     * and teleports within it, keeping `<slot>` accessible and maintaining
-     * correct overlay stacking.
+     * The default behaviour teleports the modal into the shared `#modal-root`
+     * container in the light DOM. This keeps all overlays as siblings so that
+     * z-index stacking works correctly across the whole page, including when
+     * the component is used as a Web Component (custom element).
+     *
+     * Set this only when `#modal-root` is unavailable or inline rendering is
+     * explicitly preferred.
      */
     noTeleport?: boolean;
 }
@@ -109,13 +111,11 @@ const open = ref(true);
 const id = useId();
 const { pop, push, isTop, zIndex } = useOverlayStack(id, true, true);
 
-// When rendered inside a Web Component, teleport within the shadow DOM so that
-// the native <slot> element stays accessible for slotted content projection.
-// Falls back to '#modal-root' in regular Vue app contexts.
-// We access instance.ce directly (same property useShadowRoot() uses internally)
-// to avoid a dev warning when the component is used in a regular Vue app.
-const _ce = (getCurrentInstance() as any)?.ce as Element | undefined;
-const teleportTarget: string | ShadowRoot = _ce?.shadowRoot ?? "#modal-root";
+// When compiled as a Web Component (customElement: true), Vue compiles <slot>
+// into a native <slot> element. Teleporting that element out of the shadow DOM
+// breaks slot distribution. Detect the CE context so the template can render
+// slot content via $slots.default?() directly instead.
+const isCE = useIsCustomElement();
 
 const { deactivate, activate } = useOverlayFocus(dialog, isTop);
 
@@ -145,7 +145,7 @@ const useClasses = computed(() => {
 </script>
 
 <template>
-    <Teleport :to="(teleportTarget as any)" :disabled="noTeleport">
+    <Teleport to="#modal-root" :disabled="noTeleport">
         <Transition name="g-fade" appear>
             <div
                 :id="'modal-' + id"
@@ -195,7 +195,8 @@ const useClasses = computed(() => {
                         :id="'modal-description-' + id"
                         class="g-modal-content"
                     >
-                        <slot />
+                        <slot v-if="!isCE" />
+                        <component v-else :is="() => $slots.default?.()" />
                     </div>
                 </div>
             </div>
