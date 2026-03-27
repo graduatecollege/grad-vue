@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>grad-vue Web Components Test</title>
     <!--
-        Note: when serving with Vite and customElement: true,
-        styles are injected into the shadow root of each custom element.
-        Global CSS (like variables) is imported via web-components.ts
+        Note: Shadow DOM is disabled (shadowRoot: false), so component styles
+        are injected into the document <head>. Global CSS (like variables) is
+        imported via web-components.ts
     -->
     <style>
         body {
@@ -53,11 +53,11 @@
             <g-button id="btn-primary" theme="primary">Primary Button</g-button>
             <g-button id="btn-accent" theme="accent" outlined="true">Accent Outlined</g-button>
             <g-button id="danger" theme="danger" size="small">Danger Modal</g-button>
-            <g-modal id="danger-modal" style="display: none;">
+            <g-modal id="danger-modal" label="Danger Modal" style="display: none;">
                 Here's a dangerous modal! It can open another modal:
                 <g-button id="another" theme="primary" size="small">Open Another Modal</g-button>
-                <g-modal id="another-modal" style="display: none;">
-                    This is another modal! It has a popover:
+                <g-modal id="another-modal" label="Another Modal" style="display: none;">
+                    This is another modal!
                 </g-modal>
             </g-modal>
         </div>
@@ -122,8 +122,18 @@
             document.getElementById('danger-modal').style.display = 'block';
         });
 
+        document.getElementById('danger-modal').addEventListener('close', () => {
+            document.getElementById('danger-modal').style.display = 'none';
+            log('Danger modal closed.');
+        });
+
         document.getElementById('another').addEventListener('click', () => {
             document.getElementById('another-modal').style.display = 'block';
+        });
+
+        document.getElementById('another-modal').addEventListener('close', () => {
+            document.getElementById('another-modal').style.display = 'none';
+            log('Another modal closed.');
         });
 
         document.getElementById('popover').addEventListener('click', () => {
