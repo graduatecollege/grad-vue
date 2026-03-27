@@ -23,8 +23,9 @@
  * </GPopover>
  * ```
  */
-export default {};
-</script>
+export default {
+    inheritAttrs: false,
+};</script>
 
 <script setup lang="ts">
 import {
@@ -59,7 +60,7 @@ const popoverRef = useTemplateRef<HTMLElement | null>("popoverRef");
 
 const id = useId();
 const { push, pop, isTop, zIndex } = useOverlayStack(id, true);
-const { activate, deactivate } = useOverlayFocus(popoverRef, isTop, true);
+const { activate, deactivate } = useOverlayFocus(popoverRef, isTop);
 useOverlayEscape([popoverRef, triggerRef], isTop, open, hide, pop);
 
 watch(open, (val) => {

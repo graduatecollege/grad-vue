@@ -1,4 +1,4 @@
-import { defineCustomElement } from "vue";
+import { defineCustomElement, type App } from "vue";
 import "./css/main.css";
 
 import GAlertDialog from "./components/GAlertDialog.vue";
@@ -34,38 +34,64 @@ import GThreeWayToggle from "./components/GThreeWayToggle.vue";
 import GTreeMenu from "./components/GTreeMenu.vue";
 import GUserMenu from "./components/GUserMenu.vue";
 
-customElements.define("g-alert-dialog", defineCustomElement(GAlertDialog));
-customElements.define("g-app-header", defineCustomElement(GAppHeader));
-customElements.define("g-button", defineCustomElement(GButton));
-customElements.define("g-clipboard", defineCustomElement(GClipboard));
-customElements.define("g-currency-input", defineCustomElement(GCurrencyInput));
-customElements.define("g-date-input", defineCustomElement(GDateInput));
-customElements.define("g-date-range-input", defineCustomElement(GDateRangeInput));
-customElements.define("g-detail-list", defineCustomElement(GDetailList));
-customElements.define("g-detail-list-item", defineCustomElement(GDetailListItem));
-customElements.define("g-email-input", defineCustomElement(GEmailInput));
-customElements.define("g-form", defineCustomElement(GForm));
-customElements.define("g-hamburger-menu", defineCustomElement(GHamburgerMenu));
+// Shadow DOM is disabled so that Teleport (used by GModal and others) works
+// correctly, CSS applies without encapsulation issues, and accessibility is
+// not hindered by the shadow DOM boundary.
+//
+// Each custom element creates its own Vue app instance. Without a unique
+// idPrefix, all instances start their useId() counter from the same value,
+// producing duplicate IDs on the page. We assign a monotonically increasing
+// prefix to each app so IDs are globally unique.
+//
+// Component scoped CSS is handled by Vite's normal CSS pipeline (injected as
+// <style> elements in dev mode, extracted to a CSS file in build mode). We do
+// NOT use `customElement: true` in the Vite plugin, so the component .styles
+// array stays empty and Vue never attempts shadow-root style injection.
+let ceInstanceCount = 0;
+
+const noShadow = {
+    shadowRoot: false as const,
+    configureApp(app: App) {
+        app.config.idPrefix = `ce-${ceInstanceCount++}`;
+    },
+};
+
 // GHistoryScroller, GSearch, GTable, and GTableBody use generic type parameters.
 // defineCustomElement's TypeScript overloads don't support generic SFC signatures,
 // so a cast is required. The runtime behavior is correct.
-customElements.define("g-history-scroller", defineCustomElement(GHistoryScroller as any));
-customElements.define("g-modal", defineCustomElement(GModal));
-customElements.define("g-overlay", defineCustomElement(GOverlay));
-customElements.define("g-popover", defineCustomElement(GPopover));
-customElements.define("g-progress", defineCustomElement(GProgress));
-customElements.define("g-search", defineCustomElement(GSearch as any));
-customElements.define("g-select", defineCustomElement(GSelect));
-customElements.define("g-select-button", defineCustomElement(GSelectButton));
-customElements.define("g-sidebar", defineCustomElement(GSidebar));
-customElements.define("g-sidebar-menu", defineCustomElement(GSidebarMenu));
-customElements.define("g-submit-button", defineCustomElement(GSubmitButton));
-customElements.define("g-table", defineCustomElement(GTable as any));
-customElements.define("g-table-body", defineCustomElement(GTableBody as any));
-customElements.define("g-table-pagination", defineCustomElement(GTablePagination));
-customElements.define("g-term-selector", defineCustomElement(GTermSelector));
-customElements.define("g-term-selector-control", defineCustomElement(GTermSelectorControl));
-customElements.define("g-text-input", defineCustomElement(GTextInput));
-customElements.define("g-three-way-toggle", defineCustomElement(GThreeWayToggle));
-customElements.define("g-tree-menu", defineCustomElement(GTreeMenu));
-customElements.define("g-user-menu", defineCustomElement(GUserMenu));
+function define(tag: string, component: any) {
+    customElements.define(tag, defineCustomElement(component, noShadow));
+}
+
+define("g-alert-dialog", GAlertDialog);
+define("g-app-header", GAppHeader);
+define("g-button", GButton);
+define("g-clipboard", GClipboard);
+define("g-currency-input", GCurrencyInput);
+define("g-date-input", GDateInput);
+define("g-date-range-input", GDateRangeInput);
+define("g-detail-list", GDetailList);
+define("g-detail-list-item", GDetailListItem);
+define("g-email-input", GEmailInput);
+define("g-form", GForm);
+define("g-hamburger-menu", GHamburgerMenu);
+define("g-history-scroller", GHistoryScroller);
+define("g-modal", GModal);
+define("g-overlay", GOverlay);
+define("g-popover", GPopover);
+define("g-progress", GProgress);
+define("g-search", GSearch);
+define("g-select", GSelect);
+define("g-select-button", GSelectButton);
+define("g-sidebar", GSidebar);
+define("g-sidebar-menu", GSidebarMenu);
+define("g-submit-button", GSubmitButton);
+define("g-table", GTable);
+define("g-table-body", GTableBody);
+define("g-table-pagination", GTablePagination);
+define("g-term-selector", GTermSelector);
+define("g-term-selector-control", GTermSelectorControl);
+define("g-text-input", GTextInput);
+define("g-three-way-toggle", GThreeWayToggle);
+define("g-tree-menu", GTreeMenu);
+define("g-user-menu", GUserMenu);

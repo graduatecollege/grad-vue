@@ -34,17 +34,19 @@
  * > to store the state of the overlay stack is added to `window._g_overlay_stack_state`
  * > when `document` is defined. That makes it only load in the client.
  */
-export default {};
-</script>
+export default {
+    inheritAttrs: false,
+};</script>
 
 <script setup lang="ts">
 import {
     computed,
+    nextTick,
     onBeforeMount,
     onMounted,
-    ref,
     useId,
     useTemplateRef,
+    watch,
 } from "vue";
 import { useOverlayStack } from "../compose/useOverlayStack.ts";
 import { useOverlayFocus } from "../compose/useOverlayFocus.ts";
@@ -78,18 +80,37 @@ type Props = {
      * @demo
      */
     classes?: string | string[];
+    /**
+     * Whether the modal is open. Defaults to `true` for backward compatibility
+     * with `v-if`-based usage. Set to `false` in web component usage to keep
+     * the element in the DOM while the modal is closed.
+     * @demo
+     */
+    open?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
     describedby: undefined,
     hiddenLabel: false,
     size: "medium",
+    open: true,
 });
 
 const emit = defineEmits(["close"]);
 
 const dialog = useTemplateRef("dialog");
-const open = ref(true);
+
+// Reactive open state derived from the prop. Defaults to true so that existing
+// `v-if`-based usage (where the component is mounted only when shown) continues
+// to work unchanged. Web component consumers can set `open="false"` to keep
+// the element in the DOM while hiding the modal.
+//
+// Note: HTML attributes are strings. Vue's custom element attribute → prop casting
+// does not convert the string "false" to boolean false, so we handle it explicitly.
+const open = computed(() => {
+    const val = props.open as unknown;
+    return val !== false && val !== 'false';
+});
 
 const id = useId();
 const { pop, push, isTop, zIndex } = useOverlayStack(id, true, true);
@@ -103,8 +124,24 @@ function close() {
 useOverlayEscape([dialog], isTop, open, close, pop);
 
 onMounted(() => {
-    push();
-    activate();
+    if (open.value) {
+        push();
+        activate();
+    }
+});
+
+// When the `open` prop changes, push/pop the overlay stack and activate/deactivate
+// focus management accordingly.
+watch(open, (val, oldVal) => {
+    if (val && !oldVal) {
+        nextTick(() => {
+            push();
+            activate();
+        });
+    } else if (!val && oldVal) {
+        pop();
+        deactivate();
+    }
 });
 
 onBeforeMount(() => {
@@ -125,6 +162,7 @@ const useClasses = computed(() => {
     <Teleport to="#modal-root">
         <Transition name="g-fade" appear>
             <div
+                v-if="open"
                 :id="'modal-' + id"
                 class="g-modal"
                 :class="useClasses"

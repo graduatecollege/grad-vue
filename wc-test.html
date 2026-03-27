@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>grad-vue Web Components Test</title>
     <!--
-        Note: when serving with Vite and customElement: true,
-        styles are injected into the shadow root of each custom element.
-        Global CSS (like variables) is imported via web-components.ts
+        Note: Shadow DOM is disabled (shadowRoot: false). Scoped component styles
+        are handled by Vite's normal CSS pipeline: injected as <style> elements
+        in dev mode and extracted to a CSS file in production builds. Global CSS
+        (variables, etc.) is imported via web-components.ts.
     -->
     <style>
         body {
@@ -53,17 +54,17 @@
             <g-button id="btn-primary" theme="primary">Primary Button</g-button>
             <g-button id="btn-accent" theme="accent" outlined="true">Accent Outlined</g-button>
             <g-button id="danger" theme="danger" size="small">Danger Modal</g-button>
-            <g-modal id="danger-modal" style="display: none;">
+            <g-modal id="danger-modal" label="Danger Modal" open="false">
                 Here's a dangerous modal! It can open another modal:
                 <g-button id="another" theme="primary" size="small">Open Another Modal</g-button>
-                <g-modal id="another-modal" style="display: none;">
-                    This is another modal! It has a popover:
+                <g-modal id="another-modal" label="Another Modal" open="false">
+                    This is another modal!
                 </g-modal>
             </g-modal>
         </div>
 
-        <g-button id="popover" theme="primary" size="small">Open Popover</g-button>
         <g-popover id="popover-content">
+            <button id="popover-btn" slot="trigger">Open Popover</button>
             Hello popover!
         </g-popover>
     </section>
@@ -119,14 +120,24 @@
         });
 
         document.getElementById('danger').addEventListener('click', () => {
-            document.getElementById('danger-modal').style.display = 'block';
+            document.getElementById('danger-modal').open = true;
+        });
+
+        document.getElementById('danger-modal').addEventListener('close', () => {
+            document.getElementById('danger-modal').open = false;
+            log('Danger modal closed.');
         });
 
         document.getElementById('another').addEventListener('click', () => {
-            document.getElementById('another-modal').style.display = 'block';
+            document.getElementById('another-modal').open = true;
         });
 
-        document.getElementById('popover').addEventListener('click', () => {
+        document.getElementById('another-modal').addEventListener('close', () => {
+            document.getElementById('another-modal').open = false;
+            log('Another modal closed.');
+        });
+
+        document.getElementById('popover-btn').addEventListener('click', () => {
             document.getElementById('popover-content').toggle();
         });
 

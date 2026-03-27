@@ -101,7 +101,7 @@ button.addEventListener('click', () => {
 ## Technical Notes
 
 - **Vue.js Runtime**: The `grad-vue-elements.js` file includes a minimal Vue runtime required to power the components. You do not need to include Vue separately.
-- **Styles**: Custom elements use Shadow DOM, and styles are encapsulated. The `grad-vue-elements.css` file contains global styles and variables needed for the components.
+- **Styles**: Custom elements render into the light DOM (Shadow DOM is disabled), so styles apply globally. The `grad-vue-elements.css` file contains all component styles and variables. Because there is no shadow DOM encapsulation, the component styles are injected into the document `<head>` automatically.
 - **Attributes vs Props**: Primitive types (strings, booleans, numbers) can be passed as attributes. For complex types like arrays or objects, you should set them as properties via JavaScript:
   ```javascript
   const table = document.querySelector('g-table');

@@ -8,6 +8,7 @@ export function useOverlayEscape(
     pop: () => void,
 ) {
     function onDocumentClick(e: MouseEvent) {
+        if (!isTop.value) return;
         for (const ref of containers) {
             if (ref.value?.contains(e.target as Node)) {
                 return;
