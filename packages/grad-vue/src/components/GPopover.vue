@@ -59,7 +59,7 @@ const popoverRef = useTemplateRef<HTMLElement | null>("popoverRef");
 
 const id = useId();
 const { push, pop, isTop, zIndex } = useOverlayStack(id, true);
-const { activate, deactivate } = useOverlayFocus(popoverRef, isTop, true);
+const { activate, deactivate } = useOverlayFocus(popoverRef, isTop);
 useOverlayEscape([popoverRef, triggerRef], isTop, open, hide, pop);
 
 watch(open, (val) => {
