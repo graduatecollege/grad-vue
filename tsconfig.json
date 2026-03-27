@@ -14,8 +14,9 @@
         "noFallthroughCasesInSwitch": true,
         "declaration": true,
         "emitDeclarationOnly": true,
-
-        "outDir": "./dist"
+        "rootDir": "./",
+        "outDir": "./dist",
+        "noUncheckedSideEffectImports": false
     },
     "include": [
         "src/**/*.ts",

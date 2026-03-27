@@ -547,12 +547,6 @@ inside the modal.
 Adding a dimming overlay behind modals can be done by placing `GOverlay`
 at the end of the page structure.
 
-> [!WARNING]
-> There are some shenanigans in the modal and overlay implementation in order
-> to support Nuxt without including it as a dependency. Specifically, the refs
-> to store the state of the overlay stack is added to `window._g_overlay_stack_state`
-> when `document` is defined. That makes it only load in the client.
-
 ### Props
 
 ```typescript

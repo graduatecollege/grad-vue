@@ -150,6 +150,11 @@ onBeforeUnmount(() => {
         resizeObserver.disconnect();
     }
 });
+defineExpose({
+    show,
+    hide,
+    toggle
+})
 
 </script>
 

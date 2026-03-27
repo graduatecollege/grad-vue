@@ -20,11 +20,11 @@
         "build:grad-vue-rte": "npm run build --workspace=@illinois-grad/grad-vue-rte",
         "build:elements": "npm run build:elements --workspace=@illinois-grad/grad-vue",
         "watch": "vue-tsc --watch & vite build --watch",
-        "preview": "vite preview",
         "test": "vitest run --browser.headless",
         "test:ui": "vitest",
         "test:run": "vitest run --browser.headless && node --experimental-strip-types scripts/transform-test-results.ts",
         "component:new": "node --experimental-strip-types scripts/bootstrap-component.ts",
+        "serve:wc": "vite . --open wc-test.html --config vite.wc-test.config.ts",
         "sync-props": "node --experimental-strip-types scripts/sync-props-config.ts",
         "generate:types": "node --experimental-strip-types scripts/experimental/generate-custom-element-types.ts"
     },
@@ -34,29 +34,30 @@
         "focus-trap": "^7",
         "vue": "^3.5"
     },
+    "overrides": {
+        "vite": "^8.0.3"
+    },
     "devDependencies": {
         "@axe-core/playwright": "^4.11.1",
         "@types/node": "^24.10.3",
-        "@vitejs/plugin-vue": "^6.0.4",
-        "@vitest/browser": "^4.0.18",
-        "@vitest/browser-playwright": "^4.0.18",
-        "@vitest/ui": "^4.0.18",
+        "@vitejs/plugin-vue": "^6.0.5",
+        "@vitest/browser-playwright": "^4.1.2",
+        "@vitest/ui": "^4.1.2",
         "axe-core": "^4.11.1",
-        "happy-dom": "^20.8.3",
-        "jsdom": "^28.1.0",
+        "happy-dom": "^20.8.8",
+        "jsdom": "^29.0.1",
         "pinia": "^3.0.4",
         "playwright": "^1.58.2",
         "prettier": "^3.8.1",
-        "typescript": "^5.9.3",
-        "vite": "^7.3.1",
+        "typescript": "^6.0.2",
+        "vite": "^8.0.3",
         "vite-plugin-dts": "^4.5.4",
-        "vite-plugin-vue-devtools": "^8.0.7",
-        "vitest": "^4.0.18",
-        "vitest-browser-vue": "^2.0.2",
-        "vue-tsc": "^3.2.5",
-        "marked": "^17.0.4",
+        "vite-plugin-vue-devtools": "^8.1.1",
+        "vitest-browser-vue": "^2.1.0",
+        "vue-tsc": "^3.2.6",
+        "marked": "^17.0.5",
         "marked-alert": "^2.1.2",
         "marked-shiki": "^1.2.1",
-        "shiki": "^4.0.1"
+        "shiki": "^4.0.2"
     }
 }

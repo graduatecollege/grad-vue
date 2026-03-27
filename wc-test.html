@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>grad-vue Web Components Test</title>
+    <!--
+        Note: when serving with Vite and customElement: true,
+        styles are injected into the shadow root of each custom element.
+        Global CSS (like variables) is imported via web-components.ts
+    -->
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+        section {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        h2 {
+            margin-top: 0;
+        }
+        .controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-top: 1rem;
+        }
+        #event-log {
+            background: #f4f4f4;
+            padding: 1rem;
+            border-radius: 4px;
+            font-family: monospace;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>grad-vue Web Components Test</h1>
+    <p>Testing the built web components version of <code>grad-vue</code>.</p>
+
+    <section>
+        <h2>Buttons</h2>
+        <div class="controls">
+            <g-button id="btn-primary" theme="primary">Primary Button</g-button>
+            <g-button id="btn-accent" theme="accent" outlined="true">Accent Outlined</g-button>
+            <g-button id="danger" theme="danger" size="small">Danger Modal</g-button>
+            <g-modal id="danger-modal" style="display: none;">
+                Here's a dangerous modal! It can open another modal:
+                <g-button id="another" theme="primary" size="small">Open Another Modal</g-button>
+                <g-modal id="another-modal" style="display: none;">
+                    This is another modal! It has a popover:
+                </g-modal>
+            </g-modal>
+        </div>
+
+        <g-button id="popover" theme="primary" size="small">Open Popover</g-button>
+        <g-popover id="popover-content">
+            Hello popover!
+        </g-popover>
+    </section>
+
+    <section>
+        <h2>Inputs</h2>
+        <g-text-input 
+            id="text-input"
+            label="User Name" 
+            name="username"
+            placeholder="Enter your name"
+            instructions="This should emit a 'change' event when you type and blur.">
+        </g-text-input>
+        <p>Current value: <span id="input-value">None</span></p>
+    </section>
+
+    <section>
+        <h2>Table</h2>
+        <p>This table's items are set via JavaScript properties.</p>
+        <g-table id="test-table" start-index="0"></g-table>
+    </section>
+
+    <section>
+        <h2>Event Log</h2>
+        <div id="event-log">Waiting for events...</div>
+    </section>
+
+    <!-- Modal root for GModal if needed -->
+    <div id="modal-root"></div>
+
+    <!-- Include the web components source -->
+    <script type="module" src="./packages/grad-vue/src/web-components.ts"></script>
+
+    <script>
+        // Log helper
+        const logEl = document.getElementById('event-log');
+        function log(msg) {
+            const entry = document.createElement('div');
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+            logEl.prepend(entry);
+        }
+
+        // Wait for custom elements to be defined if necessary, 
+        // though standard addEventListener works even before they are defined.
+        
+        // Button events
+        document.getElementById('btn-primary').addEventListener('click', () => {
+            log('Primary button clicked!');
+        });
+
+        document.getElementById('btn-accent').addEventListener('click', () => {
+            log('Accent outlined button clicked!');
+        });
+
+        document.getElementById('danger').addEventListener('click', () => {
+            document.getElementById('danger-modal').style.display = 'block';
+        });
+
+        document.getElementById('another').addEventListener('click', () => {
+            document.getElementById('another-modal').style.display = 'block';
+        });
+
+        document.getElementById('popover').addEventListener('click', () => {
+            document.getElementById('popover-content').toggle();
+        });
+
+        // Input events
+        const textInput = document.getElementById('text-input');
+        const valueDisplay = document.getElementById('input-value');
+        
+        textInput.addEventListener('change', (e) => {
+            // Vue custom elements emit events where data is in e.detail
+            const val = e.detail?.[0] || e.target.value;
+            log(`Input changed: ${val}`);
+            valueDisplay.textContent = val;
+        });
+
+        // Table properties
+        const table = document.getElementById('test-table');
+        // We might need to wait for the element to be ready to set complex properties
+        // Or we can just set them, and if it's a Vue component it should pick them up when mounted.
+        table.resultCount = 3;
+        table.data = [
+            { key: 1, name: 'John Doe', role: 'Admin' },
+            { key: 2, name: 'Jane Smith', role: 'User' },
+            { key: 3, name: 'Bob Johnson', role: 'Editor' }
+        ];
+        
+        // Define columns for the table
+        table.columns = [
+            { key: 'key', label: 'ID' },
+            { key: 'name', label: 'Name' },
+            { key: 'role', label: 'Role' }
+        ];
+
+        log('Page initialized.');
+    </script>
+</body>
+</html>
