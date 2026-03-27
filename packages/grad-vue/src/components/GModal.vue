@@ -49,6 +49,10 @@ import {
 import { useOverlayStack } from "../compose/useOverlayStack.ts";
 import { useOverlayFocus } from "../compose/useOverlayFocus.ts";
 import { useOverlayEscape } from "../compose/useOverlayEscape.ts";
+import {
+    isCustomElementMode,
+    useCustomElementAttrs,
+} from "../compose/useCustomElementAttrs.ts";
 
 type Props = {
     /**
@@ -63,7 +67,7 @@ type Props = {
     describedby?: string;
     /**
      * Hide label
-     * 
+     *
      * The label is still used as the `aria-label` for accessibility, but it will not be visible in the UI.
      * @demo
      */
@@ -84,13 +88,13 @@ type Props = {
      * consumers can set this attribute to control visibility.
      */
     open?: boolean;
-}
+};
 
 const props = withDefaults(defineProps<Props>(), {
     describedby: undefined,
     hiddenLabel: false,
     size: "medium",
-    open: true,
+    open: !isCustomElementMode(),
 });
 
 const emit = defineEmits(["close"]);
@@ -106,28 +110,28 @@ function close() {
     emit("close");
 }
 
-const openRef = computed(() => props.open);
-useOverlayEscape([dialog], isTop, openRef, close, pop);
+const isOpen = computed(() => {
+    return props.open;
+})
+
+useOverlayEscape([dialog], isTop, isOpen, close, pop);
 
 onMounted(() => {
-    if (props.open) {
+    if (isOpen.value) {
         push();
         activate();
     }
 });
 
-watch(
-    () => props.open,
-    (isOpen) => {
-        if (isOpen) {
-            push();
-            activate();
-        } else {
-            pop();
-            deactivate();
-        }
-    },
-);
+watch(isOpen, (isOpen) => {
+    if (isOpen) {
+        push();
+        activate();
+    } else {
+        pop();
+        deactivate();
+    }
+});
 
 onBeforeMount(() => {
     pop();
@@ -137,7 +141,9 @@ onBeforeMount(() => {
 const useClasses = computed(() => {
     let modalClasses = [`g-modal--${props.size}`];
     if (props.classes) {
-        modalClasses = modalClasses.concat(Array.isArray(props.classes) ? props.classes : [props.classes]);
+        modalClasses = modalClasses.concat(
+            Array.isArray(props.classes) ? props.classes : [props.classes],
+        );
     }
     return modalClasses;
 });
@@ -147,7 +153,7 @@ const useClasses = computed(() => {
     <Teleport to="#modal-root">
         <Transition name="g-fade" appear>
             <div
-                v-if="open"
+                v-if="isOpen"
                 :id="'modal-' + id"
                 class="g-modal"
                 :class="useClasses"

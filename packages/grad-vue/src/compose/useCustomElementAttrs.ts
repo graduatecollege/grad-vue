@@ -1,16 +1,22 @@
-import { computed, getCurrentInstance, useAttrs, type ComponentInternalInstance } from "vue";
+import { computed, useAttrs } from "vue";
 
 type UseCustomElementAttrsOptions = {
     omitInCustomElement?: string[];
 };
 
+export function isCustomElementMode() {
+    const globalScope = globalThis as typeof globalThis & {
+        __GRAD_VUE_IS_WEB_COMPONENTS_BUILD__?: boolean;
+    };
+    return globalScope.__GRAD_VUE_IS_WEB_COMPONENTS_BUILD__ === true;
+}
+
 export function useCustomElementAttrs(options: UseCustomElementAttrsOptions = {}) {
     const attrs = useAttrs();
-    const instance = getCurrentInstance() as (ComponentInternalInstance & {
-        ce?: unknown;
-        isCE?: boolean;
-    }) | null;
-    const isCustomElement = !!(instance?.isCE ?? instance?.ce);
+    const globalScope = globalThis as typeof globalThis & {
+        __GRAD_VUE_IS_WEB_COMPONENTS_BUILD__?: boolean;
+    };
+    const isCustomElement = globalScope.__GRAD_VUE_IS_WEB_COMPONENTS_BUILD__ === true;
     const omitInCustomElement = options.omitInCustomElement ?? [];
 
     const forwardedAttrs = computed(() => {

@@ -36,7 +36,10 @@ import GUserMenu from "./components/GUserMenu.vue";
 
 const globalScope = globalThis as typeof globalThis & {
     __GRAD_VUE_WC_APP_ID__?: number;
+    __GRAD_VUE_IS_WEB_COMPONENTS_BUILD__?: boolean;
 };
+
+globalScope.__GRAD_VUE_IS_WEB_COMPONENTS_BUILD__ = true;
 
 const ceOptions = {
     shadowRoot: false,

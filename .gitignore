@@ -33,6 +33,7 @@ coverage
 tests/__screenshots__
 .playwright-cli/
 playwright-report/
+.vitest-attachments/
 
 # Editor directories and files
 .vscode/*
