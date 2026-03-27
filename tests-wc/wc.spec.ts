@@ -4,8 +4,13 @@ test.beforeEach(async ({ page }) => {
     await page.goto("/wc-test.html");
     // Disable CSS transitions and animations for deterministic tests,
     // consistent with the setup in tests/setup.ts for vitest.
+    // We use `:root *` (specificity 0,1,0) rather than just `*` (0,0,0) so
+    // that this rule wins over scoped-CSS selectors like [data-v-xxx] which
+    // also have specificity 0,1,0. When two !important rules share the same
+    // specificity the last one in document order wins, and addStyleTag adds
+    // this rule after the component styles that were injected on page load.
     await page.addStyleTag({
-        content: "*, *::before, *::after { transition: none !important; animation: none !important; }",
+        content: ":root *, :root *::before, :root *::after { transition: none !important; animation: none !important; }",
     });
     // Wait for the web components to be defined and rendered
     await page.waitForFunction(() => customElements.get("g-modal") !== undefined);

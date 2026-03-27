@@ -42,6 +42,11 @@ import GUserMenu from "./components/GUserMenu.vue";
 // idPrefix, all instances start their useId() counter from the same value,
 // producing duplicate IDs on the page. We assign a monotonically increasing
 // prefix to each app so IDs are globally unique.
+//
+// Component scoped CSS is handled by Vite's normal CSS pipeline (injected as
+// <style> elements in dev mode, extracted to a CSS file in build mode). We do
+// NOT use `customElement: true` in the Vite plugin, so the component .styles
+// array stays empty and Vue never attempts shadow-root style injection.
 let ceInstanceCount = 0;
 
 const noShadow = {
@@ -51,27 +56,10 @@ const noShadow = {
     },
 };
 
-// Vue 3.5 skips style injection when shadowRoot is false (it only injects into
-// shadow roots). We inject each component's styles manually into document.head
-// the first time that component type is registered. Using a Set keyed on the
-// component object prevents duplicate <style> elements on the page.
-const injectedComponents = new Set<object>();
-
-function injectStyles(component: any) {
-    if (!component?.styles?.length || injectedComponents.has(component)) return;
-    injectedComponents.add(component);
-    component.styles.forEach((css: string) => {
-        const style = document.createElement("style");
-        style.textContent = css;
-        document.head.appendChild(style);
-    });
-}
-
 // GHistoryScroller, GSearch, GTable, and GTableBody use generic type parameters.
 // defineCustomElement's TypeScript overloads don't support generic SFC signatures,
 // so a cast is required. The runtime behavior is correct.
 function define(tag: string, component: any) {
-    injectStyles(component);
     customElements.define(tag, defineCustomElement(component, noShadow));
 }
 

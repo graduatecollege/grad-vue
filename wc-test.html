@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>grad-vue Web Components Test</title>
     <!--
-        Note: Shadow DOM is disabled (shadowRoot: false), so component styles
-        are injected into the document <head>. Global CSS (like variables) is
-        imported via web-components.ts
+        Note: Shadow DOM is disabled (shadowRoot: false). Scoped component styles
+        are handled by Vite's normal CSS pipeline: injected as <style> elements
+        in dev mode and extracted to a CSS file in production builds. Global CSS
+        (variables, etc.) is imported via web-components.ts.
     -->
     <style>
         body {
@@ -63,7 +64,7 @@
         </div>
 
         <g-popover id="popover-content">
-            <g-button id="popover-btn" slot="trigger" theme="primary" size="small">Open Popover</g-button>
+            <button id="popover-btn" slot="trigger">Open Popover</button>
             Hello popover!
         </g-popover>
     </section>

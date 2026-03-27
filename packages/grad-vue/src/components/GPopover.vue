@@ -23,8 +23,9 @@
  * </GPopover>
  * ```
  */
-export default {};
-</script>
+export default {
+    inheritAttrs: false,
+};</script>
 
 <script setup lang="ts">
 import {

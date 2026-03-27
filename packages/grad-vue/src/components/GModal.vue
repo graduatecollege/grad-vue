@@ -34,8 +34,9 @@
  * > to store the state of the overlay stack is added to `window._g_overlay_stack_state`
  * > when `document` is defined. That makes it only load in the client.
  */
-export default {};
-</script>
+export default {
+    inheritAttrs: false,
+};</script>
 
 <script setup lang="ts">
 import {
