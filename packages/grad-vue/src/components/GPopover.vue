@@ -3,10 +3,13 @@
  * Popover that appears next to or over a trigger element, staying visible
  * in the viewport as much as possible.
  *
- * **Slot** `trigger` must have an interactive element for which
- * the only interaction is to open the popover. The trigger element is also used
- * for `aria-labelledby`. The trigger is passed a prop `toggle` which is a function
+ * **Slot** `trigger` is optional. When provided, it should contain an
+ * interactive element for opening the popover and it is used for
+ * `aria-labelledby`. The trigger is passed a prop `toggle` which is a function
  * that toggles the popover's open state.
+ *
+ * Without a trigger slot, open the popover programmatically via `show()` or
+ * `toggle()` on the component instance / custom element.
  *
  * **Slot** `default` is the content of the popover.
  *
@@ -28,11 +31,12 @@ export default {};
 
 <script setup lang="ts">
 import {
-    getCurrentInstance,
+    computed,
     nextTick,
     onBeforeUnmount,
     ref,
     useId,
+    useSlots,
     useTemplateRef,
     watch,
     toRef,
@@ -41,6 +45,7 @@ import { useOverlayStack } from "../compose/useOverlayStack.ts";
 import { useOverlayFocus } from "../compose/useOverlayFocus.ts";
 import { useOverlayEscape } from "../compose/useOverlayEscape.ts";
 import { calculatePopoverPosition } from "../compose/popoverPosition.ts";
+import { useCustomElementAttrs } from "../compose/useCustomElementAttrs.ts";
 
 type Props = {
     /**
@@ -66,15 +71,16 @@ const open = ref(props.modelValue);
 watch(toRef(props, "modelValue"), (v) => {
     open.value = v;
 });
+const slots = useSlots();
+const hasTrigger = computed(() => !!slots.trigger);
 
 const triggerRef = useTemplateRef<HTMLElement | null>("triggerRef");
 const popoverRef = useTemplateRef<HTMLElement | null>("popoverRef");
 
 // Disable Teleport inside custom elements: scoped named slots
 // break CE slot distribution when content is teleported.
-// @ts-ignore
-const isCE = !!getCurrentInstance()?.isCE;
-const disableTeleport = isCE;
+const { isCustomElement } = useCustomElementAttrs();
+const disableTeleport = isCustomElement;
 
 const id = useId();
 const { push, pop, isTop, zIndex } = useOverlayStack(id, true);
@@ -117,14 +123,27 @@ const popoverOverlay = ref(false);
 let resizeObserver: ResizeObserver | null = null;
 
 function updatePopoverPosition() {
-    if (!triggerRef.value || !popoverRef.value) {
+    if (!popoverRef.value) {
         return;
     }
-    const triggerRect = triggerRef.value.getBoundingClientRect();
+
     // Use offsetWidth/offsetHeight for popover dimensions to avoid getting
     // scaled values during the CSS scale() enter transition.
     const popoverRect = new DOMRect(0, 0, popoverRef.value.offsetWidth, popoverRef.value.offsetHeight);
     const viewportRect = new DOMRect(0, 0, window.innerWidth, window.innerHeight);
+
+    if (!triggerRef.value) {
+        popoverPosition.value = {
+            top: Math.max((viewportRect.height - popoverRect.height) / 2, 8),
+            left: Math.max((viewportRect.width - popoverRect.width) / 2, 8),
+        };
+        popoverOverlay.value = false;
+        popoverAbove.value = false;
+        arrowPosition.value = { left: "50%" };
+        return;
+    }
+
+    const triggerRect = triggerRef.value.getBoundingClientRect();
 
     const { top, left, xOffset, placedAbove, overlay } =
         calculatePopoverPosition(triggerRect, popoverRect, viewportRect, {
@@ -182,13 +201,13 @@ defineExpose({
 
 <template>
     <div class="g-popover-wrap">
-        <div ref="triggerRef" class="g-popover-trigger" :id="`${id}-trigger`">
+        <div v-if="hasTrigger" ref="triggerRef" class="g-popover-trigger" :id="`${id}-trigger`">
             <slot name="trigger" :toggle="toggle"></slot>
         </div>
         <Teleport to="#modal-root" :disabled="disableTeleport">
             <transition name="g-popover-expand" appear>
                 <div
-                    v-if="isCE || open" v-show="open"
+                    v-if="isCustomElement || open" v-show="open"
                     ref="popoverRef"
                     :class="{
                         'g-popover': true,
@@ -198,7 +217,8 @@ defineExpose({
                     }"
                     role="dialog"
                     aria-modal="true"
-                    :aria-labelledby="`${id}-trigger`"
+                    :aria-labelledby="hasTrigger ? `${id}-trigger` : undefined"
+                    :aria-label="hasTrigger ? undefined : 'Popover'"
                     :style="{
                         top: popoverPosition.top + 'px',
                         left: popoverPosition.left + 'px',

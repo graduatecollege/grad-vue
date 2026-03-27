@@ -1,4 +1,4 @@
-import { defineCustomElement, type Component } from "vue";
+import { defineCustomElement, type App, type Component } from "vue";
 import "./css/main.css";
 
 import GAlertDialog from "./components/GAlertDialog.vue";
@@ -34,7 +34,18 @@ import GThreeWayToggle from "./components/GThreeWayToggle.vue";
 import GTreeMenu from "./components/GTreeMenu.vue";
 import GUserMenu from "./components/GUserMenu.vue";
 
-const ceOptions = { shadowRoot: false };
+const globalScope = globalThis as typeof globalThis & {
+    __GRAD_VUE_WC_APP_ID__?: number;
+};
+
+const ceOptions = {
+    shadowRoot: false,
+    configureApp(app: App) {
+        const nextId = (globalScope.__GRAD_VUE_WC_APP_ID__ ?? 0) + 1;
+        globalScope.__GRAD_VUE_WC_APP_ID__ = nextId;
+        app.config.idPrefix = `g-wc-${nextId}-`;
+    },
+};
 
 const components: [string, Component][] = [
     ["g-alert-dialog", GAlertDialog],

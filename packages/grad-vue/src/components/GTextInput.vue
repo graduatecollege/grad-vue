@@ -13,8 +13,9 @@ export default {};
 </script>
 
 <script lang="ts" setup>
-import { ref, useAttrs, useId, watch, toRef } from "vue";
+import { computed, ref, useId, watch, toRef } from "vue";
 import { useFormField } from "../compose/useFormField.ts";
+import { useCustomElementAttrs } from "../compose/useCustomElementAttrs.ts";
 import GFormErrorMessages from "./form/GFormErrorMessages.vue";
 defineOptions({
     inheritAttrs: false,
@@ -82,6 +83,15 @@ const props = withDefaults(defineProps<Props>(), {
 const model = defineModel<string | null>({ type: String });
 
 const id = useId();
+const { attrs, isCustomElement, forwardedAttrs } = useCustomElementAttrs({
+    omitInCustomElement: ["id"],
+});
+const inputId = computed(() => {
+    if (isCustomElement) {
+        return id;
+    }
+    return (attrs.id as string) || id;
+});
 
 // Use form field composable for form registration and error handling
 const { displayErrors, hasErrors } = useFormField({
@@ -166,7 +176,7 @@ function onKeydown(e: KeyboardEvent) {
     >
         <label
             v-if="props.label"
-            :for="($attrs.id as string) || id"
+            :for="inputId"
             class="g-text-input-label"
             >{{ props.label }}</label
         >
@@ -194,8 +204,8 @@ function onKeydown(e: KeyboardEvent) {
                 type="text"
                 class="g-text-input"
                 v-bind="{
-                    ...$attrs,
-                    id: ($attrs.id as string) || id,
+                    ...forwardedAttrs,
+                    id: inputId,
                     'aria-describedby':
                         $slots.instructions || instructions
                             ? 'instructions-' + id

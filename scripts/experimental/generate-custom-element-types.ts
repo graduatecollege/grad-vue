@@ -81,6 +81,41 @@ function parseWebComponentsFile(): TagEntry[] {
 
     const entries: TagEntry[] = [];
 
+    const addEntry = (tag: string, componentName: string | null) => {
+        if (!componentName || !importMap[componentName]) return;
+        entries.push({ tag, componentName, importPath: importMap[componentName] });
+    };
+
+    // Current pattern: iterate a `components` tuple array and call customElements.define.
+    // Parse that array directly so generation remains robust to registration refactors.
+    ts.forEachChild(source, (node) => {
+        if (!ts.isVariableStatement(node)) return;
+        for (const decl of node.declarationList.declarations) {
+            if (!ts.isIdentifier(decl.name) || decl.name.text !== 'components') continue;
+            if (!decl.initializer || !ts.isArrayLiteralExpression(decl.initializer)) continue;
+
+            for (const el of decl.initializer.elements) {
+                if (!ts.isArrayLiteralExpression(el) || el.elements.length < 2) continue;
+                const [tagExpr, componentExpr] = el.elements;
+                if (!ts.isStringLiteral(tagExpr)) continue;
+
+                let componentName: string | null = null;
+                if (ts.isIdentifier(componentExpr)) {
+                    componentName = componentExpr.text;
+                } else if (ts.isAsExpression(componentExpr) && ts.isIdentifier(componentExpr.expression)) {
+                    componentName = componentExpr.expression.text;
+                }
+
+                addEntry(tagExpr.text, componentName);
+            }
+        }
+    });
+
+    if (entries.length > 0) {
+        return entries;
+    }
+
+    // Backward-compatible fallback: direct customElements.define("tag", defineCustomElement(Component)).
     function visit(node: ts.Node): void {
         if (
             ts.isCallExpression(node) &&
@@ -104,9 +139,7 @@ function parseWebComponentsFile(): TagEntry[] {
                 }
             }
 
-            if (componentName && importMap[componentName]) {
-                entries.push({ tag, componentName, importPath: importMap[componentName] });
-            }
+            addEntry(tag, componentName);
         }
         ts.forEachChild(node, visit);
     }

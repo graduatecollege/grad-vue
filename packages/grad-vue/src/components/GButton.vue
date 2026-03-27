@@ -21,7 +21,12 @@ export default {};
 </script>
 
 <script setup lang="ts">
-import { computed, useAttrs } from "vue";
+import { computed } from "vue";
+import { useCustomElementAttrs } from "../compose/useCustomElementAttrs.ts";
+
+defineOptions({
+    inheritAttrs: false,
+});
 
 type Props = {
     /**
@@ -61,6 +66,10 @@ type Props = {
      * If a named slot `icon` is provided, it takes precedence over this prop.
      */
     icon?: string;
+    /**
+     * Native button type
+     */
+    type?: "button" | "submit" | "reset";
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -71,6 +80,7 @@ const props = withDefaults(defineProps<Props>(), {
     to: undefined,
     component: undefined,
     icon: undefined,
+    type: "button",
 });
 
 const slots = defineSlots<{
@@ -89,7 +99,9 @@ defineEmits([
     "mouseenter",
     "mouseleave",
 ]);
-const attrs = useAttrs();
+const { forwardedAttrs } = useCustomElementAttrs({
+    omitInCustomElement: ["id"],
+});
 
 const classes = computed(() => [
     "g-btn",
@@ -110,10 +122,10 @@ const classes = computed(() => [
 <template>
     <component
         :is="props.component ? props.component : 'button'"
-        v-bind="attrs"
+        v-bind="forwardedAttrs"
         :to="props.to"
         :class="classes"
-        :type="props.to ? undefined : 'button'"
+        :type="props.to ? undefined : props.type"
         @click="$emit('click', $event)"
         @focus="$emit('focus', $event)"
         @blur="$emit('blur', $event)"

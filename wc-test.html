@@ -63,6 +63,13 @@
             <g-button slot="trigger" id="popover" theme="primary" size="small">Open Popover</g-button>
             Hello popover!
         </g-popover>
+
+        <div class="controls">
+            <g-button id="open-programmatic-popover" theme="primary" size="small">Open Programmatic Popover</g-button>
+            <g-popover id="programmatic-popover">
+                Programmatic popover content.
+            </g-popover>
+        </div>
     </section>
 
     <section>
@@ -140,6 +147,10 @@
 
         document.getElementById('popover').addEventListener('click', () => {
             document.getElementById('popover-content').toggle();
+        });
+
+        document.getElementById('open-programmatic-popover').addEventListener('click', () => {
+            document.getElementById('programmatic-popover').show();
         });
 
         // Input events

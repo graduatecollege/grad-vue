@@ -1,6 +1,16 @@
 import { nextTick, Ref, ref, watch } from "vue";
 import { useFocusTrap } from "@vueuse/integrations/useFocusTrap";
 
+const tabbableSelector = [
+    "a[href]",
+    "button:not([disabled])",
+    "input:not([disabled])",
+    "select:not([disabled])",
+    "textarea:not([disabled])",
+    "[tabindex]:not([tabindex='-1'])",
+    "[contenteditable='true']",
+].join(",");
+
 export function useOverlayFocus(
     element: Ref<HTMLElement | null>,
     isTop: Ref<boolean>,
@@ -8,8 +18,11 @@ export function useOverlayFocus(
 ) {
     const unpausing = ref(false);
 
+    const hasTabbableNodes = () =>
+        !!element.value?.querySelector(tabbableSelector);
+
     const { activate, deactivate, pause, unpause } = useFocusTrap(element, {
-        immediate: true,
+        immediate: false,
         clickOutsideDeactivates,
         initialFocus: () => {
             if (unpausing.value) {
@@ -42,11 +55,10 @@ export function useOverlayFocus(
 
     watch(isTop, (top) => {
         if (top) {
-            // If the overlay is open immediately on mount, this can
-            // fail if we don't wait for the next tick because there are no
-            // focusable elements yet.
             nextTick(() => {
-                unpause();
+                if (hasTabbableNodes()) {
+                    unpause();
+                }
             }).catch((err) => {
                 console.error(err);
             });
@@ -55,5 +67,17 @@ export function useOverlayFocus(
         }
     });
 
-    return { activate, deactivate, pause, unpause };
+    const activateWhenReady = () => {
+        nextTick(() => {
+            requestAnimationFrame(() => {
+                if (hasTabbableNodes()) {
+                    activate();
+                }
+            });
+        }).catch((err) => {
+            console.error(err);
+        });
+    };
+
+    return { activate: activateWhenReady, deactivate, pause, unpause };
 }

@@ -157,6 +157,5 @@ button.addEventListener('click', () => {
 
 ### Known Limitations
 
-- **`useId()` collisions**: Each custom element is an independent Vue app instance, so `useId()` counters restart per element. Avoid relying on generated IDs being globally unique (e.g., for `aria-labelledby` across elements).
 - **Popover positioning**: Popovers render in-place (not teleported) in custom element mode. This works correctly with `position: fixed` but may be clipped by ancestors with `overflow: hidden`.
 - **Scoped slot props**: The trigger slot in `<g-popover>` cannot pass the `toggle` function to slotted content in CE mode. Use the exposed `toggle()` method on the element instead.
