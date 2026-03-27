@@ -39,6 +39,7 @@ import { useOverlayStack } from "../compose/useOverlayStack.ts";
 import { useOverlayFocus } from "../compose/useOverlayFocus.ts";
 import { useOverlayEscape } from "../compose/useOverlayEscape.ts";
 import { calculatePopoverPosition } from "../compose/popoverPosition.ts";
+import { useIsCustomElement } from "../compose/useIsCustomElement.ts";
 
 type Props = {
     /**
@@ -46,10 +47,23 @@ type Props = {
      * @demo
      */
     minimal?: boolean;
+    /**
+     * Disable teleporting the popover to `#modal-root`.
+     *
+     * The default behaviour teleports the popover into the shared `#modal-root`
+     * container in the light DOM. This keeps all overlays as siblings so that
+     * z-index stacking works correctly across the whole page, including when
+     * the component is used as a Web Component (custom element).
+     *
+     * Set this only when `#modal-root` is unavailable or inline rendering is
+     * explicitly preferred.
+     */
+    noTeleport?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
     minimal: false,
+    noTeleport: false,
 });
 const emit = defineEmits(["show", "hide"]);
 const open = defineModel<boolean>({ default: false });
@@ -59,6 +73,12 @@ const popoverRef = useTemplateRef<HTMLElement | null>("popoverRef");
 
 const id = useId();
 const { push, pop, isTop, zIndex } = useOverlayStack(id, true);
+
+// When compiled as a Web Component (customElement: true), Vue compiles <slot>
+// into a native <slot> element. Teleporting that element out of the shadow DOM
+// breaks slot distribution. Detect the CE context so the template can render
+// slot content via $slots.default?() directly instead.
+const isCE = useIsCustomElement();
 const { activate, deactivate } = useOverlayFocus(popoverRef, isTop, true);
 useOverlayEscape([popoverRef, triggerRef], isTop, open, hide, pop);
 
@@ -163,7 +183,7 @@ defineExpose({
         <div ref="triggerRef" class="g-popover-trigger" :id="`${id}-trigger`">
             <slot name="trigger" :toggle="toggle"></slot>
         </div>
-        <Teleport to="#modal-root">
+        <Teleport to="#modal-root" :disabled="noTeleport">
             <transition name="g-popover-expand" appear>
                 <div
                     v-if="open"
@@ -190,7 +210,8 @@ defineExpose({
                         :style="arrowPosition"
                         aria-hidden="true"
                     ></div>
-                    <slot></slot>
+                    <slot v-if="!isCE"></slot>
+                    <component v-else :is="() => $slots.default?.()" />
                     <button
                         v-if="!minimal"
                         class="g-popover-close"

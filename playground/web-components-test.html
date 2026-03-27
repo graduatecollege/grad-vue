@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Web Components Test – Teleport + Stacking</title>
+    <style>
+        body { margin: 2rem; font-family: sans-serif; background: #f5f5f5; }
+        h1 { margin-bottom: 0.25rem; }
+        p.subtitle { color: #555; margin-top: 0; }
+        section {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        section h2 { margin-top: 0; }
+        code {
+            background: #eee;
+            border-radius: 3px;
+            padding: 0.1rem 0.4rem;
+            font-size: 0.9em;
+        }
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 0.85rem;
+        }
+        button {
+            padding: 0.5rem 1rem;
+            background: #1d58a7;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 0.25rem;
+        }
+        button:hover { background: #154080; }
+        .success {
+            background: #e8f5e9;
+            border-left: 4px solid #388e3c;
+            padding: 0.75rem 1rem;
+            border-radius: 0 4px 4px 0;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        .info {
+            background: #e3f2fd;
+            border-left: 4px solid #1976d2;
+            padding: 0.75rem 1rem;
+            border-radius: 0 4px 4px 0;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>Web Components – Teleport + Overlay Stacking</h1>
+    <p class="subtitle">
+        All overlay components (<code>GModal</code>, <code>GAlertDialog</code>,
+        <code>GPopover</code>) teleport to <code>#modal-root</code> in the
+        <strong>light DOM</strong>. This keeps every overlay as a sibling in
+        one shared container, so z-index stacking works correctly across the
+        whole page — even when the components are used as custom elements.
+    </p>
+
+    <!-- ─── How it works ─────────────────────────────────────────── -->
+    <section>
+        <h2>How it works</h2>
+        <p>
+            All three components always teleport to <code>#modal-root</code> in
+            the light DOM. When used as a Web Component, slotted content would
+            break if the native <code>&lt;slot&gt;</code> element were moved
+            out of the shadow DOM.
+        </p>
+        <p>
+            The fix: instead of a native <code>&lt;slot&gt;</code> element
+            inside the teleported container, the components call
+            <code>$slots.default?.()</code> directly via a functional component.
+            Vue stores the light DOM children of <code>&lt;g-modal&gt;</code>
+            as vnodes in <code>$slots.default</code> regardless of where the
+            render happens, so the content is correctly rendered inside
+            <code>#modal-root</code>.
+        </p>
+        <pre>// Inside the teleported container (GModal / GAlertDialog / GPopover):
+// Before (broken with web components):
+//   &lt;slot /&gt;  ← becomes native &lt;slot&gt; which must stay in shadow DOM
+
+// After (works everywhere):
+//   &lt;component :is="() =&gt; $slots.default?.()" /&gt;  ← renders vnodes directly</pre>
+        <p>
+            In a regular Vue app, <code>&lt;component :is="() =&gt; $slots.default?.()"/&gt;</code>
+            is functionally equivalent to <code>&lt;slot /&gt;</code>. No API
+            change is needed for Vue consumers.
+        </p>
+    </section>
+
+    <!-- ─── GModal with slotted content ─────────────────────────── -->
+    <section>
+        <h2>GModal – slotted content in <code>#modal-root</code></h2>
+        <div class="success">
+            Click the buttons below. Slotted content is visible and the modal
+            is rendered inside <code>#modal-root</code> — no <code>no-teleport</code>
+            prop needed.
+        </div>
+        <button onclick="document.getElementById('modal-1').removeAttribute('hidden')">
+            Open GModal
+        </button>
+        <button onclick="document.getElementById('modal-2').removeAttribute('hidden')">
+            Open GModal (large)
+        </button>
+
+        <g-modal id="modal-1" label="Web Component Modal" hidden
+                 onclose="this.setAttribute('hidden','')">
+            <div>
+                <p>This slotted content is visible even though the modal is
+                   teleported to <code>#modal-root</code> in the light DOM.</p>
+                <ul>
+                    <li>Slotted content works ✓</li>
+                    <li>Teleports to <code>#modal-root</code> ✓</li>
+                    <li>Close button works ✓</li>
+                    <li>Escape key closes the modal ✓</li>
+                </ul>
+            </div>
+        </g-modal>
+
+        <g-modal id="modal-2" label="Large Modal" size="large" hidden
+                 onclose="this.setAttribute('hidden','')">
+            <div>
+                <p>A larger modal with slotted content — size prop works as expected.</p>
+            </div>
+        </g-modal>
+    </section>
+
+    <!-- ─── Stacking demo ────────────────────────────────────────── -->
+    <section>
+        <h2>Overlay stacking (z-index)</h2>
+        <div class="info">
+            Both modals are rendered as siblings inside <code>#modal-root</code>
+            in the light DOM. The shared <code>useOverlayStack</code> global
+            state assigns correct z-indexes: 200 for the first modal, 201 for
+            the second. Open them in order to see the second stacked above the first.
+        </div>
+        <button onclick="document.getElementById('modal-stack-1').removeAttribute('hidden')">
+            Open first modal
+        </button>
+        <button onclick="document.getElementById('modal-stack-2').removeAttribute('hidden')">
+            Open second modal (stacks on top)
+        </button>
+
+        <g-modal id="modal-stack-1" label="First Modal (z-index: 200)" hidden
+                 onclose="this.setAttribute('hidden','')">
+            <div>
+                <p>I am the first modal. My z-index is 200.</p>
+                <button onclick="document.getElementById('modal-stack-2').removeAttribute('hidden')">
+                    Open second modal on top of me
+                </button>
+            </div>
+        </g-modal>
+
+        <g-modal id="modal-stack-2" label="Second Modal (z-index: 201)" hidden
+                 onclose="this.setAttribute('hidden','')">
+            <div>
+                <p>I am the second modal. My z-index is 201.</p>
+                <p>I appear above the first modal because both are siblings
+                   in the same <code>#modal-root</code> container.</p>
+            </div>
+        </g-modal>
+    </section>
+
+    <!-- ─── GAlertDialog demo ────────────────────────────────────── -->
+    <section>
+        <h2>GAlertDialog with slotted content</h2>
+        <button onclick="document.getElementById('alert-1').removeAttribute('hidden')">
+            Open GAlertDialog
+        </button>
+
+        <g-alert-dialog id="alert-1" label="Confirm Action" hidden
+                        oncancel="this.setAttribute('hidden','')"
+                        onconfirm="this.setAttribute('hidden',''); alert('Confirmed!')">
+            <div>
+                Are you sure you want to proceed?
+                This slotted content renders correctly without any extra props.
+            </div>
+        </g-alert-dialog>
+    </section>
+
+    <!-- ─── noTeleport opt-out ───────────────────────────────────── -->
+    <section>
+        <h2>The <code>no-teleport</code> prop (escape hatch)</h2>
+        <p>
+            If <code>#modal-root</code> is unavailable or you explicitly want
+            inline rendering, set <code>no-teleport</code>. The component
+            renders inline (inside the shadow DOM). Note that when components
+            are not co-located in <code>#modal-root</code>, overlay stacking
+            between different web components depends on the host elements not
+            creating stacking contexts.
+        </p>
+        <button onclick="document.getElementById('modal-noteleport').removeAttribute('hidden')">
+            Open modal with <code>no-teleport</code>
+        </button>
+
+        <g-modal id="modal-noteleport" label="Inline Modal (no-teleport)" no-teleport hidden
+                 onclose="this.setAttribute('hidden','')">
+            <div>
+                <p>This modal uses <code>no-teleport</code>. It renders inline
+                   inside the shadow DOM — slotted content still works via
+                   <code>$slots.default?.()</code>.</p>
+            </div>
+        </g-modal>
+    </section>
+
+    <!-- ─── Vue.js app note ─────────────────────────────────────── -->
+    <section>
+        <h2>Usage in a regular Vue.js app</h2>
+        <p>
+            Behavior is <strong>completely unchanged</strong>. In a regular Vue
+            app, <code>&lt;component :is="() =&gt; $slots.default?.()"/&gt;</code>
+            is equivalent to <code>&lt;slot /&gt;</code>. No API changes needed.
+        </p>
+        <pre>&lt;!-- Vue.js app – unchanged --&gt;
+&lt;GModal label="My Modal"&gt;
+    &lt;p&gt;Content here&lt;/p&gt;
+&lt;/GModal&gt;
+
+&lt;!-- Web Component – now works without extra props --&gt;
+&lt;g-modal label="My Modal"&gt;
+    &lt;p&gt;Content here&lt;/p&gt;
+&lt;/g-modal&gt;</pre>
+    </section>
+
+    <!--
+        #modal-root is required — all overlays teleport here.
+        Place it near the end of the page, outside any transformed elements.
+    -->
+    <div id="modal-root"></div>
+
+    <!--
+        Dev server: import from source.
+        Production: use the built artifact:
+            <script type="module" src="/packages/grad-vue/dist/grad-vue-elements.js"></script>
+    -->
+    <script type="module" src="/web-components-test.ts"></script>
+</body>
+</html>

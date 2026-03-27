@@ -18,6 +18,9 @@
  *   specific important text to describe the modal.
  * - `hiddenLabel`: Hide label visually. It will still be used as `aria-label`.
  * - `size`: Modal size
+ * - `noTeleport`: Disable teleporting the modal to `#modal-root`. Only needed
+ *   in unusual layouts where `#modal-root` is unavailable or inline rendering
+ *   is explicitly preferred.
  *
  * **Slot** `default` is used as the content of the modal.
  *
@@ -49,6 +52,7 @@ import {
 import { useOverlayStack } from "../compose/useOverlayStack.ts";
 import { useOverlayFocus } from "../compose/useOverlayFocus.ts";
 import { useOverlayEscape } from "../compose/useOverlayEscape.ts";
+import { useIsCustomElement } from "../compose/useIsCustomElement.ts";
 
 type Props = {
     /**
@@ -78,12 +82,25 @@ type Props = {
      * @demo
      */
     classes?: string | string[];
+    /**
+     * Disable teleporting the modal to `#modal-root`.
+     *
+     * The default behaviour teleports the modal into the shared `#modal-root`
+     * container in the light DOM. This keeps all overlays as siblings so that
+     * z-index stacking works correctly across the whole page, including when
+     * the component is used as a Web Component (custom element).
+     *
+     * Set this only when `#modal-root` is unavailable or inline rendering is
+     * explicitly preferred.
+     */
+    noTeleport?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
     describedby: undefined,
     hiddenLabel: false,
     size: "medium",
+    noTeleport: false,
 });
 
 const emit = defineEmits(["close"]);
@@ -93,6 +110,12 @@ const open = ref(true);
 
 const id = useId();
 const { pop, push, isTop, zIndex } = useOverlayStack(id, true, true);
+
+// When compiled as a Web Component (customElement: true), Vue compiles <slot>
+// into a native <slot> element. Teleporting that element out of the shadow DOM
+// breaks slot distribution. Detect the CE context so the template can render
+// slot content via $slots.default?() directly instead.
+const isCE = useIsCustomElement();
 
 const { deactivate, activate } = useOverlayFocus(dialog, isTop);
 
@@ -122,7 +145,7 @@ const useClasses = computed(() => {
 </script>
 
 <template>
-    <Teleport to="#modal-root">
+    <Teleport to="#modal-root" :disabled="noTeleport">
         <Transition name="g-fade" appear>
             <div
                 :id="'modal-' + id"
@@ -172,7 +195,8 @@ const useClasses = computed(() => {
                         :id="'modal-description-' + id"
                         class="g-modal-content"
                     >
-                        <slot />
+                        <slot v-if="!isCE" />
+                        <component v-else :is="() => $slots.default?.()" />
                     </div>
                 </div>
             </div>

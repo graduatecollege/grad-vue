@@ -14,6 +14,12 @@
  *
  * **Slot** `default` is used as the content of the alert, and also becomes
  * the ARIA description of the alert.
+ *
+ * **Props**:
+ *
+ * - `noTeleport`: Disable teleporting the dialog to `#modal-root`. Only needed
+ *   in unusual layouts where `#modal-root` is unavailable or inline rendering
+ *   is explicitly preferred.
  */
 export default {};
 </script>
@@ -23,6 +29,7 @@ import { onBeforeMount, onMounted, ref, useId } from "vue";
 import { useOverlayStack } from "../compose/useOverlayStack.ts";
 import { useOverlayFocus } from "../compose/useOverlayFocus.ts";
 import { useOverlayEscape } from "../compose/useOverlayEscape.ts";
+import { useIsCustomElement } from "../compose/useIsCustomElement.ts";
 import GButton from "./GButton.vue";
 
 type Props = {
@@ -41,12 +48,25 @@ type Props = {
      * @demo
      */
     buttonColor?: "primary" | "secondary" | "danger";
+    /**
+     * Disable teleporting the dialog to `#modal-root`.
+     *
+     * The default behaviour teleports the dialog into the shared `#modal-root`
+     * container in the light DOM. This keeps all overlays as siblings so that
+     * z-index stacking works correctly across the whole page, including when
+     * the component is used as a Web Component (custom element).
+     *
+     * Set this only when `#modal-root` is unavailable or inline rendering is
+     * explicitly preferred.
+     */
+    noTeleport?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
     label: "Confirmation",
     buttonText: "Continue",
     buttonColor: "primary",
+    noTeleport: false,
 });
 
 const emit = defineEmits(["cancel", "confirm"]);
@@ -56,6 +76,12 @@ const open = ref(true);
 
 const id = useId();
 const { pop, push, isTop, zIndex } = useOverlayStack(id, true, true);
+
+// When compiled as a Web Component (customElement: true), Vue compiles <slot>
+// into a native <slot> element. Teleporting that element out of the shadow DOM
+// breaks slot distribution. Detect the CE context so the template can render
+// slot content via $slots.default?() directly instead.
+const isCE = useIsCustomElement();
 
 const { deactivate, activate } = useOverlayFocus(dialog, isTop);
 
@@ -77,7 +103,7 @@ onBeforeMount(() => {
 </script>
 
 <template>
-    <Teleport to="#modal-root">
+    <Teleport to="#modal-root" :disabled="noTeleport">
         <Transition name="g-fade" appear>
             <div
                 :id="'alertdialog-' + id"
@@ -100,7 +126,8 @@ onBeforeMount(() => {
                         :id="'alertdialog-description-' + id"
                         class="g-alertdialog-content"
                     >
-                        <slot />
+                        <slot v-if="!isCE" />
+                        <component v-else :is="() => $slots.default?.()" />
                     </div>
                     <div class="g-alertdialog-actions">
                         <GButton outlined @click="emit('cancel')"
