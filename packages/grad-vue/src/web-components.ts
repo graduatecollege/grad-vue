@@ -1,4 +1,4 @@
-import { defineCustomElement } from "vue";
+import { defineCustomElement, type Component } from "vue";
 import "./css/main.css";
 
 import GAlertDialog from "./components/GAlertDialog.vue";
@@ -34,38 +34,71 @@ import GThreeWayToggle from "./components/GThreeWayToggle.vue";
 import GTreeMenu from "./components/GTreeMenu.vue";
 import GUserMenu from "./components/GUserMenu.vue";
 
-customElements.define("g-alert-dialog", defineCustomElement(GAlertDialog));
-customElements.define("g-app-header", defineCustomElement(GAppHeader));
-customElements.define("g-button", defineCustomElement(GButton));
-customElements.define("g-clipboard", defineCustomElement(GClipboard));
-customElements.define("g-currency-input", defineCustomElement(GCurrencyInput));
-customElements.define("g-date-input", defineCustomElement(GDateInput));
-customElements.define("g-date-range-input", defineCustomElement(GDateRangeInput));
-customElements.define("g-detail-list", defineCustomElement(GDetailList));
-customElements.define("g-detail-list-item", defineCustomElement(GDetailListItem));
-customElements.define("g-email-input", defineCustomElement(GEmailInput));
-customElements.define("g-form", defineCustomElement(GForm));
-customElements.define("g-hamburger-menu", defineCustomElement(GHamburgerMenu));
-// GHistoryScroller, GSearch, GTable, and GTableBody use generic type parameters.
-// defineCustomElement's TypeScript overloads don't support generic SFC signatures,
-// so a cast is required. The runtime behavior is correct.
-customElements.define("g-history-scroller", defineCustomElement(GHistoryScroller as any));
-customElements.define("g-modal", defineCustomElement(GModal));
-customElements.define("g-overlay", defineCustomElement(GOverlay));
-customElements.define("g-popover", defineCustomElement(GPopover));
-customElements.define("g-progress", defineCustomElement(GProgress));
-customElements.define("g-search", defineCustomElement(GSearch as any));
-customElements.define("g-select", defineCustomElement(GSelect));
-customElements.define("g-select-button", defineCustomElement(GSelectButton));
-customElements.define("g-sidebar", defineCustomElement(GSidebar));
-customElements.define("g-sidebar-menu", defineCustomElement(GSidebarMenu));
-customElements.define("g-submit-button", defineCustomElement(GSubmitButton));
-customElements.define("g-table", defineCustomElement(GTable as any));
-customElements.define("g-table-body", defineCustomElement(GTableBody as any));
-customElements.define("g-table-pagination", defineCustomElement(GTablePagination));
-customElements.define("g-term-selector", defineCustomElement(GTermSelector));
-customElements.define("g-term-selector-control", defineCustomElement(GTermSelectorControl));
-customElements.define("g-text-input", defineCustomElement(GTextInput));
-customElements.define("g-three-way-toggle", defineCustomElement(GThreeWayToggle));
-customElements.define("g-tree-menu", defineCustomElement(GTreeMenu));
-customElements.define("g-user-menu", defineCustomElement(GUserMenu));
+const ceOptions = { shadowRoot: false };
+
+const components: [string, Component][] = [
+    ["g-alert-dialog", GAlertDialog],
+    ["g-app-header", GAppHeader],
+    ["g-button", GButton],
+    ["g-clipboard", GClipboard],
+    ["g-currency-input", GCurrencyInput],
+    ["g-date-input", GDateInput],
+    ["g-date-range-input", GDateRangeInput],
+    ["g-detail-list", GDetailList],
+    ["g-detail-list-item", GDetailListItem],
+    ["g-email-input", GEmailInput],
+    ["g-form", GForm],
+    ["g-hamburger-menu", GHamburgerMenu],
+    // GHistoryScroller, GSearch, GTable, and GTableBody use generic type parameters.
+    // defineCustomElement's TypeScript overloads don't support generic SFC signatures,
+    // so a cast is required. The runtime behavior is correct.
+    ["g-history-scroller", GHistoryScroller as any],
+    ["g-modal", GModal],
+    ["g-overlay", GOverlay],
+    ["g-popover", GPopover],
+    ["g-progress", GProgress],
+    ["g-search", GSearch as any],
+    ["g-select", GSelect],
+    ["g-select-button", GSelectButton],
+    ["g-sidebar", GSidebar],
+    ["g-sidebar-menu", GSidebarMenu],
+    ["g-submit-button", GSubmitButton],
+    ["g-table", GTable as any],
+    ["g-table-body", GTableBody as any],
+    ["g-table-pagination", GTablePagination],
+    ["g-term-selector", GTermSelector],
+    ["g-term-selector-control", GTermSelectorControl],
+    ["g-text-input", GTextInput],
+    ["g-three-way-toggle", GThreeWayToggle],
+    ["g-tree-menu", GTreeMenu],
+    ["g-user-menu", GUserMenu],
+];
+
+const allStyles: string[] = [];
+
+function collectStyles(comp: any) {
+    const def = comp.__vccOpts || comp;
+    if (def.styles) {
+        allStyles.push(...def.styles);
+    }
+    // Recurse into sub-components so their styles are also collected.
+    const children = def.components;
+    if (children) {
+        for (const child of Object.values(children)) {
+            collectStyles(child);
+        }
+    }
+}
+
+for (const [tagName, comp] of components) {
+    collectStyles(comp);
+    const ce = defineCustomElement(comp as any, ceOptions);
+    customElements.define(tagName, ce);
+}
+
+if (allStyles.length > 0 && typeof document !== "undefined") {
+    const style = document.createElement("style");
+    style.setAttribute("data-grad-vue-elements", "");
+    style.textContent = allStyles.join("\n");
+    document.head.appendChild(style);
+}

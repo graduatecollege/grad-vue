@@ -42,9 +42,9 @@ import {
     computed,
     onBeforeMount,
     onMounted,
-    ref,
     useId,
     useTemplateRef,
+    watch,
 } from "vue";
 import { useOverlayStack } from "../compose/useOverlayStack.ts";
 import { useOverlayFocus } from "../compose/useOverlayFocus.ts";
@@ -78,18 +78,24 @@ type Props = {
      * @demo
      */
     classes?: string | string[];
+    /**
+     * Whether the modal is open. Defaults to true for backward
+     * compatibility with Vue's `v-if` pattern. Web component
+     * consumers can set this attribute to control visibility.
+     */
+    open?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
     describedby: undefined,
     hiddenLabel: false,
     size: "medium",
+    open: true,
 });
 
 const emit = defineEmits(["close"]);
 
 const dialog = useTemplateRef("dialog");
-const open = ref(true);
 
 const id = useId();
 const { pop, push, isTop, zIndex } = useOverlayStack(id, true, true);
@@ -100,12 +106,28 @@ function close() {
     emit("close");
 }
 
-useOverlayEscape([dialog], isTop, open, close, pop);
+const openRef = computed(() => props.open);
+useOverlayEscape([dialog], isTop, openRef, close, pop);
 
 onMounted(() => {
-    push();
-    activate();
+    if (props.open) {
+        push();
+        activate();
+    }
 });
+
+watch(
+    () => props.open,
+    (isOpen) => {
+        if (isOpen) {
+            push();
+            activate();
+        } else {
+            pop();
+            deactivate();
+        }
+    },
+);
 
 onBeforeMount(() => {
     pop();
@@ -125,6 +147,7 @@ const useClasses = computed(() => {
     <Teleport to="#modal-root">
         <Transition name="g-fade" appear>
             <div
+                v-if="open"
                 :id="'modal-' + id"
                 class="g-modal"
                 :class="useClasses"

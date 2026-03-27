@@ -28,12 +28,14 @@ export default {};
 
 <script setup lang="ts">
 import {
+    getCurrentInstance,
     nextTick,
     onBeforeUnmount,
     ref,
     useId,
     useTemplateRef,
     watch,
+    toRef,
 } from "vue";
 import { useOverlayStack } from "../compose/useOverlayStack.ts";
 import { useOverlayFocus } from "../compose/useOverlayFocus.ts";
@@ -46,16 +48,33 @@ type Props = {
      * @demo
      */
     minimal?: boolean;
+    /**
+     * v-model binding for the open state. Also works as a plain
+     * prop/attribute in custom-element mode where `defineModel`
+     * would revert local state.
+     */
+    modelValue?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
     minimal: false,
+    modelValue: false,
 });
-const emit = defineEmits(["show", "hide"]);
-const open = defineModel<boolean>({ default: false });
+const emit = defineEmits(["show", "hide", "update:modelValue"]);
+
+const open = ref(props.modelValue);
+watch(toRef(props, "modelValue"), (v) => {
+    open.value = v;
+});
 
 const triggerRef = useTemplateRef<HTMLElement | null>("triggerRef");
 const popoverRef = useTemplateRef<HTMLElement | null>("popoverRef");
+
+// Disable Teleport inside custom elements: scoped named slots
+// break CE slot distribution when content is teleported.
+// @ts-ignore
+const isCE = !!getCurrentInstance()?.isCE;
+const disableTeleport = isCE;
 
 const id = useId();
 const { push, pop, isTop, zIndex } = useOverlayStack(id, true);
@@ -78,14 +97,17 @@ watch(open, (val) => {
 
 function show() {
     open.value = true;
+    emit("update:modelValue", true);
 }
 
 function hide() {
     open.value = false;
+    emit("update:modelValue", false);
 }
 
 function toggle() {
     open.value = !open.value;
+    emit("update:modelValue", open.value);
 }
 
 const popoverPosition = ref<Record<string, any>>({ top: 0, left: 0 });
@@ -163,10 +185,10 @@ defineExpose({
         <div ref="triggerRef" class="g-popover-trigger" :id="`${id}-trigger`">
             <slot name="trigger" :toggle="toggle"></slot>
         </div>
-        <Teleport to="#modal-root">
+        <Teleport to="#modal-root" :disabled="disableTeleport">
             <transition name="g-popover-expand" appear>
                 <div
-                    v-if="open"
+                    v-if="isCE || open" v-show="open"
                     ref="popoverRef"
                     :class="{
                         'g-popover': true,

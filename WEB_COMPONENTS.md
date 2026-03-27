@@ -81,6 +81,53 @@ Form components like `g-text-input` work similarly.
 </g-text-input>
 ```
 
+### Modals
+
+Modals require a `<div id="modal-root"></div>` somewhere on your page (content is teleported there for correct stacking). Control visibility with the `open` property:
+
+```html
+<g-modal id="my-modal" label="Confirm Action">
+  <p>Are you sure?</p>
+</g-modal>
+<div id="modal-root"></div>
+
+<script>
+  const modal = document.getElementById('my-modal');
+
+  // Modals default to open, so close them on init
+  modal.open = false;
+
+  // Open the modal
+  document.getElementById('open-btn').addEventListener('click', () => {
+    modal.open = true;
+  });
+
+  // Listen for the close event (fired by the built-in close button or Escape key)
+  modal.addEventListener('close', () => {
+    modal.open = false;
+  });
+</script>
+```
+
+Multiple modals should be siblings, not nested, and each needs its own `open` management.
+
+### Popovers
+
+Place the trigger button inside the popover element using `slot="trigger"`. Toggle visibility with the exposed `toggle()`, `show()`, and `hide()` methods:
+
+```html
+<g-popover id="my-popover">
+  <button slot="trigger" id="pop-btn">Info</button>
+  <p>Here is some helpful information.</p>
+</g-popover>
+
+<script>
+  document.getElementById('pop-btn').addEventListener('click', () => {
+    document.getElementById('my-popover').toggle();
+  });
+</script>
+```
+
 ### Handling Events
 
 Vue-built custom elements emit standard DOM events. For custom events defined in the components (like `change` in `g-text-input`), you can listen for them using `addEventListener`:
@@ -101,9 +148,15 @@ button.addEventListener('click', () => {
 ## Technical Notes
 
 - **Vue.js Runtime**: The `grad-vue-elements.js` file includes a minimal Vue runtime required to power the components. You do not need to include Vue separately.
-- **Styles**: Custom elements use Shadow DOM, and styles are encapsulated. The `grad-vue-elements.css` file contains global styles and variables needed for the components.
+- **No Shadow DOM**: Custom elements render without Shadow DOM so that component CSS works naturally with the rest of the page. Component styles are collected and injected into a `<style data-grad-vue-elements>` tag in the document head. The `grad-vue-elements.css` file contains global styles and CSS custom properties (variables) used by the components.
 - **Attributes vs Props**: Primitive types (strings, booleans, numbers) can be passed as attributes. For complex types like arrays or objects, you should set them as properties via JavaScript:
   ```javascript
   const table = document.querySelector('g-table');
   table.items = [ { id: 1, name: 'Item 1' }, { id: 2, name: 'Item 2' } ];
   ```
+
+### Known Limitations
+
+- **`useId()` collisions**: Each custom element is an independent Vue app instance, so `useId()` counters restart per element. Avoid relying on generated IDs being globally unique (e.g., for `aria-labelledby` across elements).
+- **Popover positioning**: Popovers render in-place (not teleported) in custom element mode. This works correctly with `position: fixed` but may be clipped by ancestors with `overflow: hidden`.
+- **Scoped slot props**: The trigger slot in `<g-popover>` cannot pass the `toggle` function to slotted content in CE mode. Use the exposed `toggle()` method on the element instead.
