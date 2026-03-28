@@ -32,7 +32,9 @@ import GTermSelector from "./components/GTermSelector.vue";
 import GTermSelectorControl from "./components/term/GTermSelectorControl.vue";
 import GTextInput from "./components/GTextInput.vue";
 import GThreeWayToggle from "./components/GThreeWayToggle.vue";
+import GFormErrorMessages from "./components/form/GFormErrorMessages.vue";
 import GTreeMenu from "./components/GTreeMenu.vue";
+import GTreeMenuList from "./components/tree-menu/GTreeMenuList.vue";
 import GUserMenu from "./components/GUserMenu.vue";
 
 const globalScope = globalThis as typeof globalThis & {
@@ -64,23 +66,20 @@ const components: [string, Component][] = [
     ["g-email-input", GEmailInput],
     ["g-form", GForm],
     ["g-hamburger-menu", GHamburgerMenu],
-    // GHistoryScroller, GSearch, GTable, and GTableBody use generic type parameters.
-    // defineCustomElement's TypeScript overloads don't support generic SFC signatures,
-    // so a cast is required. The runtime behavior is correct.
-    ["g-history-scroller", GHistoryScroller as any],
+    ["g-history-scroller", GHistoryScroller],
     ["g-modal", GModal],
     ["g-overlay", GOverlay],
     ["g-popover", GPopover],
     ["g-tooltip", GTooltip],
     ["g-progress", GProgress],
-    ["g-search", GSearch as any],
+    ["g-search", GSearch],
     ["g-select", GSelect],
     ["g-select-button", GSelectButton],
     ["g-sidebar", GSidebar],
     ["g-sidebar-menu", GSidebarMenu],
     ["g-submit-button", GSubmitButton],
-    ["g-table", GTable as any],
-    ["g-table-body", GTableBody as any],
+    ["g-table", GTable],
+    ["g-table-body", GTableBody],
     ["g-table-pagination", GTablePagination],
     ["g-term-selector", GTermSelector],
     ["g-term-selector-control", GTermSelectorControl],
@@ -90,18 +89,23 @@ const components: [string, Component][] = [
     ["g-user-menu", GUserMenu],
 ];
 
+const internalComponents: Component[] = [
+    GFormErrorMessages,
+    GTreeMenuList,
+];
+
 const allStyles: string[] = [];
+const seenStyles = new Set<string>();
 
 function collectStyles(comp: any) {
     const def = comp.__vccOpts || comp;
     if (def.styles) {
-        allStyles.push(...def.styles);
-    }
-    // Recurse into sub-components so their styles are also collected.
-    const children = def.components;
-    if (children) {
-        for (const child of Object.values(children)) {
-            collectStyles(child);
+        for (const styleText of def.styles) {
+            if (seenStyles.has(styleText)) {
+                continue;
+            }
+            seenStyles.add(styleText);
+            allStyles.push(styleText);
         }
     }
 }
@@ -110,6 +114,10 @@ for (const [tagName, comp] of components) {
     collectStyles(comp);
     const ce = defineCustomElement(comp as any, ceOptions);
     customElements.define(tagName, ce);
+}
+
+for (const comp of internalComponents) {
+    collectStyles(comp);
 }
 
 if (allStyles.length > 0 && typeof document !== "undefined") {

@@ -44,7 +44,9 @@
     <h1>grad-vue Web Components Test</h1>
     <p>Testing the built web components version of <code>grad-vue</code>.</p>
 
-    <g-sidebar></g-sidebar>
+    <g-sidebar>
+        <g-tree-menu id="sidebar-tree" title="Navigation" theme="dark"></g-tree-menu>
+    </g-sidebar>
     <section>
         <h2>Buttons</h2>
         <div class="controls">
@@ -115,6 +117,53 @@
         // Wait for custom elements to be defined if necessary, 
         // though standard addEventListener works even before they are defined.
         
+        let dangerModal = null;
+        let anotherModal = null;
+
+        function openAnotherModal() {
+            if (anotherModal) {
+                return;
+            }
+
+            const modal = document.createElement('g-modal');
+            modal.setAttribute('label', 'Another');
+            modal.innerHTML = '<p>This is another modal!</p>';
+
+            modal.addEventListener('close', () => {
+                anotherModal = null;
+                modal.remove();
+            }, { once: true });
+
+            anotherModal = modal;
+            document.body.appendChild(modal);
+        }
+
+        function openDangerModal() {
+            if (dangerModal) {
+                return;
+            }
+
+            const modal = document.createElement('g-modal');
+            modal.setAttribute('label', 'Danger');
+            modal.innerHTML = `
+                <p>Here's a dangerous modal!</p>
+                <g-button id="another" theme="primary" size="small">Open Another Modal</g-button>
+            `;
+
+            modal.addEventListener('close', () => {
+                if (anotherModal) {
+                    anotherModal.remove();
+                    anotherModal = null;
+                }
+                dangerModal = null;
+                modal.remove();
+            }, { once: true });
+
+            dangerModal = modal;
+            document.body.appendChild(modal);
+
+        }
+
         // Button events
         document.getElementById('btn-primary').addEventListener('click', () => {
             log('Primary button clicked!');
@@ -122,6 +171,18 @@
 
         document.getElementById('btn-accent').addEventListener('click', () => {
             log('Accent outlined button clicked!');
+        });
+
+        document.getElementById('danger').addEventListener('click', openDangerModal);
+
+        document.addEventListener('click', (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) {
+                return;
+            }
+            if (target.closest('g-button#another')) {
+                openAnotherModal();
+            }
         });
 
         document.getElementById('popover').addEventListener('click', () => {
@@ -143,6 +204,32 @@
             log(`Input changed: ${val.to}`);
             valueDisplay.textContent = val.to;
         });
+
+        const sidebarTree = document.getElementById('sidebar-tree');
+        sidebarTree.items = [
+            {
+                label: 'Getting Started',
+                children: [
+                    { label: 'Overview', href: '#overview' },
+                    { label: 'Setup', href: '#setup' }
+                ]
+            },
+            {
+                label: 'Components',
+                children: [
+                    { label: 'Buttons', href: '#buttons' },
+                    { label: 'Inputs', href: '#inputs' },
+                    {
+                        label: 'Navigation',
+                        children: [
+                            { label: 'Sidebar', href: '#sidebar' },
+                            { label: 'Tree Menu', href: '#tree-menu' }
+                        ]
+                    }
+                ]
+            },
+            { label: 'Table', href: '#table' }
+        ];
 
         // Table properties
         const table = document.getElementById('test-table');
