@@ -44,7 +44,10 @@ export default defineConfig({
         outputFile: {
             json: "./test-results/results.json",
             html: "./test-results/index.html",
-        }
+        },
+        include: [
+            "tests/**/*.test.ts"
+        ]
     },
     resolve: {
         alias: {
