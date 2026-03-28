@@ -17,6 +17,7 @@ import GHistoryScroller from "./components/GHistoryScroller.vue";
 import GModal from "./components/GModal.vue";
 import GOverlay from "./components/GOverlay.vue";
 import GPopover from "./components/GPopover.vue";
+import GTooltip from "./components/GTooltip.vue";
 import GProgress from "./components/GProgress.vue";
 import GSearch from "./components/GSearch.vue";
 import GSelect from "./components/GSelect.vue";
@@ -70,6 +71,7 @@ const components: [string, Component][] = [
     ["g-modal", GModal],
     ["g-overlay", GOverlay],
     ["g-popover", GPopover],
+    ["g-tooltip", GTooltip],
     ["g-progress", GProgress],
     ["g-search", GSearch as any],
     ["g-select", GSelect],

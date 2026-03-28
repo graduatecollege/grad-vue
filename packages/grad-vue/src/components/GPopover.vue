@@ -122,6 +122,24 @@ const popoverAbove = ref(false);
 const popoverOverlay = ref(false);
 let resizeObserver: ResizeObserver | null = null;
 
+function getAnchorElement() {
+    if (triggerRef.value) {
+        return triggerRef.value;
+    }
+
+    let host: HTMLElement | null = popoverRef.value?.parentElement ?? null;
+    while (host && host.tagName.toLowerCase() !== "g-popover") {
+        host = host.parentElement;
+    }
+    const previousSibling = host?.previousElementSibling;
+
+    if (previousSibling instanceof HTMLElement) {
+        return previousSibling;
+    }
+
+    return null;
+}
+
 function updatePopoverPosition() {
     if (!popoverRef.value) {
         return;
@@ -132,7 +150,9 @@ function updatePopoverPosition() {
     const popoverRect = new DOMRect(0, 0, popoverRef.value.offsetWidth, popoverRef.value.offsetHeight);
     const viewportRect = new DOMRect(0, 0, window.innerWidth, window.innerHeight);
 
-    if (!triggerRef.value) {
+    const anchorEl = getAnchorElement();
+
+    if (!anchorEl) {
         popoverPosition.value = {
             top: Math.max((viewportRect.height - popoverRect.height) / 2, 8),
             left: Math.max((viewportRect.width - popoverRect.width) / 2, 8),
@@ -143,7 +163,7 @@ function updatePopoverPosition() {
         return;
     }
 
-    const triggerRect = triggerRef.value.getBoundingClientRect();
+    const triggerRect = anchorEl.getBoundingClientRect();
 
     const { top, left, xOffset, placedAbove, overlay } =
         calculatePopoverPosition(triggerRect, popoverRect, viewportRect, {

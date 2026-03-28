@@ -2,6 +2,7 @@ import GButton from "./components/GButton.vue";
 import GTreeMenu from "./components/GTreeMenu.vue";
 import GTextInput from "./components/GTextInput.vue";
 import GPopover from "./components/GPopover.vue";
+import GTooltip from "./components/GTooltip.vue";
 import GSelectButton from "./components/GSelectButton.vue";
 import GProgress from "./components/GProgress.vue";
 import GAlertDialog from "./components/GAlertDialog.vue";
@@ -41,6 +42,7 @@ export {
     GButton,
     GTextInput,
     GPopover,
+    GTooltip,
     GSelectButton,
     GProgress,
     GAlertDialog,

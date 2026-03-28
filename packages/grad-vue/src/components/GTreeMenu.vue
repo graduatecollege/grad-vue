@@ -177,7 +177,7 @@ function handleKeydown(event: KeyboardEvent) {
         <div class="g-tree-menu__content">
             <GTreeMenuList
                 :items="items"
-                :list-type="listType"
+                :list-type="listType || 'ul'"
                 :expanded-items="expandedItems"
                 key-prefix=""
                 @toggle="toggleItem"

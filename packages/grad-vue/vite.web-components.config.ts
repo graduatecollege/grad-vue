@@ -1,5 +1,4 @@
 import { defineConfig } from "vite";
-// @ts-ignore Not sure why WebStorm is complaining about this line
 import vue from "@vitejs/plugin-vue";
 import { resolve } from "path";
 

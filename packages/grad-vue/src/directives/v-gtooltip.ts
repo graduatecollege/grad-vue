@@ -1,63 +1,12 @@
 import type { Directive, DirectiveBinding } from "vue";
 import { ref, watchEffect } from "vue";
-import { calculatePopoverPosition } from "../compose/popoverPosition.ts";
-import { getTopZIndex } from "../compose/useOverlayStack.ts";
-
-let tooltipIdCounter = 1;
-
-/**
- * Create the tooltip HTML element.
- * @param text Text content.
- * @param id ID for aria-describedby to point to this tooltip.
- */
-function createTooltipEl(text: string, id: string) {
-    const tooltip = document.createElement("div");
-    tooltip.className = "v-gtooltip";
-    tooltip.textContent = text;
-    tooltip.setAttribute("role", "tooltip");
-    tooltip.setAttribute("id", id);
-    return tooltip;
-}
-
-/**
- * Show the tooltip at the correct position based on the element's position.
- *
- * @param el The interactive element that the tooltip is attached to.
- * @param tooltip The tooltip HTML element.
- */
-function showTooltip(el: HTMLElement, tooltip: HTMLElement) {
-    const anchorRect = el.getBoundingClientRect();
-    const popoverRect = tooltip.getBoundingClientRect();
-    // Use (0, 0) as origin since getBoundingClientRect() and position: fixed
-    // both use viewport-relative coordinates.
-    const viewportRect = new DOMRect(0, 0, window.innerWidth, window.innerHeight);
-    const { top, left, placedAbove } = calculatePopoverPosition(anchorRect, popoverRect, viewportRect, {
-        gap: 8,
-        margin: 8,
-        preferAbove: true,
-    });
-    // Calculate arrow position as a percentage
-    const anchorCenter = anchorRect.left + anchorRect.width / 2;
-    const tooltipLeft = left;
-    const arrowX = ((anchorCenter - tooltipLeft) / popoverRect.width) * 100;
-    tooltip.style.setProperty("--v-gtooltip-arrow-x", `${arrowX}%`);
-    tooltip.classList.remove("v-gtooltip-bottom");
-    if (!placedAbove) {
-        tooltip.classList.add("v-gtooltip-bottom");
-    }
-    tooltip.style.left = `${left}px`;
-    tooltip.style.top = `${top}px`;
-    tooltip.style.zIndex = `${getTopZIndex()}`;
-    tooltip.style.opacity = "1";
-}
-
-/**
- * The opacity is set to 0 to fade the tooltip out.
- * @param tooltip
- */
-function hideTooltip(tooltip: HTMLElement) {
-    tooltip.style.opacity = "0";
-}
+import {
+    appendTooltipEl,
+    createTooltipEl,
+    hideTooltip,
+    resolveTooltipId,
+    showTooltip,
+} from "../compose/tooltipDom.ts";
 
 export type VGtooltipDirective = Directive<HTMLElement, string>;
 
@@ -70,13 +19,7 @@ const VGtooltip: VGtooltipDirective = {
         let resizeObserver: ResizeObserver | null = null;
         let scrollListenerActive = false;
         // Generate unique id for tooltip
-        let tooltipId: string;
-        if (el.getAttribute("aria-describedby")) {
-            tooltipId = el.getAttribute("aria-describedby")!;
-        } else {
-            tooltipId = `v-gtooltip-${++tooltipIdCounter}`;
-            el.setAttribute("aria-describedby", tooltipId);
-        }
+        const tooltipId = resolveTooltipId(el);
 
         const ensureTooltip = () => {
             if (!tooltip.value) {
@@ -86,8 +29,7 @@ const VGtooltip: VGtooltipDirective = {
                 // consistent z-index stacking context and avoids CSS transform issues
                 // when the trigger is inside a transformed ancestor (e.g., GModal uses
                 // transform: translate(-50%, -50%) for centering).
-                const modalRoot = document.getElementById("modal-root");
-                (modalRoot ?? document.body).appendChild(tooltip.value);
+                appendTooltipEl(tooltip.value);
                 resizeObserver = new ResizeObserver(() => {
                     if (tooltip.value && (isHovered.value || isFocused.value)) {
                         showTooltip(el, tooltip.value);

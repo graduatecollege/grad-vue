@@ -83,33 +83,34 @@ Form components like `g-text-input` work similarly.
 
 ### Modals
 
-Modals require a `<div id="modal-root"></div>` somewhere on your page (content is teleported there for correct stacking). Control visibility with the `open` property:
+Modals require a `<div id="modal-root"></div>` somewhere on your page (content is teleported there for correct stacking).
+
+In custom elements mode, `g-modal` should be added to the DOM only when it needs to be shown, then removed on close:
 
 ```html
-<g-modal id="my-modal" label="Confirm Action">
-  <p>Are you sure?</p>
-</g-modal>
+<button id="open-btn">Open modal</button>
 <div id="modal-root"></div>
 
 <script>
-  const modal = document.getElementById('my-modal');
+  const openBtn = document.getElementById('open-btn');
 
-  // Modals default to open, so close them on init
-  modal.open = false;
+  function openModal() {
+    const modal = document.createElement('g-modal');
+    modal.setAttribute('label', 'Confirm Action');
+    modal.innerHTML = '<p>Are you sure?</p>';
 
-  // Open the modal
-  document.getElementById('open-btn').addEventListener('click', () => {
-    modal.open = true;
-  });
+    modal.addEventListener('close', () => {
+      modal.remove();
+    }, { once: true });
 
-  // Listen for the close event (fired by the built-in close button or Escape key)
-  modal.addEventListener('close', () => {
-    modal.open = false;
-  });
+    document.body.appendChild(modal);
+  }
+
+  openBtn.addEventListener('click', openModal);
 </script>
 ```
 
-Multiple modals should be siblings, not nested, and each needs its own `open` management.
+Multiple modals should be siblings, not nested.
 
 ### Popovers
 
@@ -127,6 +128,33 @@ Place the trigger button inside the popover element using `slot="trigger"`. Togg
   });
 </script>
 ```
+
+If no trigger slot is provided, call `show()`/`toggle()` programmatically. In that case, `g-popover` positions itself relative to its previous sibling element.
+
+### Tooltips
+
+Use `g-tooltip` in custom elements mode:
+
+```html
+<g-tooltip text="Primary action">
+  <g-button slot="trigger">Save</g-button>
+</g-tooltip>
+```
+
+You can also use it without a trigger slot and position it from script. In that case it anchors to its previous sibling element:
+
+```html
+<button id="help-btn">Help</button>
+<g-tooltip id="help-tip" text="More details are available in the docs."></g-tooltip>
+
+<script>
+  document.getElementById('help-btn').addEventListener('click', () => {
+    document.getElementById('help-tip').toggle();
+  });
+</script>
+```
+
+`v-gtooltip` remains available for Vue templates, but directive syntax is not usable in plain custom element markup.
 
 ### Handling Events
 
@@ -159,3 +187,4 @@ button.addEventListener('click', () => {
 
 - **Popover positioning**: Popovers render in-place (not teleported) in custom element mode. This works correctly with `position: fixed` but may be clipped by ancestors with `overflow: hidden`.
 - **Scoped slot props**: The trigger slot in `<g-popover>` cannot pass the `toggle` function to slotted content in CE mode. Use the exposed `toggle()` method on the element instead.
+- **Tooltip trigger slot props**: `g-tooltip` does not currently expose slot props in custom elements mode.

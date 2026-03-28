@@ -8,10 +8,11 @@
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-            padding: 2rem;
+
             max-width: 800px;
             margin: 0 auto;
             line-height: 1.5;
+            --g-toolbar-height: 0;
         }
         section {
             margin-bottom: 2rem;
@@ -19,7 +20,7 @@
             border: 1px solid #ddd;
             border-radius: 8px;
         }
-        h2 {
+        h1, h2 {
             margin-top: 0;
         }
         .controls {
@@ -43,12 +44,15 @@
     <h1>grad-vue Web Components Test</h1>
     <p>Testing the built web components version of <code>grad-vue</code>.</p>
 
+    <g-sidebar></g-sidebar>
     <section>
         <h2>Buttons</h2>
         <div class="controls">
             <g-button id="btn-primary" theme="primary">Primary Button</g-button>
+            <g-tooltip text="Hey!"></g-tooltip>
             <g-button id="btn-accent" theme="accent" outlined>Accent Outlined</g-button>
             <g-button id="danger" theme="danger" size="small">Danger Modal</g-button>
+            <g-clipboard text="huh"></g-clipboard>
         </div>
 
         <g-popover id="popover-content">
@@ -74,6 +78,12 @@
             instructions="This should emit a 'change' event when you type and blur.">
         </g-text-input>
         <p>Current value: <span id="input-value">None</span></p>
+        <g-currency-input
+            id="currency-input"
+            label="Amount"
+            name="amount"
+            placeholder="Enter amount"
+            ></g-currency-input>
     </section>
 
     <section>
@@ -127,10 +137,11 @@
         const valueDisplay = document.getElementById('input-value');
         
         textInput.addEventListener('change', (e) => {
+            console.log(e);
             // Vue custom elements emit events where data is in e.detail
             const val = e.detail?.[0] || e.target.value;
-            log(`Input changed: ${val}`);
-            valueDisplay.textContent = val;
+            log(`Input changed: ${val.to}`);
+            valueDisplay.textContent = val.to;
         });
 
         // Table properties

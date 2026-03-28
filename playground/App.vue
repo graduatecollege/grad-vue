@@ -202,6 +202,7 @@ const bookItems: TreeMenuItem[] = [
                     <GPopover>
                         <template #trigger="{ toggle }">
                             <GButton @click="toggle">Open Popover</GButton>
+                            <GTooltip text="Sibling tooltip"/>
                         </template>
                         <p>This popover is inside a modal and should be positioned correctly.
                             <GButton v-gtooltip="'Real Button 2'">Button</GButton>

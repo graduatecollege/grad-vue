@@ -11,6 +11,7 @@ import {
     GModal,
     GOverlay,
     GPopover,
+    GTooltip,
     GProgress,
     GSearch,
     GSelect,
@@ -44,6 +45,7 @@ export default {
         app.component("GButton", GButton);
         app.component("GTextInput", GTextInput);
         app.component("GPopover", GPopover);
+        app.component("GTooltip", GTooltip);
         app.component("GSelectButton", GSelectButton);
         app.component("GProgress", GProgress);
         app.component("GAlertDialog", GAlertDialog);
@@ -81,6 +83,7 @@ declare module "vue" {
         GButton: typeof GButton;
         GTextInput: typeof GTextInput;
         GPopover: typeof GPopover;
+        GTooltip: typeof GTooltip;
         GSelectButton: typeof GSelectButton;
         GProgress: typeof GProgress;
         GAlertDialog: typeof GAlertDialog;
