@@ -27,12 +27,6 @@
  *
  * Adding a dimming overlay behind modals can be done by placing `GOverlay`
  * at the end of the page structure.
- *
- * > [!WARNING]
- * > There are some shenanigans in the modal and overlay implementation in order
- * > to support Nuxt without including it as a dependency. Specifically, the refs
- * > to store the state of the overlay stack is added to `window._g_overlay_stack_state`
- * > when `document` is defined. That makes it only load in the client.
  */
 export default {};
 </script>
@@ -42,17 +36,13 @@ import {
     computed,
     onBeforeMount,
     onMounted,
+    ref,
     useId,
     useTemplateRef,
-    watch,
 } from "vue";
 import { useOverlayStack } from "../compose/useOverlayStack.ts";
 import { useOverlayFocus } from "../compose/useOverlayFocus.ts";
 import { useOverlayEscape } from "../compose/useOverlayEscape.ts";
-import {
-    isCustomElementMode,
-    useCustomElementAttrs,
-} from "../compose/useCustomElementAttrs.ts";
 
 type Props = {
     /**
@@ -82,24 +72,18 @@ type Props = {
      * @demo
      */
     classes?: string | string[];
-    /**
-     * Whether the modal is open. Defaults to true for backward
-     * compatibility with Vue's `v-if` pattern. Web component
-     * consumers can set this attribute to control visibility.
-     */
-    open?: boolean;
-};
+}
 
 const props = withDefaults(defineProps<Props>(), {
     describedby: undefined,
     hiddenLabel: false,
     size: "medium",
-    open: !isCustomElementMode(),
 });
 
 const emit = defineEmits(["close"]);
 
 const dialog = useTemplateRef("dialog");
+const open = ref(true);
 
 const id = useId();
 const { pop, push, isTop, zIndex } = useOverlayStack(id, true, true);
@@ -110,27 +94,11 @@ function close() {
     emit("close");
 }
 
-const isOpen = computed(() => {
-    return props.open;
-})
-
-useOverlayEscape([dialog], isTop, isOpen, close, pop);
+useOverlayEscape([dialog], isTop, open, close, pop);
 
 onMounted(() => {
-    if (isOpen.value) {
-        push();
-        activate();
-    }
-});
-
-watch(isOpen, (isOpen) => {
-    if (isOpen) {
-        push();
-        activate();
-    } else {
-        pop();
-        deactivate();
-    }
+    push();
+    activate();
 });
 
 onBeforeMount(() => {
@@ -141,9 +109,7 @@ onBeforeMount(() => {
 const useClasses = computed(() => {
     let modalClasses = [`g-modal--${props.size}`];
     if (props.classes) {
-        modalClasses = modalClasses.concat(
-            Array.isArray(props.classes) ? props.classes : [props.classes],
-        );
+        modalClasses = modalClasses.concat(Array.isArray(props.classes) ? props.classes : [props.classes]);
     }
     return modalClasses;
 });
@@ -153,7 +119,6 @@ const useClasses = computed(() => {
     <Teleport to="#modal-root">
         <Transition name="g-fade" appear>
             <div
-                v-if="isOpen"
                 :id="'modal-' + id"
                 class="g-modal"
                 :class="useClasses"

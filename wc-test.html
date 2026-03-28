@@ -51,14 +51,6 @@
             <g-button id="danger" theme="danger" size="small">Danger Modal</g-button>
         </div>
 
-        <g-modal id="danger-modal" label="Danger">
-            Here's a dangerous modal! It can open another modal:
-            <g-button id="another" theme="primary" size="small">Open Another Modal</g-button>
-        </g-modal>
-        <g-modal id="another-modal" label="Another">
-            This is another modal! It has a popover:
-        </g-modal>
-
         <g-popover id="popover-content">
             <g-button slot="trigger" id="popover" theme="primary" size="small">Open Popover</g-button>
             Hello popover!
@@ -120,28 +112,6 @@
 
         document.getElementById('btn-accent').addEventListener('click', () => {
             log('Accent outlined button clicked!');
-        });
-
-        // Modals default to open=true for Vue backward compat.
-        // For WC usage, set open to false initially via JS.
-        document.getElementById('another-modal').open = false;
-
-        document.getElementById('danger').addEventListener('click', () => {
-            document.getElementById('danger-modal').open = true;
-        });
-
-        document.getElementById('another').addEventListener('click', () => {
-            document.getElementById('another-modal').open = true;
-        });
-
-        // Listen for modal close events to set open back to false
-        document.getElementById('danger-modal').addEventListener('close', () => {
-            document.getElementById('danger-modal').open = false;
-            log('Danger modal closed');
-        });
-        document.getElementById('another-modal').addEventListener('close', () => {
-            document.getElementById('another-modal').open = false;
-            log('Another modal closed');
         });
 
         document.getElementById('popover').addEventListener('click', () => {
