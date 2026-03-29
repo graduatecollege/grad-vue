@@ -58,8 +58,7 @@ type Props = {
      */
     required?: boolean;
     /**
-     * Render as radio buttons (single-select). Only one value can be selected
-     * at a time; the model is still a `string[]` for API consistency.
+     * Render as radio buttons (single-select)
      * @demo
      */
     radio?: boolean;
@@ -200,6 +199,7 @@ function inputAriaAttrs(option: CheckboxOption, index: number): Record<string, s
             >
                 <label
                     class="g-checkbox-group__option"
+                    :for="inputId(index)"
                     :class="{ 'g-checkbox-group__option--checked': isChecked(option.value) }"
                 >
                     <input

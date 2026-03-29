@@ -24,37 +24,78 @@ const options = [
             :props-config="{
                 label: {
                     type: 'string',
-                    label: 'Legend label',
-                    default: 'Choose options'
+                    label: 'Legend / accessible label for the group',
+                    default: 'Checkbox Group'
                 },
                 instructions: {
                     type: 'string',
-                    label: 'Instructions',
+                    label: 'Instructions shown below the legend',
                     default: ''
                 },
                 required: {
                     type: 'boolean',
-                    label: 'Required',
+                    label: 'Mark the group as required',
                     default: false
                 },
                 radio: {
                     type: 'boolean',
-                    label: 'Radio mode (single-select)',
+                    label: 'Render as radio buttons (single-select)',
                     default: false
                 }
             }"
         >
-            <template #docs>
-                <p>
-                    Renders a <code>fieldset</code> + <code>legend</code> for semantic grouping.
-                    Each option is a native <code>&lt;input type=&quot;checkbox&quot;&gt;</code>
-                    (or <code>type=&quot;radio&quot;</code> when <code>radio</code> is set).
-                </p>
-                <p>
-                    The <code>options</code> prop accepts <code>{ label, value, disabled?, hint? }[]</code>.
-                    The <code>v-model</code> is always <code>string[]</code>.
-                </p>
-            </template>
+            <template #props><figure class="highlighted-code">
+<pre class="shiki light-plus" style="background-color:#FFFFFF;color:#000000" tabindex="0"><code><span class="line"><span style="color:#0000FF">type</span><span style="color:#267F99"> Props</span><span style="color:#000000"> = &lcub;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Legend / accessible label for the group</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    label</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * List of checkbox options</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    options</span><span style="color:#000000">: </span><span style="color:#267F99">CheckboxOption</span><span style="color:#000000">[];</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Instructions shown below the legend</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    instructions</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Error messages array (supports multiple validation errors)</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    errors</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">[];</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Mark the group as required</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    required</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Render as radio buttons (single-select)</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    radio</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Name for form registration and native input `name` attribute</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    name</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Form channel key for custom elements mode</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    formKey</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#000000">};</span></span></code></pre>
+</figure>
+
+</template>
+            <template #docs><p>A group of checkboxes (or radio buttons) with styling for a label,
+instructions, and error messages.</p>
+<p>When more than one option is provided (or <code>radio</code> mode is used), a
+<code>fieldset</code> + <code>legend</code> provides semantic grouping. With a single checkbox
+a plain <code>div</code> is rendered instead.</p>
+<p>Each option renders as a native <code>&lt;input type=&quot;checkbox&quot;&gt;</code> (or
+<code>type=&quot;radio&quot;</code> when <code>radio</code> is <code>true</code>) so that keyboard navigation and
+browser/assistive-technology support come for free.</p>
+<p>In standard Vue usage, this registers with the nearest parent <code>GForm</code> via
+injection. In custom-elements mode, use matching <code>form-key</code> values to pair
+with a <code>GForm</code>.</p>
+<p>Errors are provided as an array of strings or computed values.
+Multiple errors will all be displayed.</p>
+</template>
             <template #default="{ props }">
                 <GCheckboxGroup
                     v-bind="props"
