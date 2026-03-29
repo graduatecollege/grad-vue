@@ -29,6 +29,7 @@ import {
     GUserMenu,
     GCurrencyInput,
     GEmailInput,
+    GFileInput,
     GDateInput,
     GDateRangeInput,
     GForm,
@@ -70,6 +71,7 @@ export default {
         app.component("GUserMenu", GUserMenu);
         app.component("GCurrencyInput", GCurrencyInput);
         app.component("GEmailInput", GEmailInput);
+        app.component("GFileInput", GFileInput);
         app.component("GDateInput", GDateInput);
         app.component("GDateRangeInput", GDateRangeInput);
         app.component("GForm", GForm);
@@ -105,6 +107,7 @@ declare module "vue" {
         GTreeMenu: typeof GTreeMenu;
         GForm: typeof GForm;
         GSubmitButton: typeof GSubmitButton;
+        GFileInput: typeof GFileInput;
     }
 
     export interface ComponentCustomProperties {

@@ -32,6 +32,7 @@ import GTreeMenuDemo from "~/components/demo/GTreeMenuDemo.vue";
 import GUserMenuDemo from "~/components/demo/GUserMenuDemo.vue";
 import GCurrencyInputDemo from "~/components/demo/GCurrencyInputDemo.vue";
 import GEmailInputDemo from "~/components/demo/GEmailInputDemo.vue";
+import GFileInputDemo from "~/components/demo/GFileInputDemo.vue";
 import GDateInputDemo from "~/components/demo/GDateInputDemo.vue";
 import GDateRangeInputDemo from "~/components/demo/GDateRangeInputDemo.vue";
 import GChatInputDemo from "~/components/demo/GChatInputDemo.vue";
@@ -64,6 +65,7 @@ const demoComponents = [
     { label: "Date Range Input", component: GDateRangeInputDemo },
     { label: "Detail List", component: GDetailListDemo },
     { label: "Email Input", component: GEmailInputDemo },
+    { label: "File Input", component: GFileInputDemo },
     { label: "Form", component: GFormDemo },
     { label: "Hamburger Menu", component: GHamburgerMenuDemo },
     { label: "History Scroller", component: GHistoryScrollerDemo },
