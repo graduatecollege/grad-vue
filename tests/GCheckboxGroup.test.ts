@@ -103,6 +103,17 @@ describe("GCheckboxGroup", () => {
             await expect.element(wrapper.instance.getByText("A helpful hint")).toBeInTheDocument();
         });
 
+        it("hint is outside the label element and referenced via aria-describedby", async () => {
+            const wrapper = mnt(GCheckboxGroup, {
+                props: { label: "Pick", options, modelValue: [] },
+            });
+
+            const hintEl = wrapper.container.element().querySelector(".g-checkbox-group__hint") as HTMLElement;
+            const hintId = hintEl.id;
+            const inputD = wrapper.instance.getByRole("checkbox", { name: "Option D" }).element() as HTMLInputElement;
+            expect(inputD.getAttribute("aria-describedby")).toContain(hintId);
+        });
+
         it("radio mode allows only one selection", async () => {
             const model = ref<string[]>([]);
             const wrapper = mnt(GCheckboxGroup, {
@@ -130,6 +141,60 @@ describe("GCheckboxGroup", () => {
             });
 
             await expect.element(wrapper.instance.getByText("Select all that apply")).toBeInTheDocument();
+        });
+
+        it("uses a fieldset for multiple checkboxes", async () => {
+            const wrapper = mnt(GCheckboxGroup, {
+                props: { label: "Pick", options, modelValue: [] },
+            });
+
+            const root = wrapper.container.element().firstElementChild as HTMLElement;
+            expect(root.tagName.toLowerCase()).toBe("fieldset");
+        });
+
+        it("uses a div (no fieldset) for a single checkbox", async () => {
+            const wrapper = mnt(GCheckboxGroup, {
+                props: {
+                    label: "I agree",
+                    options: [{ label: "Accept terms", value: "accept" }],
+                    modelValue: [],
+                },
+            });
+
+            const root = wrapper.container.element().firstElementChild as HTMLElement;
+            expect(root.tagName.toLowerCase()).toBe("div");
+        });
+
+        it("sets aria-invalid and aria-errormessage on checkbox inputs when there are errors", async () => {
+            const wrapper = mnt(GCheckboxGroup, {
+                props: {
+                    label: "Pick",
+                    options,
+                    modelValue: [],
+                    errors: ["Required"],
+                },
+            });
+
+            const inputA = wrapper.instance.getByRole("checkbox", { name: "Option A" }).element() as HTMLInputElement;
+            expect(inputA.getAttribute("aria-invalid")).toBe("true");
+            expect(inputA.getAttribute("aria-errormessage")).toBeTruthy();
+        });
+
+        it("sets role=radiogroup with aria-invalid on the fieldset in radio mode with errors", async () => {
+            const wrapper = mnt(GCheckboxGroup, {
+                props: {
+                    label: "Pick one",
+                    options,
+                    modelValue: [],
+                    radio: true,
+                    errors: ["Required"],
+                },
+            });
+
+            const root = wrapper.container.element().firstElementChild as HTMLElement;
+            expect(root.tagName.toLowerCase()).toBe("fieldset");
+            expect(root.getAttribute("role")).toBe("radiogroup");
+            expect(root.getAttribute("aria-invalid")).toBe("true");
         });
     });
 
@@ -183,6 +248,23 @@ describe("GCheckboxGroup", () => {
                 options,
                 modelValue: [],
                 radio: true,
+            });
+        });
+
+        it("single checkbox (no fieldset)", async () => {
+            await testAccessibility(GCheckboxGroup, {
+                label: "I agree",
+                options: [{ label: "Accept terms and conditions", value: "accept" }],
+                modelValue: [],
+            });
+        });
+
+        it("single checkbox with error", async () => {
+            await testAccessibility(GCheckboxGroup, {
+                label: "I agree",
+                options: [{ label: "Accept terms and conditions", value: "accept" }],
+                modelValue: [],
+                errors: ["You must accept the terms"],
             });
         });
     });

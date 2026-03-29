@@ -3,9 +3,12 @@
  * A group of checkboxes (or radio buttons) with styling for a label,
  * instructions, and error messages.
  *
- * Renders a `fieldset` + `legend` for semantic grouping when `label` is
- * provided.  Each option is rendered as a native `<input type="checkbox">`
- * (or `type="radio"` when `radio` is `true`) so that keyboard navigation and
+ * When more than one option is provided (or `radio` mode is used), a
+ * `fieldset` + `legend` provides semantic grouping. With a single checkbox
+ * a plain `div` is rendered instead.
+ *
+ * Each option renders as a native `<input type="checkbox">` (or
+ * `type="radio"` when `radio` is `true`) so that keyboard navigation and
  * browser/assistive-technology support come for free.
  *
  * In standard Vue usage, this registers with the nearest parent `GForm` via
@@ -119,25 +122,68 @@ function handleChange(optionValue: string, checked: boolean) {
 const inputType = computed(() => (props.radio ? "radio" : "checkbox"));
 const errorId = computed(() => `error-message-${id}`);
 const instructionsId = computed(() => `instructions-${id}`);
-const groupAriaDescribedBy = computed(() => {
-    const parts: string[] = [];
-    if (props.instructions) parts.push(instructionsId.value);
-    if (hasErrors.value) parts.push(errorId.value);
-    return parts.length ? parts.join(" ") : undefined;
+
+// Use a fieldset for radio mode or multiple checkboxes; a plain div for a single checkbox
+const useFieldset = computed(() => props.radio || props.options.length > 1);
+
+// Attributes added to the outer element only in radio mode.
+// role=radiogroup allows aria-invalid and aria-errormessage on the group element.
+const radioGroupAttrs = computed(() => {
+    if (!props.radio) return {};
+    const describedParts: string[] = [];
+    if (props.instructions) describedParts.push(instructionsId.value);
+    return {
+        role: "radiogroup",
+        "aria-invalid": hasErrors.value ? "true" : undefined,
+        "aria-errormessage": hasErrors.value ? errorId.value : undefined,
+        "aria-describedby": describedParts.length ? describedParts.join(" ") : undefined,
+    };
 });
+
+function hintId(index: number): string {
+    return `${id}-hint-${index}`;
+}
+
+function inputId(index: number): string {
+    return `${id}-input-${index}`;
+}
+
+// Per-input aria attributes.
+// - For checkbox inputs: aria-invalid and aria-errormessage live here.
+// - For radio inputs: the radiogroup fieldset carries those; inputs only reference hints.
+function inputAriaAttrs(option: CheckboxOption, index: number): Record<string, string | undefined> {
+    const describedParts: string[] = [];
+    if (!props.radio && props.instructions) describedParts.push(instructionsId.value);
+    if (option.hint) describedParts.push(hintId(index));
+
+    if (props.radio) {
+        return {
+            "aria-describedby": describedParts.length ? describedParts.join(" ") : undefined,
+        };
+    }
+
+    return {
+        "aria-describedby": describedParts.length ? describedParts.join(" ") : undefined,
+        "aria-invalid": hasErrors.value ? "true" : "false",
+        "aria-errormessage": hasErrors.value ? errorId.value : undefined,
+    };
+}
 </script>
 
 <template>
-    <fieldset
+    <component
+        :is="useFieldset ? 'fieldset' : 'div'"
         class="g-checkbox-group"
         :class="{ 'g-checkbox-group--error': hasErrors }"
-        :aria-describedby="groupAriaDescribedBy"
-        :aria-invalid="hasErrors ? 'true' : undefined"
+        v-bind="radioGroupAttrs"
     >
-        <legend
-            v-if="label"
-            class="g-checkbox-group__legend"
-        >{{ label }}<span v-if="required" class="g-checkbox-group__required" aria-hidden="true">&nbsp;*</span></legend>
+        <!-- fieldset uses <legend>; single-checkbox div uses a plain heading div -->
+        <legend v-if="useFieldset && label" class="g-checkbox-group__legend">
+            {{ label }}<span v-if="required" class="g-checkbox-group__required" aria-hidden="true">&nbsp;*</span>
+        </legend>
+        <div v-else-if="!useFieldset && label" class="g-checkbox-group__label">
+            {{ label }}<span v-if="required" class="g-checkbox-group__required" aria-hidden="true">&nbsp;*</span>
+        </div>
 
         <div
             v-if="instructions"
@@ -146,37 +192,43 @@ const groupAriaDescribedBy = computed(() => {
         >{{ instructions }}</div>
 
         <div class="g-checkbox-group__options">
-            <label
-                v-for="option in options"
+            <div
+                v-for="(option, index) in options"
                 :key="option.value"
-                class="g-checkbox-group__option"
-                :class="{
-                    'g-checkbox-group__option--disabled': option.disabled,
-                    'g-checkbox-group__option--checked': isChecked(option.value),
-                }"
+                class="g-checkbox-group__option-wrapper"
+                :class="{ 'g-checkbox-group__option-wrapper--disabled': option.disabled }"
             >
-                <input
-                    :type="inputType"
-                    :name="name || id"
-                    :value="option.value"
-                    :checked="isChecked(option.value)"
-                    :disabled="option.disabled"
-                    class="g-checkbox-group__input"
-                    @change="handleChange(option.value, ($event.target as HTMLInputElement).checked)"
-                />
-                <span class="g-checkbox-group__label-text">{{ option.label }}</span>
-                <span
+                <label
+                    class="g-checkbox-group__option"
+                    :class="{ 'g-checkbox-group__option--checked': isChecked(option.value) }"
+                >
+                    <input
+                        :id="inputId(index)"
+                        :type="inputType"
+                        :name="name || id"
+                        :value="option.value"
+                        :checked="isChecked(option.value)"
+                        :disabled="option.disabled"
+                        class="g-checkbox-group__input"
+                        v-bind="inputAriaAttrs(option, index)"
+                        @change="handleChange(option.value, ($event.target as HTMLInputElement).checked)"
+                    />
+                    <span class="g-checkbox-group__label-text">{{ option.label }}</span>
+                </label>
+                <!-- Hint is outside the label and referenced via aria-describedby on the input -->
+                <div
                     v-if="option.hint"
+                    :id="hintId(index)"
                     class="g-checkbox-group__hint"
-                >{{ option.hint }}</span>
-            </label>
+                >{{ option.hint }}</div>
+            </div>
         </div>
 
         <GFormErrorMessages
             :errors="displayErrors"
             :id="errorId"
         />
-    </fieldset>
+    </component>
 </template>
 
 <style scoped>
@@ -188,7 +240,8 @@ const groupAriaDescribedBy = computed(() => {
     flex-direction: column;
 }
 
-.g-checkbox-group__legend {
+.g-checkbox-group__legend,
+.g-checkbox-group__label {
     font-size: 1.25em;
     margin-bottom: 0.5em;
     padding: 0;
@@ -213,6 +266,16 @@ const groupAriaDescribedBy = computed(() => {
     clear: both;
 }
 
+.g-checkbox-group__option-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.g-checkbox-group__option-wrapper--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 .g-checkbox-group__option {
     display: flex;
     align-items: flex-start;
@@ -222,8 +285,7 @@ const groupAriaDescribedBy = computed(() => {
     border-radius: 4px;
 }
 
-.g-checkbox-group__option--disabled {
-    opacity: 0.5;
+.g-checkbox-group__option-wrapper--disabled .g-checkbox-group__option {
     cursor: not-allowed;
 }
 
@@ -236,7 +298,7 @@ const groupAriaDescribedBy = computed(() => {
     cursor: pointer;
 }
 
-.g-checkbox-group__option--disabled .g-checkbox-group__input {
+.g-checkbox-group__option-wrapper--disabled .g-checkbox-group__input {
     cursor: not-allowed;
 }
 
@@ -245,12 +307,14 @@ const groupAriaDescribedBy = computed(() => {
     line-height: 1.4;
 }
 
+/* Indent hint to align with the label text, accounting for the checkbox width
+   (1.1em) + flex gap (0.5em) + option left-padding (0.5em). */
 .g-checkbox-group__hint {
-    display: block;
+    padding-left: calc(0.5em + 1.1em + 0.5em);
+    padding-right: 0.5em;
     font-size: 0.875em;
     color: var(--g-surface-700);
     margin-top: 0.125em;
-    width: 100%;
 }
 
 .g-checkbox-group--error .g-checkbox-group__options {
