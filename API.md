@@ -467,6 +467,73 @@ type Props = {
 
 ---
 
+## GFileInput
+
+A file input component for accessible file uploads.
+
+If `label` is omitted, an accessible label must be provided some other way.
+
+In standard Vue usage, this registers with the nearest parent `GForm` via
+injection. In custom-elements mode, use matching `form-key` values to pair
+with a `GForm`.
+
+Errors are provided as an array of strings. Multiple errors will all be
+displayed. Client-side validation errors from `maxFileSize` and `maxFiles`
+are shown alongside any provided `errors`.
+
+### Props
+
+```typescript
+type Props = {
+    /**
+     * Label
+     */
+    label?: string;
+    /**
+     * Instructions
+     */
+    instructions?: string;
+    /**
+     * Disabled
+     */
+    disabled?: boolean;
+    /**
+     * Error messages array (supports multiple validation errors)
+     */
+    errors?: string[];
+    /**
+     * Required
+     */
+    required?: boolean;
+    /**
+     * Name for form registration
+     */
+    name?: string;
+    /**
+     * Form channel key for custom elements mode
+     */
+    formKey?: string;
+    /**
+     * Accepted file types (e.g. ".pdf,.docx" or "image/*")
+     */
+    accept?: string;
+    /**
+     * Allow multiple file selection
+     */
+    multiple?: boolean;
+    /**
+     * Maximum file size in bytes for client-side validation
+     */
+    maxFileSize?: number;
+    /**
+     * Maximum number of files allowed for client-side validation
+     */
+    maxFiles?: number;
+};
+```
+
+---
+
 ## GForm
 
 A form wrapper component that automatically manages form state and
