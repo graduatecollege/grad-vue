@@ -32,6 +32,7 @@ import GDateInput from "./components/GDateInput.vue";
 import GDateRangeInput from "./components/GDateRangeInput.vue";
 import GForm from "./components/GForm.vue";
 import GSubmitButton from "./components/GSubmitButton.vue";
+import GTextarea from "./components/GTextarea.vue";
 
 import "./css/main.css";
 import VGtooltip from "./directives/v-gtooltip.ts";
@@ -72,6 +73,7 @@ export {
     GForm,
     GSubmitButton,
     GTreeMenu,
+    GTextarea,
 };
 
 export { calculatePopoverPosition } from "./compose/popoverPosition";

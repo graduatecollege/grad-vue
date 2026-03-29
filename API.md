@@ -1390,6 +1390,83 @@ type Props = {
 
 ---
 
+## GTextarea
+
+A multi-line plain text input with styling for a label, instructions,
+and error messages.
+
+If `label` is omitted, an accessible label must be provided some other way.
+All non-prop attributes are passed through to the textarea element, including
+`id`.
+
+In standard Vue usage, this registers with the nearest parent `GForm` via
+injection. In custom-elements mode, use matching `form-key` values to pair
+with a `GForm`.
+
+Errors are provided as an array of strings or computed values.
+Multiple errors will all be displayed.
+
+### Props
+
+```typescript
+type Props = {
+    /**
+     * Label
+     */
+    label?: string;
+    /**
+     * Placeholder text
+     */
+    placeholder?: string;
+    /**
+     * Disabled
+     */
+    disabled?: boolean;
+    /**
+     * Read-only
+     */
+    readonly?: boolean;
+    /**
+     * Required
+     */
+    required?: boolean;
+    /**
+     * Error messages array (supports multiple validation errors)
+     */
+    errors?: string[];
+    /**
+     * Instructions
+     */
+    instructions?: string;
+    /**
+     * Number of visible text rows
+     */
+    rows?: number;
+    /**
+     * Maximum number of characters allowed
+     */
+    maxlength?: number;
+    /**
+     * Automatically grow the textarea height to fit content
+     */
+    autoGrow?: boolean;
+    /**
+     * Name for form registration
+     */
+    name?: string;
+    /**
+     * Form channel key for custom elements mode
+     */
+    formKey?: string;
+};
+```
+
+### Slots
+
+- `instructions`
+
+---
+
 ## GThreeWayToggle
 
 This component acts like a radio button group condensed into a compact

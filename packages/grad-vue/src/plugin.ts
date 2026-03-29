@@ -33,6 +33,7 @@ import {
     GDateRangeInput,
     GForm,
     GSubmitButton,
+    GTextarea,
     VGtooltip,
     VGtooltipDirective,
 } from "./grad-vue.ts";
@@ -74,6 +75,7 @@ export default {
         app.component("GDateRangeInput", GDateRangeInput);
         app.component("GForm", GForm);
         app.component("GSubmitButton", GSubmitButton);
+        app.component("GTextarea", GTextarea);
     },
 };
 

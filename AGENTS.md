@@ -20,3 +20,9 @@ This is a collection of reusable Vue.js components for the Graduate College.
 - `npm run test`: run tests
 - `npm run build`: build the components for production
 - `npm run dev`: start the development server for the playground
+
+## Notes
+
+- API.md is automatically generated, don't edit
+- Component demo props-config, and #props and #docs slots are auto-generated
+- `npm run sync-props` does the above
