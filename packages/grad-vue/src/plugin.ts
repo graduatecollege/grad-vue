@@ -33,6 +33,7 @@ import {
     GDateRangeInput,
     GForm,
     GSubmitButton,
+    GCheckboxGroup,
     VGtooltip,
     VGtooltipDirective,
 } from "./grad-vue.ts";
@@ -74,6 +75,7 @@ export default {
         app.component("GDateRangeInput", GDateRangeInput);
         app.component("GForm", GForm);
         app.component("GSubmitButton", GSubmitButton);
+        app.component("GCheckboxGroup", GCheckboxGroup);
     },
 };
 
@@ -81,6 +83,7 @@ declare module "vue" {
     export interface GlobalComponents {
         GAppHeader: typeof GAppHeader;
         GButton: typeof GButton;
+        GCheckboxGroup: typeof GCheckboxGroup;
         GTextInput: typeof GTextInput;
         GPopover: typeof GPopover;
         GTooltip: typeof GTooltip;

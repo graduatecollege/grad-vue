@@ -37,6 +37,7 @@ import GDateRangeInputDemo from "~/components/demo/GDateRangeInputDemo.vue";
 import GChatInputDemo from "~/components/demo/GChatInputDemo.vue";
 import GNoteInputDemo from "~/components/demo/GNoteInputDemo.vue";
 import GRichTextContentDemo from "~/components/demo/GRichTextContentDemo.vue";
+import GCheckboxGroupDemo from "~/components/demo/GCheckboxGroupDemo.vue";
 import { onMounted, provide } from "vue";
 import { useTemplateRef } from "#imports";
 import GFormDemo from "~/components/demo/GFormDemo.vue";
@@ -58,6 +59,7 @@ const demoComponents = [
     { label: "App Header", component: GAppHeaderDemo },
     { label: "Button", component: GButtonDemo },
     { label: "Chat Input", component: GChatInputDemo },
+    { label: "Checkbox Group", component: GCheckboxGroupDemo },
     { label: "Clipboard", component: GClipboardDemo },
     { label: "Currency Input", component: GCurrencyInputDemo },
     { label: "Date Input", component: GDateInputDemo },

@@ -32,6 +32,7 @@ import GDateInput from "./components/GDateInput.vue";
 import GDateRangeInput from "./components/GDateRangeInput.vue";
 import GForm from "./components/GForm.vue";
 import GSubmitButton from "./components/GSubmitButton.vue";
+import GCheckboxGroup from "./components/GCheckboxGroup.vue";
 
 import "./css/main.css";
 import VGtooltip from "./directives/v-gtooltip.ts";
@@ -72,6 +73,7 @@ export {
     GForm,
     GSubmitButton,
     GTreeMenu,
+    GCheckboxGroup,
 };
 
 export { calculatePopoverPosition } from "./compose/popoverPosition";
@@ -122,3 +124,4 @@ export type {
 } from "./components/table/TableColumn";
 export type { BulkAction } from "./components/GTable.vue";
 export type { TreeMenuItem } from "./components/tree-menu/GTreeMenuList.vue";
+export type { CheckboxOption } from "./components/GCheckboxGroup.vue";
