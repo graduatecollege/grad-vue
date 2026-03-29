@@ -31,6 +31,7 @@ import GTablePagination from "./components/table/GTablePagination.vue";
 import GTermSelector from "./components/GTermSelector.vue";
 import GTermSelectorControl from "./components/term/GTermSelectorControl.vue";
 import GTextInput from "./components/GTextInput.vue";
+import GTextarea from "./components/GTextarea.vue";
 import GThreeWayToggle from "./components/GThreeWayToggle.vue";
 import GFormErrorMessages from "./components/form/GFormErrorMessages.vue";
 import GTreeMenu from "./components/GTreeMenu.vue";
@@ -84,6 +85,7 @@ const components: [string, Component][] = [
     ["g-term-selector", GTermSelector],
     ["g-term-selector-control", GTermSelectorControl],
     ["g-text-input", GTextInput],
+    ["g-textarea", GTextarea],
     ["g-three-way-toggle", GThreeWayToggle],
     ["g-tree-menu", GTreeMenu],
     ["g-user-menu", GUserMenu],
