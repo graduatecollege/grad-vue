@@ -151,6 +151,67 @@ type Props = {
 
 ---
 
+## GCheckboxGroup
+
+A group of checkboxes (or radio buttons) with styling for a label,
+instructions, and error messages.
+
+When more than one option is provided (or `radio` mode is used), a
+`fieldset` + `legend` provides semantic grouping. With a single checkbox
+a plain `div` is rendered instead.
+
+Each option renders as a native `<input type="checkbox">` (or
+`type="radio"` when `radio` is `true`) so that keyboard navigation and
+browser/assistive-technology support come for free.
+
+In standard Vue usage, this registers with the nearest parent `GForm` via
+injection. In custom-elements mode, use matching `form-key` values to pair
+with a `GForm`.
+
+Errors are provided as an array of strings or computed values.
+Multiple errors will all be displayed.
+
+### Props
+
+```typescript
+type Props = {
+    /**
+     * Legend / accessible label for the group
+     */
+    label?: string;
+    /**
+     * List of checkbox options
+     */
+    options: CheckboxOption[];
+    /**
+     * Instructions shown below the legend
+     */
+    instructions?: string;
+    /**
+     * Error messages array (supports multiple validation errors)
+     */
+    errors?: string[];
+    /**
+     * Mark the group as required
+     */
+    required?: boolean;
+    /**
+     * Render as radio buttons (single-select)
+     */
+    radio?: boolean;
+    /**
+     * Name for form registration and native input `name` attribute
+     */
+    name?: string;
+    /**
+     * Form channel key for custom elements mode
+     */
+    formKey?: string;
+};
+```
+
+---
+
 ## GClipboard
 
 Displays text with a clipboard button that copies the text to the clipboard.

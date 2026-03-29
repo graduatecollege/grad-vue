@@ -4,6 +4,7 @@ import "./css/main.css";
 import GAlertDialog from "./components/GAlertDialog.vue";
 import GAppHeader from "./components/GAppHeader.vue";
 import GButton from "./components/GButton.vue";
+import GCheckboxGroup from "./components/GCheckboxGroup.vue";
 import GClipboard from "./components/GClipboard.vue";
 import GCurrencyInput from "./components/GCurrencyInput.vue";
 import GDateInput from "./components/GDateInput.vue";
@@ -58,6 +59,7 @@ const components: [string, Component][] = [
     ["g-alert-dialog", GAlertDialog],
     ["g-app-header", GAppHeader],
     ["g-button", GButton],
+    ["g-checkbox-group", GCheckboxGroup],
     ["g-clipboard", GClipboard],
     ["g-currency-input", GCurrencyInput],
     ["g-date-input", GDateInput],

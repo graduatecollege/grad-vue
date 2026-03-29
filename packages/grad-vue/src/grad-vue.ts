@@ -32,6 +32,7 @@ import GDateInput from "./components/GDateInput.vue";
 import GDateRangeInput from "./components/GDateRangeInput.vue";
 import GForm from "./components/GForm.vue";
 import GSubmitButton from "./components/GSubmitButton.vue";
+import GCheckboxGroup from "./components/GCheckboxGroup.vue";
 import GTextarea from "./components/GTextarea.vue";
 
 import "./css/main.css";
@@ -73,6 +74,7 @@ export {
     GForm,
     GSubmitButton,
     GTreeMenu,
+    GCheckboxGroup,
     GTextarea,
 };
 
@@ -124,3 +126,4 @@ export type {
 } from "./components/table/TableColumn";
 export type { BulkAction } from "./components/GTable.vue";
 export type { TreeMenuItem } from "./components/tree-menu/GTreeMenuList.vue";
+export type { CheckboxOption } from "./components/GCheckboxGroup.vue";
