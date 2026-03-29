@@ -4,7 +4,7 @@
     "private": true,
     "scripts": {
         "build:gh-pages": "nuxt build --preset github_pages",
-        "dev:demo": "nuxt dev",
+        "dev:demo": "cd .. && npm run build && cd demo && nuxt dev",
         "preview": "nuxt preview",
         "postinstall": "nuxt prepare"
     },

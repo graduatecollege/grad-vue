@@ -40,6 +40,7 @@ import GRichTextContentDemo from "~/components/demo/GRichTextContentDemo.vue";
 import { onMounted, provide } from "vue";
 import { useTemplateRef } from "#imports";
 import GFormDemo from "~/components/demo/GFormDemo.vue";
+import GTextareaDemo from "~/components/demo/GTextareaDemo.vue";
 
 const sidebar = useSidebar();
 provide("sidebar", sidebar);
@@ -80,6 +81,7 @@ const demoComponents = [
     { label: "Table", component: GTableDemo },
     { label: "Term Selector", component: GTermSelectorDemo },
     { label: "Text Input", component: GTextInputDemo },
+    { label: "Textarea", component: GTextareaDemo },
     { label: "Three Way Toggle", component: GThreeWayToggleDemo },
     { label: "Tree Menu", component: GTreeMenuDemo },
     { label: "User Menu", component: GUserMenuDemo },
