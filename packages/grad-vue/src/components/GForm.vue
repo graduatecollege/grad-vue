@@ -12,6 +12,8 @@
  * - Reactive error handling by providing a computed list of errors
  * - Optionally manage your own form state in a parent component by providing a
  *   `form` injection
+ * - In web components mode, use the `form-key` prop to pair a form with
+ *   matching inputs/buttons across custom element app boundaries
  *
  * ### Basic example
  *
@@ -28,8 +30,10 @@ export default {};
 </script>
 
 <script lang="ts" setup>
-import { provide, watch, inject, computed } from "vue";
+import { provide, watch, inject } from "vue";
 import { useForm, UseFormReturn } from "../compose/useForm.ts";
+import { useWebComponentForm } from "../compose/useWebComponentForm.ts";
+import { isCustomElementMode } from "../compose/useCustomElementAttrs.ts";
 
 type Props = {
     /**
@@ -42,11 +46,17 @@ type Props = {
      * @demo
      */
     method?: string;
+    /**
+     * Form channel key for custom elements mode
+     * @demo
+     */
+    formKey?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
     action: undefined,
     method: "post",
+    formKey: "default",
 });
 
 const model = defineModel<Record<string, any>>({ default: () => ({}) });
@@ -58,8 +68,9 @@ const emit = defineEmits<{
 // Check if a form is already injected from a parent
 const parentForm = inject<UseFormReturn | null>("form", null);
 
-// Only create a new form if one wasn't already provided
-const form = parentForm || useForm();
+const form =
+    parentForm ??
+    (isCustomElementMode() ? useWebComponentForm(props.formKey) : useForm());
 
 // Only provide the form if we created it (not if we're using a parent's form)
 if (!parentForm) {

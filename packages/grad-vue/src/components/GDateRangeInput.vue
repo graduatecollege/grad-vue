@@ -1,9 +1,13 @@
 <script lang="ts">
 /**
  * A date range input component with start and end dates.
- * 
+ *
  * This component uses two GDateInput components laid out horizontally
  * to allow selecting a date range.
+ *
+ * In standard Vue usage, this registers with the nearest parent `GForm` via
+ * injection. In custom-elements mode, use matching `form-key` values to pair
+ * with a `GForm`.
  */
 export default {};
 </script>
@@ -48,6 +52,10 @@ type Props = {
      * Name for form registration
      */
     name?: string;
+    /**
+     * Form channel key for custom elements mode
+     */
+    formKey?: string;
 };
 
 const props = withDefaults(defineProps<Props>(), {
@@ -58,6 +66,7 @@ const props = withDefaults(defineProps<Props>(), {
     disabled: false,
     errors: () => [],
     name: undefined,
+    formKey: undefined,
 });
 
 type DateRange = {
@@ -77,6 +86,7 @@ const { displayErrors } = useFormField({
     name: props.name,
     value: model,
     errors: toRef(props, 'errors'),
+    formKey: props.formKey,
 });
 
 watch([startDate, endDate], () => {

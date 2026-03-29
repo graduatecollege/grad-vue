@@ -83,9 +83,6 @@ html {
     scroll-padding-top: 70px;
 }
 
-:root {
-    --g-toolbar-height: 56px;
-}
 .g-app-header {
     .g-app-header__title {
         display: flex;

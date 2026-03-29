@@ -12,6 +12,9 @@
  * The sidebar can be made collapsible by providing the `sidebar` injected
  * object from `useSidebar`. See the [Hamburger Menu Documentation](#use-sidebar)
  * for details.
+ *
+ * In web components mode, use the `sidebar-key` prop to pair this sidebar
+ * with a matching GHamburgerMenu instance.
  */
 export default {};
 </script>
@@ -19,6 +22,8 @@ export default {};
 <script setup lang="ts">
 import { computed, inject, useId } from "vue";
 import { useSidebar } from "../compose/useSidebar.ts";
+import { useWebComponentSidebar } from "../compose/useWebComponentSidebar.ts";
+import { isCustomElementMode } from "../compose/useCustomElementAttrs.ts";
 
 type Props = {
     /**
@@ -51,6 +56,11 @@ type Props = {
      * @demo
      */
     width?: string;
+    /**
+     * Sidebar channel key for custom elements mode
+     * @demo
+     */
+    sidebarKey?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -60,14 +70,19 @@ const props = withDefaults(defineProps<Props>(), {
     width: "300px",
     topOffset: "",
     topOffsetVar: "",
+    sidebarKey: "default",
 });
 
-const sidebar = inject<ReturnType<typeof useSidebar>>(
+const injectedSidebar = inject<ReturnType<typeof useSidebar>>(
     "sidebar",
     // This isn't required, so the default value just avoids compiler warnings
     () => undefined as any,
     true,
 );
+
+const sidebar =
+    injectedSidebar ??
+    (isCustomElementMode() ? useWebComponentSidebar(props.sidebarKey) : undefined);
 
 const bgImage = computed(() => {
     if (props.backgroundImage) {

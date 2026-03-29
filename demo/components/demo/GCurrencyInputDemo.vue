@@ -64,6 +64,10 @@ const currencyValue = ref("");
 <span class="line"><span style="color:#008000">     * Name for form registration</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    name</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Form channel key for custom elements mode</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    formKey</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#000000">};</span></span></code></pre>
 </figure>
 
@@ -71,6 +75,9 @@ const currencyValue = ref("");
             <template #docs><p>A currency input component for US dollars.</p>
 <p>This component is a wrapper around a text input with a prefix and
 appropriate input type for currency values.</p>
+<p>In standard Vue usage, this registers with the nearest parent <code>GForm</code> via
+injection. In custom-elements mode, use matching <code>form-key</code> values to pair
+with a <code>GForm</code>.</p>
 </template>
             <template #default="{ props }">
                 <GCurrencyInput

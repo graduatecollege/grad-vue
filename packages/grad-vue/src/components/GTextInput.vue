@@ -5,7 +5,11 @@
  * If `label` is omitted, an accessible label must be provided some other way.
  * All non-prop attributes are passed through to the input element, including
  * `id`.
- * 
+ *
+ * In standard Vue usage, this registers with the nearest parent `GForm` via
+ * injection. In custom-elements mode, use matching `form-key` values to pair
+ * with a `GForm`.
+ *
  * Errors are provided as an array of strings or computed values.
  * Multiple errors will all be displayed.
  */
@@ -67,6 +71,10 @@ type Props = {
      * Name for form registration
      */
     name?: string;
+    /**
+     * Form channel key for custom elements mode
+     */
+    formKey?: string;
 };
 
 const props = withDefaults(defineProps<Props>(), {
@@ -79,6 +87,7 @@ const props = withDefaults(defineProps<Props>(), {
     suffix: "",
     debounce: 100,
     name: undefined,
+    formKey: undefined,
 });
 const model = defineModel<string | null>({ type: String });
 
@@ -98,6 +107,7 @@ const { displayErrors, hasErrors } = useFormField({
     name: props.name,
     value: model,
     errors: toRef(props, 'errors'),
+    formKey: props.formKey,
 });
 
 const emit = defineEmits<{

@@ -6,6 +6,10 @@
  * - Show a loading state during form submission
  * - Be disabled when specified
  *
+ * In standard Vue usage, this resolves the nearest parent `GForm` via
+ * injection. In custom-elements mode, use matching `form-key` values to pair
+ * with a `GForm`.
+ *
  * @example
  * <GForm v-model="formData" @submit="handleSubmit">
  *   <GTextInput name="email" label="Email" />
@@ -16,8 +20,10 @@ export default {};
 </script>
 
 <script lang="ts" setup>
-import { inject, computed } from "vue";
+import { inject, computed, useAttrs } from "vue";
 import { UseFormReturn } from "../compose/useForm.ts";
+import { useWebComponentForm } from "../compose/useWebComponentForm.ts";
+import { isCustomElementMode } from "../compose/useCustomElementAttrs.ts";
 import GButton from "./GButton.vue";
 
 type Props = {
@@ -36,15 +42,28 @@ type Props = {
      * @demo
      */
     variant?: "primary" | "secondary" | "danger";
+    /**
+     * Form channel key for custom elements mode
+     * @demo
+     */
+    formKey?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
     disabled: false,
     loadingText: "Submitting...",
     variant: "primary",
+    formKey: "default",
 });
 
-const form = inject<UseFormReturn | null>("form", null);
+const attrs = useAttrs();
+const attrFormKey = typeof attrs["form-key"] === "string" ? attrs["form-key"] : undefined;
+const formKey = props.formKey || attrFormKey || "default";
+
+const injectedForm = inject<UseFormReturn | null>("form", null);
+const form =
+    injectedForm ??
+    (isCustomElementMode() ? useWebComponentForm(formKey) : null);
 
 const isDisabled = computed(() => {
     return props.disabled || (form?.isSubmitting.value ?? false);
@@ -62,8 +81,10 @@ const isSubmitting = computed(() => {
         :variant="props.variant"
         class="g-submit-button"
     >
-        <template v-if="isSubmitting">{{ props.loadingText }}</template>
-        <slot v-else>Submit</slot>
+        <span v-show="isSubmitting">{{ props.loadingText }}</span>
+        <span v-show="!isSubmitting">
+            <slot>Submit</slot>
+        </span>
     </GButton>
 </template>
 

@@ -1,9 +1,13 @@
 <script lang="ts">
 /**
  * A date input component.
- * 
+ *
  * This component is a wrapper around GTextInput with type="date" for
  * proper date selection using the browser's native date picker.
+ *
+ * In standard Vue usage, this registers with the nearest parent `GForm` via
+ * injection. In custom-elements mode, use matching `form-key` values to pair
+ * with a `GForm`.
  */
 export default {};
 </script>
@@ -41,6 +45,10 @@ type Props = {
      * Name for form registration
      */
     name?: string;
+    /**
+     * Form channel key for custom elements mode
+     */
+    formKey?: string;
 };
 
 const props = withDefaults(defineProps<Props>(), {
@@ -50,6 +58,7 @@ const props = withDefaults(defineProps<Props>(), {
     disabled: false,
     errors: () => [],
     name: undefined,
+    formKey: undefined,
 });
 
 const model = defineModel<string | null>({ type: String });
@@ -64,6 +73,7 @@ const model = defineModel<string | null>({ type: String });
         :disabled="props.disabled"
         :errors="props.errors"
         :instructions="props.instructions"
+        :form-key="props.formKey"
         type="date"
         v-bind="$attrs"
     />

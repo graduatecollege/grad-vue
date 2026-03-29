@@ -124,7 +124,7 @@ onMounted(() => {
                         <img src="/grad-vue.svg" alt="grad-vue" width="350" />
                     </h1>
                     <p class="demo-page__description">
-                        Vue.js 3 / Nuxt 4 component library.
+                        Vue.js 3 / Nuxt 4 / Custom Elements component library.
                     </p>
                     <p class="demo-page__description">
                         <a href="https://github.com/graduatecollege/grad-vue">
@@ -148,6 +148,18 @@ onMounted(() => {
 
                     <p>Some components come with heavy dependencies that are not appropriate for all projects. Those are split into separate packages to allow for more granular installation.</p>
                     <pre><code>npm install @illinois-grad/grad-vue-rte</code></pre>
+
+                    <h4>Custom Elements (Web Components)</h4>
+                    <p>
+                        grad-vue includes a custom element build that can be used
+                        outside of Vue.js apps, including other frameworks, CMS
+                        platforms, and just plain HTML.
+                    </p>
+                    <p>
+                        <GButton component="a" size="small" href="https://github.com/graduatecollege/grad-vue/tree/main/WEB_COMPONENTS.md">
+                            Custom Elements Documentation
+                        </GButton>
+                    </p>
 
                     <h3>More Information</h3>
                     <p>

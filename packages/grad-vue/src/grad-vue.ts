@@ -84,7 +84,9 @@ export {
 
 export { useActiveLinkContent } from "./compose/useActiveLink";
 export { useSidebar } from "./compose/useSidebar";
+export { useWebComponentSidebar } from "./compose/useWebComponentSidebar";
 export { useForm } from "./compose/useForm";
+export { useWebComponentForm } from "./compose/useWebComponentForm";
 export type { UseFormReturn, FormField } from "./compose/useForm";
 export { useFormField } from "./compose/useFormField";
 export type { UseFormFieldReturn, UseFormFieldOptions } from "./compose/useFormField";

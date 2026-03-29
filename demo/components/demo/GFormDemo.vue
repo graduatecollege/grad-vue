@@ -43,6 +43,11 @@ const fname = ref("heh");
                     type: 'string',
                     label: 'HTTP method (optional, for native form submission)',
                     default: 'post'
+                },
+                formKey: {
+                    type: 'string',
+                    label: 'Form channel key for custom elements mode',
+                    default: 'default'
                 }
             }"
         >
@@ -56,6 +61,10 @@ const fname = ref("heh");
 <span class="line"><span style="color:#008000">     * HTTP method (optional, for native form submission)</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    method</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Form channel key for custom elements mode</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    formKey</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#000000">}</span></span></code></pre>
 </figure>
 
@@ -70,6 +79,8 @@ register with the form, and their values will be tracked in the form model.</p>
 <li>Reactive error handling by providing a computed list of errors</li>
 <li>Optionally manage your own form state in a parent component by providing a
 <code>form</code> injection</li>
+<li>In web components mode, use the <code>form-key</code> prop to pair a form with
+matching inputs/buttons across custom element app boundaries</li>
 </ul>
 <h3>Basic example</h3>
 <figure class="highlighted-code">

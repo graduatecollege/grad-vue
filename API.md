@@ -137,6 +137,10 @@ type Props = {
      * If a named slot `icon` is provided, it takes precedence over this prop.
      */
     icon?: string;
+    /**
+     * Native button type
+     */
+    type?: "button" | "submit" | "reset";
 }
 ```
 
@@ -185,6 +189,10 @@ A currency input component for US dollars.
 This component is a wrapper around a text input with a prefix and
 appropriate input type for currency values.
 
+In standard Vue usage, this registers with the nearest parent `GForm` via
+injection. In custom-elements mode, use matching `form-key` values to pair
+with a `GForm`.
+
 ### Props
 
 ```typescript
@@ -214,6 +222,10 @@ type Props = {
      * Name for form registration
      */
     name?: string;
+    /**
+     * Form channel key for custom elements mode
+     */
+    formKey?: string;
 };
 ```
 
@@ -226,6 +238,10 @@ A date input component.
 This component is a wrapper around GTextInput with type="date" for
 proper date selection using the browser's native date picker.
 
+In standard Vue usage, this registers with the nearest parent `GForm` via
+injection. In custom-elements mode, use matching `form-key` values to pair
+with a `GForm`.
+
 ### Props
 
 ```typescript
@@ -255,6 +271,10 @@ type Props = {
      * Name for form registration
      */
     name?: string;
+    /**
+     * Form channel key for custom elements mode
+     */
+    formKey?: string;
 };
 ```
 
@@ -266,6 +286,10 @@ A date range input component with start and end dates.
 
 This component uses two GDateInput components laid out horizontally
 to allow selecting a date range.
+
+In standard Vue usage, this registers with the nearest parent `GForm` via
+injection. In custom-elements mode, use matching `form-key` values to pair
+with a `GForm`.
 
 ### Props
 
@@ -300,6 +324,10 @@ type Props = {
      * Name for form registration
      */
     name?: string;
+    /**
+     * Form channel key for custom elements mode
+     */
+    formKey?: string;
 };
 ```
 
@@ -392,6 +420,8 @@ register with the form, and their values will be tracked in the form model.
 - Reactive error handling by providing a computed list of errors
 - Optionally manage your own form state in a parent component by providing a
   `form` injection
+- In web components mode, use the `form-key` prop to pair a form with
+  matching inputs/buttons across custom element app boundaries
 
 ### Basic example
 
@@ -416,6 +446,10 @@ type Props = {
      * HTTP method (optional, for native form submission)
      */
     method?: string;
+    /**
+     * Form channel key for custom elements mode
+     */
+    formKey?: string;
 }
 ```
 
@@ -453,6 +487,8 @@ provides the sidebar, they will be able to communicate with each other.
 
 > [!NOTE]
 > This button hides itself automatically according to the useSidebar media query.
+> In web components mode, use the `sidebar-key` prop to pair this menu with a
+> matching GSidebar instance.
 
 ### Props
 
@@ -462,6 +498,10 @@ type Props = {
      * Accessible label
      */
     label?: string;
+    /**
+     * Sidebar channel key for custom elements mode
+     */
+    sidebarKey?: string;
 }
 ```
 
@@ -561,7 +601,7 @@ type Props = {
     describedby?: string;
     /**
      * Hide label
-     * 
+     *
      * The label is still used as the `aria-label` for accessibility, but it will not be visible in the UI.
      */
     hiddenLabel?: boolean;
@@ -601,10 +641,13 @@ type Props = {
 Popover that appears next to or over a trigger element, staying visible
 in the viewport as much as possible.
 
-**Slot** `trigger` must have an interactive element for which
-the only interaction is to open the popover. The trigger element is also used
-for `aria-labelledby`. The trigger is passed a prop `toggle` which is a function
+**Slot** `trigger` is optional. When provided, it should contain an
+interactive element for opening the popover and it is used for
+`aria-labelledby`. The trigger is passed a prop `toggle` which is a function
 that toggles the popover's open state.
+
+Without a trigger slot, open the popover programmatically via `show()` or
+`toggle()` on the component instance / custom element.
 
 **Slot** `default` is the content of the popover.
 
@@ -629,6 +672,12 @@ type Props = {
      * Render without padding
      */
     minimal?: boolean;
+    /**
+     * v-model binding for the open state. Also works as a plain
+     * prop/attribute in custom-element mode where `defineModel`
+     * would revert local state.
+     */
+    modelValue?: boolean;
 }
 ```
 
@@ -780,6 +829,10 @@ type Props = {
 By default, this component behaves like a normal select element with
 custom styling.
 
+In standard Vue usage, this registers with the nearest parent `GForm` via
+injection. In custom-elements mode, use matching `form-key` values to pair
+with a `GForm`.
+
 The component can be marked `searchable` to enable search functionality.
 This turns it into a text input that filters the options. Filtering is
 done with a simple lower-case string search.
@@ -835,6 +888,10 @@ type Props = {
      * Error messages array (supports multiple validation errors)
      */
     errors?: string[];
+    /**
+     * Form channel key for custom elements mode
+     */
+    formKey?: string;
 }
 ```
 
@@ -847,6 +904,10 @@ type Props = {
 ## GSelectButton
 
 This component is just a radio button group with special styling.
+
+In standard Vue usage, this registers with the nearest parent `GForm` via
+injection. In custom-elements mode, use matching `form-key` values to pair
+with a `GForm`.
 
 Use the `options` prop to provide a list of choices. Each option can
 be a string or an object with `label` and `value` properties.
@@ -883,6 +944,10 @@ type Props = {
      * Error messages array (supports multiple validation errors)
      */
     errors?: string[];
+    /**
+     * Form channel key for custom elements mode
+     */
+    formKey?: string;
 }
 ```
 
@@ -902,6 +967,9 @@ offset by `var(--g-toolbar-height)`. If there is no toolbar, just pass
 The sidebar can be made collapsible by providing the `sidebar` injected
 object from `useSidebar`. See the [Hamburger Menu Documentation](#use-sidebar)
 for details.
+
+In web components mode, use the `sidebar-key` prop to pair this sidebar
+with a matching GHamburgerMenu instance.
 
 ### Props
 
@@ -933,6 +1001,10 @@ type Props = {
      * Width of the sidebar
      */
     width?: string;
+    /**
+     * Sidebar channel key for custom elements mode
+     */
+    sidebarKey?: string;
 }
 ```
 
@@ -1052,6 +1124,10 @@ When used inside a GForm, the button will automatically:
 - Show a loading state during form submission
 - Be disabled when specified
 
+In standard Vue usage, this resolves the nearest parent `GForm` via
+injection. In custom-elements mode, use matching `form-key` values to pair
+with a `GForm`.
+
 @example
 <GForm v-model="formData" @submit="handleSubmit">
   <GTextInput name="email" label="Email" />
@@ -1074,6 +1150,10 @@ type Props = {
      * Variant
      */
     variant?: "primary" | "secondary" | "danger";
+    /**
+     * Form channel key for custom elements mode
+     */
+    formKey?: string;
 }
 ```
 
@@ -1248,6 +1328,10 @@ If `label` is omitted, an accessible label must be provided some other way.
 All non-prop attributes are passed through to the input element, including
 `id`.
 
+In standard Vue usage, this registers with the nearest parent `GForm` via
+injection. In custom-elements mode, use matching `form-key` values to pair
+with a `GForm`.
+
 Errors are provided as an array of strings or computed values.
 Multiple errors will all be displayed.
 
@@ -1293,6 +1377,10 @@ type Props = {
      * Name for form registration
      */
     name?: string;
+    /**
+     * Form channel key for custom elements mode
+     */
+    formKey?: string;
 };
 ```
 
@@ -1348,6 +1436,31 @@ type Props = {
 ### Slots
 
 - `label`
+
+---
+
+## GTooltip
+
+Tooltip for concise contextual help text.
+
+The `trigger` slot is optional. Without a trigger slot, the tooltip anchors
+to the previous sibling element and can still be controlled via exposed
+methods.
+
+### Props
+
+```typescript
+type Props = {
+    /**
+     * Tooltip text
+     */
+    text: string;
+}
+```
+
+### Slots
+
+- `trigger`
 
 ---
 

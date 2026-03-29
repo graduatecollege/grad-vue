@@ -26,12 +26,16 @@
  *
  * > [!NOTE]
  * > This button hides itself automatically according to the useSidebar media query.
+ * > In web components mode, use the `sidebar-key` prop to pair this menu with a
+ * > matching GSidebar instance.
  */
 export default {};
 </script>
 
 <script setup lang="ts">
 import { useSidebar } from "../compose/useSidebar.ts";
+import { useWebComponentSidebar } from "../compose/useWebComponentSidebar.ts";
+import { isCustomElementMode } from "../compose/useCustomElementAttrs.ts";
 import { inject, useId } from "vue";
 
 type Props = {
@@ -40,13 +44,22 @@ type Props = {
      * @demo
      */
     label?: string;
+    /**
+     * Sidebar channel key for custom elements mode
+     * @demo
+     */
+    sidebarKey?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
     label: "Main Navigation",
+    sidebarKey: "default",
 });
 
-const sidebar = inject<ReturnType<typeof useSidebar>>("sidebar")!;
+const injectedSidebar = inject<ReturnType<typeof useSidebar>>("sidebar");
+const sidebar =
+    injectedSidebar ??
+    (isCustomElementMode() ? useWebComponentSidebar(props.sidebarKey) : undefined);
 
 const emit = defineEmits<{
     toggle: [];

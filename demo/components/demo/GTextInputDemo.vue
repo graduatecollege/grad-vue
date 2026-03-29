@@ -91,6 +91,10 @@ const textValue = ref("");
 <span class="line"><span style="color:#008000">     * Name for form registration</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    name</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Form channel key for custom elements mode</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    formKey</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#000000">};</span></span></code></pre>
 </figure>
 
@@ -99,6 +103,9 @@ const textValue = ref("");
 <p>If <code>label</code> is omitted, an accessible label must be provided some other way.
 All non-prop attributes are passed through to the input element, including
 <code>id</code>.</p>
+<p>In standard Vue usage, this registers with the nearest parent <code>GForm</code> via
+injection. In custom-elements mode, use matching <code>form-key</code> values to pair
+with a <code>GForm</code>.</p>
 <p>Errors are provided as an array of strings or computed values.
 Multiple errors will all be displayed.</p>
 </template>

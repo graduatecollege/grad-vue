@@ -23,16 +23,22 @@ import { GButton, GPopover } from "@illinois-grad/grad-vue";
 <span class="line"><span style="color:#008000">     * Render without padding</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    minimal</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * v-model binding for the open state. Also works as a plain prop/attribute in custom-element mode where `defineModel` would revert local state.</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    modelValue</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#000000">}</span></span></code></pre>
 </figure>
 
 </template>
             <template #docs><p>Popover that appears next to or over a trigger element, staying visible
 in the viewport as much as possible.</p>
-<p><strong>Slot</strong> <code>trigger</code> must have an interactive element for which
-the only interaction is to open the popover. The trigger element is also used
-for <code>aria-labelledby</code>. The trigger is passed a prop <code>toggle</code> which is a function
+<p><strong>Slot</strong> <code>trigger</code> is optional. When provided, it should contain an
+interactive element for opening the popover and it is used for
+<code>aria-labelledby</code>. The trigger is passed a prop <code>toggle</code> which is a function
 that toggles the popover&#39;s open state.</p>
+<p>Without a trigger slot, open the popover programmatically via <code>show()</code> or
+<code>toggle()</code> on the component instance / custom element.</p>
 <p><strong>Slot</strong> <code>default</code> is the content of the popover.</p>
 <p>Example:</p>
 <figure class="highlighted-code">

@@ -84,6 +84,10 @@ const handleClick = () => {
 <span class="line"><span style="color:#008000">     * Optional icon classes to render an icon span before the label. Example: "fa-solid fa-plus" or "material-symbols:add". If a named slot `icon` is provided, it takes precedence over this prop.</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    icon</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Native button type</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    type</span><span style="color:#000000">?: </span><span style="color:#A31515">"button"</span><span style="color:#000000"> | </span><span style="color:#A31515">"submit"</span><span style="color:#000000"> | </span><span style="color:#A31515">"reset"</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#000000">}</span></span></code></pre>
 </figure>
 

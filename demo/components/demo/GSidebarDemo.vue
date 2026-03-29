@@ -35,6 +35,11 @@ import { GSidebar } from "@illinois-grad/grad-vue";
                     label: 'Width',
                     default: '300px',
                     instructions: 'Width of the sidebar'
+                },
+                sidebarKey: {
+                    type: 'string',
+                    label: 'Sidebar channel key for custom elements mode',
+                    default: 'default'
                 }
             }"
         >
@@ -66,6 +71,10 @@ import { GSidebar } from "@illinois-grad/grad-vue";
 <span class="line"><span style="color:#008000">     * Width of the sidebar</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    width</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Sidebar channel key for custom elements mode</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    sidebarKey</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#000000">}</span></span></code></pre>
 </figure>
 
@@ -79,6 +88,8 @@ offset by <code>var(--g-toolbar-height)</code>. If there is no toolbar, just pas
 <p>The sidebar can be made collapsible by providing the <code>sidebar</code> injected
 object from <code>useSidebar</code>. See the <a href="#use-sidebar">Hamburger Menu Documentation</a>
 for details.</p>
+<p>In web components mode, use the <code>sidebar-key</code> prop to pair this sidebar
+with a matching GHamburgerMenu instance.</p>
 </template>
             <template #default="{ props }">
                 <div style="display: flex; gap: 1rem; flex-direction: column;">

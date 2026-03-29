@@ -2,6 +2,10 @@
 /**
  * This component is just a radio button group with special styling.
  *
+ * In standard Vue usage, this registers with the nearest parent `GForm` via
+ * injection. In custom-elements mode, use matching `form-key` values to pair
+ * with a `GForm`.
+ *
  * Use the `options` prop to provide a list of choices. Each option can
  * be a string or an object with `label` and `value` properties.
  *
@@ -50,6 +54,10 @@ type Props = {
      * Error messages array (supports multiple validation errors)
      */
     errors?: string[];
+    /**
+     * Form channel key for custom elements mode
+     */
+    formKey?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -57,6 +65,7 @@ const props = withDefaults(defineProps<Props>(), {
     name: undefined,
     disabled: false,
     errors: () => [],
+    formKey: undefined,
 });
 
 const emit = defineEmits(["change"]);
@@ -69,6 +78,7 @@ const { displayErrors, hasErrors } = useFormField({
     name: props.name,
     value: model,
     errors: toRef(props, 'errors'),
+    formKey: props.formKey,
 });
 
 const normalizedOptions = computed(() => {

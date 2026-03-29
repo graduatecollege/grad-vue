@@ -68,11 +68,18 @@ const selectButtonOptions = ref([
 <span class="line"><span style="color:#008000">     * Error messages array (supports multiple validation errors)</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    errors</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">[];</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Form channel key for custom elements mode</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    formKey</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#000000">}</span></span></code></pre>
 </figure>
 
 </template>
             <template #docs><p>This component is just a radio button group with special styling.</p>
+<p>In standard Vue usage, this registers with the nearest parent <code>GForm</code> via
+injection. In custom-elements mode, use matching <code>form-key</code> values to pair
+with a <code>GForm</code>.</p>
 <p>Use the <code>options</code> prop to provide a list of choices. Each option can
 be a string or an object with <code>label</code> and <code>value</code> properties.</p>
 <p>In addition to <code>v-model</code>, a <code>change</code> event is emitted when the

@@ -1,5 +1,7 @@
-import { ref, Ref, computed, inject, onMounted, onBeforeUnmount, ComputedRef } from "vue";
+import { Ref, computed, inject, onMounted, onBeforeUnmount, ComputedRef, useAttrs } from "vue";
 import { UseFormReturn } from "./useForm";
+import { useWebComponentForm } from "./useWebComponentForm";
+import { isCustomElementMode } from "./useCustomElementAttrs";
 
 export interface UseFormFieldOptions {
     /**
@@ -14,6 +16,10 @@ export interface UseFormFieldOptions {
      * Error messages from props (optional) - should be a reactive reference
      */
     errors?: Ref<string[]> | ComputedRef<string[]>;
+    /**
+     * Form channel key for custom elements mode
+     */
+    formKey?: string;
 }
 
 export interface UseFormFieldReturn {
@@ -31,7 +37,13 @@ export interface UseFormFieldReturn {
  * Composable to handle form field registration and error management.
  */
 export function useFormField(options: UseFormFieldOptions): UseFormFieldReturn {
-    const form = inject<UseFormReturn | null>("form", null);
+    const attrs = useAttrs();
+    const attrFormKey = typeof attrs["form-key"] === "string" ? attrs["form-key"] : undefined;
+    const formKey = options.formKey ?? attrFormKey ?? "default";
+    const injectedForm = inject<UseFormReturn | null>("form", null);
+    const form =
+        injectedForm ??
+        (isCustomElementMode() ? useWebComponentForm(formKey) : null);
 
     const displayErrors = computed(() => {
         const allErrors: string[] = [];
