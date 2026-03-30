@@ -205,6 +205,7 @@ function onPageSizeChange(e: Event) {
             &:focus {
                 background: var(--ilw-color--focus--background);
                 color: var(--ilw-color--focus--text);
+                outline-color: var(--g-primary-500);
             }
         }
     }
@@ -235,6 +236,7 @@ function onPageSizeChange(e: Event) {
 .g-pagination .page-size-select:focus {
     background: var(--ilw-color--focus--background);
     color: var(--ilw-color--focus--text);
+    outline-color: var(--g-primary-500);
 }
 .page-size-label {
     line-height: 1.2;

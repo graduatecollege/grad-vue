@@ -148,6 +148,7 @@ const slots = defineSlots<{
 .g-user-menu__avatar:focus-visible {
     background-color: var(--ilw-color--focus--background) !important;
     color: var(--ilw-color--focus--text) !important;
+    outline-color: var(--g-primary-500);
 }
 
 .g-user-menu__popover {
@@ -190,6 +191,7 @@ const slots = defineSlots<{
     font-family: var(--il-font-sans);
     text-align: left;
     cursor: pointer;
+    width: 100%;
 }
 
 .g-user-menu__list :deep(a:hover),
@@ -202,6 +204,7 @@ const slots = defineSlots<{
 .g-user-menu__list :deep(button:focus) {
     background: var(--ilw-color--focus--background);
     color: var(--ilw-color--focus--text);
+    outline-color: var(--g-primary-500);
 }
 
 .g-user-menu__list :deep(a:active),

@@ -409,6 +409,7 @@ const id = useId();
     &:focus {
         color: var(--ilw-color--focus--text);
         background: var(--ilw-color--focus--background);
+        outline-color: var(--ilw-color--focus--outline);
     }
 }
 

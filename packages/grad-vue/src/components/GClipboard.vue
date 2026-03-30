@@ -111,6 +111,7 @@ const handleTooltipHide = () => {
     &:focus {
         color: var(--g-primary-500);
         background: var(--g-info-200);
+        outline-color: var(--g-primary-500);
     }
 
     :deep(span) {

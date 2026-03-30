@@ -184,6 +184,7 @@ const classes = computed(() => [
         border-color: var(--ilw-color--focus--outline);
         color: var(--ilw-color--focus--text);
         background: var(--ilw-color--focus--background);
+        outline-color: var(--g-primary-500);
     }
 }
 

@@ -258,6 +258,12 @@ function onKeydown(e: KeyboardEvent) {
     border-radius: 4px;
     background: var(--g-surface-0);
     overflow: hidden;
+
+    &:focus-within {
+        outline: 2px solid var(--g-primary-500);
+        outline-offset: 2px;
+        box-shadow: 0 0 0 2px var(--g-info-200);
+    }
 }
 .g-text-input-prefix,
 .g-text-input-suffix {

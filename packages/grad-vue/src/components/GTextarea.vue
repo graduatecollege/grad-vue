@@ -275,6 +275,7 @@ function onPaste(e: ClipboardEvent) {
 
 .g-textarea:focus {
     outline: 2px solid var(--g-primary-500);
+    box-shadow: 0 0 0 2px var(--g-info-200);
     outline-offset: 2px;
 }
 
