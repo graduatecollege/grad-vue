@@ -28,6 +28,7 @@ import GTermSelectorControl from "./components/term/GTermSelectorControl.vue";
 import GUserMenu from "./components/GUserMenu.vue";
 import GCurrencyInput from "./components/GCurrencyInput.vue";
 import GEmailInput from "./components/GEmailInput.vue";
+import GFileInput from "./components/GFileInput.vue";
 import GDateInput from "./components/GDateInput.vue";
 import GDateRangeInput from "./components/GDateRangeInput.vue";
 import GForm from "./components/GForm.vue";
@@ -69,6 +70,7 @@ export {
     GUserMenu,
     GCurrencyInput,
     GEmailInput,
+    GFileInput,
     GDateInput,
     GDateRangeInput,
     GForm,

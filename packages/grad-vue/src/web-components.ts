@@ -12,6 +12,7 @@ import GDateRangeInput from "./components/GDateRangeInput.vue";
 import GDetailList from "./components/GDetailList.vue";
 import GDetailListItem from "./components/detail-list/GDetailListItem.vue";
 import GEmailInput from "./components/GEmailInput.vue";
+import GFileInput from "./components/GFileInput.vue";
 import GForm from "./components/GForm.vue";
 import GHamburgerMenu from "./components/GHamburgerMenu.vue";
 import GHistoryScroller from "./components/GHistoryScroller.vue";
@@ -67,6 +68,7 @@ const components: [string, Component][] = [
     ["g-detail-list", GDetailList],
     ["g-detail-list-item", GDetailListItem],
     ["g-email-input", GEmailInput],
+    ["g-file-input", GFileInput],
     ["g-form", GForm],
     ["g-hamburger-menu", GHamburgerMenu],
     ["g-history-scroller", GHistoryScroller],
