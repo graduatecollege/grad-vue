@@ -80,17 +80,11 @@ type Props = {
 };
 
 const props = withDefaults(defineProps<Props>(), {
-    label: undefined,
     instructions: "",
     disabled: false,
     errors: () => [],
     required: false,
-    name: undefined,
-    formKey: undefined,
-    accept: undefined,
     multiple: false,
-    maxFileSize: undefined,
-    maxFiles: undefined,
 });
 
 const model = defineModel<File[]>({ default: () => [] });
@@ -147,9 +141,7 @@ const allErrors = computed(() => [
 
 const hasErrors = computed(() => allErrors.value.length > 0);
 
-const selectedFileNames = computed(() =>
-    model.value.map((f) => f.name),
-);
+const selectedFileNames = computed(() => model.value.map((f) => f.name));
 </script>
 
 <template>
@@ -157,62 +149,43 @@ const selectedFileNames = computed(() =>
         class="g-file-input-wrap"
         :class="{ 'g-file-input-has-error': hasErrors }"
     >
-        <label
-            v-if="props.label"
-            :for="id"
-            class="g-file-input-label"
-        >
-            {{ props.label }}
-            <span
-                v-if="props.required"
-                class="g-file-input-required"
-                aria-hidden="true"
-            >*</span>
+        <label v-if="label" :for="id" class="g-file-input-label">
+            {{ label }}
+            <span v-if="required" class="g-file-input-required">*</span>
         </label>
 
         <div
             class="g-file-input-box"
-            :class="{ 'g-file-input-box--disabled': props.disabled }"
+            :class="{ 'g-file-input-box--disabled': disabled }"
         >
-            <div class="g-file-input-box-header">
-                <svg
-                    class="g-file-input-upload-icon"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 640 640"
-                    aria-hidden="true"
-                    focusable="false"
-                >
-                    <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
-                    <path
-                        fill="currentColor"
-                        d="M144 480C64.5 480 0 415.5 0 336C0 269.6 45.1 214 106.2 197.3C103.4 187.1 102 176.5 102 165.5C102 92.6 163.7 32 239.8 32C278.3 32 313.1 48.5 337.3 75.3C354.1 63.7 374.8 57 397 57C454.9 57 502 104.1 502 162C502 163.5 502 165 501.9 166.5C573.4 183.1 626 248.5 626 326C626 415.5 562.7 480 484 480L352 480 352 308.5 397.2 353.7C403.4 359.9 413.6 359.9 419.8 353.7 426 347.5 426 337.3 419.8 331.1L333.7 244.9C327.5 238.7 317.3 238.7 311.1 244.9L224.9 331.1C218.7 337.3 218.7 347.5 224.9 353.7 231.1 359.9 241.3 359.9 247.5 353.7L292 308.5 292 480 144 480z"
-                    />
-                </svg>
+            <div v-if="instructions" class="g-file-input-box-header">
                 <span
-                    v-if="props.instructions"
                     :id="'instructions-' + id"
                     class="g-file-input-instructions"
-                >{{ props.instructions }}</span>
+                    >{{ instructions }}</span
+                >
             </div>
 
             <input
                 :id="id"
                 type="file"
                 class="g-file-input"
-                :disabled="props.disabled"
-                :required="props.required"
-                :accept="props.accept || undefined"
-                :multiple="props.multiple"
+                :disabled="disabled"
+                :required="required"
+                :accept="accept || undefined"
+                :multiple="multiple"
                 :aria-invalid="hasErrors ? 'true' : 'false'"
                 :aria-describedby="
-                    props.instructions ? 'instructions-' + id : undefined
+                    instructions ? 'instructions-' + id : undefined
                 "
-                :aria-errormessage="hasErrors ? 'error-message-' + id : undefined"
+                :aria-errormessage="
+                    hasErrors ? 'error-message-' + id : undefined
+                "
                 @change="onFileChange"
             />
 
             <ul
-                v-if="selectedFileNames.length > 0"
+                v-if="multiple && selectedFileNames.length > 0"
                 class="g-file-input-pills"
                 aria-label="Selected files"
             >
@@ -223,15 +196,13 @@ const selectedFileNames = computed(() =>
                 >
                     <svg
                         class="g-file-input-pill-icon"
+                        role="none presentation"
                         xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 384 512"
-                        aria-hidden="true"
-                        focusable="false"
+                        viewBox="0 0 640 640"
                     >
-                        <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+                        <!--!Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
                         <path
-                            fill="currentColor"
-                            d="M0 64C0 28.7 28.7 0 64 0L224 0l0 128c0 17.7 14.3 32 32 32l128 0 0 288c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 64zm384 64l-128 0L256 0 384 128z"
+                            d="M192 64C156.7 64 128 92.7 128 128L128 512C128 547.3 156.7 576 192 576L448 576C483.3 576 512 547.3 512 512L512 234.5C512 217.5 505.3 201.2 493.3 189.2L386.7 82.7C374.7 70.7 358.5 64 341.5 64L192 64zM453.5 240L360 240C346.7 240 336 229.3 336 216L336 122.5L453.5 240z"
                         />
                     </svg>
                     {{ name }}
@@ -239,10 +210,7 @@ const selectedFileNames = computed(() =>
             </ul>
         </div>
 
-        <GFormErrorMessages
-            :errors="allErrors"
-            :id="'error-message-' + id"
-        />
+        <GFormErrorMessages :errors="allErrors" :id="'error-message-' + id" />
     </div>
 </template>
 
@@ -265,12 +233,12 @@ const selectedFileNames = computed(() =>
 
 .g-file-input-box {
     display: flex;
+    max-width: 360px;
     flex-direction: column;
     gap: 0.75em;
-    border: 2px solid var(--g-primary-500);
-    border-radius: 4px;
-    background: var(--g-surface-0);
-    padding: 0.75em 1em;
+    border: 1px solid var(--g-primary-500);
+    background: var(--g-surface-50);
+    padding: 0.75em;
 }
 
 .g-file-input-box--disabled {
@@ -292,18 +260,18 @@ const selectedFileNames = computed(() =>
 
 .g-file-input-upload-icon {
     flex-shrink: 0;
-    height: 1.4em;
-    width: 1.4em;
+    height: 2em;
+    width: 2em;
     color: var(--g-primary-500);
 }
 
 .g-file-input-box--disabled .g-file-input-upload-icon {
-    color: var(--g-surface-400);
+    color: var(--g-surface-600);
 }
 
 .g-file-input-instructions {
     font-size: 0.9em;
-    color: var(--g-surface-800);
+    color: var(--g-surface-900);
 }
 
 .g-file-input {
@@ -318,36 +286,41 @@ const selectedFileNames = computed(() =>
 }
 
 .g-file-input::file-selector-button {
-    font-size: 0.9em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     font-family: var(--il-font-sans);
-    background: var(--g-primary-500);
-    color: var(--g-primary-text);
-    border: none;
-    border-radius: 4px;
-    padding: 0.35em 0.85em;
-    margin-right: 0.75em;
+    font-weight: 700;
+    font-size: 19px;
+    line-height: 20px;
+    border: 2px solid var(--g-primary-500);
+    background: var(--g-surface-0);
+    color: var(--g-primary-500);
     cursor: pointer;
-    transition: background 0.15s;
+    padding: 12px 20px;
+    border-radius: var(--g-border-radius-m);
+    text-decoration: none;
 }
 
 .g-file-input::file-selector-button:hover {
-    background: var(--g-primary-300);
+    background: var(--g-primary-500);
+    color: var(--g-surface-0);
 }
 
 .g-file-input:focus-visible {
-    outline: 2px solid var(--g-primary-500);
-    outline-offset: 2px;
-    border-radius: 2px;
+    background: var(--ilw-color--focus--background);
+    color: var(--ilw-color--focus--text);
 }
 
 .g-file-input:disabled {
     cursor: not-allowed;
-    color: var(--g-surface-600);
+    color: var(--g-surface-800);
 }
 
 .g-file-input:disabled::file-selector-button {
-    background: var(--g-surface-400);
-    color: var(--g-surface-700);
+    background: var(--g-surface-200);
+    color: var(--g-surface-900);
+    border-color: var(--g-surface-200);
     cursor: not-allowed;
 }
 
@@ -364,7 +337,7 @@ const selectedFileNames = computed(() =>
     display: inline-flex;
     align-items: center;
     gap: 0.3em;
-    background: var(--g-info-300);
+    border: 1px solid var(--g-primary-500);
     color: var(--g-surface-950);
     border-radius: 999px;
     padding: 0.2em 0.7em;
@@ -377,8 +350,8 @@ const selectedFileNames = computed(() =>
 
 .g-file-input-pill-icon {
     flex-shrink: 0;
-    height: 0.85em;
-    width: 0.85em;
+    height: 1em;
+    width: 1em;
     opacity: 0.7;
 }
 </style>

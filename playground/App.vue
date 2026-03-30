@@ -92,6 +92,27 @@ const bookItems: TreeMenuItem[] = [
 
         <div class="wrap">
             <main class="main" ref="main">
+                <div>
+                    <GFileInput
+                        label="File Input"
+                        instructions="Upload a file"
+                    />
+                    <GFileInput
+                        disabled
+                        label="File Input"
+                        instructions="Upload a file"
+                    />
+                    <GFileInput
+                        :errors="['There is a problem!']"
+                        label="File Input"
+                        instructions="Upload a file"
+                    />
+                    <GFileInput
+                        label="File Input"
+                        instructions="Upload a file or more"
+                        multiple
+                    />
+                </div>
                 <div style="max-width: 320px">
                     <GTreeMenu
                         title="With Linked Parents"
