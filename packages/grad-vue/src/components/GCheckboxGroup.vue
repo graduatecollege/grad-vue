@@ -296,6 +296,12 @@ function inputAriaAttrs(option: CheckboxOption, index: number): Record<string, s
     width: 1.1em;
     height: 1.1em;
     cursor: pointer;
+
+    &:focus-visible {
+        outline: 2px solid var(--g-primary-500);
+        outline-offset: 2px;
+        box-shadow: 0 0 0 2px var(--g-info-200);
+    }
 }
 
 .g-checkbox-group__option-wrapper--disabled .g-checkbox-group__input {

@@ -310,6 +310,10 @@ const selectedFileNames = computed(() => model.value.map((f) => f.name));
 .g-file-input:focus-visible {
     background: var(--ilw-color--focus--background);
     color: var(--ilw-color--focus--text);
+    outline: 2px solid var(--g-primary-500);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px var(--g-info-200);
+    border-radius: var(--g-border-radius-s);
 }
 
 .g-file-input:disabled {

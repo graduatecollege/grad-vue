@@ -380,11 +380,13 @@ defineExpose({
     &:focus-visible {
         background: var(--ilw-color--focus--background);
         color: var(--ilw-color--focus--text);
+        outline-color: var(--g-primary-500);
     }
 
     .g-popover-close-icon {
         width: 1.25rem;
         height: 1.25rem;
+        display: block;
     }
 }
 

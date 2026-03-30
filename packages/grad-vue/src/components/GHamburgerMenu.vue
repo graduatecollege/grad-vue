@@ -139,6 +139,7 @@ const fallbackId = useId();
     &:focus-visible {
         color: var(--ilw-color--focus--text);
         background: var(--ilw-color--focus--background);
+        outline-color: var(--g-primary-500);
     }
 }
 .g-hamburger-button--collapsible {

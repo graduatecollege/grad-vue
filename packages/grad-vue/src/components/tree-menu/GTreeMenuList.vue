@@ -252,5 +252,6 @@ function toggle(i: number) {
 .g-tree-menu__link:focus-visible {
     background: var(--ilw-color--focus--background);
     color: var(--ilw-color--focus--text);
+    outline-color: var(--g-primary-500);
 }
 </style>

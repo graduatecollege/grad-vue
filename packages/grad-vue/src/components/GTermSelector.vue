@@ -116,6 +116,7 @@ const term = defineModel<{year: string, name: string}>({
     &:focus-visible {
         background: var(--ilw-color--focus--background);
         color: var(--ilw-color--focus--text);
+        outline-color: var(--g-primary-500);
     }
 
     .g-caret {

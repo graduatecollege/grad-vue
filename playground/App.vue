@@ -93,6 +93,7 @@ const bookItems: TreeMenuItem[] = [
         <div class="wrap">
             <main class="main" ref="main">
                 <div>
+                    <GTextarea></GTextarea>
                     <GFileInput
                         label="File Input"
                         instructions="Upload a file"

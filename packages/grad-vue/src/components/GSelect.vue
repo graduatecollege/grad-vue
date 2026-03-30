@@ -699,6 +699,11 @@ onBeforeUnmount(() => {
     &:focus-visible {
         background: var(--g-info-200);
         color: var(--g-primary-500);
+        outline-color: var(--g-primary-500);
+
+        .g-select-caret {
+            color: var(--g-primary-500);
+        }
     }
 
     &:has(:focus-visible) {
@@ -843,6 +848,7 @@ onBeforeUnmount(() => {
     &:focus {
         background: var(--g-info-200);
         color: var(--g-primary-500);
+        outline-color: var(--g-primary-500);
     }
 }
 
