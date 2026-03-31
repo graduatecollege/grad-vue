@@ -35,6 +35,7 @@ import GForm from "./components/GForm.vue";
 import GSubmitButton from "./components/GSubmitButton.vue";
 import GCheckboxGroup from "./components/GCheckboxGroup.vue";
 import GTextarea from "./components/GTextarea.vue";
+import GMultiSelect from "./components/GMultiSelect.vue";
 
 import "./css/main.css";
 import VGtooltip from "./directives/v-gtooltip.ts";
@@ -78,6 +79,7 @@ export {
     GTreeMenu,
     GCheckboxGroup,
     GTextarea,
+    GMultiSelect,
 };
 
 export { calculatePopoverPosition } from "./compose/popoverPosition";
