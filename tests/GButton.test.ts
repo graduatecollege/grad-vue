@@ -40,10 +40,9 @@ describe("GButton", () => {
                     slots: { default: () => "Button" },
                 });
 
-                const btn = wrapper.instance.element() as HTMLElement;
                 await expect.element(wrapper.instance).toBeVisible();
 
-                const rect = btn.getBoundingClientRect();
+                const rect = wrapper.instance.element().getBoundingClientRect();
                 dims[size] = { width: rect.width, height: rect.height };
 
                 await userEvent.click(wrapper.instance);
@@ -70,10 +69,10 @@ describe("GButton", () => {
                     slots: { default: () => "Button" },
                 });
 
-                const btn = wrapper.instance.element() as HTMLElement;
                 await expect.element(wrapper.instance).toBeVisible();
 
-                colors[theme] = window.getComputedStyle(btn).backgroundColor;
+                const style = window.getComputedStyle(wrapper.instance.element());
+                colors[theme] = style.backgroundColor;
 
                 await userEvent.click(wrapper.instance);
             }

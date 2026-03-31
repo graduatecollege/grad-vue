@@ -39,6 +39,7 @@ import GChatInputDemo from "~/components/demo/GChatInputDemo.vue";
 import GNoteInputDemo from "~/components/demo/GNoteInputDemo.vue";
 import GRichTextContentDemo from "~/components/demo/GRichTextContentDemo.vue";
 import GCheckboxGroupDemo from "~/components/demo/GCheckboxGroupDemo.vue";
+import GMultiSelectDemo from "~/components/demo/GMultiSelectDemo.vue";
 import { onMounted, provide } from "vue";
 import { useTemplateRef } from "#imports";
 import GFormDemo from "~/components/demo/GFormDemo.vue";
@@ -73,6 +74,7 @@ const demoComponents = [
     { label: "Hamburger Menu", component: GHamburgerMenuDemo },
     { label: "History Scroller", component: GHistoryScrollerDemo },
     { label: "Modal", component: GModalDemo },
+    { label: "Multi Select", component: GMultiSelectDemo },
     { label: "Note Input", component: GNoteInputDemo },
     { label: "Rich Text Content", component: GRichTextContentDemo },
     { label: "Popover", component: GPopoverDemo },

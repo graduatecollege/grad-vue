@@ -5,7 +5,7 @@ import { userEvent } from "vitest/browser";
 
 describe("GSearch", () => {
     describe("Functional Tests", () => {
-        it("renders with default props", () => {
+        it("renders with default props", async () => {
             const { container } = mnt(GSearch, {
                 props: {
                     modelValue: "",
@@ -13,7 +13,7 @@ describe("GSearch", () => {
                 },
             });
 
-            expect(container.element().querySelector("input")).toBeTruthy();
+            await expect.element(container.getByRole("search")).toBeInTheDocument();
         });
 
         it("with auto enabled, submit event should be fired with typing, after debounce", async () => {
@@ -27,7 +27,7 @@ describe("GSearch", () => {
                 },
             });
 
-            const input = container.element().querySelector("input")!;
+            const input = container.getByRole("combobox");
             await userEvent.type(input, "test");
 
             // Should not have submitted immediately
@@ -52,7 +52,7 @@ describe("GSearch", () => {
                 },
             });
 
-            const input = container.element().querySelector("input")!;
+            const input = container.getByRole("combobox");
 
             // First type
             await userEvent.type(input, "test");
@@ -82,7 +82,7 @@ describe("GSearch", () => {
                 },
             });
 
-            const input = container.element().querySelector("input")!;
+            const input = container.getByRole("combobox");
             await userEvent.type(input, "test");
 
             await vi.advanceTimersByTimeAsync(1000);
@@ -103,7 +103,7 @@ describe("GSearch", () => {
                 },
             });
 
-            const input = container.element().querySelector("input")!;
+            const input = container.getByRole("combobox");
             await userEvent.type(input, "test{Enter}");
             await vm.$nextTick();
 
@@ -122,7 +122,7 @@ describe("GSearch", () => {
                 },
             });
 
-            const input = container.element().querySelector("input")!;
+            const input = container.getByRole("combobox");
 
             // Open dropdown
 
@@ -154,7 +154,7 @@ describe("GSearch", () => {
                 },
             });
 
-            const input = container.element().querySelector("input")!;
+            const input = container.getByRole("combobox");
 
             // Open dropdown
 
@@ -184,7 +184,7 @@ describe("GSearch", () => {
                     onSelect: callback,
                 },
             });
-            const input = container.element().querySelector("input")!;
+            const input = container.getByRole("combobox");
             await userEvent.type(input, "opt{Enter}");
             await vm.$nextTick();
             await userEvent.type(input, "{ArrowDown}{ArrowDown}{Enter}");
@@ -217,19 +217,18 @@ describe("GSearch", () => {
                     results: [],
                 },
             });
-            const containerElement = container.element();
 
             await userEvent.type(
-                containerElement.querySelector("input")!,
+                container.getByRole("combobox"),
                 "Opt",
             );
             await vm.$nextTick();
             await userEvent.type(
-                containerElement.querySelector("input")!,
+                container.getByRole("combobox"),
                 "{Enter}",
             );
 
-            await testAccessibility(containerElement);
+            await testAccessibility(container.element());
         });
         it("with 2 results", async () => {
             const { container, vm } = mnt(GSearch, {
@@ -241,19 +240,18 @@ describe("GSearch", () => {
                     ],
                 },
             });
-            const containerElement = container.element();
 
             await userEvent.type(
-                containerElement.querySelector("input")!,
+                container.getByRole("combobox"),
                 "Opt",
             );
             await vm.$nextTick();
             await userEvent.type(
-                containerElement.querySelector("input")!,
+                container.getByRole("combobox"),
                 "{Enter}",
             );
 
-            await testAccessibility(containerElement);
+            await testAccessibility(container.element());
         });
     });
 });

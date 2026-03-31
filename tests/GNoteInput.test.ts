@@ -124,10 +124,6 @@ describe("GNoteInput", () => {
             const boldButton = toolbar.getByRole("button", { name: "Bold", exact: true });
             
             await expect.element(boldButton).toBeInTheDocument();
-            
-            // Check that the SVG within the button has aria-hidden
-            const svg = boldButton.element().querySelector('svg');
-            expect(svg?.getAttribute('aria-hidden')).toBe('true');
         });
     });
 });

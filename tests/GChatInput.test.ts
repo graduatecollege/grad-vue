@@ -66,8 +66,7 @@ describe("GChatInput", () => {
             await expect.element(wrapper.instance).toBeInTheDocument();
 
             // Find the editor (contenteditable element)
-            const editor = wrapper.container.element().querySelector('.tiptap');
-            expect(editor).toBeTruthy();
+            const editor = wrapper.container.element().querySelector('.tiptap')!;
 
             // Type text into the editor
             await userEvent.click(editor as HTMLElement);
@@ -94,9 +93,9 @@ describe("GChatInput", () => {
             });
 
             const sendButton = wrapper.instance.getByRole("button", { name: /send/i });
-            const svg = sendButton.element().querySelector('svg');
+            const svg = sendButton.getByRole("img", { includeHidden: true });
             
-            expect(svg?.getAttribute('aria-hidden')).toBe('true');
+            await expect.element(svg).toHaveAttribute('aria-hidden', 'true');
         });
     });
 });

@@ -18,21 +18,16 @@ export default {};
 </script>
 
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, useId, watch, toRef } from "vue";
-import { useOverlayStack } from "../compose/useOverlayStack.ts";
+import { computed, nextTick, ref, useId, watch, toRef } from "vue";
+import { useSelectDropdown, normalizeSelectOptions, type SelectOption } from "../compose/useSelectDropdown.ts";
 import { useFormField } from "../compose/useFormField.ts";
 import GFormErrorMessages from "./form/GFormErrorMessages.vue";
-
-type OptionType = {
-    label: string;
-    value: string | number;
-}
 
 type Props = {
     /**
      * List of options to choose from
      */
-    options: Array<string | OptionType>;
+    options: Array<string | SelectOption>;
     /**
      * Accessible label
      * @demo Select Option
@@ -88,11 +83,9 @@ type Props = {
 
 const props = withDefaults(defineProps<Props>(), {
     disabled: false,
-    name: undefined,
     searchable: false,
     compact: false,
     errors: () => [],
-    formKey: undefined,
 });
 const emit = defineEmits(["change"]);
 const model = defineModel<string | number | null>();
@@ -100,13 +93,12 @@ const model = defineModel<string | number | null>();
 const baseId = useId();
 const comboRef = ref<HTMLElement | null>(null);
 const listboxRef = ref<HTMLElement | null>(null);
+const comboInputRef = ref<HTMLInputElement | null>(null);
 const open = ref(false);
 const activeIndex = ref(0);
 const ignoreBlur = ref(false);
 const ignoreFocus = ref(false);
-const { push, pop, isTop } = useOverlayStack(baseId);
 
-// Use form field composable for form registration and error handling
 const { displayErrors, hasErrors } = useFormField({
     name: props.name,
     value: model,
@@ -114,92 +106,15 @@ const { displayErrors, hasErrors } = useFormField({
     formKey: props.formKey,
 });
 
-const menuPlacement = ref<"below" | "above">("below");
-const menuMaxHeight = ref<number | null>(null);
-
-const menuStyle = computed(() => {
-    const style: Record<string, string> = {};
-    if (menuMaxHeight.value !== null) {
-        style.maxHeight = `${menuMaxHeight.value}px`;
-    }
-    if (menuPlacement.value === "above") {
-        style.top = "auto";
-        style.bottom = "100%";
-    } else {
-        style.top = "100%";
-        style.bottom = "auto";
-    }
-    return style;
+const { menuPlacement, menuStyle, isTop, scrollOptionIntoView } = useSelectDropdown({
+    open,
+    anchorRef: comboRef,
+    listboxRef,
+    baseId,
+    activeIndex,
 });
 
-function updateMenuPlacement() {
-    if (!open.value) {
-        return;
-    }
-    if (!comboRef.value) {
-        return;
-    }
-
-    const rect = comboRef.value.getBoundingClientRect();
-    const spaceBelow = window.innerHeight - rect.bottom;
-    const spaceAbove = rect.top;
-    const listboxFullHeight = listboxRef.value?.scrollHeight ?? 200;
-    const minSpaceToOpenBelow = Math.min(200, listboxFullHeight);
-    const gap = 8;
-
-    if (spaceBelow >= minSpaceToOpenBelow) {
-        menuPlacement.value = "below";
-        menuMaxHeight.value = Math.max(0, Math.floor(spaceBelow - gap));
-        return;
-    }
-
-    if (spaceBelow < minSpaceToOpenBelow && spaceAbove > spaceBelow) {
-        menuPlacement.value = "above";
-        menuMaxHeight.value = Math.max(0, Math.floor(spaceAbove - gap));
-        return;
-    }
-
-    menuPlacement.value = "below";
-    menuMaxHeight.value = Math.max(0, Math.floor(spaceBelow - gap));
-}
-
-let removeWindowListeners: (() => void) | null = null;
-
-function addWindowListeners() {
-    if (removeWindowListeners) {
-        return;
-    }
-    const onChange = () => {
-        updateMenuPlacement();
-    };
-    window.addEventListener("resize", onChange, { passive: true });
-    window.addEventListener("scroll", onChange, {
-        passive: true,
-        capture: true,
-    });
-    removeWindowListeners = () => {
-        window.removeEventListener("resize", onChange);
-        window.removeEventListener("scroll", onChange, true);
-        removeWindowListeners = null;
-    };
-}
-
-function removeListeners() {
-    if (!removeWindowListeners) {
-        return;
-    }
-    removeWindowListeners();
-}
-
-const normalizedOptions = computed(() => {
-    return props.options.map((opt) => {
-        if (typeof opt === "string") {
-            return { label: opt, value: opt };
-        } else {
-            return opt;
-        }
-    });
-});
+const normalizedOptions = computed(() => normalizeSelectOptions(props.options));
 
 const searchQuery = ref("");
 
@@ -227,36 +142,11 @@ watch(
     },
 );
 
-// Watch for open state to manage overlay stack
-watch(open, (val) => {
-    if (val) {
-        push();
-    } else {
-        pop();
-    }
-});
-
-watch(open, (val) => {
-    if (val) {
-        addWindowListeners();
-        nextTick(() => {
-            updateMenuPlacement();
-        });
-    } else {
-        removeListeners();
-        menuPlacement.value = "below";
-        menuMaxHeight.value = null;
-    }
-});
-
 function openMenu() {
     if (props.disabled) {
         return;
     }
     open.value = true;
-    nextTick(() => {
-        updateMenuPlacement();
-    });
     if (props.searchable) {
         searchQuery.value = "";
         // If a value is selected, highlight it in filtered list
@@ -278,12 +168,6 @@ function closeMenu() {
         searchQuery.value = "";
     }
 }
-
-onBeforeUnmount(() => {
-    removeListeners();
-});
-
-const comboInputRef = ref<HTMLInputElement | null>(null);
 
 function onComboFocus(e: FocusEvent) {
     if (props.disabled) {
@@ -425,17 +309,6 @@ function onOptionMouseDown() {
     ignoreBlur.value = true;
 }
 
-function scrollOptionIntoView() {
-    nextTick(() => {
-        const el = document.getElementById(
-            `${baseId}-option-${activeIndex.value}`,
-        );
-        if (el) {
-            el.scrollIntoView({ block: "nearest" });
-        }
-    });
-}
-
 const showClearButton = computed(() => {
     return (
         props.clearButton &&
@@ -454,10 +327,6 @@ function clearValue() {
         }
     }
 }
-
-onBeforeUnmount(() => {
-    pop();
-});
 </script>
 
 <template>

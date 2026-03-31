@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { page, userEvent } from "vitest/browser";
 import GTreeMenu from "../packages/grad-vue/src/components/GTreeMenu.vue";
-import type { TreeMenuItem } from "../packages/grad-vue/src/components/GTreeMenu.vue";
-import { mnt, testAccessibility } from "./test-utils";
+import type { TreeMenuItem } from "../packages/grad-vue/src/components/tree-menu/GTreeMenuList.vue";
+import { mnt, tabTo, testAccessibility } from "./test-utils";
 
 const flatItems: TreeMenuItem[] = [
     { label: "Home", href: "/" },
@@ -157,14 +157,10 @@ describe("GTreeMenu", () => {
     });
 
     describe("Keyboard Navigation Tests", () => {
-        async function focusFirst(container: ReturnType<typeof mnt>["container"]) {
-            const el = container.element()!.querySelector<HTMLElement>("[data-tree-primary]");
-            el?.focus();
-        }
 
         it("ArrowDown moves focus to the next item", async () => {
             const wrapper = mnt(GTreeMenu, { props: { items: nestedItems } });
-            await focusFirst(wrapper.container);
+            await tabTo("Chapter 1");
 
             await userEvent.keyboard("{ArrowDown}");
 
@@ -175,11 +171,7 @@ describe("GTreeMenu", () => {
 
         it("ArrowUp moves focus to the previous item", async () => {
             const wrapper = mnt(GTreeMenu, { props: { items: nestedItems } });
-
-            // Focus the second item manually
-            const buttons = wrapper.container.element()!.querySelectorAll<HTMLElement>("[data-tree-primary]");
-            (buttons[1] as HTMLElement).focus();
-
+            await tabTo("Chapter 2");
             await userEvent.keyboard("{ArrowUp}");
 
             await expect
@@ -189,7 +181,7 @@ describe("GTreeMenu", () => {
 
         it("ArrowRight expands a collapsed item", async () => {
             const wrapper = mnt(GTreeMenu, { props: { items: nestedItems } });
-            await focusFirst(wrapper.container);
+            await tabTo("Chapter 1");
 
             await userEvent.keyboard("{ArrowRight}");
 
@@ -200,13 +192,10 @@ describe("GTreeMenu", () => {
             const wrapper = mnt(GTreeMenu, { props: { items: nestedItems } });
 
             // Expand Chapter 1 by clicking so focus stays on the button.
-            await wrapper.container.getByRole("button", { name: "Chapter 1" }).click();
+            await tabTo("Chapter 1");
+            await userEvent.keyboard("{ArrowRight}");
 
-            // Re-focus the Chapter 1 button.
-            const ch1Btn = wrapper.container.element()!.querySelector<HTMLElement>(
-                "[data-tree-primary]",
-            );
-            ch1Btn?.focus();
+            await tabTo("Chapter 1");
 
             // Chapter 1 is now expanded — ArrowRight should move to first child.
             await userEvent.keyboard("{ArrowRight}");
@@ -220,14 +209,11 @@ describe("GTreeMenu", () => {
             const wrapper = mnt(GTreeMenu, { props: { items: nestedItems } });
 
             // Expand Chapter 1 by clicking so focus stays on the button.
-            await wrapper.container.getByRole("button", { name: "Chapter 1" }).click();
-            await expect.element(wrapper.container.getByText("Section 1.1")).toBeVisible();
+            await tabTo("Chapter 1");
+            await userEvent.keyboard("{ArrowRight}");
 
             // Re-focus Chapter 1 button.
-            const ch1Btn = wrapper.container.element()!.querySelector<HTMLElement>(
-                "[data-tree-primary]",
-            );
-            ch1Btn?.focus();
+            await tabTo("Chapter 1");
 
             // ArrowLeft on an expanded item collapses it.
             await userEvent.keyboard("{ArrowLeft}");
@@ -236,7 +222,7 @@ describe("GTreeMenu", () => {
 
         it("ArrowLeft on a collapsed item moves focus to its parent", async () => {
             const wrapper = mnt(GTreeMenu, { props: { items: nestedItems } });
-            await focusFirst(wrapper.container);
+            await tabTo("Chapter 1");
 
             // Expand Chapter 1, then move into Section 1.1
             await userEvent.keyboard("{ArrowRight}");
@@ -254,8 +240,7 @@ describe("GTreeMenu", () => {
             const wrapper = mnt(GTreeMenu, { props: { items: nestedItems } });
 
             // Focus the last top-level item
-            const buttons = wrapper.container.element()!.querySelectorAll<HTMLElement>("[data-tree-primary]");
-            (buttons[buttons.length - 1] as HTMLElement).focus();
+            await tabTo("Appendix");
 
             await userEvent.keyboard("{Home}");
 
@@ -266,7 +251,7 @@ describe("GTreeMenu", () => {
 
         it("End moves focus to the last visible item", async () => {
             const wrapper = mnt(GTreeMenu, { props: { items: nestedItems } });
-            await focusFirst(wrapper.container);
+            await tabTo("Chapter 1");
 
             await userEvent.keyboard("{End}");
 

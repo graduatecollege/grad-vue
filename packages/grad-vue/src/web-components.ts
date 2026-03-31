@@ -17,6 +17,7 @@ import GForm from "./components/GForm.vue";
 import GHamburgerMenu from "./components/GHamburgerMenu.vue";
 import GHistoryScroller from "./components/GHistoryScroller.vue";
 import GModal from "./components/GModal.vue";
+import GMultiSelect from "./components/GMultiSelect.vue";
 import GOverlay from "./components/GOverlay.vue";
 import GPopover from "./components/GPopover.vue";
 import GTooltip from "./components/GTooltip.vue";
@@ -73,6 +74,7 @@ const components: [string, Component][] = [
     ["g-hamburger-menu", GHamburgerMenu],
     ["g-history-scroller", GHistoryScroller],
     ["g-modal", GModal],
+    ["g-multi-select", GMultiSelect],
     ["g-overlay", GOverlay],
     ["g-popover", GPopover],
     ["g-tooltip", GTooltip],
