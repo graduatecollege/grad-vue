@@ -750,6 +750,75 @@ type Props = {
 
 ---
 
+## GMultiSelect
+
+A multi-select combobox that allows selecting multiple values with
+optional search/filter support.
+
+Selected values are displayed as removable chips inside the control.
+The dropdown listbox shows all (or filtered) options with a checkmark
+next to each selected option.
+
+The `options` prop accepts an array of strings or `{ label, value }`
+objects. The `v-model` binds to an array of `string | number` values.
+
+In standard Vue usage, this registers with the nearest parent `GForm` via
+injection. In custom-elements mode, use matching `form-key` values to pair
+with a `GForm`.
+
+Keyboard navigation:
+- `Down Arrow` / `Up Arrow`: move through options (opens menu if closed)
+- `Enter`: toggle the focused option
+- `Space`: toggle the focused option when the search field is empty
+- `Escape`: close the dropdown
+- `Home` / `End`: jump to first / last option
+- `Backspace`: remove the last chip when the search field is empty
+
+### Props
+
+```typescript
+type Props = {
+    /**
+     * List of options to choose from
+     */
+    options: Array<string | MultiSelectOption>;
+    /**
+     * Accessible label
+     */
+    label: string;
+    /**
+     * Hide the label visually
+     */
+    hiddenLabel?: boolean;
+    /**
+     * Placeholder text shown when no values are selected
+     */
+    placeholder?: string;
+    /**
+     * Disabled
+     */
+    disabled?: boolean;
+    /**
+     * Name for form registration
+     */
+    name?: string;
+    /**
+     * Error messages array (supports multiple validation errors)
+     */
+    errors?: string[];
+    /**
+     * Instructions shown below the label
+     */
+    instructions?: string;
+    /**
+     * Form channel key for custom elements mode
+     */
+    formKey?: string;
+};
+```
+
+---
+
 ## GOverlay
 
 Client-side overlay for behind modal dialogs.
@@ -1677,23 +1746,23 @@ individually.
 
 **Props**:
 
-- `title` — optional heading and accessible name for the nav landmark.
-- `items` — array of `TreeMenuItem` objects. Each item may have:
-  - `label` — display text (required).
-  - `href` or `to` — link destination. When `to` is provided and `vue-router`
+- `title` - optional heading and accessible name for the nav landmark.
+- `items` - array of `TreeMenuItem` objects. Each item may have:
+  - `label` - display text (required).
+  - `href` or `to` - link destination. When `to` is provided and `vue-router`
     is present the link is rendered as a `<router-link>`.
-  - `children` — nested `TreeMenuItem[]` for sub-levels (unlimited depth).
-- `listType` — `ul` (default) or `ol`. Use `ol` for numbered
+  - `children` - nested `TreeMenuItem[]` for sub-levels (unlimited depth).
+- `listType` - `ul` (default) or `ol`. Use `ol` for numbered
   hierarchies such as book chapters.
-- `theme` — `light` (default) or `dark`.
+- `theme` - `light` (default) or `dark`.
 
 **Keyboard navigation** (tree-view style):
 
-- `↑` / `↓` — move between visible menu items.
-- `→` — expand a collapsed item; if already expanded, move to its first child.
-- `←` — collapse an expanded item; if already collapsed, move focus to its
+- `Up Arrow` / `Down Arrow` - move between visible menu items.
+- `Right Arrow` - expand a collapsed item; if already expanded, move to its first child.
+- `Left Arrow` - collapse an expanded item; if already collapsed, move focus to its
   parent.
-- `Home` / `End` — jump to the first or last visible item.
+- `Home` / `End` - jump to the first or last visible item.
 
 ### Props
 
@@ -1708,7 +1777,7 @@ type Props = {
      */
     items: TreeMenuItem[];
     /**
-     * List element type — use `ol` for numbered hierarchies like book chapters
+     * List element type - use `ol` for numbered hierarchies like book chapters
      */
     listType?: "ul" | "ol";
     /**

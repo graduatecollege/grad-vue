@@ -36,6 +36,7 @@ import {
     GSubmitButton,
     GCheckboxGroup,
     GTextarea,
+    GMultiSelect,
     VGtooltip,
     VGtooltipDirective,
 } from "./grad-vue.ts";
@@ -80,6 +81,7 @@ export default {
         app.component("GSubmitButton", GSubmitButton);
         app.component("GCheckboxGroup", GCheckboxGroup);
         app.component("GTextarea", GTextarea);
+        app.component("GMultiSelect", GMultiSelect);
     },
 };
 
