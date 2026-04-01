@@ -332,10 +332,10 @@ const describedBy = computed(() => {
                         @click.stop="removeValue(val)"
                     >
                         <svg
-                            aria-hidden="true"
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 51.26 51.26"
                             width="1em"
+                            role="none presentation"
                         >
                             <path
                                 fill="currentColor"

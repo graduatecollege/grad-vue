@@ -120,10 +120,10 @@ describe("GMultiSelect", () => {
                 props: { label: "Pick fruits", options: objectOptions, modelValue: ["apple"] },
             });
             await container.getByRole("combobox").click();
-            const appleOption = container.getByRole("option", { name: "Apple" }).element() as HTMLElement;
-            expect(appleOption.getAttribute("aria-selected")).toBe("true");
-            const bananaOption = container.getByRole("option", { name: "Banana" }).element() as HTMLElement;
-            expect(bananaOption.getAttribute("aria-selected")).toBe("false");
+            await expect.element(container.getByRole("option", { name: "Apple" }))
+                .toHaveAttribute("aria-selected", "true");
+            await expect.element(container.getByRole("option", { name: "Banana" }))
+                .toHaveAttribute("aria-selected", "false");
         });
 
         it("emits change event on selection", async () => {
@@ -143,15 +143,16 @@ describe("GMultiSelect", () => {
             });
             await container.getByRole("combobox").click({force: true});
             await nextTick();
-            await expect.element(container.getByRole("combobox")).toHaveAttribute("aria-expanded", "false");
+            await expect.element(container.getByRole("combobox"))
+                .toHaveAttribute("aria-expanded", "false");
         });
 
         it("remove buttons are disabled when component is disabled", async () => {
             const { container } = mnt(GMultiSelect, {
                 props: { label: "Pick", options, modelValue: ["Option 1"], disabled: true },
             });
-            const btn = container.getByRole("button", { name: "Remove Option 1" }).element() as HTMLButtonElement;
-            expect(btn.disabled).toBe(true);
+            await expect.element(container.getByRole("button", { name: "Remove Option 1" }))
+                .toBeDisabled();
         });
 
         it("shows error messages", async () => {
@@ -229,11 +230,10 @@ describe("GMultiSelect", () => {
             await nextTick();
             await userEvent.keyboard("{ArrowDown}");
             await nextTick();
-            const comboboxEl = input.element() as HTMLInputElement;
-            expect(comboboxEl.getAttribute("aria-activedescendant")).toContain("-option-1");
+            await expect.element(input).toHaveAttribute("aria-activedescendant", expect.stringContaining("-option-1"));
             await userEvent.keyboard("{ArrowUp}");
             await nextTick();
-            expect(comboboxEl.getAttribute("aria-activedescendant")).toContain("-option-0");
+            await expect.element(input).toHaveAttribute("aria-activedescendant", expect.stringContaining("-option-0"));
         });
 
         it("selects option with Enter key", async () => {
@@ -271,11 +271,10 @@ describe("GMultiSelect", () => {
             });
             const input = container.getByRole("combobox");
             await input.click();
-            const listboxEl = container.element().querySelector('[role="listbox"]') as HTMLElement;
-            expect(listboxEl.style.display).not.toBe("none");
+            await expect.element(container.getByRole("listbox")).toBeVisible();
             await userEvent.keyboard("{Escape}");
             await nextTick();
-            expect(input.element().getAttribute("aria-expanded")).toBe("false");
+            await expect.element(input).toHaveAttribute("aria-expanded", "false");
         });
     });
 

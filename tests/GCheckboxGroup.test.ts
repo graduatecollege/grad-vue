@@ -108,10 +108,10 @@ describe("GCheckboxGroup", () => {
                 props: { label: "Pick", options, modelValue: [] },
             });
 
-            const hintEl = wrapper.container.element().querySelector(".g-checkbox-group__hint") as HTMLElement;
-            const hintId = hintEl.id;
-            const inputD = wrapper.instance.getByRole("checkbox", { name: "Option D" }).element() as HTMLInputElement;
-            expect(inputD.getAttribute("aria-describedby")).toContain(hintId);
+            const hint = wrapper.instance.getByText("A helpful hint");
+            const inputD = wrapper.instance.getByRole("checkbox", { name: "Option D" });
+            
+            await expect.element(inputD).toHaveAccessibleDescription("A helpful hint");
         });
 
         it("radio mode allows only one selection", async () => {
@@ -148,8 +148,7 @@ describe("GCheckboxGroup", () => {
                 props: { label: "Pick", options, modelValue: [] },
             });
 
-            const root = wrapper.container.element().firstElementChild as HTMLElement;
-            expect(root.tagName.toLowerCase()).toBe("fieldset");
+            await expect.element(wrapper.container.getByRole("group")).toBeInTheDocument();
         });
 
         it("uses a div (no fieldset) for a single checkbox", async () => {
@@ -161,8 +160,7 @@ describe("GCheckboxGroup", () => {
                 },
             });
 
-            const root = wrapper.container.element().firstElementChild as HTMLElement;
-            expect(root.tagName.toLowerCase()).toBe("div");
+            await expect.element(wrapper.container.getByRole("group")).not.toBeInTheDocument();
         });
 
         it("sets aria-invalid and aria-errormessage on checkbox inputs when there are errors", async () => {
@@ -175,9 +173,9 @@ describe("GCheckboxGroup", () => {
                 },
             });
 
-            const inputA = wrapper.instance.getByRole("checkbox", { name: "Option A" }).element() as HTMLInputElement;
-            expect(inputA.getAttribute("aria-invalid")).toBe("true");
-            expect(inputA.getAttribute("aria-errormessage")).toBeTruthy();
+            const inputA = wrapper.instance.getByRole("checkbox", { name: "Option A" });
+            await expect.element(inputA).toHaveAttribute("aria-invalid", "true");
+            await expect.element(inputA).toHaveAttribute("aria-errormessage");
         });
 
         it("sets role=radiogroup with aria-invalid on the fieldset in radio mode with errors", async () => {
@@ -191,10 +189,9 @@ describe("GCheckboxGroup", () => {
                 },
             });
 
-            const root = wrapper.container.element().firstElementChild as HTMLElement;
-            expect(root.tagName.toLowerCase()).toBe("fieldset");
-            expect(root.getAttribute("role")).toBe("radiogroup");
-            expect(root.getAttribute("aria-invalid")).toBe("true");
+            const group = wrapper.container.getByRole("radiogroup");
+            await expect.element(group).toBeInTheDocument();
+            await expect.element(group).toHaveAttribute("aria-invalid", "true");
         });
     });
 

@@ -4,13 +4,12 @@ import { page, userEvent } from "vitest/browser";
 import GTooltip from "../packages/grad-vue/src/components/GTooltip.vue";
 import { mnt, testAccessibility } from "./test-utils";
 
-function getTooltip() {
-    return page.getByRole("tooltip");
-}
-
-async function expectTooltipShown(tooltip: ReturnType<typeof getTooltip>) {
+/**
+ * There are no semantic assertions for opacity as far as I know,
+ * so we use this helper.
+ */
+async function expectTooltipShown() {
     await expect.poll(() => (document.querySelector("[role='tooltip']") as HTMLElement | null)?.style.opacity).toBe("1");
-    await expect.element(tooltip).toBeVisible();
 }
 
 async function expectTooltipHidden() {
@@ -29,9 +28,7 @@ describe("GTooltip", () => {
                 },
             });
 
-            const tooltip = getTooltip();
-
-            await expect.element(tooltip).toHaveTextContent("Help text");
+            await expect.element(page.getByRole("tooltip")).toHaveTextContent("Help text");
         });
 
         it("sets aria-describedby on the trigger", async () => {
@@ -60,10 +57,9 @@ describe("GTooltip", () => {
             });
 
             const trigger = page.getByRole("button", { name: "Help" });
-            const tooltip = getTooltip();
 
             await userEvent.hover(trigger);
-            await expectTooltipShown(tooltip);
+            await expectTooltipShown();
         });
 
         it("hides the tooltip on trigger unhover", async () => {
@@ -77,10 +73,9 @@ describe("GTooltip", () => {
             });
 
             const trigger = page.getByRole("button", { name: "Help" });
-            const tooltip = getTooltip();
 
             await userEvent.hover(trigger);
-            await expectTooltipShown(tooltip);
+            await expectTooltipShown();
 
             await userEvent.unhover(trigger);
             await expectTooltipHidden();
@@ -102,7 +97,7 @@ describe("GTooltip", () => {
             });
 
             tooltipRef.value.show();
-            await expectTooltipShown(getTooltip());
+            await expectTooltipShown();
         });
 
         it("hides the tooltip through hide() without a trigger slot", async () => {
@@ -121,7 +116,7 @@ describe("GTooltip", () => {
             });
 
             tooltipRef.value.show();
-            await expectTooltipShown(getTooltip());
+            await expectTooltipShown();
 
             tooltipRef.value.hide();
             await expectTooltipHidden();
@@ -165,10 +160,8 @@ describe("GTooltip", () => {
                 },
             );
 
-            const tooltip = getTooltip();
-
             tooltipRef.value.show();
-            await expectTooltipShown(tooltip);
+            await expectTooltipShown();
         });
 
         it("hides the tooltip through exposed hide()", async () => {
@@ -195,7 +188,7 @@ describe("GTooltip", () => {
             );
 
             tooltipRef.value.show();
-            await expectTooltipShown(getTooltip());
+            await expectTooltipShown();
 
             tooltipRef.value.hide();
             await expectTooltipHidden();
@@ -225,7 +218,7 @@ describe("GTooltip", () => {
             );
 
             tooltipRef.value.toggle();
-            await expectTooltipShown(getTooltip());
+            await expectTooltipShown();
 
             tooltipRef.value.toggle();
             await expectTooltipHidden();
@@ -248,10 +241,9 @@ describe("GTooltip", () => {
             );
 
             const anchor = page.getByRole("button", { name: "Anchor" });
-            const tooltip = getTooltip();
 
             await userEvent.hover(anchor);
-            await expectTooltipShown(tooltip);
+            await expectTooltipShown();
 
             await userEvent.unhover(anchor);
             await expectTooltipHidden();

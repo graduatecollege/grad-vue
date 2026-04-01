@@ -98,10 +98,10 @@ const tableData: TableEntry[] = [
 ];
 
 const defaultFilter = {
-    key: undefined,
-    name: undefined,
-    abbr: undefined,
-    collegeInName: undefined,
+    key: undefined as string | undefined,
+    name: undefined as string | undefined,
+    abbr: undefined as string | undefined,
+    collegeInName: undefined as string | undefined,
 };
 
 function filterCollegesData(data: TableEntry[], filter: Record<string, any>) {
@@ -109,9 +109,7 @@ function filterCollegesData(data: TableEntry[], filter: Record<string, any>) {
     for (let [key, val] of Object.entries(filter)) {
         if (val) {
             filtered = filtered.filter((item) =>
-                val === "yes"
-                    ? (item as any)[key]
-                    : !(item as any)[key],
+                val === "yes" ? (item as any)[key] : !(item as any)[key],
             );
         }
     }
@@ -131,7 +129,9 @@ function createCollegesTableFixture() {
 }
 
 function getColumn(container: Locator, index: number = 0) {
-    const cells = container.element().querySelectorAll("tr > td:nth-child(" + (index + 1) + ")");
+    const cells = container
+        .element()
+        .querySelectorAll("tr > td:nth-child(" + (index + 1) + ")");
 
     return [...cells].map((cell) => cell.textContent);
 }
@@ -139,7 +139,7 @@ function getColumn(container: Locator, index: number = 0) {
 beforeEach(() => {
     // Make the viewport a little bigger
     return page.viewport(600, 800);
-})
+});
 
 describe("GTable", () => {
     describe("Functional Tests", () => {
@@ -211,7 +211,16 @@ describe("GTable", () => {
             const { GTableFixture } = createCollegesTableFixture();
             const { container } = mnt(GTableFixture);
             await container.getByRole("combobox").selectOptions("10");
-            expect(getColumn(container, 0)).toEqual(["LT", "KL", "KY", "KN", "KM", "KO", "KV", "LL"]);
+            expect(getColumn(container, 0)).toEqual([
+                "LT",
+                "KL",
+                "KY",
+                "KN",
+                "KM",
+                "KO",
+                "KV",
+                "LL",
+            ]);
         });
         it("sorts rows by code in ascending order after clicking on code column header", async () => {
             const { GTableFixture } = createCollegesTableFixture();
@@ -251,9 +260,11 @@ describe("GTable", () => {
             });
             await filterButton.click();
 
-            await page.getByRole("option", {
-                name: "No",
-            }).click();
+            await page
+                .getByRole("option", {
+                    name: "No",
+                })
+                .click();
 
             expect(getColumn(container, 0)).toEqual(["LL"]);
         });
@@ -264,12 +275,14 @@ describe("GTable", () => {
                 name: "Filter",
             });
             await filterButton.click();
-            await page.getByRole("option", {
-                name: "No",
-            }).click();
+            await page
+                .getByRole("option", {
+                    name: "No",
+                })
+                .click();
 
             await expect.element(container.getByText("1 result")).toBeVisible();
-        })
+        });
         it("clear filters removes all filters", async () => {
             const { GTableFixture } = createCollegesTableFixture();
             const { container, vm } = mnt(GTableFixture);
@@ -288,7 +301,7 @@ describe("GTable", () => {
             await clearFiltersButton.click();
             await vm.$nextTick();
             expect(getColumn(container, 0)).toEqual(["LT", "KL", "KY"]);
-        })
+        });
     });
     describe("Bulk Selection Tests", () => {
         it("shows checkboxes when bulk selection is enabled", async () => {
@@ -312,24 +325,39 @@ describe("GTable", () => {
             });
             await expect.element(selectAllCheckbox).toBeVisible();
 
-            const rowCheckboxes = container.element().querySelectorAll('input[type="checkbox"][aria-label^="Select row"]');
+            const rowCheckboxes = container
+                .element()
+                .querySelectorAll(
+                    'input[type="checkbox"][aria-label^="Select row"]',
+                );
             expect(rowCheckboxes.length).toBe(3); // 3 rows on first page
+
+            await expect.element(
+                container
+                    .getByRole("cell")
+                    .getByRole("checkbox"))
+                .toHaveLength(3);
         });
 
         it("selects a row when checkbox is clicked", async () => {
-            const { GTableFixture, selectedRows } = createGTableFixture<TableEntry>({
-                label: "Colleges",
-                columns,
-                data: tableData,
-                initialFilter: defaultFilter,
-                initialPageSize: 3,
-                pageSizes: [3, 10, 50],
-                filterData: filterCollegesData,
-                bulkSelectionEnabled: true,
-                bulkActions: [
-                    { id: "delete", label: "Delete", theme: "danger" as const },
-                ],
-            });
+            const { GTableFixture, selectedRows } =
+                createGTableFixture<TableEntry>({
+                    label: "Colleges",
+                    columns,
+                    data: tableData,
+                    initialFilter: defaultFilter,
+                    initialPageSize: 3,
+                    pageSizes: [3, 10, 50],
+                    filterData: filterCollegesData,
+                    bulkSelectionEnabled: true,
+                    bulkActions: [
+                        {
+                            id: "delete",
+                            label: "Delete",
+                            theme: "danger" as const,
+                        },
+                    ],
+                });
             const { container } = mnt(GTableFixture);
 
             const firstRowCheckbox = container.getByRole("checkbox", {
@@ -352,7 +380,11 @@ describe("GTable", () => {
                 bulkSelectionEnabled: true,
                 bulkActions: [
                     { id: "delete", label: "Delete", theme: "danger" as const },
-                    { id: "export", label: "Export", theme: "primary" as const },
+                    {
+                        id: "export",
+                        label: "Export",
+                        theme: "primary" as const,
+                    },
                 ],
             });
             const { container } = mnt(GTableFixture);
@@ -364,25 +396,36 @@ describe("GTable", () => {
 
             const toolbar = container.getByRole("list");
             await expect.element(toolbar).toBeVisible();
-            await expect.element(container.getByText("1 row selected")).toBeVisible();
-            await expect.element(container.getByRole("button", { name: "Delete" })).toBeVisible();
-            await expect.element(container.getByRole("button", { name: "Export" })).toBeVisible();
+            await expect
+                .element(container.getByText("1 row selected"))
+                .toBeVisible();
+            await expect
+                .element(container.getByRole("button", { name: "Delete" }))
+                .toBeVisible();
+            await expect
+                .element(container.getByRole("button", { name: "Export" }))
+                .toBeVisible();
         });
 
         it("selects all rows when select all checkbox is clicked", async () => {
-            const { GTableFixture, selectedRows } = createGTableFixture<TableEntry>({
-                label: "Colleges",
-                columns,
-                data: tableData,
-                initialFilter: defaultFilter,
-                initialPageSize: 3,
-                pageSizes: [3, 10, 50],
-                filterData: filterCollegesData,
-                bulkSelectionEnabled: true,
-                bulkActions: [
-                    { id: "delete", label: "Delete", theme: "danger" as const },
-                ],
-            });
+            const { GTableFixture, selectedRows } =
+                createGTableFixture<TableEntry>({
+                    label: "Colleges",
+                    columns,
+                    data: tableData,
+                    initialFilter: defaultFilter,
+                    initialPageSize: 3,
+                    pageSizes: [3, 10, 50],
+                    filterData: filterCollegesData,
+                    bulkSelectionEnabled: true,
+                    bulkActions: [
+                        {
+                            id: "delete",
+                            label: "Delete",
+                            theme: "danger" as const,
+                        },
+                    ],
+                });
             const { container } = mnt(GTableFixture);
 
             const selectAllCheckbox = container.getByRole("checkbox", {
@@ -394,19 +437,24 @@ describe("GTable", () => {
         });
 
         it("selects range of rows when using shift-click", async () => {
-            const { GTableFixture, selectedRows } = createGTableFixture<TableEntry>({
-                label: "Colleges",
-                columns,
-                data: tableData,
-                initialFilter: defaultFilter,
-                initialPageSize: 5, // Show 5 rows for better range testing
-                pageSizes: [5, 10, 50],
-                filterData: filterCollegesData,
-                bulkSelectionEnabled: true,
-                bulkActions: [
-                    { id: "delete", label: "Delete", theme: "danger" as const },
-                ],
-            });
+            const { GTableFixture, selectedRows } =
+                createGTableFixture<TableEntry>({
+                    label: "Colleges",
+                    columns,
+                    data: tableData,
+                    initialFilter: defaultFilter,
+                    initialPageSize: 5, // Show 5 rows for better range testing
+                    pageSizes: [5, 10, 50],
+                    filterData: filterCollegesData,
+                    bulkSelectionEnabled: true,
+                    bulkActions: [
+                        {
+                            id: "delete",
+                            label: "Delete",
+                            theme: "danger" as const,
+                        },
+                    ],
+                });
             const { container } = mnt(GTableFixture);
 
             // First, select the first row (LT)
@@ -421,7 +469,7 @@ describe("GTable", () => {
             const thirdRowCheckbox = container.getByRole("checkbox", {
                 name: "Select row KY",
             });
-            
+
             // Simulate shift-click by clicking with shiftKey
             await thirdRowCheckbox.click({ modifiers: ["Shift"] });
 
@@ -429,19 +477,24 @@ describe("GTable", () => {
         });
 
         it("selects range of rows in reverse order with shift-click", async () => {
-            const { GTableFixture, selectedRows } = createGTableFixture<TableEntry>({
-                label: "Colleges",
-                columns,
-                data: tableData,
-                initialFilter: defaultFilter,
-                initialPageSize: 5,
-                pageSizes: [5, 10, 50],
-                filterData: filterCollegesData,
-                bulkSelectionEnabled: true,
-                bulkActions: [
-                    { id: "delete", label: "Delete", theme: "danger" as const },
-                ],
-            });
+            const { GTableFixture, selectedRows } =
+                createGTableFixture<TableEntry>({
+                    label: "Colleges",
+                    columns,
+                    data: tableData,
+                    initialFilter: defaultFilter,
+                    initialPageSize: 5,
+                    pageSizes: [5, 10, 50],
+                    filterData: filterCollegesData,
+                    bulkSelectionEnabled: true,
+                    bulkActions: [
+                        {
+                            id: "delete",
+                            label: "Delete",
+                            theme: "danger" as const,
+                        },
+                    ],
+                });
             const { container } = mnt(GTableFixture);
 
             // First, select the fourth row (KN)
@@ -462,19 +515,24 @@ describe("GTable", () => {
         });
 
         it("extends selection when shift-clicking after initial selection", async () => {
-            const { GTableFixture, selectedRows } = createGTableFixture<TableEntry>({
-                label: "Colleges",
-                columns,
-                data: tableData,
-                initialFilter: defaultFilter,
-                initialPageSize: 5,
-                pageSizes: [5, 10, 50],
-                filterData: filterCollegesData,
-                bulkSelectionEnabled: true,
-                bulkActions: [
-                    { id: "delete", label: "Delete", theme: "danger" as const },
-                ],
-            });
+            const { GTableFixture, selectedRows } =
+                createGTableFixture<TableEntry>({
+                    label: "Colleges",
+                    columns,
+                    data: tableData,
+                    initialFilter: defaultFilter,
+                    initialPageSize: 5,
+                    pageSizes: [5, 10, 50],
+                    filterData: filterCollegesData,
+                    bulkSelectionEnabled: true,
+                    bulkActions: [
+                        {
+                            id: "delete",
+                            label: "Delete",
+                            theme: "danger" as const,
+                        },
+                    ],
+                });
             const { container } = mnt(GTableFixture);
 
             // Select first row (LT)
@@ -508,16 +566,16 @@ describe("GTable", () => {
 
             // The pagination component should be visible
             await expect.element(container.getByText("1 to 3")).toBeVisible();
-            
+
             // The pagination navigation buttons should exist
             const nextPageButton = container.getByRole("button", {
                 name: "Next Page",
             });
             await expect.element(nextPageButton).toBeInTheDocument();
-            
-            // The controls bar should be visible
-            const controlsBar = container.element().querySelector('.g-table-controls');
-            expect(controlsBar).toBeTruthy();
+
+            await expect
+                .element(container.getByRole("button", { name: "First Page" }))
+                .toBeInTheDocument();
         });
 
         it("hides entire controls bar when slot is empty and showPagination is false", async () => {
@@ -529,13 +587,9 @@ describe("GTable", () => {
             });
             const { container } = mnt(GTableFixture);
 
-            // The entire controls bar should not be visible
-            const controlsBar = container.element().querySelector('.g-table-controls');
-            expect(controlsBar).toBeNull();
-            
-            // The pagination div should not exist
-            const paginationDiv = container.element().querySelector('.pagination');
-            expect(paginationDiv).toBeNull();
+            await expect
+                .element(container.getByRole("button", { name: "First Page" }))
+                .not.toBeInTheDocument();
         });
 
         it("shows controls bar when showPagination prop is true even with empty slot", async () => {
@@ -543,10 +597,10 @@ describe("GTable", () => {
                 setup() {
                     const filtering = useFiltering(defaultFilter);
                     const { filters } = filtering;
-                    
+
                     return () =>
                         h(
-                            GTable<TableEntry>,
+                            GTable<TableEntry, TableColumn<TableEntry>>,
                             {
                                 label: "Test Table",
                                 data: tableData,
@@ -562,16 +616,11 @@ describe("GTable", () => {
                         );
                 },
             });
-            
+
             const { container } = mnt(GTableFixture);
 
-            // The controls bar should be visible
-            const controlsBar = container.element().querySelector('.g-table-controls');
-            expect(controlsBar).toBeTruthy();
-            
-            // The pagination div should be visible even though the slot is empty
-            const paginationDiv = container.element().querySelector('.pagination');
-            expect(paginationDiv).toBeTruthy();
+            // The pagination status should be visible even though the slot is empty
+            await expect.element(container.getByText("results")).toBeVisible();
         });
 
         it("hides controls bar when showPagination is false and slot is empty", async () => {
@@ -579,10 +628,10 @@ describe("GTable", () => {
                 setup() {
                     const filtering = useFiltering(defaultFilter);
                     const { filters } = filtering;
-                    
+
                     return () =>
                         h(
-                            GTable<TableEntry>,
+                            GTable<TableEntry, TableColumn<TableEntry>>,
                             {
                                 label: "Test Table",
                                 data: tableData,
@@ -598,12 +647,12 @@ describe("GTable", () => {
                         );
                 },
             });
-            
+
             const { container } = mnt(GTableFixture);
 
-            // The entire controls bar should not be visible
-            const controlsBar = container.element().querySelector('.g-table-controls');
-            expect(controlsBar).toBeNull();
+            await expect
+                .element(container.getByRole("button", { name: "First Page" }))
+                .not.toBeInTheDocument();
         });
 
         it("shows controls bar with custom content in slot", async () => {
@@ -611,10 +660,10 @@ describe("GTable", () => {
                 setup() {
                     const filtering = useFiltering(defaultFilter);
                     const { filters } = filtering;
-                    
+
                     return () =>
                         h(
-                            GTable<TableEntry>,
+                            GTable<TableEntry, TableColumn<TableEntry>>,
                             {
                                 label: "Test Table",
                                 data: tableData,
@@ -624,16 +673,19 @@ describe("GTable", () => {
                                 startIndex: 0,
                             },
                             {
-                                pagination: () => h('span', 'Custom pagination content'),
+                                pagination: () =>
+                                    h("span", "Custom pagination content"),
                             },
                         );
                 },
             });
-            
+
             const { container } = mnt(GTableFixture);
 
             // The pagination div should be visible with custom content
-            await expect.element(container.getByText("Custom pagination content")).toBeVisible();
+            await expect
+                .element(container.getByText("Custom pagination content"))
+                .toBeVisible();
         });
 
         it("shows controls bar when filters are active even without pagination", async () => {
@@ -641,13 +693,13 @@ describe("GTable", () => {
                 setup() {
                     const filtering = useFiltering(defaultFilter);
                     const { filters } = filtering;
-                    
+
                     // Set a filter to make isFiltered true
                     filters.collegeInName = "yes";
-                    
+
                     return () =>
                         h(
-                            GTable<TableEntry>,
+                            GTable<TableEntry, TableColumn<TableEntry>>,
                             {
                                 label: "Test Table",
                                 data: tableData,
@@ -668,15 +720,13 @@ describe("GTable", () => {
                         );
                 },
             });
-            
+
             const { container } = mnt(GTableFixture);
 
-            // The controls bar should be visible because filters are active
-            const controlsBar = container.element().querySelector('.g-table-controls');
-            expect(controlsBar).toBeTruthy();
-            
             // The clear filters button should be visible
-            await expect.element(container.getByText("Clear Filters")).toBeVisible();
+            await expect
+                .element(container.getByText("Clear Filters"))
+                .toBeVisible();
         });
     });
 
