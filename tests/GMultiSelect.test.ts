@@ -141,10 +141,9 @@ describe("GMultiSelect", () => {
             const { container } = mnt(GMultiSelect, {
                 props: { label: "Pick", options, modelValue: [], disabled: true },
             });
-            await container.locator(".g-multiselect-control").click({ force: true });
+            await container.getByRole("combobox").click({force: true});
             await nextTick();
-            const input = container.element().querySelector('[role="combobox"]') as HTMLInputElement;
-            expect(input.getAttribute("aria-expanded")).toBe("false");
+            await expect.element(container.getByRole("combobox")).toHaveAttribute("aria-expanded", "false");
         });
 
         it("remove buttons are disabled when component is disabled", async () => {

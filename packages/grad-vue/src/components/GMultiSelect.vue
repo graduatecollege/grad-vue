@@ -15,7 +15,7 @@
  * with a `GForm`.
  *
  * Keyboard navigation:
- * - `ArrowDown` / `ArrowUp`: move through options (opens menu if closed)
+ * - `Down Arrow` / `Up Arrow`: move through options (opens menu if closed)
  * - `Enter`: toggle the focused option
  * - `Space`: toggle the focused option when the search field is empty
  * - `Escape`: close the dropdown
@@ -51,7 +51,7 @@ type Props = {
     options: Array<string | MultiSelectOption>;
     /**
      * Accessible label
-     * @demo Multi Select
+     * @demo Select Fruits
      */
     label: string;
     /**
@@ -91,11 +91,7 @@ type Props = {
 const props = withDefaults(defineProps<Props>(), {
     disabled: false,
     hiddenLabel: false,
-    placeholder: undefined,
-    name: undefined,
     errors: () => [],
-    instructions: undefined,
-    formKey: undefined,
 });
 
 const emit = defineEmits<{
@@ -193,7 +189,10 @@ function addWindowListeners() {
     if (removeWindowListeners) return;
     const onChange = () => updateMenuPlacement();
     window.addEventListener("resize", onChange, { passive: true });
-    window.addEventListener("scroll", onChange, { passive: true, capture: true });
+    window.addEventListener("scroll", onChange, {
+        passive: true,
+        capture: true,
+    });
     removeWindowListeners = () => {
         window.removeEventListener("resize", onChange);
         window.removeEventListener("scroll", onChange, true);
@@ -294,7 +293,7 @@ function onBlur(e: FocusEvent) {
 
 function onOptionMouseDown(e: MouseEvent) {
     e.preventDefault();
-    ignoreBlur.value = true;
+    //ignoreBlur.value = true;
 }
 
 function onChipMouseDown() {
@@ -375,6 +374,7 @@ function onKeydown(e: KeyboardEvent) {
 
 // ----- IDs -----
 
+const inputId = computed(() => `${baseId}-input`);
 const labelId = computed(() => `${baseId}-label`);
 const instructionsId = computed(() => `${baseId}-instructions`);
 const errorId = computed(() => `error-message-${baseId}`);
@@ -395,16 +395,9 @@ const describedBy = computed(() => {
             'g-multiselect-has-error': hasErrors,
         }"
     >
-        <!-- Label -->
-        <div
-            v-if="!hiddenLabel"
-            :id="labelId"
-            class="g-multiselect-label"
-        >
+        <label v-if="!hiddenLabel" :id="labelId" :for="inputId" class="g-multiselect-label">
             {{ label }}
-        </div>
-
-        <!-- Instructions -->
+        </label>
         <div
             v-if="instructions"
             :id="instructionsId"
@@ -412,49 +405,46 @@ const describedBy = computed(() => {
         >
             {{ instructions }}
         </div>
-
-        <!-- Control: chips + search input -->
         <div
             ref="controlRef"
             class="g-multiselect-control"
             :class="{ 'g-multiselect-control--disabled': disabled }"
             @click="onControlClick"
         >
-            <!-- Selected value chips -->
-            <span
-                v-for="val in model"
-                :key="val"
-                class="g-multiselect-chip"
-            >
-                <span class="g-multiselect-chip-label">{{ labelForValue(val) }}</span>
-                <button
-                    type="button"
-                    class="g-multiselect-chip-remove"
-                    :aria-label="`Remove ${labelForValue(val)}`"
-                    :disabled="disabled"
-                    @mousedown="onChipMouseDown"
-                    @click.stop="removeValue(val)"
-                >
-                    <svg
-                        aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 51.26 51.26"
-                        width="0.75em"
+            <ul class="g-multiselect-chips" :aria-labelledby="labelId">
+                <li v-for="val in model" :key="val" class="g-multiselect-chip">
+                    <span class="g-multiselect-chip-label">{{
+                        labelForValue(val)
+                    }}</span>
+                    <button
+                        type="button"
+                        class="g-multiselect-chip-remove"
+                        :aria-label="`Remove ${labelForValue(val)}`"
+                        :disabled="disabled"
+                        @mousedown="onChipMouseDown"
+                        @click.stop="removeValue(val)"
                     >
-                        <path
-                            fill="currentColor"
-                            d="m37.84 32.94-7.63-7.63 7.63-7.63a3.24 3.24 0 0 0-4.58-4.58l-7.63 7.63L18 13.1a3.24 3.24 0 0 0-4.58 4.58L21 25.31l-7.62 7.63A3.24 3.24 0 1 0 18 37.52l7.63-7.63 7.63 7.63a3.24 3.24 0 0 0 4.58-4.58Z"
-                        />
-                    </svg>
-                </button>
-            </span>
+                        <svg
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 51.26 51.26"
+                            width="1em"
+                        >
+                            <path
+                                fill="currentColor"
+                                d="m37.84 32.94-7.63-7.63 7.63-7.63a3.24 3.24 0 0 0-4.58-4.58l-7.63 7.63L18 13.1a3.24 3.24 0 0 0-4.58 4.58L21 25.31l-7.62 7.63A3.24 3.24 0 1 0 18 37.52l7.63-7.63 7.63 7.63a3.24 3.24 0 0 0 4.58-4.58Z"
+                            />
+                        </svg>
+                    </button>
+                </li>
+            </ul>
 
-            <!-- Search / combobox input -->
             <input
                 ref="inputRef"
                 type="text"
                 role="combobox"
                 class="g-multiselect-input"
+                :id="inputId"
                 :value="searchQuery"
                 :placeholder="model.length === 0 ? placeholder : undefined"
                 :disabled="disabled"
@@ -468,11 +458,7 @@ const describedBy = computed(() => {
                         ? baseId + '-option-' + activeIndex
                         : undefined
                 "
-                v-bind="
-                    hiddenLabel
-                        ? { 'aria-label': label }
-                        : { 'aria-labelledby': labelId }
-                "
+                v-bind="hiddenLabel ? { 'aria-label': label } : undefined"
                 :aria-describedby="describedBy"
                 @input="onInput"
                 @keydown="onKeydown"
@@ -480,7 +466,6 @@ const describedBy = computed(() => {
                 @blur="onBlur"
             />
 
-            <!-- Caret -->
             <svg
                 class="g-multiselect-caret"
                 xmlns="http://www.w3.org/2000/svg"
@@ -494,70 +479,68 @@ const describedBy = computed(() => {
                     d="M38.75 24.13a1.36 1.36 0 0 1 0 2.36l-12.44 7.18-12.43 7.18a1.36 1.36 0 0 1-2.05-1.18V11a1.36 1.36 0 0 1 2.05-1.18L26.31 17Z"
                 />
             </svg>
-        </div>
 
-        <!-- Listbox dropdown -->
-        <div
-            v-show="open"
-            ref="listboxRef"
-            :id="baseId + '-listbox'"
-            role="listbox"
-            aria-multiselectable="true"
-            v-bind="
+            <div
+                v-show="open"
+                ref="listboxRef"
+                :id="baseId + '-listbox'"
+                role="listbox"
+                aria-multiselectable="true"
+                v-bind="
                 hiddenLabel
                     ? { 'aria-label': label }
                     : { 'aria-labelledby': labelId }
             "
-            class="g-multiselect-listbox"
-            :class="{
+                class="g-multiselect-listbox"
+                :class="{
                 'g-multiselect-listbox--above': menuPlacement === 'above',
             }"
-            :style="menuStyle"
-            tabindex="-1"
-        >
-            <template v-if="filteredOptions.length > 0">
-                <div
-                    v-for="(opt, idx) in filteredOptions"
-                    :key="opt.value"
-                    :id="baseId + '-option-' + idx"
-                    role="option"
-                    class="g-multiselect-option"
-                    :class="{
+                :style="menuStyle"
+                tabindex="-1"
+            >
+                <template v-if="filteredOptions.length > 0">
+                    <div
+                        v-for="(opt, idx) in filteredOptions"
+                        :key="opt.value"
+                        :id="baseId + '-option-' + idx"
+                        role="option"
+                        class="g-multiselect-option"
+                        :class="{
                         'g-multiselect-option--active': idx === activeIndex,
                         'g-multiselect-option--selected': isSelected(opt.value),
                     }"
-                    :aria-selected="isSelected(opt.value) ? 'true' : 'false'"
-                    @mousedown="onOptionMouseDown"
-                    @click="toggleOption(idx)"
-                >
+                        :aria-selected="isSelected(opt.value) ? 'true' : 'false'"
+                        @mousedown="onOptionMouseDown"
+                        @click="toggleOption(idx)"
+                    >
                     <span class="g-multiselect-option-check" aria-hidden="true">
                         <svg
                             v-if="isSelected(opt.value)"
                             xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 448 512"
-                            width="0.875em"
+                            viewBox="0 0 640 640"
+                            width="1.25em"
                         >
-                            <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+                            <!--!Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
                             <path
-                                fill="currentColor"
-                                d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"
+                                d="M530.8 134.1C545.1 144.5 548.3 164.5 537.9 178.8L281.9 530.8C276.4 538.4 267.9 543.1 258.5 543.9C249.1 544.7 240 541.2 233.4 534.6L105.4 406.6C92.9 394.1 92.9 373.8 105.4 361.3C117.9 348.8 138.2 348.8 150.7 361.3L252.2 462.8L486.2 141.1C496.6 126.8 516.6 123.6 530.9 134z"
                             />
                         </svg>
                     </span>
-                    {{ opt.label }}
-                </div>
-            </template>
-            <template v-else>
-                <div
-                    aria-live="polite"
-                    class="g-multiselect-option g-multiselect-no-results"
-                >
-                    No results found.
-                </div>
-            </template>
+                        {{ opt.label }}
+                    </div>
+                </template>
+                <template v-else>
+                    <div
+                        aria-live="polite"
+                        class="g-multiselect-option g-multiselect-no-results"
+                    >
+                        No results found.
+                    </div>
+                </template>
+            </div>
         </div>
 
-        <!-- Error messages -->
+
         <GFormErrorMessages :errors="displayErrors" :id="errorId" />
     </div>
 </template>
@@ -583,6 +566,7 @@ const describedBy = computed(() => {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
+    list-style: none;
     gap: 0.375em;
     min-height: calc(0.25em + 1.875em + 0.25em + 4px);
     padding: 0.3em 2.25em 0.3em 0.5em;
@@ -620,6 +604,16 @@ const describedBy = computed(() => {
     background: var(--g-danger-100);
 }
 
+.g-multiselect-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375em;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 .g-multiselect-chip {
     display: inline-flex;
     align-items: center;
@@ -628,7 +622,6 @@ const describedBy = computed(() => {
     color: var(--g-primary-text);
     border-radius: 1em;
     padding: 0.1em 0.4em 0.1em 0.6em;
-    font-size: 0.875em;
     line-height: 1.5;
     max-width: 100%;
 }
@@ -648,6 +641,9 @@ const describedBy = computed(() => {
     color: inherit;
     cursor: pointer;
     padding: 0.15em;
+    box-sizing: border-box;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
     flex-shrink: 0;
     line-height: 1;
@@ -758,11 +754,15 @@ const describedBy = computed(() => {
 }
 
 .g-multiselect-option-check {
-    display: inline-flex;
+    display: block;
     align-items: center;
     justify-content: center;
-    width: 1em;
+    width: 1.25em;
     flex-shrink: 0;
+}
+.g-multiselect-option-check :deep(svg) {
+    display: block;
+    fill: currentColor;
 }
 
 .g-multiselect-no-results {

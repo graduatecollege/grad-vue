@@ -72,7 +72,7 @@ const linkedParentItems: TreeMenuItem[] = [
                 },
                 listType: {
                     type: 'select',
-                    label: 'List element type — use `ol` for numbered hierarchies like book chapters',
+                    label: 'List element type - use `ol` for numbered hierarchies like book chapters',
                     default: 'ul',
                     options: [
                         'ul',
@@ -106,7 +106,7 @@ const linkedParentItems: TreeMenuItem[] = [
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    items</span><span style="color:#000000">: </span><span style="color:#267F99">TreeMenuItem</span><span style="color:#000000">[];</span></span>
 <span class="line"><span style="color:#008000">    /**</span></span>
-<span class="line"><span style="color:#008000">     * List element type — use `ol` for numbered hierarchies like book chapters</span></span>
+<span class="line"><span style="color:#008000">     * List element type - use `ol` for numbered hierarchies like book chapters</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    listType</span><span style="color:#000000">?: </span><span style="color:#A31515">"ul"</span><span style="color:#000000"> | </span><span style="color:#A31515">"ol"</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#008000">    /**</span></span>
@@ -122,25 +122,25 @@ navigation. Items with children start collapsed and can be expanded/collapsed
 individually.</p>
 <p><strong>Props</strong>:</p>
 <ul>
-<li><code>title</code> — optional heading and accessible name for the nav landmark.</li>
-<li><code>items</code> — array of <code>TreeMenuItem</code> objects. Each item may have:<ul>
-<li><code>label</code> — display text (required).</li>
-<li><code>href</code> or <code>to</code> — link destination. When <code>to</code> is provided and <code>vue-router</code>
+<li><code>title</code> - optional heading and accessible name for the nav landmark.</li>
+<li><code>items</code> - array of <code>TreeMenuItem</code> objects. Each item may have:<ul>
+<li><code>label</code> - display text (required).</li>
+<li><code>href</code> or <code>to</code> - link destination. When <code>to</code> is provided and <code>vue-router</code>
 is present the link is rendered as a <code>&lt;router-link&gt;</code>.</li>
-<li><code>children</code> — nested <code>TreeMenuItem[]</code> for sub-levels (unlimited depth).</li>
+<li><code>children</code> - nested <code>TreeMenuItem[]</code> for sub-levels (unlimited depth).</li>
 </ul>
 </li>
-<li><code>listType</code> — <code>ul</code> (default) or <code>ol</code>. Use <code>ol</code> for numbered
+<li><code>listType</code> - <code>ul</code> (default) or <code>ol</code>. Use <code>ol</code> for numbered
 hierarchies such as book chapters.</li>
-<li><code>theme</code> — <code>light</code> (default) or <code>dark</code>.</li>
+<li><code>theme</code> - <code>light</code> (default) or <code>dark</code>.</li>
 </ul>
 <p><strong>Keyboard navigation</strong> (tree-view style):</p>
 <ul>
-<li><code>↑</code> / <code>↓</code> — move between visible menu items.</li>
-<li><code>→</code> — expand a collapsed item; if already expanded, move to its first child.</li>
-<li><code>←</code> — collapse an expanded item; if already collapsed, move focus to its
+<li><code>Up Arrow</code> / <code>Down Arrow</code> - move between visible menu items.</li>
+<li><code>Right Arrow</code> - expand a collapsed item; if already expanded, move to its first child.</li>
+<li><code>Left Arrow</code> - collapse an expanded item; if already collapsed, move focus to its
 parent.</li>
-<li><code>Home</code> / <code>End</code> — jump to the first or last visible item.</li>
+<li><code>Home</code> / <code>End</code> - jump to the first or last visible item.</li>
 </ul>
 </template>
         </ComponentDemo>

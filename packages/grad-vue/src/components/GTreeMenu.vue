@@ -6,23 +6,23 @@
  *
  * **Props**:
  *
- * - `title` — optional heading and accessible name for the nav landmark.
- * - `items` — array of `TreeMenuItem` objects. Each item may have:
- *   - `label` — display text (required).
- *   - `href` or `to` — link destination. When `to` is provided and `vue-router`
+ * - `title` - optional heading and accessible name for the nav landmark.
+ * - `items` - array of `TreeMenuItem` objects. Each item may have:
+ *   - `label` - display text (required).
+ *   - `href` or `to` - link destination. When `to` is provided and `vue-router`
  *     is present the link is rendered as a `<router-link>`.
- *   - `children` — nested `TreeMenuItem[]` for sub-levels (unlimited depth).
- * - `listType` — `ul` (default) or `ol`. Use `ol` for numbered
+ *   - `children` - nested `TreeMenuItem[]` for sub-levels (unlimited depth).
+ * - `listType` - `ul` (default) or `ol`. Use `ol` for numbered
  *   hierarchies such as book chapters.
- * - `theme` — `light` (default) or `dark`.
+ * - `theme` - `light` (default) or `dark`.
  *
  * **Keyboard navigation** (tree-view style):
  *
- * - `↑` / `↓` — move between visible menu items.
- * - `→` — expand a collapsed item; if already expanded, move to its first child.
- * - `←` — collapse an expanded item; if already collapsed, move focus to its
+ * - `Up Arrow` / `Down Arrow` - move between visible menu items.
+ * - `Right Arrow` - expand a collapsed item; if already expanded, move to its first child.
+ * - `Left Arrow` - collapse an expanded item; if already collapsed, move focus to its
  *   parent.
- * - `Home` / `End` — jump to the first or last visible item.
+ * - `Home` / `End` - jump to the first or last visible item.
  */
 export default {};
 </script>
@@ -43,7 +43,7 @@ type Props = {
      */
     items: TreeMenuItem[];
     /**
-     * List element type — use `ol` for numbered hierarchies like book chapters
+     * List element type - use `ol` for numbered hierarchies like book chapters
      * @demo
      */
     listType?: "ul" | "ol";
@@ -122,7 +122,7 @@ function handleKeydown(event: KeyboardEvent) {
                 // Expand and move focus to the first child.
                 toggleItem(currentItemKey);
             } else {
-                // Already expanded — move focus to first child.
+                // Already expanded - move focus to first child.
                 const next = primaries[primaryIdx + 1];
                 if (next) next.focus();
             }
