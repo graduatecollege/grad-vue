@@ -29,20 +29,16 @@ export default {};
 import {
     computed,
     nextTick,
-    onBeforeUnmount,
     ref,
     toRef,
     useId,
-    watch,
 } from "vue";
-import { useOverlayStack } from "../compose/useOverlayStack.ts";
+import { useSelectDropdown, normalizeSelectOptions, type SelectOption } from "../compose/useSelectDropdown.ts";
 import { useFormField } from "../compose/useFormField.ts";
 import GFormErrorMessages from "./form/GFormErrorMessages.vue";
 
-export type MultiSelectOption = {
-    label: string;
-    value: string | number;
-};
+/** @deprecated Use `SelectOption` from `useSelectDropdown` instead. */
+export type MultiSelectOption = SelectOption;
 
 type Props = {
     /**
@@ -110,8 +106,6 @@ const activeIndex = ref(0);
 const searchQuery = ref("");
 const ignoreBlur = ref(false);
 
-const { push, pop, isTop } = useOverlayStack(baseId);
-
 const { displayErrors, hasErrors } = useFormField({
     name: props.name,
     value: model,
@@ -119,13 +113,19 @@ const { displayErrors, hasErrors } = useFormField({
     formKey: props.formKey,
 });
 
-const normalizedOptions = computed<MultiSelectOption[]>(() =>
-    props.options.map((opt) =>
-        typeof opt === "string" ? { label: opt, value: opt } : opt,
-    ),
+const { menuPlacement, menuStyle, isTop, scrollOptionIntoView } = useSelectDropdown({
+    open,
+    anchorRef: controlRef,
+    listboxRef,
+    baseId,
+    activeIndex,
+});
+
+const normalizedOptions = computed<SelectOption[]>(() =>
+    normalizeSelectOptions(props.options),
 );
 
-const filteredOptions = computed<MultiSelectOption[]>(() => {
+const filteredOptions = computed<SelectOption[]>(() => {
     if (!searchQuery.value) return normalizedOptions.value;
     const q = searchQuery.value.toLowerCase();
     return normalizedOptions.value.filter((opt) =>
@@ -142,93 +142,12 @@ function labelForValue(value: string | number): string {
     return opt ? opt.label : String(value);
 }
 
-// ----- Menu placement -----
-
-const menuPlacement = ref<"below" | "above">("below");
-const menuMaxHeight = ref<number | null>(null);
-
-const menuStyle = computed(() => {
-    const style: Record<string, string> = {};
-    if (menuMaxHeight.value !== null) {
-        style.maxHeight = `${menuMaxHeight.value}px`;
-    }
-    if (menuPlacement.value === "above") {
-        style.top = "auto";
-        style.bottom = "100%";
-    } else {
-        style.top = "100%";
-        style.bottom = "auto";
-    }
-    return style;
-});
-
-function updateMenuPlacement() {
-    if (!open.value || !controlRef.value) return;
-    const rect = controlRef.value.getBoundingClientRect();
-    const spaceBelow = window.innerHeight - rect.bottom;
-    const spaceAbove = rect.top;
-    const listboxFullHeight = listboxRef.value?.scrollHeight ?? 200;
-    const minSpaceToOpenBelow = Math.min(200, listboxFullHeight);
-    const gap = 8;
-
-    if (spaceBelow >= minSpaceToOpenBelow) {
-        menuPlacement.value = "below";
-        menuMaxHeight.value = Math.max(0, Math.floor(spaceBelow - gap));
-    } else if (spaceAbove > spaceBelow) {
-        menuPlacement.value = "above";
-        menuMaxHeight.value = Math.max(0, Math.floor(spaceAbove - gap));
-    } else {
-        menuPlacement.value = "below";
-        menuMaxHeight.value = Math.max(0, Math.floor(spaceBelow - gap));
-    }
-}
-
-let removeWindowListeners: (() => void) | null = null;
-
-function addWindowListeners() {
-    if (removeWindowListeners) return;
-    const onChange = () => updateMenuPlacement();
-    window.addEventListener("resize", onChange, { passive: true });
-    window.addEventListener("scroll", onChange, {
-        passive: true,
-        capture: true,
-    });
-    removeWindowListeners = () => {
-        window.removeEventListener("resize", onChange);
-        window.removeEventListener("scroll", onChange, true);
-        removeWindowListeners = null;
-    };
-}
-
-function removeListeners() {
-    if (removeWindowListeners) removeWindowListeners();
-}
-
-watch(open, (val) => {
-    if (val) {
-        push();
-        addWindowListeners();
-        nextTick(() => updateMenuPlacement());
-    } else {
-        pop();
-        removeListeners();
-        menuPlacement.value = "below";
-        menuMaxHeight.value = null;
-    }
-});
-
-onBeforeUnmount(() => {
-    removeListeners();
-    pop();
-});
-
 // ----- Open / close -----
 
 function openMenu() {
     if (props.disabled) return;
     open.value = true;
     activeIndex.value = 0;
-    nextTick(() => updateMenuPlacement());
 }
 
 function closeMenu() {
@@ -298,15 +217,6 @@ function onOptionMouseDown(e: MouseEvent) {
 
 function onChipMouseDown() {
     ignoreBlur.value = true;
-}
-
-function scrollOptionIntoView() {
-    nextTick(() => {
-        const el = document.getElementById(
-            `${baseId}-option-${activeIndex.value}`,
-        );
-        if (el) el.scrollIntoView({ block: "nearest" });
-    });
 }
 
 function onKeydown(e: KeyboardEvent) {
