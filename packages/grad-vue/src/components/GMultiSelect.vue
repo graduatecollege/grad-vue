@@ -37,14 +37,11 @@ import { useSelectDropdown, normalizeSelectOptions, type SelectOption } from "..
 import { useFormField } from "../compose/useFormField.ts";
 import GFormErrorMessages from "./form/GFormErrorMessages.vue";
 
-/** @deprecated Use `SelectOption` from `useSelectDropdown` instead. */
-export type MultiSelectOption = SelectOption;
-
 type Props = {
     /**
      * List of options to choose from
      */
-    options: Array<string | MultiSelectOption>;
+    options: Array<string | SelectOption>;
     /**
      * Accessible label
      * @demo Select Fruits
