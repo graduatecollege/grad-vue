@@ -1,7 +1,7 @@
 {
-  "totalComponents": 40,
-  "totalTests": 378,
-  "passedTests": 378,
+  "totalComponents": 41,
+  "totalTests": 408,
+  "passedTests": 408,
   "failedTests": 0,
   "skippedTests": 0,
   "components": {
@@ -1283,6 +1283,226 @@
         },
         {
           "title": "label should match accessible name",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        }
+      ]
+    },
+    "GMultiSelect": {
+      "component": "GMultiSelect",
+      "total": 30,
+      "passed": 30,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed",
+      "tests": [
+        {
+          "title": "renders with label and options",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "opens listbox when input is focused",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "shows all options in listbox",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "selects an option on click and shows it as a chip",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "allows selecting multiple options",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "deselects an option when clicked again",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "removes chip via remove button",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "filters options based on search query",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "shows 'No results found' when filter matches nothing",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "marks selected options with aria-selected=true",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "emits change event on selection",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "does not open when disabled",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "remove buttons are disabled when component is disabled",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "shows error messages",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "shows instructions text",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "hides label when hiddenLabel is true",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "works with object options",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "shows label text in chip for object options",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "opens with ArrowDown when closed",
+          "status": "passed",
+          "ancestors": [
+            "Keyboard Tests"
+          ]
+        },
+        {
+          "title": "navigates options with ArrowDown / ArrowUp",
+          "status": "passed",
+          "ancestors": [
+            "Keyboard Tests"
+          ]
+        },
+        {
+          "title": "selects option with Enter key",
+          "status": "passed",
+          "ancestors": [
+            "Keyboard Tests"
+          ]
+        },
+        {
+          "title": "removes last chip with Backspace when input is empty",
+          "status": "passed",
+          "ancestors": [
+            "Keyboard Tests"
+          ]
+        },
+        {
+          "title": "closes with Escape key",
+          "status": "passed",
+          "ancestors": [
+            "Keyboard Tests"
+          ]
+        },
+        {
+          "title": "with basic props",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "with pre-selected values",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "with object options",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "with errors",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "with instructions",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "with hidden label",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "disabled",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
