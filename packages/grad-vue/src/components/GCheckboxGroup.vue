@@ -138,11 +138,6 @@ const groupAttrs = computed(() => {
             "aria-describedby": describedParts.length ? describedParts.join(" ") : undefined,
         };
     }
-    if (props.required && props.options.length > 1) {
-        return {
-            "aria-required": "true",
-        };
-    }
     return {
         "aria-describedby": describedParts.length ? describedParts.join(" ") : undefined,
     };
@@ -172,6 +167,8 @@ function inputAriaAttrs(option: CheckboxOption, index: number): Record<string, s
 
     return {
         "aria-describedby": describedParts.length ? describedParts.join(" ") : undefined,
+        "aria-required":
+            props.required && props.options.length > 1 ? "true" : undefined,
         "aria-invalid": hasErrors.value ? "true" : "false",
         "aria-errormessage": hasErrors.value ? errorId.value : undefined,
     };
