@@ -193,6 +193,33 @@ describe("GCheckboxGroup", () => {
             await expect.element(group).toBeInTheDocument();
             await expect.element(group).toHaveAttribute("aria-invalid", "true");
         });
+
+        it("sets required on the first radio when required in radio mode", async () => {
+            const wrapper = mnt(GCheckboxGroup, {
+                props: {
+                    label: "Pick one",
+                    options,
+                    modelValue: [],
+                    radio: true,
+                    required: true,
+                },
+            });
+
+            await expect.element(wrapper.instance.getByRole("radio", { name: "Option A" })).toHaveAttribute("required");
+        });
+
+        it("sets aria-required on multi-checkbox groups when required", async () => {
+            const wrapper = mnt(GCheckboxGroup, {
+                props: {
+                    label: "Pick any",
+                    options,
+                    modelValue: [],
+                    required: true,
+                },
+            });
+
+            await expect.element(wrapper.container.getByRole("group")).toHaveAttribute("aria-required", "true");
+        });
     });
 
     describe("Accessibility Tests", () => {

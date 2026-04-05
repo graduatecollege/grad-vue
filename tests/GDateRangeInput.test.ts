@@ -41,6 +41,20 @@ describe("GDateRangeInput", () => {
 
             await expect.element(wrapper.instance.getByRole("alert")).toHaveTextContent("Invalid date range");
         });
+
+        it("sets required on both date inputs when required", async () => {
+            const wrapper = mnt(GDateRangeInput, {
+                props: {
+                    label: "Date Range",
+                    required: true,
+                    modelValue: { start: null, end: null },
+                },
+            });
+
+            const inputs = await wrapper.instance.getByRole("textbox").all();
+            await expect.element(inputs[0]).toHaveAttribute("required");
+            await expect.element(inputs[1]).toHaveAttribute("required");
+        });
     });
 
     describe("Accessibility Tests", () => {
@@ -55,6 +69,14 @@ describe("GDateRangeInput", () => {
             await testAccessibility(GDateRangeInput, {
                 label: "Date Range",
                 errors: ["Invalid date range"],
+                modelValue: { start: null, end: null },
+            });
+        });
+
+        it("passes accessibility tests with required", async () => {
+            await testAccessibility(GDateRangeInput, {
+                label: "Date Range",
+                required: true,
                 modelValue: { start: null, end: null },
             });
         });

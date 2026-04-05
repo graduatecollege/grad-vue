@@ -80,6 +80,19 @@ describe("GSelect", () => {
 
 
         });
+
+        it("sets aria-required when required", async () => {
+            const { container } = mnt(GSelect, {
+                props: {
+                    label: "Select option",
+                    options,
+                    modelValue: null,
+                    required: true,
+                },
+            });
+
+            await expect.element(container.getByRole("combobox")).toHaveAttribute("aria-required", "true");
+        });
     });
 
     describe("Accessibility Tests", () => {
@@ -118,6 +131,15 @@ describe("GSelect", () => {
                 options,
                 modelValue: null,
                 searchable: true,
+            });
+        });
+
+        it("with required", async () => {
+            await testAccessibility(GSelect, {
+                label: "Select option",
+                options,
+                modelValue: null,
+                required: true,
             });
         });
     });

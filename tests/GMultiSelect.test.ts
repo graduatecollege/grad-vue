@@ -204,6 +204,14 @@ describe("GMultiSelect", () => {
             });
             await expect.element(container.getByRole("button", { name: "Remove Apple" })).toBeInTheDocument();
         });
+
+        it("sets aria-required when required", async () => {
+            const { container } = mnt(GMultiSelect, {
+                props: { label: "Pick", options, modelValue: [], required: true },
+            });
+
+            await expect.element(container.getByRole("combobox")).toHaveAttribute("aria-required", "true");
+        });
     });
 
     describe("Keyboard Tests", () => {
@@ -336,6 +344,15 @@ describe("GMultiSelect", () => {
                 options,
                 modelValue: ["Option 1"],
                 disabled: true,
+            });
+        });
+
+        it("with required", async () => {
+            await testAccessibility(GMultiSelect, {
+                label: "Pick options",
+                options,
+                modelValue: [],
+                required: true,
             });
         });
     });

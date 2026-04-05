@@ -50,6 +50,11 @@ type Props = {
      * @demo
      */
     disabled?: boolean;
+    /**
+     * Required
+     * @demo
+     */
+    required?: boolean;
 
     /**
      * Name for form registration
@@ -83,6 +88,7 @@ type Props = {
 
 const props = withDefaults(defineProps<Props>(), {
     disabled: false,
+    required: false,
     searchable: false,
     compact: false,
     errors: () => [],
@@ -339,7 +345,7 @@ function clearValue() {
             :id="baseId + '-label'"
             class="g-select-combo-label g-select-label"
         >
-            {{ props.label }}
+            {{ props.label }}<span v-if="props.required" class="g-select-required" aria-hidden="true"> *</span>
         </div>
         <div class="g-select-input-wrap">
             <div
@@ -368,8 +374,9 @@ function clearValue() {
                     @blur="onComboBlur"
                     :aria-autocomplete="'list'"
                     :aria-controls="baseId + '-listbox'"
-                    :aria-expanded="open ? 'true' : 'false'"
-                    aria-haspopup="listbox"
+                     :aria-expanded="open ? 'true' : 'false'"
+                     :aria-required="props.required ? 'true' : undefined"
+                     aria-haspopup="listbox"
                     :aria-activedescendant="
                         open ? baseId + '-option-' + activeIndex : undefined
                     "
@@ -423,8 +430,9 @@ function clearValue() {
                 :class="{ 'g-select-clearable': clearButton }"
                 role="combobox"
                 :aria-controls="baseId + '-listbox'"
-                :aria-expanded="open ? 'true' : 'false'"
-                aria-haspopup="listbox"
+                 :aria-expanded="open ? 'true' : 'false'"
+                 :aria-required="props.required ? 'true' : undefined"
+                 aria-haspopup="listbox"
                 v-bind="
                     hiddenLabel
                         ? { 'aria-label': props.label }
@@ -549,6 +557,10 @@ function clearValue() {
     font-weight: 700;
     color: var(--g-surface-900);
     margin-bottom: 0.5em;
+}
+
+.g-select-required {
+    color: var(--g-danger-600);
 }
 
 .g-select-input-wrap {

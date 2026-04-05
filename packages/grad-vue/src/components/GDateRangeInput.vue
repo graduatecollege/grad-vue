@@ -38,6 +38,11 @@ type Props = {
      * @demo
      */
     disabled?: boolean;
+    /**
+     * Required
+     * @demo
+     */
+    required?: boolean;
 
     /**
      * Error messages array (supports multiple validation errors)
@@ -64,6 +69,7 @@ const props = withDefaults(defineProps<Props>(), {
     endLabel: "End Date",
     instructions: "",
     disabled: false,
+    required: false,
     errors: () => [],
     name: undefined,
     formKey: undefined,
@@ -113,7 +119,7 @@ watch(
 <template>
     <div class="g-date-range-input">
         <div v-if="props.label" class="g-date-range-input__label">
-            {{ props.label }}
+            {{ props.label }}<span v-if="props.required" class="g-date-range-input__required" aria-hidden="true"> *</span>
         </div>
         <div
             v-if="props.instructions"
@@ -126,12 +132,14 @@ watch(
                 v-model="startDate"
                 :label="props.startLabel"
                 :disabled="props.disabled"
+                :required="props.required"
                 class="g-date-range-input__field"
             />
             <GDateInput
                 v-model="endDate"
                 :label="props.endLabel"
                 :disabled="props.disabled"
+                :required="props.required"
                 class="g-date-range-input__field"
             />
         </div>
@@ -157,6 +165,10 @@ watch(
 .g-date-range-input__label {
     font-size: 1.25em;
     font-weight: 600;
+}
+
+.g-date-range-input__required {
+    color: var(--g-danger-600);
 }
 
 .g-date-range-input__instructions {

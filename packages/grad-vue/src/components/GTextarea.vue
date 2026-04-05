@@ -205,13 +205,13 @@ function onPaste(e: ClipboardEvent) {
             :placeholder="props.placeholder"
             :disabled="props.disabled"
             :readonly="props.readonly"
+            :required="props.required"
             :rows="props.rows"
             :maxlength="props.maxlength ?? undefined"
             class="g-textarea"
             v-bind="{
                 ...forwardedAttrs,
                 id: inputId,
-                'aria-required': props.required ? 'true' : undefined,
                 'aria-describedby':
                     $slots.instructions || instructions
                         ? 'instructions-' + id

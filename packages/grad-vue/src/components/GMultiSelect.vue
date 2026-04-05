@@ -63,6 +63,11 @@ type Props = {
      */
     disabled?: boolean;
     /**
+     * Required
+     * @demo
+     */
+    required?: boolean;
+    /**
      * Name for form registration
      */
     name?: string;
@@ -84,6 +89,7 @@ type Props = {
 const props = withDefaults(defineProps<Props>(), {
     disabled: false,
     hiddenLabel: false,
+    required: false,
     errors: () => [],
 });
 
@@ -303,7 +309,7 @@ const describedBy = computed(() => {
         }"
     >
         <label v-if="!hiddenLabel" :id="labelId" :for="inputId" class="g-multiselect-label">
-            {{ label }}
+            {{ label }}<span v-if="required" class="g-multiselect-required" aria-hidden="true"> *</span>
         </label>
         <div
             v-if="instructions"
@@ -365,9 +371,10 @@ const describedBy = computed(() => {
                         ? baseId + '-option-' + activeIndex
                         : undefined
                 "
-                v-bind="hiddenLabel ? { 'aria-label': label } : undefined"
-                :aria-describedby="describedBy"
-                @input="onInput"
+                 v-bind="hiddenLabel ? { 'aria-label': label } : undefined"
+                 :aria-describedby="describedBy"
+                 :aria-required="required ? 'true' : undefined"
+                 @input="onInput"
                 @keydown="onKeydown"
                 @focus="onFocus"
                 @blur="onBlur"
@@ -462,6 +469,10 @@ const describedBy = computed(() => {
     font-weight: 700;
     color: var(--g-surface-900);
     margin-bottom: 0.5em;
+}
+
+.g-multiselect-required {
+    color: var(--g-danger-600);
 }
 
 .g-multiselect-instructions {

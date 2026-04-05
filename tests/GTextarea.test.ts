@@ -108,7 +108,7 @@ describe("GTextarea", () => {
             await expect.element(textarea).toHaveAttribute("aria-invalid", "true");
         });
 
-        it("sets aria-required when required", async () => {
+        it("sets required when required", async () => {
             const wrapper = mnt(GTextarea, {
                 props: {
                     label: "Comments",
@@ -118,7 +118,7 @@ describe("GTextarea", () => {
             });
 
             const textarea = wrapper.instance.getByRole("textbox", { name: "Comments" });
-            await expect.element(textarea).toHaveAttribute("aria-required", "true");
+            await expect.element(textarea).toHaveAttribute("required");
         });
 
         it("does not apply maxlength attribute when not provided", async () => {
