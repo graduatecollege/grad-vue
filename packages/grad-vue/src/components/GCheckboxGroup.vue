@@ -125,16 +125,20 @@ const instructionsId = computed(() => `instructions-${id}`);
 // Use a fieldset for radio mode or multiple checkboxes; a plain div for a single checkbox
 const useFieldset = computed(() => props.radio || props.options.length > 1);
 
-// Attributes added to the outer element only in radio mode.
-// role=radiogroup allows aria-invalid and aria-errormessage on the group element.
-const radioGroupAttrs = computed(() => {
-    if (!props.radio) return {};
+// Attributes added to the outer element when native required semantics are unavailable
+// or when radio mode needs grouped error metadata.
+const groupAttrs = computed(() => {
     const describedParts: string[] = [];
     if (props.instructions) describedParts.push(instructionsId.value);
+    if (props.radio) {
+        return {
+            role: "radiogroup",
+            "aria-invalid": hasErrors.value ? "true" : undefined,
+            "aria-errormessage": hasErrors.value ? errorId.value : undefined,
+            "aria-describedby": describedParts.length ? describedParts.join(" ") : undefined,
+        };
+    }
     return {
-        role: "radiogroup",
-        "aria-invalid": hasErrors.value ? "true" : undefined,
-        "aria-errormessage": hasErrors.value ? errorId.value : undefined,
         "aria-describedby": describedParts.length ? describedParts.join(" ") : undefined,
     };
 });
@@ -163,6 +167,8 @@ function inputAriaAttrs(option: CheckboxOption, index: number): Record<string, s
 
     return {
         "aria-describedby": describedParts.length ? describedParts.join(" ") : undefined,
+        "aria-required":
+            props.required && props.options.length > 1 ? "true" : undefined,
         "aria-invalid": hasErrors.value ? "true" : "false",
         "aria-errormessage": hasErrors.value ? errorId.value : undefined,
     };
@@ -174,7 +180,7 @@ function inputAriaAttrs(option: CheckboxOption, index: number): Record<string, s
         :is="useFieldset ? 'fieldset' : 'div'"
         class="g-checkbox-group"
         :class="{ 'g-checkbox-group--error': hasErrors }"
-        v-bind="radioGroupAttrs"
+        v-bind="groupAttrs"
     >
         <!-- fieldset uses <legend>; single-checkbox div uses a plain heading div -->
         <legend v-if="useFieldset && label" class="g-checkbox-group__legend">
@@ -209,6 +215,10 @@ function inputAriaAttrs(option: CheckboxOption, index: number): Record<string, s
                         :value="option.value"
                         :checked="isChecked(option.value)"
                         :disabled="option.disabled"
+                        :required="
+                            required &&
+                            ((radio && index === 0) || (!radio && options.length === 1))
+                        "
                         class="g-checkbox-group__input"
                         v-bind="inputAriaAttrs(option, index)"
                         @change="handleChange(option.value, ($event.target as HTMLInputElement).checked)"

@@ -28,6 +28,19 @@ describe("GEmailInput", () => {
             const input = wrapper.instance.getByRole("textbox", { name: "Email" });
             await expect.element(input).toHaveAttribute("placeholder", "user@example.com");
         });
+
+        it("sets required when required", async () => {
+            const wrapper = mnt(GEmailInput, {
+                props: {
+                    label: "Email",
+                    required: true,
+                    modelValue: "",
+                },
+            });
+
+            const input = wrapper.instance.getByRole("textbox", { name: "Email" });
+            await expect.element(input).toHaveAttribute("required");
+        });
     });
 
     describe("Accessibility Tests", () => {
@@ -42,6 +55,14 @@ describe("GEmailInput", () => {
             await testAccessibility(GEmailInput, {
                 label: "Email",
                 error: "Invalid email address",
+                modelValue: "",
+            });
+        });
+
+        it("passes accessibility tests with required", async () => {
+            await testAccessibility(GEmailInput, {
+                label: "Email",
+                required: true,
                 modelValue: "",
             });
         });

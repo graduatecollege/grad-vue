@@ -76,6 +76,18 @@ describe("GSelectButton", () => {
             expect(callback2).toHaveBeenCalledWith("Option 2");
             expect(callback).toHaveBeenCalledWith("Option 2");
         });
+
+        it("sets required on the first radio when required", async () => {
+            const { instance } = mnt(GSelectButton, {
+                props: {
+                    label: "Choose option",
+                    options,
+                    required: true,
+                },
+            });
+
+            await expect.element(instance.getByRole("radio", { name: "Option 1" })).toHaveAttribute("required");
+        });
     });
 
     describe("Accessibility Tests", () => {
@@ -92,6 +104,15 @@ describe("GSelectButton", () => {
                 label: "Choose option",
                 options,
                 modelValue: "Option 1",
+            });
+        });
+
+        it("with required", async () => {
+            await testAccessibility(GSelectButton, {
+                label: "Choose option",
+                options,
+                modelValue: "",
+                required: true,
             });
         });
     });

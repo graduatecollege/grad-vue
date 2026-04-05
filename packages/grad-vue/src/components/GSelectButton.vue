@@ -49,6 +49,11 @@ type Props = {
      * @demo
      */
     disabled?: boolean;
+    /**
+     * Required
+     * @demo
+     */
+    required?: boolean;
 
     /**
      * Error messages array (supports multiple validation errors)
@@ -64,6 +69,7 @@ const props = withDefaults(defineProps<Props>(), {
     size: "medium",
     name: undefined,
     disabled: false,
+    required: false,
     errors: () => [],
     formKey: undefined,
 });
@@ -112,7 +118,9 @@ function onChange(val: string | number) {
 
 <template>
     <fieldset :class="groupClasses" :disabled="props.disabled">
-        <legend class="g-select-btn-legend">{{ props.label }}</legend>
+        <legend class="g-select-btn-legend">
+            {{ props.label }}<span v-if="props.required" class="g-select-btn-required" aria-hidden="true"> *</span>
+        </legend>
         <div class="g-select-btn-wrapper" :class="{ 'g-select-btn-has-error': hasErrors }">
             <div class="g-select-btn-row">
             <template
@@ -124,11 +132,12 @@ function onChange(val: string | number) {
                     type="radio"
                     :id="`${baseId}-${option.value}`"
                     :name="props.name || baseId"
-                    :value="option.value"
-                    :checked="option.value === model"
-                    :disabled="props.disabled"
-                    @change="onChange(option.value)"
-                />
+                     :value="option.value"
+                     :checked="option.value === model"
+                     :disabled="props.disabled"
+                     :required="props.required && idx === 0"
+                     @change="onChange(option.value)"
+                 />
                 <label
                     :for="`${baseId}-${option.value}`"
                     :class="getBtnClasses(option.value === model)"
@@ -161,6 +170,10 @@ function onChange(val: string | number) {
     padding: 0;
     font-weight: 700;
     color: var(--g-surface-900);
+}
+
+.g-select-btn-required {
+    color: var(--g-danger-600);
 }
 
 .g-select-btn-row {

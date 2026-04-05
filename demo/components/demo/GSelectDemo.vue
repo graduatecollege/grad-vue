@@ -41,6 +41,11 @@ const selectOptions = ref([
                     label: 'Disabled',
                     default: false
                 },
+                required: {
+                    type: 'boolean',
+                    label: 'Required',
+                    default: false
+                },
                 searchable: {
                     type: 'boolean',
                     label: 'Searchable',
@@ -63,7 +68,7 @@ const selectOptions = ref([
 <span class="line"><span style="color:#008000">    /**</span></span>
 <span class="line"><span style="color:#008000">     * List of options to choose from</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
-<span class="line"><span style="color:#001080">    options</span><span style="color:#000000">: </span><span style="color:#267F99">Array</span><span style="color:#000000">&#x3C;</span><span style="color:#267F99">string</span><span style="color:#000000"> | </span><span style="color:#267F99">OptionType</span><span style="color:#000000">>;</span></span>
+<span class="line"><span style="color:#001080">    options</span><span style="color:#000000">: </span><span style="color:#267F99">Array</span><span style="color:#000000">&#x3C;</span><span style="color:#267F99">string</span><span style="color:#000000"> | </span><span style="color:#267F99">SelectOption</span><span style="color:#000000">>;</span></span>
 <span class="line"><span style="color:#008000">    /**</span></span>
 <span class="line"><span style="color:#008000">     * Accessible label</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
@@ -82,6 +87,10 @@ const selectOptions = ref([
 <span class="line"><span style="color:#008000">     * Disabled</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    disabled</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Required</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    required</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#008000">    /**</span></span>
 <span class="line"><span style="color:#008000">     * Name for form registration</span></span>

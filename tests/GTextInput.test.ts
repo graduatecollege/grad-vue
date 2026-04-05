@@ -30,6 +30,19 @@ describe("GTextInput", () => {
             await expect.element(input).toBeDisabled();
         });
 
+        it("sets required when required", async () => {
+            const wrapper = mnt(GTextInput, {
+                props: {
+                    label: "Text Input",
+                    required: true,
+                    modelValue: "",
+                },
+            });
+
+            const input = wrapper.instance.getByRole("textbox", { name: "Text Input" });
+            await expect.element(input).toHaveAttribute("required");
+        });
+
         it("renders with prefix", async () => {
             const wrapper = mnt(GTextInput, {
                 props: {
@@ -117,6 +130,14 @@ describe("GTextInput", () => {
                 label: "Text Input",
                 instructions: "Enter text here",
                 error: "This field has an error",
+            });
+        });
+
+        it("with required", async () => {
+            await testAccessibility(GTextInput, {
+                label: "Text Input",
+                required: true,
+                modelValue: "",
             });
         });
 

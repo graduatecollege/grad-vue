@@ -47,6 +47,11 @@ const stringOptions = ["Option 1", "Option 2", "Option 3", "Option 4"];
                     label: 'Disabled',
                     default: false
                 },
+                required: {
+                    type: 'boolean',
+                    label: 'Required',
+                    default: false
+                },
                 instructions: {
                     type: 'string',
                     label: 'Instructions shown below the label',
@@ -68,7 +73,7 @@ const stringOptions = ["Option 1", "Option 2", "Option 3", "Option 4"];
 <span class="line"><span style="color:#008000">    /**</span></span>
 <span class="line"><span style="color:#008000">     * List of options to choose from</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
-<span class="line"><span style="color:#001080">    options</span><span style="color:#000000">: </span><span style="color:#267F99">Array</span><span style="color:#000000">&#x3C;</span><span style="color:#267F99">string</span><span style="color:#000000"> | </span><span style="color:#267F99">MultiSelectOption</span><span style="color:#000000">>;</span></span>
+<span class="line"><span style="color:#001080">    options</span><span style="color:#000000">: </span><span style="color:#267F99">Array</span><span style="color:#000000">&#x3C;</span><span style="color:#267F99">string</span><span style="color:#000000"> | </span><span style="color:#267F99">SelectOption</span><span style="color:#000000">>;</span></span>
 <span class="line"><span style="color:#008000">    /**</span></span>
 <span class="line"><span style="color:#008000">     * Accessible label</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
@@ -85,6 +90,10 @@ const stringOptions = ["Option 1", "Option 2", "Option 3", "Option 4"];
 <span class="line"><span style="color:#008000">     * Disabled</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    disabled</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Required</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    required</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#008000">    /**</span></span>
 <span class="line"><span style="color:#008000">     * Name for form registration</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
