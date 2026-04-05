@@ -28,6 +28,19 @@ describe("GCurrencyInput", () => {
             await expect.element(input).toHaveAttribute("step", "0.01");
             await expect.element(input).toHaveAttribute("min", "0");
         });
+
+        it("sets required when required", async () => {
+            const wrapper = mnt(GCurrencyInput, {
+                props: {
+                    label: "Amount",
+                    required: true,
+                    modelValue: "",
+                },
+            });
+
+            const input = wrapper.instance.getByRole("spinbutton", { name: "Amount" });
+            await expect.element(input).toHaveAttribute("required");
+        });
     });
 
     describe("Accessibility Tests", () => {
@@ -42,6 +55,14 @@ describe("GCurrencyInput", () => {
             await testAccessibility(GCurrencyInput, {
                 label: "Amount",
                 error: "Invalid amount",
+                modelValue: "",
+            });
+        });
+
+        it("passes accessibility tests with required", async () => {
+            await testAccessibility(GCurrencyInput, {
+                label: "Amount",
+                required: true,
                 modelValue: "",
             });
         });
