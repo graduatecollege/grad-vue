@@ -194,7 +194,7 @@ describe("GCheckboxGroup", () => {
             await expect.element(group).toHaveAttribute("aria-invalid", "true");
         });
 
-        it("sets required on the first radio when required in radio mode", async () => {
+        it("sets required on the first radio button when required", async () => {
             const wrapper = mnt(GCheckboxGroup, {
                 props: {
                     label: "Pick one",
