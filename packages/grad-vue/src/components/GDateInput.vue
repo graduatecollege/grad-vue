@@ -31,6 +31,11 @@ type Props = {
      * @demo
      */
     disabled?: boolean;
+    /**
+     * Required
+     * @demo
+     */
+    required?: boolean;
 
     /**
      * Error messages array (supports multiple validation errors)
@@ -56,6 +61,7 @@ const props = withDefaults(defineProps<Props>(), {
     instructions: "",
     placeholder: "",
     disabled: false,
+    required: false,
     errors: () => [],
     name: undefined,
     formKey: undefined,
@@ -71,6 +77,7 @@ const model = defineModel<string | null>({ type: String });
         :label="props.label"
         :placeholder="props.placeholder"
         :disabled="props.disabled"
+        :required="props.required"
         :errors="props.errors"
         :instructions="props.instructions"
         :form-key="props.formKey"

@@ -1,7 +1,7 @@
 {
   "totalComponents": 41,
-  "totalTests": 408,
-  "passedTests": 408,
+  "totalTests": 424,
+  "passedTests": 424,
   "failedTests": 0,
   "skippedTests": 0,
   "components": {
@@ -459,8 +459,8 @@
     },
     "GCheckboxGroup": {
       "component": "GCheckboxGroup",
-      "total": 23,
-      "passed": 23,
+      "total": 25,
+      "passed": 25,
       "failed": 0,
       "skipped": 0,
       "status": "passed",
@@ -571,6 +571,20 @@
           ]
         },
         {
+          "title": "sets required on the first radio button when required",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "sets aria-required on multi-checkbox inputs when required",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
           "title": "with basic options",
           "status": "passed",
           "ancestors": [
@@ -661,8 +675,8 @@
     },
     "GCurrencyInput": {
       "component": "GCurrencyInput",
-      "total": 4,
-      "passed": 4,
+      "total": 6,
+      "passed": 6,
       "failed": 0,
       "skipped": 0,
       "status": "passed",
@@ -682,6 +696,13 @@
           ]
         },
         {
+          "title": "sets required when required",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
           "title": "passes accessibility tests with basic props",
           "status": "passed",
           "ancestors": [
@@ -690,6 +711,13 @@
         },
         {
           "title": "passes accessibility tests with error",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with required",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
@@ -737,8 +765,8 @@
     },
     "GDateRangeInput": {
       "component": "GDateRangeInput",
-      "total": 5,
-      "passed": 5,
+      "total": 7,
+      "passed": 7,
       "failed": 0,
       "skipped": 0,
       "status": "passed",
@@ -765,6 +793,13 @@
           ]
         },
         {
+          "title": "sets required on both date inputs when required",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
           "title": "passes accessibility tests with basic props",
           "status": "passed",
           "ancestors": [
@@ -773,6 +808,13 @@
         },
         {
           "title": "passes accessibility tests with error",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with required",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
@@ -813,8 +855,8 @@
     },
     "GEmailInput": {
       "component": "GEmailInput",
-      "total": 4,
-      "passed": 4,
+      "total": 6,
+      "passed": 6,
       "failed": 0,
       "skipped": 0,
       "status": "passed",
@@ -834,6 +876,13 @@
           ]
         },
         {
+          "title": "sets required when required",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
           "title": "passes accessibility tests with basic props",
           "status": "passed",
           "ancestors": [
@@ -842,6 +891,13 @@
         },
         {
           "title": "passes accessibility tests with error",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "passes accessibility tests with required",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
@@ -1292,8 +1348,8 @@
     },
     "GMultiSelect": {
       "component": "GMultiSelect",
-      "total": 30,
-      "passed": 30,
+      "total": 32,
+      "passed": 32,
       "failed": 0,
       "skipped": 0,
       "status": "passed",
@@ -1425,6 +1481,13 @@
           ]
         },
         {
+          "title": "sets aria-required when required",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
           "title": "opens with ArrowDown when closed",
           "status": "passed",
           "ancestors": [
@@ -1503,6 +1566,13 @@
         },
         {
           "title": "disabled",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "with required",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
@@ -1821,8 +1891,8 @@
     },
     "GSelect": {
       "component": "GSelect",
-      "total": 8,
-      "passed": 8,
+      "total": 10,
+      "passed": 10,
       "failed": 0,
       "skipped": 0,
       "status": "passed",
@@ -1856,6 +1926,13 @@
           ]
         },
         {
+          "title": "sets aria-required when required",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
           "title": "with basic props",
           "status": "passed",
           "ancestors": [
@@ -1882,13 +1959,20 @@
           "ancestors": [
             "Accessibility Tests"
           ]
+        },
+        {
+          "title": "with required",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
         }
       ]
     },
     "GSelectButton": {
       "component": "GSelectButton",
-      "total": 6,
-      "passed": 6,
+      "total": 8,
+      "passed": 8,
       "failed": 0,
       "skipped": 0,
       "status": "passed",
@@ -1922,6 +2006,13 @@
           ]
         },
         {
+          "title": "sets required on the first radio when required",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
           "title": "with basic props",
           "status": "passed",
           "ancestors": [
@@ -1930,6 +2021,13 @@
         },
         {
           "title": "with selected value",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "with required",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
@@ -2446,8 +2544,8 @@
     },
     "GTextInput": {
       "component": "GTextInput",
-      "total": 14,
-      "passed": 14,
+      "total": 16,
+      "passed": 16,
       "failed": 0,
       "skipped": 0,
       "status": "passed",
@@ -2461,6 +2559,13 @@
         },
         {
           "title": "renders with disabled state",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "sets required when required",
           "status": "passed",
           "ancestors": [
             "Functional Tests"
@@ -2524,6 +2629,13 @@
         },
         {
           "title": "with label and instructions and error state",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "with required",
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
@@ -2617,7 +2729,7 @@
           ]
         },
         {
-          "title": "sets aria-required when required",
+          "title": "sets required when required",
           "status": "passed",
           "ancestors": [
             "Functional Tests"

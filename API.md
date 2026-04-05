@@ -270,6 +270,10 @@ type Props = {
      * Disabled
      */
     disabled?: boolean;
+    /**
+     * Required
+     */
+    required?: boolean;
 
     /**
      * Error messages array (supports multiple validation errors)
@@ -319,6 +323,10 @@ type Props = {
      * Disabled
      */
     disabled?: boolean;
+    /**
+     * Required
+     */
+    required?: boolean;
 
     /**
      * Error messages array (supports multiple validation errors)
@@ -372,6 +380,10 @@ type Props = {
      * Disabled
      */
     disabled?: boolean;
+    /**
+     * Required
+     */
+    required?: boolean;
 
     /**
      * Error messages array (supports multiple validation errors)
@@ -449,6 +461,10 @@ type Props = {
      * Disabled
      */
     disabled?: boolean;
+    /**
+     * Required
+     */
+    required?: boolean;
 
     /**
      * Error messages array (supports multiple validation errors)
@@ -781,7 +797,7 @@ type Props = {
     /**
      * List of options to choose from
      */
-    options: Array<string | MultiSelectOption>;
+    options: Array<string | SelectOption>;
     /**
      * Accessible label
      */
@@ -798,6 +814,10 @@ type Props = {
      * Disabled
      */
     disabled?: boolean;
+    /**
+     * Required
+     */
+    required?: boolean;
     /**
      * Name for form registration
      */
@@ -1044,7 +1064,7 @@ type Props = {
     /**
      * List of options to choose from
      */
-    options: Array<string | OptionType>;
+    options: Array<string | SelectOption>;
     /**
      * Accessible label
      */
@@ -1063,6 +1083,10 @@ type Props = {
      * Disabled
      */
     disabled?: boolean;
+    /**
+     * Required
+     */
+    required?: boolean;
 
     /**
      * Name for form registration
@@ -1136,6 +1160,10 @@ type Props = {
      * Disabled
      */
     disabled?: boolean;
+    /**
+     * Required
+     */
+    required?: boolean;
 
     /**
      * Error messages array (supports multiple validation errors)
@@ -1548,6 +1576,10 @@ type Props = {
      * Disabled
      */
     disabled?: boolean;
+    /**
+     * Required
+     */
+    required?: boolean;
 
     /**
      * Error messages array (supports multiple validation errors)

@@ -29,6 +29,11 @@ const textValue = ref("");
                     label: 'Disabled',
                     default: false
                 },
+                required: {
+                    type: 'boolean',
+                    label: 'Required',
+                    default: false
+                },
                 instructions: {
                     type: 'string',
                     label: 'Instructions',
@@ -65,6 +70,10 @@ const textValue = ref("");
 <span class="line"><span style="color:#008000">     * Disabled</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    disabled</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Required</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    required</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#008000">    /**</span></span>
 <span class="line"><span style="color:#008000">     * Error messages array (supports multiple validation errors)</span></span>

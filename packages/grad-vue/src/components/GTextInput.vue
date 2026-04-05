@@ -41,6 +41,11 @@ type Props = {
      * @demo
      */
     disabled?: boolean;
+    /**
+     * Required
+     * @demo
+     */
+    required?: boolean;
 
     /**
      * Error messages array (supports multiple validation errors)
@@ -82,6 +87,7 @@ const props = withDefaults(defineProps<Props>(), {
     instructions: "",
     placeholder: "",
     disabled: false,
+    required: false,
     errors: () => [],
     prefix: "",
     suffix: "",
@@ -188,7 +194,8 @@ function onKeydown(e: KeyboardEvent) {
             v-if="props.label"
             :for="inputId"
             class="g-text-input-label"
-            >{{ props.label }}</label
+            >{{ props.label
+            }}<span v-if="props.required" class="g-text-input-required" aria-hidden="true"> *</span></label
         >
         <div
             v-if="$slots.instructions || instructions"
@@ -207,6 +214,7 @@ function onKeydown(e: KeyboardEvent) {
                 :value="model"
                 :placeholder="props.placeholder"
                 :disabled="props.disabled"
+                :required="props.required"
                 @input="onInput"
                 @blur="onBlur"
                 @paste="onPaste"
@@ -246,6 +254,9 @@ function onKeydown(e: KeyboardEvent) {
 .g-text-input-label {
     margin-bottom: 0.5em;
     font-size: 1.25em;
+}
+.g-text-input-required {
+    color: var(--g-danger-600);
 }
 .g-text-input-instructions {
     margin: 0 0 0.75em 0.5em;
