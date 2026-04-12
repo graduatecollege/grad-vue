@@ -34,6 +34,12 @@ import { GTreeMenu, GTreeMenuList, GTreeMenuItem } from "@illinois-grad/grad-vue
                         'light',
                         'dark'
                     ]
+                },
+                storageKey: {
+                    type: 'string',
+                    label: 'When provided, expanded/collapsed states are saved to `sessionStorage`',
+                    default: null,
+                    instructions: 'under this key and restored on page load. Item states are keyed by each\nitem's `label` prop.'
                 }
             }"
         >
@@ -74,6 +80,10 @@ import { GTreeMenu, GTreeMenuList, GTreeMenuItem } from "@illinois-grad/grad-vue
 <span class="line"><span style="color:#008000">     * Theme</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    theme</span><span style="color:#000000">?: </span><span style="color:#A31515">"light"</span><span style="color:#000000"> | </span><span style="color:#A31515">"dark"</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * When provided, expanded/collapsed states are saved to `sessionStorage` under this key and restored on page load. Item states are keyed by each item's `label` prop.</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    storageKey</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#000000">};</span></span></code></pre>
 </figure>
 
@@ -104,6 +114,10 @@ works as a basic list of links even without JavaScript.</p>
 hierarchies such as book chapters. Inherited by nested <code>GTreeMenuList</code>
 components via provide/inject.</li>
 <li><code>theme</code> - <code>light</code> (default) or <code>dark</code>.</li>
+<li><code>storageKey</code> - when provided, expanded/collapsed states are persisted to
+<code>sessionStorage</code> under this key and restored on page load. This is useful
+in Web Component / Drupal contexts where every page navigation is a full
+refresh. Item states are keyed by the item&#39;s <code>label</code> prop.</li>
 </ul>
 <p><strong>Keyboard navigation</strong> (tree-view style):</p>
 <ul>

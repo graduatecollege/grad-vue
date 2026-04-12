@@ -1,7 +1,7 @@
 {
   "totalComponents": 41,
-  "totalTests": 437,
-  "passedTests": 437,
+  "totalTests": 445,
+  "passedTests": 445,
   "failedTests": 0,
   "skippedTests": 0,
   "components": {
@@ -2997,8 +2997,8 @@
     },
     "GTreeMenu": {
       "component": "GTreeMenu",
-      "total": 38,
-      "passed": 38,
+      "total": 46,
+      "passed": 46,
       "failed": 0,
       "skipped": 0,
       "status": "passed",
@@ -3225,6 +3225,62 @@
           "status": "passed",
           "ancestors": [
             "Keyboard Navigation Tests"
+          ]
+        },
+        {
+          "title": "items are collapsed by default when no stored state exists",
+          "status": "passed",
+          "ancestors": [
+            "Session Storage"
+          ]
+        },
+        {
+          "title": "expanding an item saves its state to sessionStorage",
+          "status": "passed",
+          "ancestors": [
+            "Session Storage"
+          ]
+        },
+        {
+          "title": "collapsing an item saves its state to sessionStorage",
+          "status": "passed",
+          "ancestors": [
+            "Session Storage"
+          ]
+        },
+        {
+          "title": "restores expanded state from sessionStorage on mount",
+          "status": "passed",
+          "ancestors": [
+            "Session Storage"
+          ]
+        },
+        {
+          "title": "restores multiple expanded items from sessionStorage",
+          "status": "passed",
+          "ancestors": [
+            "Session Storage"
+          ]
+        },
+        {
+          "title": "without storageKey, items still collapse and expand normally",
+          "status": "passed",
+          "ancestors": [
+            "Session Storage"
+          ]
+        },
+        {
+          "title": "expanded prop is used as fallback when no stored state exists for the item",
+          "status": "passed",
+          "ancestors": [
+            "Session Storage"
+          ]
+        },
+        {
+          "title": "stored state takes precedence over expanded prop",
+          "status": "passed",
+          "ancestors": [
+            "Session Storage"
           ]
         },
         {

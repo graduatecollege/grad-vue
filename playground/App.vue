@@ -81,7 +81,7 @@ const fname = ref("heh");
                             <GTreeMenuItem><a href="#refs">References</a></GTreeMenuItem>
                         </GTreeMenuList>
                     </GTreeMenu>
-                    <GTreeMenu title="Numbered Chapters" style="min-height: 200px;">
+                    <GTreeMenu title="Numbered Chapters" style="min-height: 200px;" storage-key="tree-menu-state">
                         <GTreeMenuList list-type="ol">
                             <GTreeMenuItem label="Chapter 1: Introduction">
                                 Chapter 1: Introduction
