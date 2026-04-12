@@ -4,16 +4,30 @@
  * navigation. Items with children start collapsed and can be expanded/collapsed
  * individually.
  *
+ * Links are authored directly in HTML for progressive enhancement — the page
+ * works as a basic list of links even without JavaScript.
+ *
+ * Use `GTreeMenuList` and `GTreeMenuItem` sub-components to build the menu:
+ *
+ * ```vue-html
+ * <GTreeMenu title="Contents">
+ *     <GTreeMenuList>
+ *         <GTreeMenuItem label="Chapter 1">
+ *             <a href="#ch1">Chapter 1</a>
+ *             <template #children>
+ *                 <GTreeMenuItem><a href="#s1">Section 1.1</a></GTreeMenuItem>
+ *             </template>
+ *         </GTreeMenuItem>
+ *     </GTreeMenuList>
+ * </GTreeMenu>
+ * ```
+ *
  * **Props**:
  *
  * - `title` - optional heading and accessible name for the nav landmark.
- * - `items` - array of `TreeMenuItem` objects. Each item may have:
- *   - `label` - display text (required).
- *   - `href` or `to` - link destination. When `to` is provided and `vue-router`
- *     is present the link is rendered as a `<router-link>`.
- *   - `children` - nested `TreeMenuItem[]` for sub-levels (unlimited depth).
  * - `listType` - `ul` (default) or `ol`. Use `ol` for numbered
- *   hierarchies such as book chapters.
+ *   hierarchies such as book chapters. Inherited by nested `GTreeMenuList`
+ *   components via provide/inject.
  * - `theme` - `light` (default) or `dark`.
  *
  * **Keyboard navigation** (tree-view style):
@@ -28,9 +42,7 @@ export default {};
 </script>
 
 <script setup lang="ts">
-import { nextTick, ref, useId } from "vue";
-import GTreeMenuList from "./tree-menu/GTreeMenuList.vue";
-import type { TreeMenuItem } from "./tree-menu/GTreeMenuList.vue";
+import { nextTick, provide, useId } from "vue";
 
 type Props = {
     /**
@@ -38,10 +50,6 @@ type Props = {
      * @demo Tree Menu
      */
     title?: string;
-    /**
-     * Items for the menu
-     */
-    items: TreeMenuItem[];
     /**
      * List element type - use `ol` for numbered hierarchies like book chapters
      * @demo
@@ -60,19 +68,18 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const id = useId();
-const expandedItems = ref(new Set<string>());
 
-function toggleItem(key: string) {
-    if (expandedItems.value.has(key)) {
-        expandedItems.value.delete(key);
-    } else {
-        expandedItems.value.add(key);
-    }
-}
+provide("g-tree-menu-list-type", props.listType);
 
-function getParentKey(key: string): string | null {
-    const lastDash = key.lastIndexOf("-");
-    return lastDash === -1 ? null : key.substring(0, lastDash);
+/**
+ * Returns the best focusable element for the given [data-tree-primary] marker.
+ * If the marker contains an `<a>`, focus that. If the marker is itself a button,
+ * focus that. Otherwise fall back to the marker (which should have tabindex).
+ */
+function getFocusTarget(primary: HTMLElement): HTMLElement {
+    const anchor = primary.querySelector<HTMLElement>("a");
+    if (anchor) return anchor;
+    return primary;
 }
 
 /**
@@ -92,11 +99,7 @@ function handleKeydown(event: KeyboardEvent) {
     const handled = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Home", "End"];
     if (!handled.includes(event.key)) return;
 
-    // Locate the <li> ancestor that owns the focused element.
-    const currentLi = focused.closest<HTMLElement>("[data-tree-item-key]");
-    const currentItemKey = currentLi?.dataset.treeItemKey ?? null;
-
-    // Primary element of the current item (link, or standalone toggle button).
+    const currentLi = focused.closest<HTMLElement>(".g-tree-menu__item");
     const currentPrimary = currentLi?.querySelector<HTMLElement>("[data-tree-primary]") ?? null;
 
     const primaries = getPrimaryItems(nav);
@@ -105,55 +108,58 @@ function handleKeydown(event: KeyboardEvent) {
     switch (event.key) {
         case "ArrowDown": {
             const next = primaries[primaryIdx + 1];
-            if (next) next.focus();
+            if (next) getFocusTarget(next).focus();
             break;
         }
         case "ArrowUp": {
             const prev = primaries[primaryIdx - 1];
-            if (prev) prev.focus();
+            if (prev) getFocusTarget(prev).focus();
             break;
         }
         case "ArrowRight": {
-            if (!currentItemKey) break;
-            // Only act on items that actually have children.
-            const isExpandable = currentLi?.dataset.treeExpandable === "true";
+            if (!currentLi) break;
+            const isExpandable = currentLi.dataset.treeExpandable === "true";
             if (!isExpandable) break;
-            if (!expandedItems.value.has(currentItemKey)) {
-                // Expand and move focus to the first child.
-                toggleItem(currentItemKey);
+            const isExpanded =
+                currentLi.querySelector("[aria-expanded='true']") !== null;
+            if (!isExpanded) {
+                const toggleBtn = currentLi.querySelector<HTMLElement>(
+                    ".g-tree-menu__toggle-btn",
+                );
+                if (toggleBtn) toggleBtn.click();
             } else {
-                // Already expanded - move focus to first child.
                 const next = primaries[primaryIdx + 1];
-                if (next) next.focus();
+                if (next) getFocusTarget(next).focus();
             }
             break;
         }
         case "ArrowLeft": {
-            if (!currentItemKey) break;
-            if (expandedItems.value.has(currentItemKey)) {
-                // Collapse and keep focus here.
-                toggleItem(currentItemKey);
-                currentPrimary?.focus();
+            if (!currentLi) break;
+            const isExpanded =
+                currentLi.querySelector("[aria-expanded='true']") !== null;
+            if (isExpanded) {
+                const toggleBtn = currentLi.querySelector<HTMLElement>(
+                    ".g-tree-menu__toggle-btn",
+                );
+                if (toggleBtn) toggleBtn.click();
+                if (currentPrimary) nextTick(() => getFocusTarget(currentPrimary).focus());
             } else {
-                // Move focus up to the parent item.
-                const parentKey = getParentKey(currentItemKey);
-                if (parentKey !== null) {
-                    const parentLi = nav.querySelector<HTMLElement>(
-                        `[data-tree-item-key="${parentKey}"]`,
-                    );
+                const parentItem =
+                    currentLi.parentElement?.closest<HTMLElement>(".g-tree-menu__item");
+                if (parentItem) {
                     const parentPrimary =
-                        parentLi?.querySelector<HTMLElement>("[data-tree-primary]");
-                    if (parentPrimary) parentPrimary.focus();
+                        parentItem.querySelector<HTMLElement>("[data-tree-primary]");
+                    if (parentPrimary) getFocusTarget(parentPrimary).focus();
                 }
             }
             break;
         }
         case "Home": {
-            if (primaries.length > 0) primaries[0].focus();
+            if (primaries.length > 0) getFocusTarget(primaries[0]).focus();
             break;
         }
         case "End": {
-            if (primaries.length > 0) primaries[primaries.length - 1].focus();
+            if (primaries.length > 0) getFocusTarget(primaries[primaries.length - 1]).focus();
             break;
         }
     }
@@ -175,13 +181,7 @@ function handleKeydown(event: KeyboardEvent) {
         <h2 v-if="title" :id="id" class="g-tree-menu__title">{{ title }}</h2>
         <div class="g-tree-menu__divider"></div>
         <div class="g-tree-menu__content">
-            <GTreeMenuList
-                :items="items"
-                :list-type="listType || 'ul'"
-                :expanded-items="expandedItems"
-                key-prefix=""
-                @toggle="toggleItem"
-            />
+            <slot />
         </div>
     </nav>
 </template>
@@ -191,6 +191,7 @@ function handleKeydown(event: KeyboardEvent) {
 @layer base {
     .g-tree-menu {
         font-size: 1.125rem;
+        line-height: 1.2;
     }
 }
 
@@ -201,9 +202,8 @@ function handleKeydown(event: KeyboardEvent) {
         color: var(--g-surface-0);
     }
 
-    .g-tree-menu__row--toggle,
     .g-tree-menu__toggle-btn,
-    .g-tree-menu__link {
+    .g-tree-menu__row-content a {
         color: var(--g-surface-0);
 
         &:hover {
@@ -219,15 +219,15 @@ function handleKeydown(event: KeyboardEvent) {
         color: var(--g-primary-500);
     }
 
-    .g-tree-menu__row--toggle,
     .g-tree-menu__toggle-btn,
-    .g-tree-menu__link {
+    .g-tree-menu__row-content,
+    .g-tree-menu__row-content a {
         color: var(--g-primary-500);
 
         &:hover {
             color: var(--g-accent-700);
         }
-        &:focus {
+        &:focus-visible {
             color: var(--ilw-color--focus--text);
         }
     }
@@ -245,10 +245,29 @@ function handleKeydown(event: KeyboardEvent) {
     padding-top: 2rem;
     display: flex;
     flex-direction: column;
-    :deep(button) {
-        font-size: inherit;
-        font-weight: inherit;
+}
+:deep(.g-tree-menu__row-content) {
+    display: flex;
+    align-items: stretch;
+    flex: 1;
+    padding: 0;
+    margin: 4px 0;
+
+    a {
+        display: flex;
+        align-items: center;
+        flex: 1;
+        text-decoration: none;
+        color: inherit;
+
+        &:hover {
+            text-decoration: underline;
+        }
     }
+}
+
+:deep(.g-tree-menu__row:not(.g-tree-menu__row--leaf) .g-tree-menu__row-content) {
+    cursor: pointer;
 }
 
 .g-tree-menu__title {

@@ -1,7 +1,7 @@
 {
   "totalComponents": 41,
-  "totalTests": 424,
-  "passedTests": 424,
+  "totalTests": 426,
+  "passedTests": 426,
   "failedTests": 0,
   "skippedTests": 0,
   "components": {
@@ -2997,8 +2997,8 @@
     },
     "GTreeMenu": {
       "component": "GTreeMenu",
-      "total": 25,
-      "passed": 25,
+      "total": 27,
+      "passed": 27,
       "failed": 0,
       "skipped": 0,
       "status": "passed",
@@ -3067,7 +3067,7 @@
           ]
         },
         {
-          "title": "parent items with href render both a toggle button and a link",
+          "title": "parent items with a link render a toggle button alongside",
           "status": "passed",
           "ancestors": [
             "Functional Tests"
@@ -3075,6 +3075,20 @@
         },
         {
           "title": "clicking chevron toggle expands a linked parent item",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "clicking the text area of a non-link parent item expands it",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "renders custom DOM inside items",
           "status": "passed",
           "ancestors": [
             "Functional Tests"

@@ -1,87 +1,148 @@
 import { describe, expect, it } from "vitest";
 import { page, userEvent } from "vitest/browser";
+import { h } from "vue";
 import GTreeMenu from "../packages/grad-vue/src/components/GTreeMenu.vue";
-import type { TreeMenuItem } from "../packages/grad-vue/src/components/tree-menu/GTreeMenuList.vue";
+import GTreeMenuList from "../packages/grad-vue/src/components/tree-menu/GTreeMenuList.vue";
+import GTreeMenuItem from "../packages/grad-vue/src/components/tree-menu/GTreeMenuItem.vue";
 import { mnt, tabTo, testAccessibility } from "./test-utils";
 
-const flatItems: TreeMenuItem[] = [
-    { label: "Home", href: "/" },
-    { label: "About", href: "/about" },
-    { label: "Contact", href: "/contact" },
-];
-
-const nestedItems: TreeMenuItem[] = [
-    {
-        label: "Chapter 1",
-        children: [
-            { label: "Section 1.1", href: "/ch1/s1" },
-            { label: "Section 1.2", href: "/ch1/s2" },
-        ],
-    },
-    {
-        label: "Chapter 2",
-        children: [
-            {
-                label: "Section 2.1",
-                href: "/ch2/s1",
-                children: [
-                    { label: "Subsection 2.1.1", href: "/ch2/s1/ss1" },
-                    { label: "Subsection 2.1.2", href: "/ch2/s1/ss2" },
-                ],
-            },
-            { label: "Section 2.2", href: "/ch2/s2" },
-        ],
-    },
-    { label: "Appendix", href: "/appendix" },
-];
-
-// Items where parent nodes also carry links (href + children)
-const linkedParentItems: TreeMenuItem[] = [
-    {
-        label: "Chapter 1",
-        href: "/ch1",
-        children: [
-            { label: "Section 1.1", href: "/ch1/s1" },
-            { label: "Section 1.2", href: "/ch1/s2" },
-        ],
-    },
-    { label: "Chapter 2", href: "/ch2" },
-];
+/**
+ * Helper that builds a slot-based GTreeMenu using render functions.
+ * This mirrors the template-based usage:
+ *
+ *   <GTreeMenu title="...">
+ *     <GTreeMenuList>
+ *       <GTreeMenuItem><a href="...">Label</a></GTreeMenuItem>
+ *     </GTreeMenuList>
+ *   </GTreeMenu>
+ */
+function slotMenu(
+    menuProps: Record<string, any>,
+    listChildren: any[],
+    listProps?: Record<string, any>,
+) {
+    return mnt(GTreeMenu, {
+        props: menuProps,
+        slots: {
+            default: () =>
+                h(GTreeMenuList, listProps ?? {}, {
+                    default: () => listChildren,
+                }),
+        },
+    });
+}
 
 describe("GTreeMenu", () => {
     describe("Functional Tests", () => {
         it("renders with a title and flat items", async () => {
-            const wrapper = mnt(GTreeMenu, {
-                props: { title: "Navigation", items: flatItems },
-            });
+            const wrapper = slotMenu({ title: "Navigation" }, [
+                h(GTreeMenuItem, null, () => h("a", { href: "/" }, "Home")),
+                h(GTreeMenuItem, null, () =>
+                    h("a", { href: "/about" }, "About"),
+                ),
+                h(GTreeMenuItem, null, () =>
+                    h("a", { href: "/contact" }, "Contact"),
+                ),
+            ]);
+
             await expect.element(wrapper.instance).toBeInTheDocument();
-            await expect.element(page.getByRole("navigation", { name: "Navigation" })).toBeVisible();
+            await expect
+                .element(page.getByRole("navigation", { name: "Navigation" }))
+                .toBeVisible();
+            await expect
+                .element(wrapper.container.getByRole("link", { name: "Home" }))
+                .toBeVisible();
+            await expect
+                .element(
+                    wrapper.container.getByRole("link", { name: "Contact" }),
+                )
+                .toBeVisible();
         });
 
         it("renders nested items collapsed by default", async () => {
-            const wrapper = mnt(GTreeMenu, { props: { items: nestedItems } });
+            const wrapper = slotMenu({ title: "Contents" }, [
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 1" },
+                    {
+                        default: () => "Chapter 1",
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                            ),
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch1/s2" }, "Section 1.2"),
+                            ),
+                        ],
+                    },
+                ),
+            ]);
 
-            // Sections (children) should not yet be visible
-            await expect.element(wrapper.container.getByText("Section 1.1")).not.toBeInTheDocument();
-            await expect.element(wrapper.container.getByText("Section 1.2")).not.toBeInTheDocument();
-
-            // Top-level chapter buttons must be visible
-            await expect.element(wrapper.container.getByRole("button", { name: "Chapter 1" })).toBeVisible();
+            await expect
+                .element(
+                    wrapper.container.getByRole("button", {
+                        name: "Chapter 1 sub-menu",
+                    }),
+                )
+                .toBeVisible();
+            await expect
+                .element(wrapper.container.getByText("Section 1.1"))
+                .not.toBeInTheDocument();
+            await expect
+                .element(wrapper.container.getByText("Section 1.2"))
+                .not.toBeInTheDocument();
         });
 
         it("expanding an item reveals its children", async () => {
-            const wrapper = mnt(GTreeMenu, { props: { items: nestedItems } });
+            const wrapper = slotMenu({ title: "Contents" }, [
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 1" },
+                    {
+                        default: () => "Chapter 1",
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                            ),
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch1/s2" }, "Section 1.2"),
+                            ),
+                        ],
+                    },
+                ),
+            ]);
 
-            await wrapper.container.getByRole("button", { name: "Chapter 1" }).click();
+            await wrapper.container
+                .getByRole("button", { name: "Chapter 1 sub-menu" })
+                .click();
 
-            await expect.element(wrapper.container.getByText("Section 1.1")).toBeVisible();
-            await expect.element(wrapper.container.getByText("Section 1.2")).toBeVisible();
+            await expect
+                .element(wrapper.container.getByText("Section 1.1"))
+                .toBeVisible();
+            await expect
+                .element(wrapper.container.getByText("Section 1.2"))
+                .toBeVisible();
         });
 
         it("button aria-expanded updates on toggle", async () => {
-            const wrapper = mnt(GTreeMenu, { props: { items: nestedItems } });
-            const btn = wrapper.container.getByRole("button", { name: "Chapter 1" });
+            const wrapper = slotMenu({ title: "Contents" }, [
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 1" },
+                    {
+                        default: () => "Chapter 1",
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                            ),
+                        ],
+                    },
+                ),
+            ]);
 
+            const btn = wrapper.container.getByRole("button", {
+                name: "Chapter 1 sub-menu",
+            });
             await expect.element(btn).toHaveAttribute("aria-expanded", "false");
             await btn.click();
             await expect.element(btn).toHaveAttribute("aria-expanded", "true");
@@ -90,225 +151,594 @@ describe("GTreeMenu", () => {
         });
 
         it("multiple items can be expanded simultaneously", async () => {
-            const wrapper = mnt(GTreeMenu, { props: { items: nestedItems } });
+            const wrapper = slotMenu({ title: "Contents" }, [
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 1" },
+                    {
+                        default: () => "Chapter 1",
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                            ),
+                        ],
+                    },
+                ),
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 2" },
+                    {
+                        default: () => "Chapter 2",
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch2/s1" }, "Section 2.1"),
+                            ),
+                        ],
+                    },
+                ),
+            ]);
 
-            await wrapper.container.getByRole("button", { name: "Chapter 1" }).click();
-            await wrapper.container.getByRole("button", { name: "Chapter 2" }).click();
+            await wrapper.container
+                .getByRole("button", { name: "Chapter 1 sub-menu" })
+                .click();
+            await wrapper.container
+                .getByRole("button", { name: "Chapter 2 sub-menu" })
+                .click();
 
-            await expect.element(wrapper.container.getByText("Section 1.1")).toBeVisible();
-            await expect.element(wrapper.container.getByText("Section 2.2")).toBeVisible();
+            await expect
+                .element(wrapper.container.getByText("Section 1.1"))
+                .toBeVisible();
+            await expect
+                .element(wrapper.container.getByText("Section 2.1"))
+                .toBeVisible();
         });
 
         it("collapsing hides children again", async () => {
-            const wrapper = mnt(GTreeMenu, { props: { items: nestedItems } });
-            const btn = wrapper.container.getByRole("button", { name: "Chapter 1" });
+            const wrapper = slotMenu({ title: "Contents" }, [
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 1" },
+                    {
+                        default: () => "Chapter 1",
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                            ),
+                        ],
+                    },
+                ),
+            ]);
 
-            await btn.click(); // expand
-            await expect.element(wrapper.container.getByText("Section 1.1")).toBeVisible();
-            await btn.click(); // collapse
-            await expect.element(wrapper.container.getByText("Section 1.1")).not.toBeInTheDocument();
+            const btn = wrapper.container.getByRole("button", {
+                name: "Chapter 1 sub-menu",
+            });
+            await btn.click();
+            await expect
+                .element(wrapper.container.getByText("Section 1.1"))
+                .toBeVisible();
+            await btn.click();
+            await expect
+                .element(wrapper.container.getByText("Section 1.1"))
+                .not.toBeInTheDocument();
         });
 
         it("supports arbitrary depth — nested expand works", async () => {
-            const wrapper = mnt(GTreeMenu, { props: { items: nestedItems } });
+            const wrapper = slotMenu({ title: "Contents" }, [
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 2" },
+                    {
+                        default: () => "Chapter 2",
+                        children: () => [
+                            h(
+                                GTreeMenuItem,
+                                { label: "Section 2.1" },
+                                {
+                                    default: () =>
+                                        h(
+                                            "a",
+                                            { href: "/ch2/s1" },
+                                            "Section 2.1",
+                                        ),
+                                    children: () => [
+                                        h(GTreeMenuItem, null, () =>
+                                            h(
+                                                "a",
+                                                { href: "/ch2/s1/ss1" },
+                                                "Subsection 2.1.1",
+                                            ),
+                                        ),
+                                    ],
+                                },
+                            ),
+                        ],
+                    },
+                ),
+            ]);
 
-            await wrapper.container.getByRole("button", { name: "Chapter 2" }).click();
-            // Section 2.1 has children, it is also a button
-            await wrapper.container.getByRole("button", { name: "Section 2.1" }).click();
-
-            await expect.element(wrapper.container.getByText("Subsection 2.1.1")).toBeVisible();
+            await wrapper.container
+                .getByRole("button", { name: "Chapter 2 sub-menu" })
+                .click();
+            await wrapper.container
+                .getByRole("button", { name: "Section 2.1 sub-menu" })
+                .click();
+            await expect
+                .element(wrapper.container.getByText("Subsection 2.1.1"))
+                .toBeVisible();
         });
 
         it("renders as <ol> when listType='ol'", async () => {
-            const wrapper = mnt(GTreeMenu, {
-                props: { items: flatItems, listType: "ol" },
-            });
+            const wrapper = slotMenu(
+                { title: "Contents" },
+                [
+                    h(GTreeMenuItem, null, () =>
+                        h("a", { href: "#a" }, "Item A"),
+                    ),
+                ],
+                { listType: "ol" },
+            );
             const ol = wrapper.container.element()!.querySelector("ol");
             expect(ol).not.toBeNull();
         });
 
         it("renders as <ul> by default", async () => {
-            const wrapper = mnt(GTreeMenu, { props: { items: flatItems } });
+            const wrapper = slotMenu({ title: "Contents" }, [
+                h(GTreeMenuItem, null, () => h("a", { href: "#a" }, "Item A")),
+            ]);
             const ul = wrapper.container.element()!.querySelector("ul");
             expect(ul).not.toBeNull();
         });
 
-        it("parent items with href render both a toggle button and a link", async () => {
-            const wrapper = mnt(GTreeMenu, { props: { items: linkedParentItems } });
+        it("parent items with a link render a toggle button alongside", async () => {
+            const wrapper = slotMenu({ title: "Contents" }, [
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 1" },
+                    {
+                        default: () => h("a", { href: "/ch1" }, "Chapter 1"),
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                            ),
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch1/s2" }, "Section 1.2"),
+                            ),
+                        ],
+                    },
+                ),
+                h(GTreeMenuItem, null, () =>
+                    h("a", { href: "/ch2" }, "Chapter 2"),
+                ),
+            ]);
 
-            // The link for Chapter 1 should exist
-            await expect.element(
-                wrapper.container.getByRole("link", { name: "Chapter 1" }),
-            ).toBeVisible();
-
-            // A separate chevron toggle button should also exist
-            await expect.element(
-                wrapper.container.getByRole("button", { name: /Chapter 1 sub-menu/i }),
-            ).toBeVisible();
+            await expect
+                .element(
+                    wrapper.container.getByRole("link", { name: "Chapter 1" }),
+                )
+                .toBeVisible();
+            await expect
+                .element(
+                    wrapper.container.getByRole("button", {
+                        name: /Chapter 1 sub-menu/i,
+                    }),
+                )
+                .toBeVisible();
         });
 
         it("clicking chevron toggle expands a linked parent item", async () => {
-            const wrapper = mnt(GTreeMenu, { props: { items: linkedParentItems } });
+            const wrapper = slotMenu({ title: "Contents" }, [
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 1" },
+                    {
+                        default: () => h("a", { href: "/ch1" }, "Chapter 1"),
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                            ),
+                        ],
+                    },
+                ),
+            ]);
 
-            await wrapper.container.getByRole("button", { name: /Chapter 1 sub-menu/i }).click();
+            await wrapper.container
+                .getByRole("button", { name: /Chapter 1 sub-menu/i })
+                .click();
+            await expect
+                .element(wrapper.container.getByText("Section 1.1"))
+                .toBeVisible();
+        });
 
-            await expect.element(wrapper.container.getByText("Section 1.1")).toBeVisible();
+        it("clicking the text area of a non-link parent item expands it", async () => {
+            const wrapper = slotMenu({ title: "Contents" }, [
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 1" },
+                    {
+                        default: () => "Chapter 1",
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                            ),
+                        ],
+                    },
+                ),
+            ]);
+
+            await expect
+                .element(wrapper.container.getByText("Section 1.1"))
+                .not.toBeInTheDocument();
+            await wrapper.container.getByText("Chapter 1").click();
+            await expect
+                .element(wrapper.container.getByText("Section 1.1"))
+                .toBeVisible();
+        });
+
+        it("renders custom DOM inside items", async () => {
+            const wrapper = slotMenu({ title: "Contents" }, [
+                h(GTreeMenuItem, null, () =>
+                    h("a", { href: "#ch1" }, [
+                        h("span", { class: "num" }, "Chapter 1"),
+                        " ",
+                        h("span", { class: "title" }, "Some Chapter Title"),
+                    ]),
+                ),
+            ]);
+
+            const link = wrapper.container
+                .element()!
+                .querySelector("a[href='#ch1']");
+            expect(link).not.toBeNull();
+            expect(link!.querySelector(".num")!.textContent).toBe("Chapter 1");
+            expect(link!.querySelector(".title")!.textContent).toBe(
+                "Some Chapter Title",
+            );
         });
     });
 
     describe("Keyboard Navigation Tests", () => {
-
         it("ArrowDown moves focus to the next item", async () => {
-            const wrapper = mnt(GTreeMenu, { props: { items: nestedItems } });
-            await tabTo("Chapter 1");
+            const wrapper = slotMenu({ title: "Contents" }, [
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 1" },
+                    {
+                        default: () => "Chapter 1",
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                            ),
+                        ],
+                    },
+                ),
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 2" },
+                    {
+                        default: () => "Chapter 2",
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch2/s1" }, "Section 2.1"),
+                            ),
+                        ],
+                    },
+                ),
+                h(GTreeMenuItem, null, () =>
+                    h("a", { href: "/appendix" }, "Appendix"),
+                ),
+            ]);
 
+            await tabTo("Chapter 1 sub-menu");
             await userEvent.keyboard("{ArrowDown}");
-
-            await expect
-                .element(wrapper.container.getByRole("button", { name: "Chapter 2" }))
-                .toHaveFocus();
+            const focused = document.activeElement as HTMLElement;
+            await expect.element(focused).toHaveTextContent("Chapter 2");
         });
 
         it("ArrowUp moves focus to the previous item", async () => {
-            const wrapper = mnt(GTreeMenu, { props: { items: nestedItems } });
-            await tabTo("Chapter 2");
-            await userEvent.keyboard("{ArrowUp}");
+            const wrapper = slotMenu({ title: "Contents" }, [
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 1" },
+                    {
+                        default: () => "Chapter 1",
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                            ),
+                        ],
+                    },
+                ),
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 2" },
+                    {
+                        default: () => "Chapter 2",
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch2/s1" }, "Section 2.1"),
+                            ),
+                        ],
+                    },
+                ),
+            ]);
 
-            await expect
-                .element(wrapper.container.getByRole("button", { name: "Chapter 1" }))
-                .toHaveFocus();
+            await tabTo("Chapter 2 sub-menu");
+            await userEvent.keyboard("{ArrowUp}");
+            const focused = document.activeElement as HTMLElement;
+            await expect.element(focused).toHaveTextContent("Chapter 1");
         });
 
         it("ArrowRight expands a collapsed item", async () => {
-            const wrapper = mnt(GTreeMenu, { props: { items: nestedItems } });
-            await tabTo("Chapter 1");
+            const wrapper = slotMenu({ title: "Contents" }, [
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 1" },
+                    {
+                        default: () => "Chapter 1",
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                            ),
+                        ],
+                    },
+                ),
+            ]);
 
+            await tabTo("Chapter 1 sub-menu");
             await userEvent.keyboard("{ArrowRight}");
-
-            await expect.element(wrapper.container.getByText("Section 1.1")).toBeVisible();
+            await expect
+                .element(wrapper.container.getByText("Section 1.1"))
+                .toBeVisible();
         });
 
         it("ArrowRight on an expanded item moves to its first child", async () => {
-            const wrapper = mnt(GTreeMenu, { props: { items: nestedItems } });
+            const wrapper = slotMenu({ title: "Contents" }, [
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 1" },
+                    {
+                        default: () => "Chapter 1",
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                            ),
+                        ],
+                    },
+                ),
+            ]);
 
-            // Expand Chapter 1 by clicking so focus stays on the button.
-            await tabTo("Chapter 1");
+            await tabTo("Chapter 1 sub-menu");
             await userEvent.keyboard("{ArrowRight}");
-
-            await tabTo("Chapter 1");
-
-            // Chapter 1 is now expanded — ArrowRight should move to first child.
+            await tabTo("Chapter 1 sub-menu");
             await userEvent.keyboard("{ArrowRight}");
 
             await expect
-                .element(wrapper.container.getByRole("link", { name: "Section 1.1" }))
+                .element(
+                    wrapper.container.getByRole("link", {
+                        name: "Section 1.1",
+                    }),
+                )
                 .toHaveFocus();
         });
 
         it("ArrowLeft collapses an expanded item", async () => {
-            const wrapper = mnt(GTreeMenu, { props: { items: nestedItems } });
+            const wrapper = slotMenu({ title: "Contents" }, [
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 1" },
+                    {
+                        default: () => "Chapter 1",
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                            ),
+                        ],
+                    },
+                ),
+            ]);
 
-            // Expand Chapter 1 by clicking so focus stays on the button.
-            await tabTo("Chapter 1");
+            await tabTo("Chapter 1 sub-menu");
             await userEvent.keyboard("{ArrowRight}");
-
-            // Re-focus Chapter 1 button.
-            await tabTo("Chapter 1");
-
-            // ArrowLeft on an expanded item collapses it.
+            await tabTo("Chapter 1 sub-menu");
             await userEvent.keyboard("{ArrowLeft}");
-            await expect.element(wrapper.container.getByText("Section 1.1")).not.toBeInTheDocument();
+            await expect
+                .element(wrapper.container.getByText("Section 1.1"))
+                .not.toBeInTheDocument();
         });
 
         it("ArrowLeft on a collapsed item moves focus to its parent", async () => {
-            const wrapper = mnt(GTreeMenu, { props: { items: nestedItems } });
-            await tabTo("Chapter 1");
+            const wrapper = slotMenu({ title: "Contents" }, [
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 1" },
+                    {
+                        default: () => "Chapter 1",
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                            ),
+                        ],
+                    },
+                ),
+            ]);
 
-            // Expand Chapter 1, then move into Section 1.1
+            await tabTo("Chapter 1 sub-menu");
             await userEvent.keyboard("{ArrowRight}");
             await userEvent.keyboard("{ArrowRight}");
-
-            // Now ArrowLeft from Section 1.1 (which is a leaf) → should go to Chapter 1
             await userEvent.keyboard("{ArrowLeft}");
 
-            await expect
-                .element(wrapper.container.getByRole("button", { name: "Chapter 1" }))
-                .toHaveFocus();
+            const focused = document.activeElement as HTMLElement;
+            await expect.element(focused).toHaveTextContent("Chapter 1");
         });
 
         it("Home moves focus to the first item", async () => {
-            const wrapper = mnt(GTreeMenu, { props: { items: nestedItems } });
+            const wrapper = slotMenu({ title: "Contents" }, [
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 1" },
+                    {
+                        default: () => "Chapter 1",
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                            ),
+                        ],
+                    },
+                ),
+                h(GTreeMenuItem, null, () =>
+                    h("a", { href: "/appendix" }, "Appendix"),
+                ),
+            ]);
 
-            // Focus the last top-level item
             await tabTo("Appendix");
-
             await userEvent.keyboard("{Home}");
 
-            await expect
-                .element(wrapper.container.getByRole("button", { name: "Chapter 1" }))
-                .toHaveFocus();
+            const focused = document.activeElement as HTMLElement;
+            await expect.element(focused).toHaveTextContent("Chapter 1");
         });
 
         it("End moves focus to the last visible item", async () => {
-            const wrapper = mnt(GTreeMenu, { props: { items: nestedItems } });
-            await tabTo("Chapter 1");
+            const wrapper = slotMenu({ title: "Contents" }, [
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 1" },
+                    {
+                        default: () => "Chapter 1",
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                            ),
+                        ],
+                    },
+                ),
+                h(GTreeMenuItem, null, () =>
+                    h("a", { href: "/appendix" }, "Appendix"),
+                ),
+            ]);
 
+            await tabTo("Chapter 1 sub-menu");
             await userEvent.keyboard("{End}");
 
-            await expect
-                .element(wrapper.container.getByRole("link", { name: "Appendix" }))
-                .toHaveFocus();
+            const focused = document.activeElement as HTMLElement;
+            await expect.element(focused).toHaveTextContent("Appendix");
         });
     });
 
     describe("Accessibility Tests", () => {
         it("flat list passes axe", async () => {
-            await testAccessibility(GTreeMenu, {
-                title: "Navigation",
-                items: flatItems,
-            });
+            const wrapper = slotMenu({ title: "Navigation" }, [
+                h(GTreeMenuItem, null, () => h("a", { href: "/" }, "Home")),
+                h(GTreeMenuItem, null, () =>
+                    h("a", { href: "/about" }, "About"),
+                ),
+            ]);
+            await testAccessibility(wrapper.container.element() as HTMLElement);
         });
 
         it("nested list (collapsed) passes axe", async () => {
-            await testAccessibility(GTreeMenu, {
-                title: "Contents",
-                items: nestedItems,
-            });
+            const wrapper = slotMenu({ title: "Contents" }, [
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 1" },
+                    {
+                        default: () => "Chapter 1",
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                            ),
+                        ],
+                    },
+                ),
+            ]);
+            await testAccessibility(wrapper.container.element() as HTMLElement);
         });
 
         it("nested list (expanded) passes axe", async () => {
-            const wrapper = mnt(GTreeMenu, {
-                props: { title: "Contents", items: nestedItems },
-            });
+            const wrapper = slotMenu({ title: "Contents" }, [
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 1" },
+                    {
+                        default: () => "Chapter 1",
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                            ),
+                        ],
+                    },
+                ),
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 2" },
+                    {
+                        default: () => "Chapter 2",
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch2/s1" }, "Section 2.1"),
+                            ),
+                        ],
+                    },
+                ),
+            ]);
 
-            // Expand both chapters
-            await wrapper.container.getByRole("button", { name: "Chapter 1" }).click();
-            await wrapper.container.getByRole("button", { name: "Chapter 2" }).click();
+            await wrapper.container
+                .getByRole("button", { name: "Chapter 1 sub-menu" })
+                .click();
+            await wrapper.container
+                .getByRole("button", { name: "Chapter 2 sub-menu" })
+                .click();
 
             await testAccessibility(wrapper.container.element() as HTMLElement);
         });
 
         it("linked parent items pass axe", async () => {
-            await testAccessibility(GTreeMenu, {
-                title: "Contents",
-                items: linkedParentItems,
-            });
+            const wrapper = slotMenu({ title: "Contents" }, [
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 1" },
+                    {
+                        default: () => h("a", { href: "/ch1" }, "Chapter 1"),
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                            ),
+                        ],
+                    },
+                ),
+            ]);
+            await testAccessibility(wrapper.container.element() as HTMLElement);
         });
 
         it("ol list type passes axe", async () => {
-            await testAccessibility(GTreeMenu, {
-                title: "Chapters",
-                items: nestedItems,
-                listType: "ol",
-            });
+            const wrapper = slotMenu(
+                { title: "Chapters" },
+                [
+                    h(
+                        GTreeMenuItem,
+                        { label: "Chapter 1" },
+                        {
+                            default: () => "Chapter 1",
+                            children: () => [
+                                h(GTreeMenuItem, null, () =>
+                                    h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                                ),
+                            ],
+                        },
+                    ),
+                ],
+                { listType: "ol" },
+            );
+            await testAccessibility(wrapper.container.element() as HTMLElement);
         });
 
         it("dark theme passes axe", async () => {
-            await testAccessibility(GTreeMenu, {
-                title: "Navigation",
-                items: flatItems,
-                theme: "dark",
-            });
+            const wrapper = slotMenu({ title: "Navigation", theme: "dark" }, [
+                h(GTreeMenuItem, null, () => h("a", { href: "/" }, "Home")),
+                h(GTreeMenuItem, null, () =>
+                    h("a", { href: "/about" }, "About"),
+                ),
+            ]);
+            await testAccessibility(wrapper.container.element() as HTMLElement);
         });
     });
 });

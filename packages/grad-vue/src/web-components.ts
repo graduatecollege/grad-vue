@@ -39,6 +39,7 @@ import GThreeWayToggle from "./components/GThreeWayToggle.vue";
 import GFormErrorMessages from "./components/form/GFormErrorMessages.vue";
 import GTreeMenu from "./components/GTreeMenu.vue";
 import GTreeMenuList from "./components/tree-menu/GTreeMenuList.vue";
+import GTreeMenuItem from "./components/tree-menu/GTreeMenuItem.vue";
 import GUserMenu from "./components/GUserMenu.vue";
 
 const globalScope = globalThis as typeof globalThis & {
@@ -94,12 +95,13 @@ const components: [string, Component][] = [
     ["g-textarea", GTextarea],
     ["g-three-way-toggle", GThreeWayToggle],
     ["g-tree-menu", GTreeMenu],
+    ["g-tree-menu-list", GTreeMenuList],
+    ["g-tree-menu-item", GTreeMenuItem],
     ["g-user-menu", GUserMenu],
 ];
 
 const internalComponents: Component[] = [
     GFormErrorMessages,
-    GTreeMenuList,
 ];
 
 const allStyles: string[] = [];

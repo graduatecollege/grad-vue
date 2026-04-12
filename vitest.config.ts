@@ -23,7 +23,7 @@ export default defineConfig({
         ],
     },
     test: {
-        testTimeout: 5000,
+        testTimeout: 3000,
         browser: {
             enabled: true,
             instances: [

@@ -38,6 +38,42 @@
             overflow-y: auto;
             margin-top: 1rem;
         }
+
+        .chapters-menu .chapter-item {
+            display: block;
+            margin-top: 0.4em;
+
+            &:first-of-type {
+                margin-top: 0;
+            }
+        }
+        .chapter-link {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.1;
+        }
+        .link-wrapper:not(.chapter-link) {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            font-size: 1rem;
+
+            & > .item-number {
+                align-self: flex-start;
+                min-width: 28px;
+                text-align: right;
+            }
+        }
+        .chapter-link .item-number {
+            font-size: 13px;
+            font-weight: normal;
+            line-height: 1.4;
+        }
+
+        g-tree-menu-item g-tree-menu-item {
+            font-size: 0.875rem;
+        }
     </style>
 </head>
 <body>
@@ -46,7 +82,102 @@
 
     <g-hamburger-menu sidebar-key="wc-sidebar"></g-hamburger-menu>
     <g-sidebar theme="light" sidebar-key="wc-sidebar">
-        <g-tree-menu id="sidebar-tree" title="Navigation" theme="light"></g-tree-menu>
+        <g-tree-menu title="Navigation" theme="light">
+            <g-tree-menu-list>
+                <g-tree-menu-item label="Getting Started">
+                    Getting Started
+                    <g-tree-menu-item slot="children"><a href="#overview">Overview</a></g-tree-menu-item>
+                    <g-tree-menu-item slot="children"><a href="#setup">Setup</a></g-tree-menu-item>
+                </g-tree-menu-item>
+                <g-tree-menu-item label="Components">
+                    Components
+                    <g-tree-menu-item slot="children"><a href="#buttons">Buttons</a></g-tree-menu-item>
+                    <g-tree-menu-item slot="children"><a href="#inputs">Inputs</a></g-tree-menu-item>
+                    <g-tree-menu-item slot="children" label="Navigation">
+                        Navigation
+                        <g-tree-menu-item slot="children"><a href="#sidebar">Sidebar</a></g-tree-menu-item>
+                        <g-tree-menu-item slot="children"><a href="#tree-menu">Tree Menu</a></g-tree-menu-item>
+                    </g-tree-menu-item>
+                </g-tree-menu-item>
+                <g-tree-menu-item><a href="#table">Table</a></g-tree-menu-item>
+            </g-tree-menu-list>
+        </g-tree-menu>
+        <g-tree-menu title="Chapters" theme="light" class="chapters-menu">
+            <g-tree-menu-list>
+                <g-tree-menu-item class="chapter-item">
+                    <a href="#">
+                        <span class="link-wrapper chapter-link">
+                            <span class="item-number">Chapter 1</span>
+                            <span class="item-title">Admission to the Graduate College</span>
+                        </span>
+                    </a>
+                    <g-tree-menu-item slot="children">
+                        <a href="#overview">
+                            <span class="link-wrapper">
+                                <span class="item-number">1.1</span>
+                                <span class="item-title">Graduate Admission Policies</span>
+                            </span>
+                        </a>
+                    </g-tree-menu-item>
+                    <g-tree-menu-item slot="children">
+                        <a href="#setup">
+                            <span class="link-wrapper">
+                                <span class="item-number">1.2</span>
+                                <span class="item-title">Minimum Requirements for Admission</span>
+                            </span>
+                        </a>
+                    </g-tree-menu-item>
+                </g-tree-menu-item>
+                <g-tree-menu-item class="chapter-item" label="Registration">
+                    <a href="#">
+                        <span class="link-wrapper chapter-link">
+                            <span class="item-number">Chapter 2</span>
+                            <span class="item-title">Registration</span>
+                        </span>
+                    </a>
+                    <g-tree-menu-item slot="children">
+                        <a href="#buttons">
+                            <span class="link-wrapper">
+                                <span class="item-number">2.1</span>
+                                <span class="item-title">Registration Process</span>
+                            </span>
+                        </a>
+                    </g-tree-menu-item>
+                    <g-tree-menu-item slot="children">
+                        <a href="#inputs">
+                            <span class="link-wrapper">
+                                <span class="item-number">2.2</span>
+                                <span class="item-title">Required Documents</span>
+                            </span>
+                        </a>
+                    </g-tree-menu-item>
+                </g-tree-menu-item>
+                <g-tree-menu-item class="chapter-item" label="Academic Record">
+                    <a href="#">
+                        <span class="link-wrapper chapter-link">
+                            <span class="item-number">Chapter 3</span>
+                            <span class="item-title">Academic Record</span>
+                        </span>
+                    </a>
+                    <g-tree-menu-item slot="children">
+                        <a href="#buttons">
+                            <span class="link-wrapper">
+                                <span class="item-number">3.1</span>
+                                <span class="item-title">Registration Process</span>
+                            </span>
+                        </a>
+                    </g-tree-menu-item>
+                    <g-tree-menu-item slot="children">
+                        <a href="#inputs">
+                            <span class="link-wrapper">
+                                <span class="item-number">3.2</span>
+                                <span class="item-title">Required Documents</span>
+                            </span>
+                        </a>
+                    </g-tree-menu-item>
+                </g-tree-menu-item>
+            </g-tree-menu-list>
+        </g-tree-menu>
     </g-sidebar>
     <section>
         <h2>Buttons</h2>
@@ -225,32 +356,6 @@
             log(`Input changed: ${val.to}`);
             valueDisplay.textContent = val.to;
         });
-
-        const sidebarTree = document.getElementById('sidebar-tree');
-        sidebarTree.items = [
-            {
-                label: 'Getting Started',
-                children: [
-                    { label: 'Overview', href: '#overview' },
-                    { label: 'Setup', href: '#setup' }
-                ]
-            },
-            {
-                label: 'Components',
-                children: [
-                    { label: 'Buttons', href: '#buttons' },
-                    { label: 'Inputs', href: '#inputs' },
-                    {
-                        label: 'Navigation',
-                        children: [
-                            { label: 'Sidebar', href: '#sidebar' },
-                            { label: 'Tree Menu', href: '#tree-menu' }
-                        ]
-                    }
-                ]
-            },
-            { label: 'Table', href: '#table' }
-        ];
 
         // Table properties
         const table = document.getElementById('test-table');
