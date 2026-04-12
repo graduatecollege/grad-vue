@@ -1,5 +1,7 @@
 import GButton from "./components/GButton.vue";
 import GTreeMenu from "./components/GTreeMenu.vue";
+import GTreeMenuList from "./components/tree-menu/GTreeMenuList.vue";
+import GTreeMenuItem from "./components/tree-menu/GTreeMenuItem.vue";
 import GTextInput from "./components/GTextInput.vue";
 import GPopover from "./components/GPopover.vue";
 import GTooltip from "./components/GTooltip.vue";
@@ -77,6 +79,8 @@ export {
     GForm,
     GSubmitButton,
     GTreeMenu,
+    GTreeMenuList,
+    GTreeMenuItem,
     GCheckboxGroup,
     GTextarea,
     GMultiSelect,
@@ -129,5 +133,4 @@ export type {
     TableRow,
 } from "./components/table/TableColumn";
 export type { BulkAction } from "./components/GTable.vue";
-export type { TreeMenuItem } from "./components/tree-menu/GTreeMenuList.vue";
 export type { CheckboxOption } from "./components/GCheckboxGroup.vue";

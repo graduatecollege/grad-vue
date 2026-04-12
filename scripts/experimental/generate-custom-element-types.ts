@@ -231,7 +231,6 @@ const KNOWN_EXTERNAL_TYPES: Record<string, string> = {
     CellChangePayload: './compose/useTableChanges.ts',
     BulkAction: './components/GTable.vue',
     GSearchGroup: './components/GSearch.vue',
-    TreeMenuItem: './components/tree-menu/GTreeMenuList.vue',
 };
 
 function detectNeededImports(typeStr: string): Array<{ name: string; from: string }> {

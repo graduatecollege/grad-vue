@@ -26,6 +26,8 @@ import {
     GTermSelector,
     GTermSelectorControl,
     GTreeMenu,
+    GTreeMenuList,
+    GTreeMenuItem,
     GUserMenu,
     GCurrencyInput,
     GEmailInput,
@@ -71,6 +73,8 @@ export default {
         app.component("GTermSelector", GTermSelector);
         app.component("GTermSelectorControl", GTermSelectorControl);
         app.component("GTreeMenu", GTreeMenu);
+        app.component("GTreeMenuList", GTreeMenuList);
+        app.component("GTreeMenuItem", GTreeMenuItem);
         app.component("GUserMenu", GUserMenu);
         app.component("GCurrencyInput", GCurrencyInput);
         app.component("GEmailInput", GEmailInput);
@@ -112,6 +116,8 @@ declare module "vue" {
         GDetailList: typeof GDetailList;
         GDetailListItem: typeof GDetailListItem;
         GTreeMenu: typeof GTreeMenu;
+        GTreeMenuList: typeof GTreeMenuList;
+        GTreeMenuItem: typeof GTreeMenuItem;
         GForm: typeof GForm;
         GSubmitButton: typeof GSubmitButton;
         GFileInput: typeof GFileInput;

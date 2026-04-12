@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, h, onMounted, provide, ref, useTemplateRef } from "vue";
-import type { TreeMenuItem } from "../packages/grad-vue/src/grad-vue";
 
 const formData = ref<Record<string, any>>({});
 const submitResult = ref<string>("");
@@ -32,58 +31,6 @@ function handleSubmit(values: Record<string, any>) {
 }
 
 const fname = ref("heh");
-
-const linkedParentItems: TreeMenuItem[] = [
-    {
-        label: "Chapter 1",
-        href: "#ch1",
-        children: [
-            { label: "Section 1.1", href: "#ch1-s1" },
-            { label: "Section 1.2", href: "#ch1-s2" },
-        ],
-    },
-    {
-        label: "Chapter 2",
-        href: "#ch2",
-        children: [
-            { label: "Section 2.1", href: "#ch2-s1" },
-            { label: "Section 2.2", href: "#ch2-s2" },
-        ],
-    },
-    { label: "References", href: "#refs" },
-];
-
-const bookItems: TreeMenuItem[] = [
-    {
-        label: "Chapter 1: Introduction",
-        children: [
-            { label: "1.1 Background", href: "#ch1-background" },
-            { label: "1.2 Motivation", href: "#ch1-motivation" },
-            {
-                label: "1.3 Overview",
-                children: [
-                    { label: "1.3.1 Part One", href: "#ch1-part1" },
-                    { label: "1.3.2 Part Two", href: "#ch1-part2" },
-                ],
-            },
-        ],
-    },
-    {
-        label: "Chapter 2: Methods",
-        children: [
-            { label: "2.1 Data Collection", href: "#ch2-data" },
-            { label: "2.2 Analysis", href: "#ch2-analysis" },
-        ],
-    },
-    {
-        label: "Chapter 3: Results",
-        children: [
-            { label: "3.1 Findings", href: "#ch3-findings" },
-            { label: "3.2 Discussion", href: "#ch3-discussion" },
-        ],
-    },
-    { label: "Appendix", href: "#appendix" },
-];
 </script>
 
 <template>
@@ -115,17 +62,58 @@ const bookItems: TreeMenuItem[] = [
                     />
                 </div>
                 <div style="max-width: 320px">
-                    <GTreeMenu
-                        title="With Linked Parents"
-                        :items="linkedParentItems"
-                        style="min-height: 240px;"
-                    />
-                    <GTreeMenu
-                        title="Numbered Chapters"
-                        list-type="ol"
-                        :items="bookItems"
-                        style="min-height: 200px;"
-                    />
+                    <GTreeMenu title="With Linked Parents" style="min-height: 240px;">
+                        <GTreeMenuList>
+                            <GTreeMenuItem label="Chapter 1">
+                                <a href="#ch1">Chapter 1</a>
+                                <template #children>
+                                    <GTreeMenuItem><a href="#ch1-s1">Section 1.1</a></GTreeMenuItem>
+                                    <GTreeMenuItem><a href="#ch1-s2">Section 1.2</a></GTreeMenuItem>
+                                </template>
+                            </GTreeMenuItem>
+                            <GTreeMenuItem label="Chapter 2">
+                                <a href="#ch2">Chapter 2</a>
+                                <template #children>
+                                    <GTreeMenuItem><a href="#ch2-s1">Minimum Requirements for Admission</a></GTreeMenuItem>
+                                    <GTreeMenuItem><a href="#ch2-s2">Minimum Requirements for Admission</a></GTreeMenuItem>
+                                </template>
+                            </GTreeMenuItem>
+                            <GTreeMenuItem><a href="#refs">References</a></GTreeMenuItem>
+                        </GTreeMenuList>
+                    </GTreeMenu>
+                    <GTreeMenu title="Numbered Chapters" style="min-height: 200px;">
+                        <GTreeMenuList list-type="ol">
+                            <GTreeMenuItem label="Chapter 1: Introduction">
+                                Chapter 1: Introduction
+                                <template #children>
+                                    <GTreeMenuItem><a href="#ch1-background">1.1 Background</a></GTreeMenuItem>
+                                    <GTreeMenuItem><a href="#ch1-motivation">1.2 Motivation</a></GTreeMenuItem>
+                                    <GTreeMenuItem label="1.3 Overview">
+                                        1.3 Overview
+                                        <template #children>
+                                            <GTreeMenuItem><a href="#ch1-part1">1.3.1 Part One</a></GTreeMenuItem>
+                                            <GTreeMenuItem><a href="#ch1-part2">1.3.2 Part Two</a></GTreeMenuItem>
+                                        </template>
+                                    </GTreeMenuItem>
+                                </template>
+                            </GTreeMenuItem>
+                            <GTreeMenuItem label="Chapter 2: Methods">
+                                Chapter 2: Methods
+                                <template #children>
+                                    <GTreeMenuItem><a href="#ch2-data">2.1 Data Collection</a></GTreeMenuItem>
+                                    <GTreeMenuItem><a href="#ch2-analysis">2.2 Analysis</a></GTreeMenuItem>
+                                </template>
+                            </GTreeMenuItem>
+                            <GTreeMenuItem label="Chapter 3: Results">
+                                Chapter 3: Results
+                                <template #children>
+                                    <GTreeMenuItem><a href="#ch3-findings">3.1 Findings</a></GTreeMenuItem>
+                                    <GTreeMenuItem><a href="#ch3-discussion">3.2 Discussion</a></GTreeMenuItem>
+                                </template>
+                            </GTreeMenuItem>
+                            <GTreeMenuItem><a href="#appendix">Appendix</a></GTreeMenuItem>
+                        </GTreeMenuList>
+                    </GTreeMenu>
                 </div>
                 <div style="max-width: 500px;">
                     <GDetailList>
