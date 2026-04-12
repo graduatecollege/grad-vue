@@ -27,10 +27,10 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-    /** Fired when the item is expanded. Payload is the item's `label`. */
-    expand: [label: string | undefined];
-    /** Fired when the item is collapsed. Payload is the item's `label`. */
-    collapse: [label: string | undefined];
+    /** Fired when the item is expanded. */
+    expand: [];
+    /** Fired when the item is collapsed. */
+    collapse: [];
 }>();
 
 const slots = useSlots();
@@ -47,7 +47,6 @@ const hasCeChildren = ceHost?._slots?.children?.length > 0;
 const hasChildren = computed(() => !!slots.children || hasCeChildren);
 
 const isExpanded = ref(props.expanded);
-const itemRef = ref<HTMLLIElement | null>(null);
 
 watch(
     () => props.expanded,
@@ -56,22 +55,9 @@ watch(
     },
 );
 
-function emitToggle() {
-    const eventName = isExpanded.value ? "expand" : "collapse";
-    emit(eventName, props.label);
-    // Bubble a native CustomEvent so GTreeMenu can re-emit at the root.
-    // This works in both Vue and web-component modes.
-    itemRef.value?.dispatchEvent(
-        new CustomEvent(`g-tree-menu-item-${eventName}`, {
-            bubbles: true,
-            detail: { label: props.label },
-        }),
-    );
-}
-
 function toggle() {
     isExpanded.value = !isExpanded.value;
-    emitToggle();
+    emit(isExpanded.value ? "expand" : "collapse");
 }
 
 function handleContentClick(event: MouseEvent) {
@@ -90,7 +76,6 @@ function handleContentKeydown(event: KeyboardEvent) {
 
 <template>
     <li
-        ref="itemRef"
         class="g-tree-menu__item"
         :data-tree-expandable="hasChildren ? 'true' : undefined"
     >

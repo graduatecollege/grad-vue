@@ -620,7 +620,6 @@ describe("GTreeMenu", () => {
                 .click();
 
             expect(onExpand).toHaveBeenCalledOnce();
-            expect(onExpand).toHaveBeenCalledWith("Chapter 1");
         });
 
         it("GTreeMenuItem emits collapse event when collapsed", async () => {
@@ -645,148 +644,35 @@ describe("GTreeMenu", () => {
                 .click();
 
             expect(onCollapse).toHaveBeenCalledOnce();
-            expect(onCollapse).toHaveBeenCalledWith("Chapter 1");
         });
 
-        it("GTreeMenu emits item-expand when a child item is expanded", async () => {
-            const onItemExpand = vi.fn();
-            const wrapper = slotMenu(
-                { title: "Contents", "onItem-expand": onItemExpand },
-                [
-                    h(
-                        GTreeMenuItem,
-                        { label: "Chapter 1" },
-                        {
-                            default: () => "Chapter 1",
-                            children: () => [
-                                h(GTreeMenuItem, null, () =>
-                                    h("a", { href: "/ch1/s1" }, "Section 1.1"),
-                                ),
-                            ],
-                        },
-                    ),
-                ],
-            );
-
-            await wrapper.container
-                .getByRole("button", { name: "Chapter 1 sub-menu" })
-                .click();
-
-            expect(onItemExpand).toHaveBeenCalledOnce();
-            expect(onItemExpand).toHaveBeenCalledWith("Chapter 1");
-        });
-
-        it("GTreeMenu emits item-collapse when a child item is collapsed", async () => {
-            const onItemCollapse = vi.fn();
-            const wrapper = slotMenu(
-                { title: "Contents", "onItem-collapse": onItemCollapse },
-                [
-                    h(
-                        GTreeMenuItem,
-                        { label: "Chapter 1", expanded: true },
-                        {
-                            default: () => "Chapter 1",
-                            children: () => [
-                                h(GTreeMenuItem, null, () =>
-                                    h("a", { href: "/ch1/s1" }, "Section 1.1"),
-                                ),
-                            ],
-                        },
-                    ),
-                ],
-            );
-
-            await wrapper.container
-                .getByRole("button", { name: "Chapter 1 sub-menu" })
-                .click();
-
-            expect(onItemCollapse).toHaveBeenCalledOnce();
-            expect(onItemCollapse).toHaveBeenCalledWith("Chapter 1");
-        });
-
-        it("GTreeMenu receives events from deeply nested items", async () => {
-            const onItemExpand = vi.fn();
-            const wrapper = slotMenu(
-                { title: "Contents", "onItem-expand": onItemExpand },
-                [
-                    h(
-                        GTreeMenuItem,
-                        { label: "Chapter 1", expanded: true },
-                        {
-                            default: () => "Chapter 1",
-                            children: () => [
-                                h(
-                                    GTreeMenuItem,
-                                    { label: "Section 1.1" },
-                                    {
-                                        default: () =>
-                                            h(
-                                                "a",
-                                                { href: "/ch1/s1" },
-                                                "Section 1.1",
-                                            ),
-                                        children: () => [
-                                            h(GTreeMenuItem, null, () =>
-                                                h(
-                                                    "a",
-                                                    { href: "/ch1/s1/ss1" },
-                                                    "Subsection 1.1.1",
-                                                ),
-                                            ),
-                                        ],
-                                    },
-                                ),
-                            ],
-                        },
-                    ),
-                ],
-            );
-
-            onItemExpand.mockClear();
-
-            await wrapper.container
-                .getByRole("button", { name: "Section 1.1 sub-menu" })
-                .click();
-
-            expect(onItemExpand).toHaveBeenCalledWith("Section 1.1");
-        });
-
-        it("keyboard expand emits events", async () => {
-            const onItemExpand = vi.fn();
-            const onItemCollapse = vi.fn();
-            const wrapper = slotMenu(
-                {
-                    title: "Contents",
-                    "onItem-expand": onItemExpand,
-                    "onItem-collapse": onItemCollapse,
-                },
-                [
-                    h(
-                        GTreeMenuItem,
-                        { label: "Chapter 1" },
-                        {
-                            default: () => "Chapter 1",
-                            children: () => [
-                                h(GTreeMenuItem, null, () =>
-                                    h("a", { href: "/ch1/s1" }, "Section 1.1"),
-                                ),
-                            ],
-                        },
-                    ),
-                ],
-            );
+        it("keyboard expand/collapse emits events on the item", async () => {
+            const onExpand = vi.fn();
+            const onCollapse = vi.fn();
+            const wrapper = slotMenu({ title: "Contents" }, [
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 1", onExpand, onCollapse },
+                    {
+                        default: () => "Chapter 1",
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                            ),
+                        ],
+                    },
+                ),
+            ]);
 
             await tabTo("Chapter 1 sub-menu");
             await userEvent.keyboard("{ArrowRight}");
 
-            expect(onItemExpand).toHaveBeenCalledOnce();
-            expect(onItemExpand).toHaveBeenCalledWith("Chapter 1");
+            expect(onExpand).toHaveBeenCalledOnce();
 
             await tabTo("Chapter 1 sub-menu");
             await userEvent.keyboard("{ArrowLeft}");
 
-            expect(onItemCollapse).toHaveBeenCalledOnce();
-            expect(onItemCollapse).toHaveBeenCalledWith("Chapter 1");
+            expect(onCollapse).toHaveBeenCalledOnce();
         });
 
         it("clicking text area of non-link parent emits expand event", async () => {
@@ -809,35 +695,6 @@ describe("GTreeMenu", () => {
             await wrapper.container.getByText("Chapter 1").click();
 
             expect(onExpand).toHaveBeenCalledOnce();
-            expect(onExpand).toHaveBeenCalledWith("Chapter 1");
-        });
-
-        it("event payload is undefined when label is not set", async () => {
-            const onItemExpand = vi.fn();
-            const wrapper = slotMenu(
-                { title: "Contents", "onItem-expand": onItemExpand },
-                [
-                    h(
-                        GTreeMenuItem,
-                        null,
-                        {
-                            default: () => "Chapter 1",
-                            children: () => [
-                                h(GTreeMenuItem, null, () =>
-                                    h("a", { href: "/ch1/s1" }, "Section 1.1"),
-                                ),
-                            ],
-                        },
-                    ),
-                ],
-            );
-
-            await wrapper.container
-                .getByRole("button", { name: "Sub-menu" })
-                .click();
-
-            expect(onItemExpand).toHaveBeenCalledOnce();
-            expect(onItemExpand).toHaveBeenCalledWith(undefined);
         });
     });
 
