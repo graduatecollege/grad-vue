@@ -1,7 +1,7 @@
 {
   "totalComponents": 41,
-  "totalTests": 426,
-  "passedTests": 426,
+  "totalTests": 437,
+  "passedTests": 437,
   "failedTests": 0,
   "skippedTests": 0,
   "components": {
@@ -2997,8 +2997,8 @@
     },
     "GTreeMenu": {
       "component": "GTreeMenu",
-      "total": 27,
-      "passed": 27,
+      "total": 38,
+      "passed": 38,
       "failed": 0,
       "skipped": 0,
       "status": "passed",
@@ -3092,6 +3092,83 @@
           "status": "passed",
           "ancestors": [
             "Functional Tests"
+          ]
+        },
+        {
+          "title": "item with expanded=true starts expanded",
+          "status": "passed",
+          "ancestors": [
+            "Expanded Prop"
+          ]
+        },
+        {
+          "title": "expanded prop does not affect leaf items",
+          "status": "passed",
+          "ancestors": [
+            "Expanded Prop"
+          ]
+        },
+        {
+          "title": "multiple items can start expanded independently",
+          "status": "passed",
+          "ancestors": [
+            "Expanded Prop"
+          ]
+        },
+        {
+          "title": "toggling a pre-expanded item collapses it",
+          "status": "passed",
+          "ancestors": [
+            "Expanded Prop"
+          ]
+        },
+        {
+          "title": "nested items can start expanded",
+          "status": "passed",
+          "ancestors": [
+            "Expanded Prop"
+          ]
+        },
+        {
+          "title": "updating expanded prop changes expanded state",
+          "status": "passed",
+          "ancestors": [
+            "Expanded Prop"
+          ]
+        },
+        {
+          "title": "expanded item passes axe",
+          "status": "passed",
+          "ancestors": [
+            "Expanded Prop"
+          ]
+        },
+        {
+          "title": "GTreeMenuItem emits expand event when expanded",
+          "status": "passed",
+          "ancestors": [
+            "Expand/Collapse Events"
+          ]
+        },
+        {
+          "title": "GTreeMenuItem emits collapse event when collapsed",
+          "status": "passed",
+          "ancestors": [
+            "Expand/Collapse Events"
+          ]
+        },
+        {
+          "title": "keyboard expand/collapse emits events on the item",
+          "status": "passed",
+          "ancestors": [
+            "Expand/Collapse Events"
+          ]
+        },
+        {
+          "title": "clicking text area of non-link parent emits expand event",
+          "status": "passed",
+          "ancestors": [
+            "Expand/Collapse Events"
           ]
         },
         {
