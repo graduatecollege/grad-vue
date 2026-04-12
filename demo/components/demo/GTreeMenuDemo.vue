@@ -79,12 +79,30 @@ import { GTreeMenu, GTreeMenuList, GTreeMenuItem } from "@illinois-grad/grad-vue
 
 </template>
         <template #docs><p>A hierarchical sidebar menu component suitable for book-like or nested-section
-navigation. Use <code>GTreeMenuList</code> and <code>GTreeMenuItem</code> sub-components to build the menu.</p>
+navigation. Items with children start collapsed and can be expanded/collapsed
+individually.</p>
+<p>Links are authored directly in HTML for progressive enhancement — the page
+works as a basic list of links even without JavaScript.</p>
+<p>Use <code>GTreeMenuList</code> and <code>GTreeMenuItem</code> sub-components to build the menu:</p>
+<figure class="highlighted-code">
+<pre class="shiki light-plus" style="background-color:#FFFFFF;color:#000000" tabindex="0"><code><span class="line"><span style="color:#800000">&#x3C;</span><span style="color:#267F99">GTreeMenu</span><span style="color:#E50000"> title</span><span style="color:#000000">=</span><span style="color:#0000FF">"Contents"</span><span style="color:#800000">></span></span>
+<span class="line"><span style="color:#800000">    &#x3C;</span><span style="color:#267F99">GTreeMenuList</span><span style="color:#800000">></span></span>
+<span class="line"><span style="color:#800000">        &#x3C;</span><span style="color:#267F99">GTreeMenuItem</span><span style="color:#E50000"> label</span><span style="color:#000000">=</span><span style="color:#0000FF">"Chapter 1"</span><span style="color:#800000">></span></span>
+<span class="line"><span style="color:#800000">            &#x3C;a</span><span style="color:#E50000"> href</span><span style="color:#000000">=</span><span style="color:#0000FF">"#ch1"</span><span style="color:#800000">></span><span style="color:#000000">Chapter 1</span><span style="color:#800000">&#x3C;/a></span></span>
+<span class="line"><span style="color:#800000">            &#x3C;template</span><span style="color:#000000"> #</span><span style="color:#E50000">children</span><span style="color:#800000">></span></span>
+<span class="line"><span style="color:#800000">                &#x3C;</span><span style="color:#267F99">GTreeMenuItem</span><span style="color:#800000">>&#x3C;a</span><span style="color:#E50000"> href</span><span style="color:#000000">=</span><span style="color:#0000FF">"#s1"</span><span style="color:#800000">></span><span style="color:#000000">Section 1.1</span><span style="color:#800000">&#x3C;/a>&#x3C;/</span><span style="color:#267F99">GTreeMenuItem</span><span style="color:#800000">></span></span>
+<span class="line"><span style="color:#800000">            &#x3C;/template></span></span>
+<span class="line"><span style="color:#800000">        &#x3C;/</span><span style="color:#267F99">GTreeMenuItem</span><span style="color:#800000">></span></span>
+<span class="line"><span style="color:#800000">    &#x3C;/</span><span style="color:#267F99">GTreeMenuList</span><span style="color:#800000">></span></span>
+<span class="line"><span style="color:#800000">&#x3C;/</span><span style="color:#267F99">GTreeMenu</span><span style="color:#800000">></span></span></code></pre>
+</figure>
+
 <p><strong>Props</strong>:</p>
 <ul>
 <li><code>title</code> - optional heading and accessible name for the nav landmark.</li>
 <li><code>listType</code> - <code>ul</code> (default) or <code>ol</code>. Use <code>ol</code> for numbered
-hierarchies such as book chapters. Inherited by nested <code>GTreeMenuList</code> components via provide/inject.</li>
+hierarchies such as book chapters. Inherited by nested <code>GTreeMenuList</code>
+components via provide/inject.</li>
 <li><code>theme</code> - <code>light</code> (default) or <code>dark</code>.</li>
 </ul>
 <p><strong>Keyboard navigation</strong> (tree-view style):</p>

@@ -3,15 +3,34 @@ export default { name: "GTreeMenuItem" };
 </script>
 
 <script setup lang="ts">
-import { computed, getCurrentInstance, ref, useSlots } from "vue";
+import { computed, getCurrentInstance, ref, useSlots, watch } from "vue";
 import GTreeMenuList from "./GTreeMenuList.vue";
 
-const props = defineProps<{
-    /**
-     * Accessible label used for the toggle button's aria-label when the
-     * item has children (e.g. "Chapter 1" → "Chapter 1 sub-menu").
-     */
-    label?: string;
+const props = withDefaults(
+    defineProps<{
+        /**
+         * Accessible label used for the toggle button's aria-label when the
+         * item has children (e.g. "Chapter 1" → "Chapter 1 sub-menu").
+         */
+        label?: string;
+        /**
+         * Whether the item starts expanded. Only meaningful for items that
+         * have a `#children` slot. Updating this prop after mount also
+         * updates the expanded state.
+         * @demo
+         */
+        expanded?: boolean;
+    }>(),
+    {
+        expanded: false,
+    },
+);
+
+const emit = defineEmits<{
+    /** Fired when the item is expanded. */
+    expand: [];
+    /** Fired when the item is collapsed. */
+    collapse: [];
 }>();
 
 const slots = useSlots();
@@ -27,10 +46,18 @@ const hasCeChildren = ceHost?._slots?.children?.length > 0;
 
 const hasChildren = computed(() => !!slots.children || hasCeChildren);
 
-const isExpanded = ref(false);
+const isExpanded = ref(props.expanded);
+
+watch(
+    () => props.expanded,
+    (val) => {
+        isExpanded.value = val;
+    },
+);
 
 function toggle() {
     isExpanded.value = !isExpanded.value;
+    emit(isExpanded.value ? "expand" : "collapse");
 }
 
 function handleContentClick(event: MouseEvent) {

@@ -1776,16 +1776,30 @@ A hierarchical sidebar menu component suitable for book-like or nested-section
 navigation. Items with children start collapsed and can be expanded/collapsed
 individually.
 
+Links are authored directly in HTML for progressive enhancement — the page
+works as a basic list of links even without JavaScript.
+
+Use `GTreeMenuList` and `GTreeMenuItem` sub-components to build the menu:
+
+```vue-html
+<GTreeMenu title="Contents">
+    <GTreeMenuList>
+        <GTreeMenuItem label="Chapter 1">
+            <a href="#ch1">Chapter 1</a>
+            <template #children>
+                <GTreeMenuItem><a href="#s1">Section 1.1</a></GTreeMenuItem>
+            </template>
+        </GTreeMenuItem>
+    </GTreeMenuList>
+</GTreeMenu>
+```
+
 **Props**:
 
 - `title` - optional heading and accessible name for the nav landmark.
-- `items` - array of `TreeMenuItem` objects. Each item may have:
-  - `label` - display text (required).
-  - `href` or `to` - link destination. When `to` is provided and `vue-router`
-    is present the link is rendered as a `<router-link>`.
-  - `children` - nested `TreeMenuItem[]` for sub-levels (unlimited depth).
 - `listType` - `ul` (default) or `ol`. Use `ol` for numbered
-  hierarchies such as book chapters.
+  hierarchies such as book chapters. Inherited by nested `GTreeMenuList`
+  components via provide/inject.
 - `theme` - `light` (default) or `dark`.
 
 **Keyboard navigation** (tree-view style):
@@ -1805,10 +1819,6 @@ type Props = {
      */
     title?: string;
     /**
-     * Items for the menu
-     */
-    items: TreeMenuItem[];
-    /**
      * List element type - use `ol` for numbered hierarchies like book chapters
      */
     listType?: "ul" | "ol";
@@ -1818,6 +1828,10 @@ type Props = {
     theme?: "light" | "dark";
 };
 ```
+
+### Slots
+
+- `default`
 
 ---
 
