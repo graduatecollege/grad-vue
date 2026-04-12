@@ -1801,6 +1801,10 @@ Use `GTreeMenuList` and `GTreeMenuItem` sub-components to build the menu:
   hierarchies such as book chapters. Inherited by nested `GTreeMenuList`
   components via provide/inject.
 - `theme` - `light` (default) or `dark`.
+- `storageKey` - when provided, expanded/collapsed states are persisted to
+  `sessionStorage` under this key and restored on page load. This is useful
+  in Web Component / Drupal contexts where every page navigation is a full
+  refresh. Item states are keyed by the item's `label` prop.
 
 **Keyboard navigation** (tree-view style):
 
@@ -1826,6 +1830,12 @@ type Props = {
      * Theme
      */
     theme?: "light" | "dark";
+    /**
+     * When provided, expanded/collapsed states are saved to `sessionStorage`
+     * under this key and restored on page load. Item states are keyed by each
+     * item's `label` prop.
+     */
+    storageKey?: string;
 };
 ```
 

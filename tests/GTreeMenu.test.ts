@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { page, userEvent } from "vitest/browser";
 import { h, nextTick, ref } from "vue";
 import GTreeMenu from "../packages/grad-vue/src/components/GTreeMenu.vue";
@@ -923,6 +923,164 @@ describe("GTreeMenu", () => {
 
             const focused = document.activeElement as HTMLElement;
             await expect.element(focused).toHaveTextContent("Appendix");
+        });
+    });
+
+    describe("Session Storage", () => {
+        const STORAGE_KEY = "test-tree-menu-storage";
+
+        function menuWithStorage(storageKey: string) {
+            return slotMenu({ title: "Contents", storageKey }, [
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 1" },
+                    {
+                        default: () => "Chapter 1",
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                            ),
+                        ],
+                    },
+                ),
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 2" },
+                    {
+                        default: () => "Chapter 2",
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch2/s1" }, "Section 2.1"),
+                            ),
+                        ],
+                    },
+                ),
+            ]);
+        }
+
+        afterEach(() => {
+            sessionStorage.removeItem(STORAGE_KEY);
+        });
+
+        it("items are collapsed by default when no stored state exists", async () => {
+            const wrapper = menuWithStorage(STORAGE_KEY);
+            await expect
+                .element(wrapper.container.getByText("Section 1.1"))
+                .not.toBeInTheDocument();
+        });
+
+        it("expanding an item saves its state to sessionStorage", async () => {
+            const wrapper = menuWithStorage(STORAGE_KEY);
+            await wrapper.container
+                .getByRole("button", { name: "Chapter 1 sub-menu" })
+                .click();
+
+            const stored = JSON.parse(sessionStorage.getItem(STORAGE_KEY)!);
+            expect(stored["Chapter 1"]).toBe(true);
+        });
+
+        it("collapsing an item saves its state to sessionStorage", async () => {
+            sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ "Chapter 1": true }));
+            const wrapper = menuWithStorage(STORAGE_KEY);
+            await wrapper.container
+                .getByRole("button", { name: "Chapter 1 sub-menu" })
+                .click();
+
+            const stored = JSON.parse(sessionStorage.getItem(STORAGE_KEY)!);
+            expect(stored["Chapter 1"]).toBe(false);
+        });
+
+        it("restores expanded state from sessionStorage on mount", async () => {
+            sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ "Chapter 1": true }));
+            const wrapper = menuWithStorage(STORAGE_KEY);
+            await expect
+                .element(wrapper.container.getByText("Section 1.1"))
+                .toBeVisible();
+            await expect
+                .element(wrapper.container.getByText("Section 2.1"))
+                .not.toBeInTheDocument();
+        });
+
+        it("restores multiple expanded items from sessionStorage", async () => {
+            sessionStorage.setItem(
+                STORAGE_KEY,
+                JSON.stringify({ "Chapter 1": true, "Chapter 2": true }),
+            );
+            const wrapper = menuWithStorage(STORAGE_KEY);
+            await expect
+                .element(wrapper.container.getByText("Section 1.1"))
+                .toBeVisible();
+            await expect
+                .element(wrapper.container.getByText("Section 2.1"))
+                .toBeVisible();
+        });
+
+        it("without storageKey, items still collapse and expand normally", async () => {
+            const wrapper = slotMenu({ title: "Contents" }, [
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 1" },
+                    {
+                        default: () => "Chapter 1",
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                            ),
+                        ],
+                    },
+                ),
+            ]);
+
+            await wrapper.container
+                .getByRole("button", { name: "Chapter 1 sub-menu" })
+                .click();
+            await expect
+                .element(wrapper.container.getByText("Section 1.1"))
+                .toBeVisible();
+            expect(sessionStorage.getItem(STORAGE_KEY)).toBeNull();
+        });
+
+        it("expanded prop is used as fallback when no stored state exists for the item", async () => {
+            const wrapper = slotMenu({ title: "Contents", storageKey: STORAGE_KEY }, [
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 1", expanded: true },
+                    {
+                        default: () => "Chapter 1",
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                            ),
+                        ],
+                    },
+                ),
+            ]);
+
+            await expect
+                .element(wrapper.container.getByText("Section 1.1"))
+                .toBeVisible();
+        });
+
+        it("stored state takes precedence over expanded prop", async () => {
+            sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ "Chapter 1": false }));
+            const wrapper = slotMenu({ title: "Contents", storageKey: STORAGE_KEY }, [
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 1", expanded: true },
+                    {
+                        default: () => "Chapter 1",
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                            ),
+                        ],
+                    },
+                ),
+            ]);
+
+            await expect
+                .element(wrapper.container.getByText("Section 1.1"))
+                .not.toBeInTheDocument();
         });
     });
 

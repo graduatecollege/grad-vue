@@ -3,7 +3,8 @@ export default { name: "GTreeMenuItem" };
 </script>
 
 <script setup lang="ts">
-import { computed, getCurrentInstance, ref, useSlots, watch } from "vue";
+import { computed, getCurrentInstance, inject, ref, useSlots, watch } from "vue";
+import type { Ref } from "vue";
 import GTreeMenuList from "./GTreeMenuList.vue";
 
 const props = withDefaults(
@@ -15,8 +16,10 @@ const props = withDefaults(
         label?: string;
         /**
          * Whether the item starts expanded. Only meaningful for items that
-         * have a `#children` slot. Updating this prop after mount also
-         * updates the expanded state.
+         * have a `#children` slot. When a `storageKey` is active on the parent
+         * `GTreeMenu` and a stored value exists for this item's `label`, the
+         * stored value takes precedence over this prop and subsequent prop
+         * updates are ignored for that item.
          * @demo
          */
         expanded?: boolean;
@@ -46,18 +49,42 @@ const hasCeChildren = ceHost?._slots?.children?.length > 0;
 
 const hasChildren = computed(() => !!slots.children || hasCeChildren);
 
-const isExpanded = ref(props.expanded);
+const expandedStorage = inject<Ref<Record<string, boolean>> | null>(
+    "g-tree-menu-expanded-storage",
+    null,
+);
+
+function resolveInitialExpanded(): boolean {
+    if (expandedStorage && props.label !== undefined) {
+        const stored = expandedStorage.value[props.label];
+        if (stored !== undefined) return stored;
+    }
+    return props.expanded;
+}
+
+const isExpanded = ref(resolveInitialExpanded());
 
 watch(
     () => props.expanded,
     (val) => {
+        if (expandedStorage && props.label !== undefined) return;
         isExpanded.value = val;
     },
 );
 
+watch(isExpanded, (val) => {
+    if (expandedStorage && props.label !== undefined) {
+        expandedStorage.value[props.label] = val;
+    }
+});
+
 function toggle() {
     isExpanded.value = !isExpanded.value;
-    emit(isExpanded.value ? "expand" : "collapse");
+    if (isExpanded.value) {
+        emit("expand");
+    } else {
+        emit("collapse");
+    }
 }
 
 function handleContentClick(event: MouseEvent) {
