@@ -225,7 +225,7 @@ function handleKeydown(event: KeyboardEvent) {
     >
         <h2 v-if="title" :id="id" class="g-tree-menu__title">{{ title }}</h2>
         <div class="g-tree-menu__divider"></div>
-        <div v-show="!mounted" class="g-tree-menu__slot-fallback" aria-hidden="false">
+        <div v-show="!mounted" class="g-tree-menu__slot-fallback" :aria-hidden="mounted ? 'true' : undefined">
             <slot />
         </div>
         <div v-show="mounted" class="g-tree-menu__content">

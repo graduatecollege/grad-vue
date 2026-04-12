@@ -65,7 +65,6 @@ function parseLi(li: VNode): TreeMenuItem | null {
             nestedItems = parsed.items.length > 0 ? parsed.items : undefined;
             nestedListType = parsed.listType;
         } else {
-            // Plain text node or span — treat as label if we haven't found one yet
             const text = extractText(child).trim();
             if (text && !label) label = text;
         }
