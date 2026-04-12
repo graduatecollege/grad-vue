@@ -19,7 +19,7 @@ import { GTreeMenu, GTreeMenuList, GTreeMenuItem } from "@illinois-grad/grad-vue
                 },
                 listType: {
                     type: 'select',
-                    label: 'List element type - use `ol` for numbered hierarchies like book chapters',
+                    label: 'List element type',
                     default: 'ul',
                     options: [
                         'ul',
@@ -34,12 +34,6 @@ import { GTreeMenu, GTreeMenuList, GTreeMenuItem } from "@illinois-grad/grad-vue
                         'light',
                         'dark'
                     ]
-                },
-                storageKey: {
-                    type: 'string',
-                    label: 'When provided, expanded/collapsed states are saved to `sessionStorage`',
-                    default: null,
-                    instructions: 'under this key and restored on page load. Item states are keyed by each\nitem's `label` prop.'
                 }
             }"
         >
@@ -73,7 +67,7 @@ import { GTreeMenu, GTreeMenuList, GTreeMenuItem } from "@illinois-grad/grad-vue
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    title</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#008000">    /**</span></span>
-<span class="line"><span style="color:#008000">     * List element type - use `ol` for numbered hierarchies like book chapters</span></span>
+<span class="line"><span style="color:#008000">     * List element type</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    listType</span><span style="color:#000000">?: </span><span style="color:#A31515">"ul"</span><span style="color:#000000"> | </span><span style="color:#A31515">"ol"</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#008000">    /**</span></span>
@@ -81,7 +75,7 @@ import { GTreeMenu, GTreeMenuList, GTreeMenuItem } from "@illinois-grad/grad-vue
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    theme</span><span style="color:#000000">?: </span><span style="color:#A31515">"light"</span><span style="color:#000000"> | </span><span style="color:#A31515">"dark"</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#008000">    /**</span></span>
-<span class="line"><span style="color:#008000">     * When provided, expanded/collapsed states are saved to `sessionStorage` under this key and restored on page load. Item states are keyed by each item's `label` prop.</span></span>
+<span class="line"><span style="color:#008000">     * When provided, expanded/collapsed states are saved to `sessionStorage` under this key and restored on page load. Item states are keyed by each the `label` prop.</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    storageKey</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#000000">};</span></span></code></pre>

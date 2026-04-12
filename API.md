@@ -1823,7 +1823,7 @@ type Props = {
      */
     title?: string;
     /**
-     * List element type - use `ol` for numbered hierarchies like book chapters
+     * List element type
      */
     listType?: "ul" | "ol";
     /**
@@ -1833,7 +1833,7 @@ type Props = {
     /**
      * When provided, expanded/collapsed states are saved to `sessionStorage`
      * under this key and restored on page load. Item states are keyed by each
-     * item's `label` prop.
+     * the `label` prop.
      */
     storageKey?: string;
 };
