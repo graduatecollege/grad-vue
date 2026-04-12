@@ -13,10 +13,10 @@ import GPopover from "./GPopover.vue";
 
 type Props = {
     /**
-     * Title for the popover.
+     * Heading for the popover.
      * @demo Period Selection
      */
-    title?: string;
+    heading?: string;
 
     /**
      * Label for year select.
@@ -42,7 +42,7 @@ type Props = {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    title: "Period Selection",
+    heading: "Period Selection",
     termYears: () => ["2026"],
     termNames: () => ["Spring", "Summer", "Fall"],
 });
@@ -66,7 +66,7 @@ const term = defineModel<{year: string, name: string}>({
                     </span>
                 </GButton>
             </template>
-            <h2 class="popover-title" tabindex="-1">{{ title}}</h2>
+            <h2 class="popover-title" tabindex="-1">{{ heading}}</h2>
             <GTermSelectorControl v-bind="$props" />
         </GPopover>
     </div>

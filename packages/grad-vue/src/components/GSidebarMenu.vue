@@ -89,10 +89,10 @@ type MenuItem = {
 
 type Props = {
     /**
-     * Title and accessible name
+     * Heading and accessible name
      * @demo Sidebar Menu
      */
-    title?: string;
+    heading?: string;
     /**
      * Items for the menu
      */
@@ -193,11 +193,11 @@ const id = useId();
             { 'g-sidebar-menu--compact': props.compact },
         ]"
         v-bind="{
-            'aria-labelledby': title ? id : undefined,
-            'aria-label': title ? undefined : 'Sidebar Menu',
+            'aria-labelledby': heading ? id : undefined,
+            'aria-label': heading ? undefined : 'Sidebar Menu',
         }"
     >
-        <h2 v-if="title" :id="id" class="g-sidebar-menu__title">{{ title }}</h2>
+        <h2 v-if="heading" :id="id" class="g-sidebar-menu__title">{{ heading }}</h2>
         <div class="g-sidebar-menu__divider"></div>
         <div class="g-sidebar-menu__content" ref="content">
             <ul class="g-sidebar-menu__list">

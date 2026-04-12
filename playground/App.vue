@@ -62,7 +62,7 @@ const fname = ref("heh");
                     />
                 </div>
                 <div style="max-width: 320px">
-                    <GTreeMenu title="With Linked Parents" style="min-height: 240px;">
+                    <GTreeMenu heading="With Linked Parents" style="min-height: 240px;">
                         <GTreeMenuList>
                             <GTreeMenuItem label="Chapter 1">
                                 <a href="#ch1">Chapter 1</a>
@@ -81,7 +81,7 @@ const fname = ref("heh");
                             <GTreeMenuItem><a href="#refs">References</a></GTreeMenuItem>
                         </GTreeMenuList>
                     </GTreeMenu>
-                    <GTreeMenu title="Numbered Chapters" style="min-height: 200px;" storage-key="tree-menu-state">
+                    <GTreeMenu heading="Numbered Chapters" style="min-height: 200px;" storage-key="tree-menu-state">
                         <GTreeMenuList list-type="ol">
                             <GTreeMenuItem label="Chapter 1: Introduction">
                                 Chapter 1: Introduction

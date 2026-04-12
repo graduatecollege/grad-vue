@@ -13,7 +13,7 @@ describe("GSidebarMenu", () => {
         it("renders with basic props", async () => {
             const wrapper = mnt(GSidebarMenu, {
                 props: {
-                    title: "Sidebar Menu",
+                    heading: "Sidebar Menu",
                     items: menuItems,
                 },
             });
@@ -25,13 +25,13 @@ describe("GSidebarMenu", () => {
     describe("Accessibility Tests", () => {
         it("with menu items", async () => {
             await testAccessibility(GSidebarMenu, {
-                title: "Sidebar Menu",
+                heading: "Sidebar Menu",
                 items: menuItems,
             });
         });
         it("with an active item", async () => {
             await testAccessibility(GSidebarMenu, {
-                title: "Sidebar Menu",
+                heading: "Sidebar Menu",
                 items: menuItems,
                 spy: true,
                 modelValue: "about",
@@ -40,7 +40,7 @@ describe("GSidebarMenu", () => {
         it("activeId should add aria-current", async () => {
             mnt(GSidebarMenu, {
                 props: {
-                    title: "Sidebar Menu",
+                    heading: "Sidebar Menu",
                     items: menuItems,
                     spy: true,
                     modelValue: "about",
