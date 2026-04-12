@@ -144,5 +144,35 @@ parent.</li>
 </ul>
 </template>
         </ComponentDemo>
+
+        <ComponentDemo
+            description="Slot-based usage: the menu structure is provided as a plain nested ul/li/a tree in the default slot. Before JavaScript loads the raw list is shown; after mount the full interactive tree takes over."
+            component="GTreeMenu"
+            padding="0"
+        >
+            <template #default>
+                <div style="max-width: 300px;">
+                    <GTreeMenu title="Slot-based Menu" style="min-height: 260px;">
+                        <ul>
+                            <li>
+                                <a href="#ch1">Chapter 1</a>
+                                <ul>
+                                    <li><a href="#ch1-s1">Section 1.1</a></li>
+                                    <li><a href="#ch1-s2">Section 1.2</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="#ch2">Chapter 2</a>
+                                <ul>
+                                    <li><a href="#ch2-s1">Section 2.1</a></li>
+                                    <li><a href="#ch2-s2">Section 2.2</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="#appendix">Appendix</a></li>
+                        </ul>
+                    </GTreeMenu>
+                </div>
+            </template>
+        </ComponentDemo>
     </ComponentSection>
 </template>

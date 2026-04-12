@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { h } from "vue";
 import { page, userEvent } from "vitest/browser";
 import GTreeMenu from "../packages/grad-vue/src/components/GTreeMenu.vue";
 import type { TreeMenuItem } from "../packages/grad-vue/src/components/tree-menu/GTreeMenuList.vue";
@@ -309,6 +310,119 @@ describe("GTreeMenu", () => {
                 items: flatItems,
                 theme: "dark",
             });
+        });
+    });
+
+    describe("Slot-based input", () => {
+        function flatSlot() {
+            return {
+                default: () =>
+                    h("ul", [
+                        h("li", [h("a", { href: "/" }, "Home")]),
+                        h("li", [h("a", { href: "/about" }, "About")]),
+                        h("li", [h("a", { href: "/contact" }, "Contact")]),
+                    ]),
+            };
+        }
+
+        function nestedSlot() {
+            return {
+                default: () =>
+                    h("ul", [
+                        h("li", [
+                            h("a", { href: "/ch1" }, "Chapter 1"),
+                            h("ul", [
+                                h("li", [h("a", { href: "/ch1/s1" }, "Section 1.1")]),
+                                h("li", [h("a", { href: "/ch1/s2" }, "Section 1.2")]),
+                            ]),
+                        ]),
+                        h("li", [h("a", { href: "/appendix" }, "Appendix")]),
+                    ]),
+            };
+        }
+
+        it("parses flat links from slot into items", async () => {
+            const wrapper = mnt(GTreeMenu, { slots: flatSlot() });
+            await expect.element(wrapper.container.getByRole("link", { name: "Home" })).toBeVisible();
+            await expect.element(wrapper.container.getByRole("link", { name: "About" })).toBeVisible();
+            await expect.element(wrapper.container.getByRole("link", { name: "Contact" })).toBeVisible();
+        });
+
+        it("parses nested ul from slot into hierarchical items", async () => {
+            const wrapper = mnt(GTreeMenu, { slots: nestedSlot() });
+
+            // Chapter 1 has children, so it should show a toggle button (the enhanced tree renders it)
+            const btn = wrapper.container.getByRole("button", { name: /Chapter 1 sub-menu/i });
+            await expect.element(btn).toBeVisible();
+
+            // Section 1.1 should not yet be visible (collapsed by default)
+            await expect.element(btn).toHaveAttribute("aria-expanded", "false");
+
+            // Expand it
+            await btn.click();
+
+            // After expansion, Section 1.1 link becomes visible in the enhanced tree.
+            // getByRole skips display:none elements so the hidden slot fallback won't interfere.
+            await expect.element(wrapper.container.getByRole("link", { name: "Section 1.1" })).toBeVisible();
+            await expect.element(wrapper.container.getByRole("link", { name: "Section 1.2" })).toBeVisible();
+        });
+
+        it("items prop takes priority over slot content", async () => {
+            const propItems: TreeMenuItem[] = [{ label: "Prop Item", href: "/prop" }];
+            const wrapper = mnt(GTreeMenu, {
+                props: { items: propItems },
+                slots: flatSlot(),
+            });
+            await expect
+                .element(wrapper.container.getByRole("link", { name: "Prop Item" }))
+                .toBeVisible();
+            // Slot items should not appear in the interactive tree (Home comes from slot)
+            const links = wrapper.container.element()!.querySelectorAll("[data-tree-primary]");
+            const hrefs = Array.from(links).map((l) => (l as HTMLAnchorElement).getAttribute("href"));
+            expect(hrefs).not.toContain("/");
+        });
+
+        it("slot fallback is hidden after mount and enhanced tree is visible", async () => {
+            const wrapper = mnt(GTreeMenu, { slots: flatSlot() });
+
+            // After mount the slot fallback should not be visible
+            const fallback = wrapper.container.element()!.querySelector(".g-tree-menu__slot-fallback") as HTMLElement;
+            expect(fallback).not.toBeNull();
+            await expect.element(page.elementLocator(fallback)).not.toBeVisible();
+
+            // The enhanced content should be visible and contain the parsed links
+            await expect.element(wrapper.container.getByRole("link", { name: "Home" })).toBeVisible();
+        });
+
+        it("infers listType ol from an ol slot element", async () => {
+            const wrapper = mnt(GTreeMenu, {
+                slots: {
+                    default: () =>
+                        h("ol", [
+                            h("li", [h("a", { href: "/a" }, "Item A")]),
+                            h("li", [h("a", { href: "/b" }, "Item B")]),
+                        ]),
+                },
+            });
+            const ol = wrapper.container.element()!.querySelector("ol.g-tree-menu__list");
+            expect(ol).not.toBeNull();
+        });
+
+        it("listType prop overrides slot-inferred type", async () => {
+            const wrapper = mnt(GTreeMenu, {
+                props: { listType: "ol" },
+                slots: flatSlot(),
+            });
+            const ol = wrapper.container.element()!.querySelector("ol.g-tree-menu__list");
+            expect(ol).not.toBeNull();
+        });
+
+        it("slot-based flat menu passes axe", async () => {
+            await testAccessibility(GTreeMenu, { title: "Navigation" }, flatSlot());
+        });
+
+        it("slot-based nested menu passes axe", async () => {
+            await testAccessibility(GTreeMenu, { title: "Contents" }, nestedSlot());
         });
     });
 });

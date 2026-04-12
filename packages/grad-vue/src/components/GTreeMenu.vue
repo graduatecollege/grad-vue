@@ -16,6 +16,33 @@
  *   hierarchies such as book chapters.
  * - `theme` - `light` (default) or `dark`.
  *
+ * **Slot-based progressive enhancement**:
+ *
+ * Instead of (or in addition to) the `items` prop you may provide a standard nested
+ * `<ul>/<li>/<a>` tree as the default slot. The component reads this markup to build
+ * the same interactive menu. When JavaScript is unavailable the raw slot content is
+ * shown as a plain accessible list, providing a no-JS fallback automatically.
+ *
+ * ```html
+ * <GTreeMenu title="Contents">
+ *   <ul>
+ *     <li>
+ *       <a href="#ch1">Chapter 1</a>
+ *       <ul>
+ *         <li><a href="#ch1-s1">Section 1.1</a></li>
+ *         <li><a href="#ch1-s2">Section 1.2</a></li>
+ *       </ul>
+ *     </li>
+ *     <li><a href="#appendix">Appendix</a></li>
+ *   </ul>
+ * </GTreeMenu>
+ * ```
+ *
+ * The `items` prop takes priority when both are supplied. The top-level list element
+ * (`<ul>` or `<ol>`) determines the default `listType`; this can still be overridden
+ * via the `listType` prop. Use `data-to` on `<a>` tags to set the `to` prop for
+ * vue-router links (e.g. `<a data-to="/path">Label</a>`).
+ *
  * **Keyboard navigation** (tree-view style):
  *
  * - `Up Arrow` / `Down Arrow` - move between visible menu items.
@@ -28,9 +55,10 @@ export default {};
 </script>
 
 <script setup lang="ts">
-import { nextTick, ref, useId } from "vue";
+import { computed, onMounted, ref, useId, useSlots } from "vue";
 import GTreeMenuList from "./tree-menu/GTreeMenuList.vue";
 import type { TreeMenuItem } from "./tree-menu/GTreeMenuList.vue";
+import { parseSlotTree } from "./tree-menu/parseSlotTree";
 
 type Props = {
     /**
@@ -39,9 +67,9 @@ type Props = {
      */
     title?: string;
     /**
-     * Items for the menu
+     * Items for the menu. When omitted, items are read from the default slot.
      */
-    items: TreeMenuItem[];
+    items?: TreeMenuItem[];
     /**
      * List element type - use `ol` for numbered hierarchies like book chapters
      * @demo
@@ -55,12 +83,35 @@ type Props = {
 };
 
 const props = withDefaults(defineProps<Props>(), {
-    listType: "ul",
+    listType: undefined,
     theme: "light",
+});
+
+const slots = useSlots();
+
+const slotParsed = computed(() => {
+    const defaultSlot = slots.default;
+    if (!defaultSlot) return null;
+    return parseSlotTree(defaultSlot());
+});
+
+const resolvedItems = computed<TreeMenuItem[]>(() => {
+    if (props.items) return props.items;
+    return slotParsed.value?.items ?? [];
+});
+
+const resolvedListType = computed<"ul" | "ol">(() => {
+    if (props.listType) return props.listType;
+    return slotParsed.value?.listType ?? "ul";
 });
 
 const id = useId();
 const expandedItems = ref(new Set<string>());
+const mounted = ref(false);
+
+onMounted(() => {
+    mounted.value = true;
+});
 
 function toggleItem(key: string) {
     if (expandedItems.value.has(key)) {
@@ -174,10 +225,13 @@ function handleKeydown(event: KeyboardEvent) {
     >
         <h2 v-if="title" :id="id" class="g-tree-menu__title">{{ title }}</h2>
         <div class="g-tree-menu__divider"></div>
-        <div class="g-tree-menu__content">
+        <div v-show="!mounted" class="g-tree-menu__slot-fallback" aria-hidden="false">
+            <slot />
+        </div>
+        <div v-show="mounted" class="g-tree-menu__content">
             <GTreeMenuList
-                :items="items"
-                :list-type="listType || 'ul'"
+                :items="resolvedItems"
+                :list-type="resolvedListType"
                 :expanded-items="expandedItems"
                 key-prefix=""
                 @toggle="toggleItem"
@@ -268,6 +322,11 @@ function handleKeydown(event: KeyboardEvent) {
 
 .g-tree-menu__content {
     margin-top: 1rem;
+}
+
+.g-tree-menu__slot-fallback {
+    margin-top: 1rem;
+    padding: 0 1rem;
 }
 
 </style>
