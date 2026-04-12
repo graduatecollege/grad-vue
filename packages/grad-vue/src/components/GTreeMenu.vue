@@ -30,6 +30,13 @@
  *   components via provide/inject.
  * - `theme` - `light` (default) or `dark`.
  *
+ * **Events**:
+ *
+ * - `item-expand` - emitted when any descendant item is expanded. Payload
+ *   is the item's `label` prop value.
+ * - `item-collapse` - emitted when any descendant item is collapsed.
+ *   Payload is the item's `label` prop value.
+ *
  * **Keyboard navigation** (tree-view style):
  *
  * - `Up Arrow` / `Down Arrow` - move between visible menu items.
@@ -42,7 +49,7 @@ export default {};
 </script>
 
 <script setup lang="ts">
-import { nextTick, provide, useId } from "vue";
+import { nextTick, onBeforeUnmount, onMounted, provide, ref, useId } from "vue";
 
 type Props = {
     /**
@@ -67,9 +74,41 @@ const props = withDefaults(defineProps<Props>(), {
     theme: "light",
 });
 
+const emit = defineEmits<{
+    /** Fired when any descendant item is expanded. Payload is the item's `label`. */
+    "item-expand": [label: string | undefined];
+    /** Fired when any descendant item is collapsed. Payload is the item's `label`. */
+    "item-collapse": [label: string | undefined];
+}>();
+
 const id = useId();
+const navRef = ref<HTMLElement | null>(null);
 
 provide("g-tree-menu-list-type", props.listType);
+
+function handleBubbledExpand(event: Event) {
+    emit("item-expand", (event as CustomEvent).detail?.label);
+}
+
+function handleBubbledCollapse(event: Event) {
+    emit("item-collapse", (event as CustomEvent).detail?.label);
+}
+
+onMounted(() => {
+    const el = navRef.value;
+    if (el) {
+        el.addEventListener("g-tree-menu-item-expand", handleBubbledExpand);
+        el.addEventListener("g-tree-menu-item-collapse", handleBubbledCollapse);
+    }
+});
+
+onBeforeUnmount(() => {
+    const el = navRef.value;
+    if (el) {
+        el.removeEventListener("g-tree-menu-item-expand", handleBubbledExpand);
+        el.removeEventListener("g-tree-menu-item-collapse", handleBubbledCollapse);
+    }
+});
 
 /**
  * Returns the best focusable element for the given [data-tree-primary] marker.
@@ -170,6 +209,7 @@ function handleKeydown(event: KeyboardEvent) {
 
 <template>
     <nav
+        ref="navRef"
         class="g-tree-menu"
         :class="`g-tree-menu--${props.theme}`"
         v-bind="{

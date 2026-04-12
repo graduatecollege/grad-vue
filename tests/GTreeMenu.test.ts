@@ -1,6 +1,6 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { page, userEvent } from "vitest/browser";
-import { h } from "vue";
+import { h, nextTick, ref } from "vue";
 import GTreeMenu from "../packages/grad-vue/src/components/GTreeMenu.vue";
 import GTreeMenuList from "../packages/grad-vue/src/components/tree-menu/GTreeMenuList.vue";
 import GTreeMenuItem from "../packages/grad-vue/src/components/tree-menu/GTreeMenuItem.vue";
@@ -393,6 +393,451 @@ describe("GTreeMenu", () => {
             expect(link!.querySelector(".title")!.textContent).toBe(
                 "Some Chapter Title",
             );
+        });
+    });
+
+    describe("Expanded Prop", () => {
+        it("item with expanded=true starts expanded", async () => {
+            const wrapper = slotMenu({ title: "Contents" }, [
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 1", expanded: true },
+                    {
+                        default: () => "Chapter 1",
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                            ),
+                        ],
+                    },
+                ),
+            ]);
+
+            await expect
+                .element(wrapper.container.getByText("Section 1.1"))
+                .toBeVisible();
+            await expect
+                .element(
+                    wrapper.container.getByRole("button", {
+                        name: "Chapter 1 sub-menu",
+                    }),
+                )
+                .toHaveAttribute("aria-expanded", "true");
+        });
+
+        it("expanded prop does not affect leaf items", async () => {
+            const wrapper = slotMenu({ title: "Contents" }, [
+                h(GTreeMenuItem, { expanded: true }, () =>
+                    h("a", { href: "/" }, "Home"),
+                ),
+            ]);
+
+            await expect
+                .element(wrapper.container.getByRole("link", { name: "Home" }))
+                .toBeVisible();
+        });
+
+        it("multiple items can start expanded independently", async () => {
+            const wrapper = slotMenu({ title: "Contents" }, [
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 1", expanded: true },
+                    {
+                        default: () => "Chapter 1",
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                            ),
+                        ],
+                    },
+                ),
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 2", expanded: false },
+                    {
+                        default: () => "Chapter 2",
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch2/s1" }, "Section 2.1"),
+                            ),
+                        ],
+                    },
+                ),
+            ]);
+
+            await expect
+                .element(wrapper.container.getByText("Section 1.1"))
+                .toBeVisible();
+            await expect
+                .element(wrapper.container.getByText("Section 2.1"))
+                .not.toBeInTheDocument();
+        });
+
+        it("toggling a pre-expanded item collapses it", async () => {
+            const wrapper = slotMenu({ title: "Contents" }, [
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 1", expanded: true },
+                    {
+                        default: () => "Chapter 1",
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                            ),
+                        ],
+                    },
+                ),
+            ]);
+
+            await expect
+                .element(wrapper.container.getByText("Section 1.1"))
+                .toBeVisible();
+
+            await wrapper.container
+                .getByRole("button", { name: "Chapter 1 sub-menu" })
+                .click();
+
+            await expect
+                .element(wrapper.container.getByText("Section 1.1"))
+                .not.toBeInTheDocument();
+        });
+
+        it("nested items can start expanded", async () => {
+            const wrapper = slotMenu({ title: "Contents" }, [
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 1", expanded: true },
+                    {
+                        default: () => "Chapter 1",
+                        children: () => [
+                            h(
+                                GTreeMenuItem,
+                                { label: "Section 1.1", expanded: true },
+                                {
+                                    default: () =>
+                                        h(
+                                            "a",
+                                            { href: "/ch1/s1" },
+                                            "Section 1.1",
+                                        ),
+                                    children: () => [
+                                        h(GTreeMenuItem, null, () =>
+                                            h(
+                                                "a",
+                                                { href: "/ch1/s1/ss1" },
+                                                "Subsection 1.1.1",
+                                            ),
+                                        ),
+                                    ],
+                                },
+                            ),
+                        ],
+                    },
+                ),
+            ]);
+
+            await expect
+                .element(wrapper.container.getByText("Subsection 1.1.1"))
+                .toBeVisible();
+        });
+
+        it("updating expanded prop changes expanded state", async () => {
+            const expanded = ref(false);
+            const wrapper = mnt(GTreeMenu, {
+                props: { title: "Contents" },
+                slots: {
+                    default: () =>
+                        h(GTreeMenuList, {}, {
+                            default: () => [
+                                h(
+                                    GTreeMenuItem,
+                                    { label: "Chapter 1", expanded: expanded.value },
+                                    {
+                                        default: () => "Chapter 1",
+                                        children: () => [
+                                            h(GTreeMenuItem, null, () =>
+                                                h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                                            ),
+                                        ],
+                                    },
+                                ),
+                            ],
+                        }),
+                },
+            });
+
+            await expect
+                .element(wrapper.container.getByText("Section 1.1"))
+                .not.toBeInTheDocument();
+
+            expanded.value = true;
+            await nextTick();
+
+            await expect
+                .element(wrapper.container.getByText("Section 1.1"))
+                .toBeVisible();
+        });
+
+        it("expanded item passes axe", async () => {
+            const wrapper = slotMenu({ title: "Contents" }, [
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 1", expanded: true },
+                    {
+                        default: () => "Chapter 1",
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                            ),
+                        ],
+                    },
+                ),
+            ]);
+            await testAccessibility(wrapper.container.element() as HTMLElement);
+        });
+    });
+
+    describe("Expand/Collapse Events", () => {
+        it("GTreeMenuItem emits expand event when expanded", async () => {
+            const onExpand = vi.fn();
+            const wrapper = slotMenu({ title: "Contents" }, [
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 1", onExpand },
+                    {
+                        default: () => "Chapter 1",
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                            ),
+                        ],
+                    },
+                ),
+            ]);
+
+            await wrapper.container
+                .getByRole("button", { name: "Chapter 1 sub-menu" })
+                .click();
+
+            expect(onExpand).toHaveBeenCalledOnce();
+            expect(onExpand).toHaveBeenCalledWith("Chapter 1");
+        });
+
+        it("GTreeMenuItem emits collapse event when collapsed", async () => {
+            const onCollapse = vi.fn();
+            const wrapper = slotMenu({ title: "Contents" }, [
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 1", expanded: true, onCollapse },
+                    {
+                        default: () => "Chapter 1",
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                            ),
+                        ],
+                    },
+                ),
+            ]);
+
+            await wrapper.container
+                .getByRole("button", { name: "Chapter 1 sub-menu" })
+                .click();
+
+            expect(onCollapse).toHaveBeenCalledOnce();
+            expect(onCollapse).toHaveBeenCalledWith("Chapter 1");
+        });
+
+        it("GTreeMenu emits item-expand when a child item is expanded", async () => {
+            const onItemExpand = vi.fn();
+            const wrapper = slotMenu(
+                { title: "Contents", "onItem-expand": onItemExpand },
+                [
+                    h(
+                        GTreeMenuItem,
+                        { label: "Chapter 1" },
+                        {
+                            default: () => "Chapter 1",
+                            children: () => [
+                                h(GTreeMenuItem, null, () =>
+                                    h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                                ),
+                            ],
+                        },
+                    ),
+                ],
+            );
+
+            await wrapper.container
+                .getByRole("button", { name: "Chapter 1 sub-menu" })
+                .click();
+
+            expect(onItemExpand).toHaveBeenCalledOnce();
+            expect(onItemExpand).toHaveBeenCalledWith("Chapter 1");
+        });
+
+        it("GTreeMenu emits item-collapse when a child item is collapsed", async () => {
+            const onItemCollapse = vi.fn();
+            const wrapper = slotMenu(
+                { title: "Contents", "onItem-collapse": onItemCollapse },
+                [
+                    h(
+                        GTreeMenuItem,
+                        { label: "Chapter 1", expanded: true },
+                        {
+                            default: () => "Chapter 1",
+                            children: () => [
+                                h(GTreeMenuItem, null, () =>
+                                    h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                                ),
+                            ],
+                        },
+                    ),
+                ],
+            );
+
+            await wrapper.container
+                .getByRole("button", { name: "Chapter 1 sub-menu" })
+                .click();
+
+            expect(onItemCollapse).toHaveBeenCalledOnce();
+            expect(onItemCollapse).toHaveBeenCalledWith("Chapter 1");
+        });
+
+        it("GTreeMenu receives events from deeply nested items", async () => {
+            const onItemExpand = vi.fn();
+            const wrapper = slotMenu(
+                { title: "Contents", "onItem-expand": onItemExpand },
+                [
+                    h(
+                        GTreeMenuItem,
+                        { label: "Chapter 1", expanded: true },
+                        {
+                            default: () => "Chapter 1",
+                            children: () => [
+                                h(
+                                    GTreeMenuItem,
+                                    { label: "Section 1.1" },
+                                    {
+                                        default: () =>
+                                            h(
+                                                "a",
+                                                { href: "/ch1/s1" },
+                                                "Section 1.1",
+                                            ),
+                                        children: () => [
+                                            h(GTreeMenuItem, null, () =>
+                                                h(
+                                                    "a",
+                                                    { href: "/ch1/s1/ss1" },
+                                                    "Subsection 1.1.1",
+                                                ),
+                                            ),
+                                        ],
+                                    },
+                                ),
+                            ],
+                        },
+                    ),
+                ],
+            );
+
+            onItemExpand.mockClear();
+
+            await wrapper.container
+                .getByRole("button", { name: "Section 1.1 sub-menu" })
+                .click();
+
+            expect(onItemExpand).toHaveBeenCalledWith("Section 1.1");
+        });
+
+        it("keyboard expand emits events", async () => {
+            const onItemExpand = vi.fn();
+            const onItemCollapse = vi.fn();
+            const wrapper = slotMenu(
+                {
+                    title: "Contents",
+                    "onItem-expand": onItemExpand,
+                    "onItem-collapse": onItemCollapse,
+                },
+                [
+                    h(
+                        GTreeMenuItem,
+                        { label: "Chapter 1" },
+                        {
+                            default: () => "Chapter 1",
+                            children: () => [
+                                h(GTreeMenuItem, null, () =>
+                                    h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                                ),
+                            ],
+                        },
+                    ),
+                ],
+            );
+
+            await tabTo("Chapter 1 sub-menu");
+            await userEvent.keyboard("{ArrowRight}");
+
+            expect(onItemExpand).toHaveBeenCalledOnce();
+            expect(onItemExpand).toHaveBeenCalledWith("Chapter 1");
+
+            await tabTo("Chapter 1 sub-menu");
+            await userEvent.keyboard("{ArrowLeft}");
+
+            expect(onItemCollapse).toHaveBeenCalledOnce();
+            expect(onItemCollapse).toHaveBeenCalledWith("Chapter 1");
+        });
+
+        it("clicking text area of non-link parent emits expand event", async () => {
+            const onExpand = vi.fn();
+            const wrapper = slotMenu({ title: "Contents" }, [
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 1", onExpand },
+                    {
+                        default: () => "Chapter 1",
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                            ),
+                        ],
+                    },
+                ),
+            ]);
+
+            await wrapper.container.getByText("Chapter 1").click();
+
+            expect(onExpand).toHaveBeenCalledOnce();
+            expect(onExpand).toHaveBeenCalledWith("Chapter 1");
+        });
+
+        it("event payload is undefined when label is not set", async () => {
+            const onItemExpand = vi.fn();
+            const wrapper = slotMenu(
+                { title: "Contents", "onItem-expand": onItemExpand },
+                [
+                    h(
+                        GTreeMenuItem,
+                        null,
+                        {
+                            default: () => "Chapter 1",
+                            children: () => [
+                                h(GTreeMenuItem, null, () =>
+                                    h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                                ),
+                            ],
+                        },
+                    ),
+                ],
+            );
+
+            await wrapper.container
+                .getByRole("button", { name: "Sub-menu" })
+                .click();
+
+            expect(onItemExpand).toHaveBeenCalledOnce();
+            expect(onItemExpand).toHaveBeenCalledWith(undefined);
         });
     });
 

@@ -3,15 +3,34 @@ export default { name: "GTreeMenuItem" };
 </script>
 
 <script setup lang="ts">
-import { computed, getCurrentInstance, ref, useSlots } from "vue";
+import { computed, getCurrentInstance, ref, useSlots, watch } from "vue";
 import GTreeMenuList from "./GTreeMenuList.vue";
 
-const props = defineProps<{
-    /**
-     * Accessible label used for the toggle button's aria-label when the
-     * item has children (e.g. "Chapter 1" → "Chapter 1 sub-menu").
-     */
-    label?: string;
+const props = withDefaults(
+    defineProps<{
+        /**
+         * Accessible label used for the toggle button's aria-label when the
+         * item has children (e.g. "Chapter 1" → "Chapter 1 sub-menu").
+         */
+        label?: string;
+        /**
+         * Whether the item starts expanded. Only meaningful for items that
+         * have a `#children` slot. Updating this prop after mount also
+         * updates the expanded state.
+         * @demo
+         */
+        expanded?: boolean;
+    }>(),
+    {
+        expanded: false,
+    },
+);
+
+const emit = defineEmits<{
+    /** Fired when the item is expanded. Payload is the item's `label`. */
+    expand: [label: string | undefined];
+    /** Fired when the item is collapsed. Payload is the item's `label`. */
+    collapse: [label: string | undefined];
 }>();
 
 const slots = useSlots();
@@ -27,10 +46,32 @@ const hasCeChildren = ceHost?._slots?.children?.length > 0;
 
 const hasChildren = computed(() => !!slots.children || hasCeChildren);
 
-const isExpanded = ref(false);
+const isExpanded = ref(props.expanded);
+const itemRef = ref<HTMLLIElement | null>(null);
+
+watch(
+    () => props.expanded,
+    (val) => {
+        isExpanded.value = val;
+    },
+);
+
+function emitToggle() {
+    const eventName = isExpanded.value ? "expand" : "collapse";
+    emit(eventName, props.label);
+    // Bubble a native CustomEvent so GTreeMenu can re-emit at the root.
+    // This works in both Vue and web-component modes.
+    itemRef.value?.dispatchEvent(
+        new CustomEvent(`g-tree-menu-item-${eventName}`, {
+            bubbles: true,
+            detail: { label: props.label },
+        }),
+    );
+}
 
 function toggle() {
     isExpanded.value = !isExpanded.value;
+    emitToggle();
 }
 
 function handleContentClick(event: MouseEvent) {
@@ -49,6 +90,7 @@ function handleContentKeydown(event: KeyboardEvent) {
 
 <template>
     <li
+        ref="itemRef"
         class="g-tree-menu__item"
         :data-tree-expandable="hasChildren ? 'true' : undefined"
     >
