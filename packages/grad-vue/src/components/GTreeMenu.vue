@@ -305,6 +305,64 @@ function handleKeydown(event: KeyboardEvent) {
         color: var(--g-surface-0);
         background: var(--g-primary-500);
     }
+
+    .g-tree-menu__slot-fallback a {
+        color: var(--g-primary-500);
+
+        &:hover {
+            color: var(--g-accent-700);
+        }
+        &:focus {
+            color: var(--ilw-color--focus--text);
+        }
+    }
+}
+
+.g-tree-menu--dark {
+    .g-tree-menu__slot-fallback a {
+        color: var(--g-surface-0);
+
+        &:hover {
+            color: var(--g-accent-500);
+        }
+    }
+}
+
+/* Fallback list styling mirrors the enhanced tree so the pre-mount flash is
+   not jarring. Kept unscoped because slot content does not carry the component's
+   scoped attribute. */
+.g-tree-menu__slot-fallback {
+    ul,
+    ol {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        font-weight: bold;
+    }
+
+    /* Nested lists: indent matches .g-tree-menu__list .g-tree-menu__list */
+    ul ul,
+    ul ol,
+    ol ul,
+    ol ol {
+        padding-left: 1.25em;
+        font-weight: 600;
+    }
+
+    li {
+        display: block;
+        margin: 0;
+    }
+
+    a {
+        display: block;
+        padding: 0.35em 0;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
 }
 </style>
 
@@ -341,7 +399,6 @@ function handleKeydown(event: KeyboardEvent) {
 
 .g-tree-menu__slot-fallback {
     margin-top: 1rem;
-    padding: 0 1rem;
 }
 
 </style>
