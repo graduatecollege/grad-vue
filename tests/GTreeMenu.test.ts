@@ -1,4 +1,5 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, afterEach } from "vitest";
+import { defineCustomElement, nextTick } from "vue";
 import { h } from "vue";
 import { page, userEvent } from "vitest/browser";
 import GTreeMenu from "../packages/grad-vue/src/components/GTreeMenu.vue";
@@ -423,6 +424,105 @@ describe("GTreeMenu", () => {
 
         it("slot-based nested menu passes axe", async () => {
             await testAccessibility(GTreeMenu, { title: "Contents" }, nestedSlot());
+        });
+    });
+
+    describe("Web Components / Custom Elements mode", () => {
+        const TAG = "g-tree-menu-wc-test";
+        const ceElements: HTMLElement[] = [];
+
+        afterEach(() => {
+            ceElements.forEach((el) => el.remove());
+            ceElements.length = 0;
+        });
+
+        function mountCE(innerHTML: string, props: Record<string, string> = {}): HTMLElement {
+            if (!customElements.get(TAG)) {
+                const CE = defineCustomElement(GTreeMenu as any, { shadowRoot: false });
+                customElements.define(TAG, CE);
+            }
+            const el = document.createElement(TAG);
+            for (const [k, v] of Object.entries(props)) {
+                el.setAttribute(k, v);
+            }
+            el.innerHTML = innerHTML;
+            document.body.appendChild(el);
+            ceElements.push(el);
+            return el;
+        }
+
+        it("parses flat slot list into the enhanced tree", async () => {
+            const el = mountCE(`
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                </ul>
+            `);
+            await nextTick();
+            const elLoc = page.elementLocator(el);
+            await expect.element(elLoc.getByRole("link", { name: "Home" })).toBeVisible();
+            await expect.element(elLoc.getByRole("link", { name: "About" })).toBeVisible();
+            await expect.element(elLoc.getByRole("link", { name: "Contact" })).toBeVisible();
+        });
+
+        it("parses nested slot list with children", async () => {
+            const el = mountCE(`
+                <ul>
+                    <li>
+                        <a href="/ch1">Chapter 1</a>
+                        <ul>
+                            <li><a href="/ch1/s1">Section 1.1</a></li>
+                            <li><a href="/ch1/s2">Section 1.2</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="/appendix">Appendix</a></li>
+                </ul>
+            `);
+            await nextTick();
+            const elLoc = page.elementLocator(el);
+
+            const btn = elLoc.getByRole("button", { name: /Chapter 1 sub-menu/i });
+            await expect.element(btn).toBeVisible();
+            await expect.element(btn).toHaveAttribute("aria-expanded", "false");
+
+            await btn.click();
+            await expect.element(elLoc.getByRole("link", { name: "Section 1.1" })).toBeVisible();
+            await expect.element(elLoc.getByRole("link", { name: "Section 1.2" })).toBeVisible();
+        });
+
+        it("infers listType ol from a top-level ol slot element", async () => {
+            const el = mountCE(`
+                <ol>
+                    <li><a href="/a">Item A</a></li>
+                    <li><a href="/b">Item B</a></li>
+                </ol>
+            `);
+            await nextTick();
+            const ol = el.querySelector("ol.g-tree-menu__list");
+            expect(ol).not.toBeNull();
+        });
+
+        it("listType prop overrides slot-inferred type in CE mode", async () => {
+            const el = mountCE(`
+                <ul>
+                    <li><a href="/a">Item A</a></li>
+                </ul>
+            `, { "list-type": "ol" });
+            await nextTick();
+            const ol = el.querySelector("ol.g-tree-menu__list");
+            expect(ol).not.toBeNull();
+        });
+
+        it("supports data-to attribute for router links", async () => {
+            const el = mountCE(`
+                <ul>
+                    <li><a href="#" data-to="/router-path">Router Link</a></li>
+                </ul>
+            `);
+            await nextTick();
+            const elLoc = page.elementLocator(el);
+            await expect.element(elLoc.getByRole("link", { name: "Router Link" })).toBeVisible();
         });
     });
 });

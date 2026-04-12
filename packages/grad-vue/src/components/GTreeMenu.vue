@@ -55,10 +55,10 @@ export default {};
 </script>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, useId, useSlots } from "vue";
+import { computed, getCurrentInstance, onMounted, ref, useId, useSlots } from "vue";
 import GTreeMenuList from "./tree-menu/GTreeMenuList.vue";
 import type { TreeMenuItem } from "./tree-menu/GTreeMenuList.vue";
-import { parseSlotTree } from "./tree-menu/parseSlotTree";
+import { parseSlotTree, parseDomNodes } from "./tree-menu/parseSlotTree";
 
 type Props = {
     /**
@@ -89,6 +89,15 @@ const props = withDefaults(defineProps<Props>(), {
 
 const slots = useSlots();
 
+// In CE/WC mode (shadowRoot: false) Vue stores slot children as raw DOM nodes in
+// `element._slots` rather than as VNodes, so useSlots() returns nothing useful.
+// Read those nodes now (available synchronously – set before setup() runs) so we
+// can parse them as a fallback when VNode parsing returns null.
+const ceDomNodes =
+    (getCurrentInstance()?.ce as { _slots?: Record<string, Node[]> } | undefined)
+        ?._slots?.['default'];
+const wcParsed = ceDomNodes?.length ? parseDomNodes(ceDomNodes) : null;
+
 const slotParsed = computed(() => {
     const defaultSlot = slots.default;
     if (!defaultSlot) return null;
@@ -97,12 +106,12 @@ const slotParsed = computed(() => {
 
 const resolvedItems = computed<TreeMenuItem[]>(() => {
     if (props.items) return props.items;
-    return slotParsed.value?.items ?? [];
+    return slotParsed.value?.items ?? wcParsed?.items ?? [];
 });
 
 const resolvedListType = computed<"ul" | "ol">(() => {
     if (props.listType) return props.listType;
-    return slotParsed.value?.listType ?? "ul";
+    return slotParsed.value?.listType ?? wcParsed?.listType ?? "ul";
 });
 
 const id = useId();

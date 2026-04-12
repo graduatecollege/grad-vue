@@ -114,3 +114,85 @@ export function parseSlotTree(vnodes: VNode[]): ParsedSlotTree | null {
     }
     return null;
 }
+
+// ---------------------------------------------------------------------------
+// DOM-based parsing (for Web Components / Custom Elements mode)
+//
+// In CE mode with shadowRoot: false, Vue collects the host element's children
+// as real DOM nodes in `element._slots` rather than converting them to VNodes.
+// `useSlots()` therefore returns nothing, so the VNode path above yields null.
+// These helpers parse the real DOM Node[] instead.
+// ---------------------------------------------------------------------------
+
+function parseDomLi(li: HTMLElement): TreeMenuItem | null {
+    let label = "";
+    let href: string | undefined;
+    let to: string | undefined;
+    let nestedItems: TreeMenuItem[] | undefined;
+
+    for (const child of Array.from(li.children)) {
+        const tag = child.tagName.toLowerCase();
+        if (tag === "a") {
+            label = (child as HTMLElement).textContent?.trim() ?? "";
+            const hrefAttr = (child as HTMLElement).getAttribute("href");
+            if (hrefAttr != null) href = hrefAttr;
+            const toAttr = (child as HTMLElement).getAttribute("data-to");
+            if (toAttr != null) to = toAttr;
+        } else if (tag === "ul" || tag === "ol") {
+            const parsed = parseDomList(child as HTMLElement);
+            if (parsed.items.length > 0) nestedItems = parsed.items;
+        }
+    }
+
+    if (!label) {
+        for (const node of Array.from(li.childNodes)) {
+            if (node.nodeType === Node.TEXT_NODE) {
+                const text = node.textContent?.trim() ?? "";
+                if (text) {
+                    label = text;
+                    break;
+                }
+            }
+        }
+    }
+
+    if (!label) return null;
+
+    const item: TreeMenuItem = { label };
+    if (href !== undefined) item.href = href;
+    if (to !== undefined) item.to = to;
+    if (nestedItems !== undefined) item.children = nestedItems;
+    return item;
+}
+
+function parseDomList(list: HTMLElement): ParsedSlotTree {
+    const listType: "ul" | "ol" = list.tagName.toLowerCase() as "ul" | "ol";
+    const items: TreeMenuItem[] = [];
+    for (const child of Array.from(list.children)) {
+        if (child.tagName.toLowerCase() !== "li") continue;
+        const item = parseDomLi(child as HTMLElement);
+        if (item) items.push(item);
+    }
+    return { items, listType };
+}
+
+/**
+ * Parse an array of raw DOM `Node`s (as stored in a custom element's `_slots`)
+ * into a `ParsedSlotTree`. Looks for the first `<ul>` or `<ol>` among the nodes.
+ *
+ * This is the WC-mode counterpart of {@link parseSlotTree}.
+ *
+ * @param nodes - DOM nodes from the custom element's default slot.
+ * @returns Parsed items and inferred list type, or `null` if no list is found.
+ */
+export function parseDomNodes(nodes: Node[]): ParsedSlotTree | null {
+    for (const node of nodes) {
+        if (node.nodeType !== Node.ELEMENT_NODE) continue;
+        const el = node as HTMLElement;
+        const tag = el.tagName.toLowerCase();
+        if (tag === "ul" || tag === "ol") {
+            return parseDomList(el);
+        }
+    }
+    return null;
+}
