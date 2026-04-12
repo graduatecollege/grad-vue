@@ -91,8 +91,10 @@ const slots = useSlots();
 
 // In CE/WC mode (shadowRoot: false) Vue stores slot children as raw DOM nodes in
 // `element._slots` rather than as VNodes, so useSlots() returns nothing useful.
-// Read those nodes now (available synchronously – set before setup() runs) so we
-// can parse them as a fallback when VNode parsing returns null.
+// `_slots` is an internal Vue VueElement property; it is populated by
+// `_parseSlots()` before `_mount()` runs, which means it is available
+// synchronously when setup() executes (vnode.ce is called during
+// createComponentInstance, before setupComponent).
 const ceDomNodes =
     (getCurrentInstance()?.ce as { _slots?: Record<string, Node[]> } | undefined)
         ?._slots?.['default'];
@@ -234,6 +236,10 @@ function handleKeydown(event: KeyboardEvent) {
     >
         <h2 v-if="title" :id="id" class="g-tree-menu__title">{{ title }}</h2>
         <div class="g-tree-menu__divider"></div>
+        <!-- Slot fallback: visible (and accessible) before Vue mounts so that
+             screen readers and no-JS users see the raw <ul> list. After mount,
+             v-show hides it visually and aria-hidden removes it from the AT tree
+             so only the enhanced interactive tree is exposed to assistive tech. -->
         <div v-show="!mounted" class="g-tree-menu__slot-fallback" :aria-hidden="mounted ? 'true' : undefined">
             <slot />
         </div>

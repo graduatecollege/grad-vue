@@ -1,6 +1,5 @@
 import { describe, expect, it, afterEach } from "vitest";
-import { defineCustomElement, nextTick } from "vue";
-import { h } from "vue";
+import { defineCustomElement, h, nextTick } from "vue";
 import { page, userEvent } from "vitest/browser";
 import GTreeMenu from "../packages/grad-vue/src/components/GTreeMenu.vue";
 import type { TreeMenuItem } from "../packages/grad-vue/src/components/tree-menu/GTreeMenuList.vue";

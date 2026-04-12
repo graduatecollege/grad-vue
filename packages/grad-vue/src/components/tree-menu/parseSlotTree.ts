@@ -122,6 +122,11 @@ export function parseSlotTree(vnodes: VNode[]): ParsedSlotTree | null {
 // as real DOM nodes in `element._slots` rather than converting them to VNodes.
 // `useSlots()` therefore returns nothing, so the VNode path above yields null.
 // These helpers parse the real DOM Node[] instead.
+//
+// The logic mirrors parseLi / parseList above but operates on HTMLElement rather
+// than VNode: accessing .children/.childNodes/.getAttribute() instead of
+// .children (VNode array) / .props. Both paths must stay separate because VNode
+// and DOM APIs are structurally incompatible.
 // ---------------------------------------------------------------------------
 
 function parseDomLi(li: HTMLElement): TreeMenuItem | null {
