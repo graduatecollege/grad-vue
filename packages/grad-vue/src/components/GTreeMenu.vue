@@ -29,6 +29,10 @@
  *   hierarchies such as book chapters. Inherited by nested `GTreeMenuList`
  *   components via provide/inject.
  * - `theme` - `light` (default) or `dark`.
+ * - `storageKey` - when provided, expanded/collapsed states are persisted to
+ *   `sessionStorage` under this key and restored on page load. This is useful
+ *   in Web Component / Drupal contexts where every page navigation is a full
+ *   refresh. Item states are keyed by the item's `label` prop.
  *
  * **Keyboard navigation** (tree-view style):
  *
@@ -43,6 +47,7 @@ export default {};
 
 <script setup lang="ts">
 import { nextTick, provide, useId } from "vue";
+import { useSessionStorage } from "@vueuse/core";
 
 type Props = {
     /**
@@ -60,6 +65,13 @@ type Props = {
      * @demo
      */
     theme?: "light" | "dark";
+    /**
+     * When provided, expanded/collapsed states are saved to `sessionStorage`
+     * under this key and restored on page load. Item states are keyed by each
+     * item's `label` prop.
+     * @demo
+     */
+    storageKey?: string;
 };
 
 const props = withDefaults(defineProps<Props>(), {
@@ -70,6 +82,12 @@ const props = withDefaults(defineProps<Props>(), {
 const id = useId();
 
 provide("g-tree-menu-list-type", props.listType);
+
+const expandedStorage = props.storageKey
+    ? useSessionStorage<Record<string, boolean>>(props.storageKey, {})
+    : null;
+
+provide("g-tree-menu-expanded-storage", expandedStorage);
 
 /**
  * Returns the best focusable element for the given [data-tree-primary] marker.
