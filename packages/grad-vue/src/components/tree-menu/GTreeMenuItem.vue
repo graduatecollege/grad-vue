@@ -16,9 +16,10 @@ const props = withDefaults(
         label?: string;
         /**
          * Whether the item starts expanded. Only meaningful for items that
-         * have a `#children` slot. Updating this prop after mount also
-         * updates the expanded state (unless a `storageKey` is active on the
-         * parent `GTreeMenu` and a stored value exists for this item's label).
+         * have a `#children` slot. When a `storageKey` is active on the parent
+         * `GTreeMenu` and a stored value exists for this item's `label`, the
+         * stored value takes precedence over this prop and subsequent prop
+         * updates are ignored for that item.
          * @demo
          */
         expanded?: boolean;
@@ -73,7 +74,7 @@ watch(
 
 watch(isExpanded, (val) => {
     if (expandedStorage && props.label !== undefined) {
-        expandedStorage.value = { ...expandedStorage.value, [props.label]: val };
+        expandedStorage.value[props.label] = val;
     }
 });
 
