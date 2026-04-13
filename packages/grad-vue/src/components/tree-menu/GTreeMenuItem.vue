@@ -3,7 +3,7 @@ export default { name: "GTreeMenuItem" };
 </script>
 
 <script setup lang="ts">
-import { computed, getCurrentInstance, inject, ref, useSlots, watch } from "vue";
+import { computed, getCurrentInstance, inject, onBeforeUnmount, onMounted, ref, useSlots, watch } from "vue";
 import type { Ref } from "vue";
 import GTreeMenuList from "./GTreeMenuList.vue";
 
@@ -86,6 +86,63 @@ function toggle() {
         emit("collapse");
     }
 }
+
+// --- Expand / Collapse All registration ---
+
+const itemId = Symbol();
+const expandableItems = inject<Map<symbol, boolean> | null>(
+    "g-tree-menu-expandable-items",
+    null,
+);
+const expandAllSignal = inject<Ref<{ expanded: boolean; version: number }> | null>(
+    "g-tree-menu-expand-all-signal",
+    null,
+);
+const lastProcessedVersion = ref(0);
+
+function registerItem() {
+    if (expandableItems && hasChildren.value) {
+        expandableItems.set(itemId, isExpanded.value);
+    }
+}
+
+function unregisterItem() {
+    expandableItems?.delete(itemId);
+}
+
+watch(isExpanded, (val) => {
+    if (expandableItems && hasChildren.value) {
+        expandableItems.set(itemId, val);
+    }
+});
+
+if (expandAllSignal) {
+    watch(
+        () => expandAllSignal.value.version,
+        () => {
+            if (!hasChildren.value) return;
+            isExpanded.value = expandAllSignal.value.expanded;
+            lastProcessedVersion.value = expandAllSignal.value.version;
+        },
+    );
+}
+
+onMounted(() => {
+    registerItem();
+    if (
+        expandAllSignal &&
+        hasChildren.value &&
+        expandAllSignal.value.version > lastProcessedVersion.value &&
+        expandAllSignal.value.expanded
+    ) {
+        isExpanded.value = true;
+        lastProcessedVersion.value = expandAllSignal.value.version;
+    }
+});
+
+onBeforeUnmount(() => {
+    unregisterItem();
+});
 
 function handleContentClick(event: MouseEvent) {
     if (!(event.target as Element).closest("a")) {
