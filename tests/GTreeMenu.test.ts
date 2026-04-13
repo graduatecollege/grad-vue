@@ -987,7 +987,7 @@ describe("GTreeMenu", () => {
                 .click();
 
             const stored = JSON.parse(sessionStorage.getItem(STORAGE_KEY)!);
-            expect(stored["Chapter 1"]).toBe(false);
+            expect(stored["Chapter 1"]).toBeUndefined();
         });
 
         it("restores expanded state from sessionStorage on mount", async () => {
@@ -1061,7 +1061,29 @@ describe("GTreeMenu", () => {
                 .toBeVisible();
         });
 
-        it("stored state takes precedence over expanded prop", async () => {
+        it("stored true state takes precedence over expanded=false prop", async () => {
+            sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ "Chapter 1": true }));
+            const wrapper = slotMenu({ heading: "Contents", storageKey: STORAGE_KEY }, [
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 1", expanded: false },
+                    {
+                        default: () => "Chapter 1",
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                            ),
+                        ],
+                    },
+                ),
+            ]);
+
+            await expect
+                .element(wrapper.container.getByText("Section 1.1"))
+                .toBeVisible();
+        });
+
+        it("stored false value (stale) does not override expanded=true prop", async () => {
             sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ "Chapter 1": false }));
             const wrapper = slotMenu({ heading: "Contents", storageKey: STORAGE_KEY }, [
                 h(
@@ -1080,7 +1102,7 @@ describe("GTreeMenu", () => {
 
             await expect
                 .element(wrapper.container.getByText("Section 1.1"))
-                .not.toBeInTheDocument();
+                .toBeVisible();
         });
     });
 
