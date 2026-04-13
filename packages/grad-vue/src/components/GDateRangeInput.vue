@@ -155,6 +155,12 @@ watch(
     </div>
 </template>
 
+<style>
+g-date-range-input {
+    display: block;
+}
+</style>
+
 <style scoped>
 .g-date-range-input {
     display: flex;

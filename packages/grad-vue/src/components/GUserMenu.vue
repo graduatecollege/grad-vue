@@ -118,6 +118,12 @@ const slots = defineSlots<{
     </div>
 </template>
 
+<style>
+g-user-menu {
+    display: inline-block;
+}
+</style>
+
 <style scoped>
 .g-user-menu {
     display: inline-block;

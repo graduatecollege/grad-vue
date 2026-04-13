@@ -168,6 +168,12 @@ const reversedEntries = computed(() => [...props.entries].reverse());
     </div>
 </template>
 
+<style>
+g-history-scroller {
+    display: block;
+}
+</style>
+
 <style scoped>
 .g-history-scroller-wrapper {
     position: relative;

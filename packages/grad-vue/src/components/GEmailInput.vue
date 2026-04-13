@@ -76,6 +76,12 @@ const model = defineModel<string | null>({ type: String });
     />
 </template>
 
+<style>
+g-email-input {
+    display: block;
+}
+</style>
+
 <style scoped>
 /* No additional styles needed, using GTextInput styles */
 </style>

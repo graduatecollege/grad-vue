@@ -86,6 +86,12 @@ const handleTooltipHide = () => {
     </div>
 </template>
 
+<style>
+g-clipboard {
+    display: inline-block;
+}
+</style>
+
 <style scoped>
 .g-clipboard-text-button {
     display: inline-flex;

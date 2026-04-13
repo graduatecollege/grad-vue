@@ -459,6 +459,12 @@ const describedBy = computed(() => {
     </div>
 </template>
 
+<style>
+g-multi-select {
+    display: block;
+}
+</style>
+
 <style scoped>
 .g-multiselect-root {
     position: relative;

@@ -39,11 +39,15 @@ const props = withDefaults(defineProps<Props>(), {
     </dl>
 </template>
 
-<style scoped>
+<style>
+g-detail-list,
 .g-detail-list {
     margin: 0;
+    display: block;
 }
+</style>
 
+<style scoped>
 .g-detail-list--grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(var(--g-detail-list-item-min-width, 10rem), var(--g-detail-list-item-max-width, 1fr)));

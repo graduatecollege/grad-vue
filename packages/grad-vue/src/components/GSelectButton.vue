@@ -154,6 +154,12 @@ function onChange(val: string | number) {
     </fieldset>
 </template>
 
+<style>
+g-select-button {
+    display: block;
+}
+</style>
+
 <style scoped>
 .g-select-btn-group {
     border: none;

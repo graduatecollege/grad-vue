@@ -160,9 +160,21 @@ function handleContentKeydown(event: KeyboardEvent) {
     </li>
 </template>
 
-<style scoped>
+<style>
+g-tree-menu-item,
 .g-tree-menu__item {
     display: block;
+}
+
+g-tree-menu-item > a {
+    color: inherit;
+    display: flex;
+    align-items: flex-start;
+    text-decoration: none;
+}
+
+g-tree-menu-item > a:hover {
+    text-decoration: underline;
 }
 
 .g-tree-menu__row {
@@ -224,7 +236,7 @@ function handleContentKeydown(event: KeyboardEvent) {
 
 .g-tree-menu__toggle-btn:focus-visible,
 .g-tree-menu__row-content:focus-visible,
-:deep(.g-tree-menu__row-content a:focus-visible) {
+.g-tree-menu__row-content a:focus-visible {
     background: var(--ilw-color--focus--background);
     color: var(--ilw-color--focus--text);
     outline-color: var(--g-primary-500);

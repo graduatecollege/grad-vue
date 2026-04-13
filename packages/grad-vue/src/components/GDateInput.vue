@@ -86,6 +86,12 @@ const model = defineModel<string | null>({ type: String });
     />
 </template>
 
+<style>
+g-date-input {
+    display: block;
+}
+</style>
+
 <style scoped>
 /* No additional styles needed, using GTextInput styles */
 </style>

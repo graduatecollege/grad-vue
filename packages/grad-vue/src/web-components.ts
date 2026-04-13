@@ -36,7 +36,6 @@ import GTermSelectorControl from "./components/term/GTermSelectorControl.vue";
 import GTextInput from "./components/GTextInput.vue";
 import GTextarea from "./components/GTextarea.vue";
 import GThreeWayToggle from "./components/GThreeWayToggle.vue";
-import GFormErrorMessages from "./components/form/GFormErrorMessages.vue";
 import GTreeMenu from "./components/GTreeMenu.vue";
 import GTreeMenuList from "./components/tree-menu/GTreeMenuList.vue";
 import GTreeMenuItem from "./components/tree-menu/GTreeMenuItem.vue";
@@ -100,39 +99,7 @@ const components: [string, Component][] = [
     ["g-user-menu", GUserMenu],
 ];
 
-const internalComponents: Component[] = [
-    GFormErrorMessages,
-];
-
-const allStyles: string[] = [];
-const seenStyles = new Set<string>();
-
-function collectStyles(comp: any) {
-    const def = comp.__vccOpts || comp;
-    if (def.styles) {
-        for (const styleText of def.styles) {
-            if (seenStyles.has(styleText)) {
-                continue;
-            }
-            seenStyles.add(styleText);
-            allStyles.push(styleText);
-        }
-    }
-}
-
 for (const [tagName, comp] of components) {
-    collectStyles(comp);
     const ce = defineCustomElement(comp as any, ceOptions);
     customElements.define(tagName, ce);
-}
-
-for (const comp of internalComponents) {
-    collectStyles(comp);
-}
-
-if (allStyles.length > 0 && typeof document !== "undefined") {
-    const style = document.createElement("style");
-    style.setAttribute("data-grad-vue-elements", "");
-    style.textContent = allStyles.join("\n");
-    document.head.appendChild(style);
 }

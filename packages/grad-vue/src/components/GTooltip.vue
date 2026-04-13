@@ -251,6 +251,12 @@ defineExpose({
     </div>
 </template>
 
+<style>
+g-tooltip {
+    display: contents;
+}
+</style>
+
 <style scoped>
 .g-tooltip-host {
     display: contents;

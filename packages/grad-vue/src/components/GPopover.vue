@@ -279,6 +279,10 @@ defineExpose({
 </template>
 
 <style>
+g-popover {
+    display: inline-block;
+}
+
 .g-popover {
     h2 {
         font-size: 1.25rem;

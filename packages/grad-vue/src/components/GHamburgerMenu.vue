@@ -106,6 +106,10 @@ const fallbackId = useId();
 </template>
 
 <style>
+g-hamburger-menu {
+    display: none;
+}
+
 .g-hamburger-button {
     svg {
         width: 1.6rem;
