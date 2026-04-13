@@ -131,7 +131,7 @@ The project uses Vitest 4 for unit and accessibility testing in **browser mode**
 npm test
 
 # Run tests once
-npm run test:run
+npm run test:report
 ```
 
 ### Building

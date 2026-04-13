@@ -100,7 +100,7 @@ npm test
 npm run test:ui
 
 # Run tests and generate report
-npm run test:run
+npm run test:report
 ```
 
 ## Code Conventions
