@@ -10,7 +10,7 @@ import { mnt, tabTo, testAccessibility } from "./test-utils";
  * Helper that builds a slot-based GTreeMenu using render functions.
  * This mirrors the template-based usage:
  *
- *   <GTreeMenu title="...">
+ *   <GTreeMenu heading="...">
  *     <GTreeMenuList>
  *       <GTreeMenuItem><a href="...">Label</a></GTreeMenuItem>
  *     </GTreeMenuList>
@@ -35,7 +35,7 @@ function slotMenu(
 describe("GTreeMenu", () => {
     describe("Functional Tests", () => {
         it("renders with a title and flat items", async () => {
-            const wrapper = slotMenu({ title: "Navigation" }, [
+            const wrapper = slotMenu({ heading: "Navigation" }, [
                 h(GTreeMenuItem, null, () => h("a", { href: "/" }, "Home")),
                 h(GTreeMenuItem, null, () =>
                     h("a", { href: "/about" }, "About"),
@@ -60,7 +60,7 @@ describe("GTreeMenu", () => {
         });
 
         it("renders nested items collapsed by default", async () => {
-            const wrapper = slotMenu({ title: "Contents" }, [
+            const wrapper = slotMenu({ heading: "Contents" }, [
                 h(
                     GTreeMenuItem,
                     { label: "Chapter 1" },
@@ -94,7 +94,7 @@ describe("GTreeMenu", () => {
         });
 
         it("expanding an item reveals its children", async () => {
-            const wrapper = slotMenu({ title: "Contents" }, [
+            const wrapper = slotMenu({ heading: "Contents" }, [
                 h(
                     GTreeMenuItem,
                     { label: "Chapter 1" },
@@ -125,7 +125,7 @@ describe("GTreeMenu", () => {
         });
 
         it("button aria-expanded updates on toggle", async () => {
-            const wrapper = slotMenu({ title: "Contents" }, [
+            const wrapper = slotMenu({ heading: "Contents" }, [
                 h(
                     GTreeMenuItem,
                     { label: "Chapter 1" },
@@ -151,7 +151,7 @@ describe("GTreeMenu", () => {
         });
 
         it("multiple items can be expanded simultaneously", async () => {
-            const wrapper = slotMenu({ title: "Contents" }, [
+            const wrapper = slotMenu({ heading: "Contents" }, [
                 h(
                     GTreeMenuItem,
                     { label: "Chapter 1" },
@@ -194,7 +194,7 @@ describe("GTreeMenu", () => {
         });
 
         it("collapsing hides children again", async () => {
-            const wrapper = slotMenu({ title: "Contents" }, [
+            const wrapper = slotMenu({ heading: "Contents" }, [
                 h(
                     GTreeMenuItem,
                     { label: "Chapter 1" },
@@ -223,7 +223,7 @@ describe("GTreeMenu", () => {
         });
 
         it("supports arbitrary depth — nested expand works", async () => {
-            const wrapper = slotMenu({ title: "Contents" }, [
+            const wrapper = slotMenu({ heading: "Contents" }, [
                 h(
                     GTreeMenuItem,
                     { label: "Chapter 2" },
@@ -269,7 +269,7 @@ describe("GTreeMenu", () => {
 
         it("renders as <ol> when listType='ol'", async () => {
             const wrapper = slotMenu(
-                { title: "Contents" },
+                { heading: "Contents" },
                 [
                     h(GTreeMenuItem, null, () =>
                         h("a", { href: "#a" }, "Item A"),
@@ -282,7 +282,7 @@ describe("GTreeMenu", () => {
         });
 
         it("renders as <ul> by default", async () => {
-            const wrapper = slotMenu({ title: "Contents" }, [
+            const wrapper = slotMenu({ heading: "Contents" }, [
                 h(GTreeMenuItem, null, () => h("a", { href: "#a" }, "Item A")),
             ]);
             const ul = wrapper.container.element()!.querySelector("ul");
@@ -290,7 +290,7 @@ describe("GTreeMenu", () => {
         });
 
         it("parent items with a link render a toggle button alongside", async () => {
-            const wrapper = slotMenu({ title: "Contents" }, [
+            const wrapper = slotMenu({ heading: "Contents" }, [
                 h(
                     GTreeMenuItem,
                     { label: "Chapter 1" },
@@ -326,7 +326,7 @@ describe("GTreeMenu", () => {
         });
 
         it("clicking chevron toggle expands a linked parent item", async () => {
-            const wrapper = slotMenu({ title: "Contents" }, [
+            const wrapper = slotMenu({ heading: "Contents" }, [
                 h(
                     GTreeMenuItem,
                     { label: "Chapter 1" },
@@ -350,7 +350,7 @@ describe("GTreeMenu", () => {
         });
 
         it("clicking the text area of a non-link parent item expands it", async () => {
-            const wrapper = slotMenu({ title: "Contents" }, [
+            const wrapper = slotMenu({ heading: "Contents" }, [
                 h(
                     GTreeMenuItem,
                     { label: "Chapter 1" },
@@ -375,7 +375,7 @@ describe("GTreeMenu", () => {
         });
 
         it("renders custom DOM inside items", async () => {
-            const wrapper = slotMenu({ title: "Contents" }, [
+            const wrapper = slotMenu({ heading: "Contents" }, [
                 h(GTreeMenuItem, null, () =>
                     h("a", { href: "#ch1" }, [
                         h("span", { class: "num" }, "Chapter 1"),
@@ -398,7 +398,7 @@ describe("GTreeMenu", () => {
 
     describe("Expanded Prop", () => {
         it("item with expanded=true starts expanded", async () => {
-            const wrapper = slotMenu({ title: "Contents" }, [
+            const wrapper = slotMenu({ heading: "Contents" }, [
                 h(
                     GTreeMenuItem,
                     { label: "Chapter 1", expanded: true },
@@ -426,7 +426,7 @@ describe("GTreeMenu", () => {
         });
 
         it("expanded prop does not affect leaf items", async () => {
-            const wrapper = slotMenu({ title: "Contents" }, [
+            const wrapper = slotMenu({ heading: "Contents" }, [
                 h(GTreeMenuItem, { expanded: true }, () =>
                     h("a", { href: "/" }, "Home"),
                 ),
@@ -438,7 +438,7 @@ describe("GTreeMenu", () => {
         });
 
         it("multiple items can start expanded independently", async () => {
-            const wrapper = slotMenu({ title: "Contents" }, [
+            const wrapper = slotMenu({ heading: "Contents" }, [
                 h(
                     GTreeMenuItem,
                     { label: "Chapter 1", expanded: true },
@@ -474,7 +474,7 @@ describe("GTreeMenu", () => {
         });
 
         it("toggling a pre-expanded item collapses it", async () => {
-            const wrapper = slotMenu({ title: "Contents" }, [
+            const wrapper = slotMenu({ heading: "Contents" }, [
                 h(
                     GTreeMenuItem,
                     { label: "Chapter 1", expanded: true },
@@ -503,7 +503,7 @@ describe("GTreeMenu", () => {
         });
 
         it("nested items can start expanded", async () => {
-            const wrapper = slotMenu({ title: "Contents" }, [
+            const wrapper = slotMenu({ heading: "Contents" }, [
                 h(
                     GTreeMenuItem,
                     { label: "Chapter 1", expanded: true },
@@ -544,7 +544,7 @@ describe("GTreeMenu", () => {
         it("updating expanded prop changes expanded state", async () => {
             const expanded = ref(false);
             const wrapper = mnt(GTreeMenu, {
-                props: { title: "Contents" },
+                props: { heading: "Contents" },
                 slots: {
                     default: () =>
                         h(GTreeMenuList, {}, {
@@ -579,7 +579,7 @@ describe("GTreeMenu", () => {
         });
 
         it("expanded item passes axe", async () => {
-            const wrapper = slotMenu({ title: "Contents" }, [
+            const wrapper = slotMenu({ heading: "Contents" }, [
                 h(
                     GTreeMenuItem,
                     { label: "Chapter 1", expanded: true },
@@ -600,7 +600,7 @@ describe("GTreeMenu", () => {
     describe("Expand/Collapse Events", () => {
         it("GTreeMenuItem emits expand event when expanded", async () => {
             const onExpand = vi.fn();
-            const wrapper = slotMenu({ title: "Contents" }, [
+            const wrapper = slotMenu({ heading: "Contents" }, [
                 h(
                     GTreeMenuItem,
                     { label: "Chapter 1", onExpand },
@@ -624,7 +624,7 @@ describe("GTreeMenu", () => {
 
         it("GTreeMenuItem emits collapse event when collapsed", async () => {
             const onCollapse = vi.fn();
-            const wrapper = slotMenu({ title: "Contents" }, [
+            const wrapper = slotMenu({ heading: "Contents" }, [
                 h(
                     GTreeMenuItem,
                     { label: "Chapter 1", expanded: true, onCollapse },
@@ -649,7 +649,7 @@ describe("GTreeMenu", () => {
         it("keyboard expand/collapse emits events on the item", async () => {
             const onExpand = vi.fn();
             const onCollapse = vi.fn();
-            const wrapper = slotMenu({ title: "Contents" }, [
+            const wrapper = slotMenu({ heading: "Contents" }, [
                 h(
                     GTreeMenuItem,
                     { label: "Chapter 1", onExpand, onCollapse },
@@ -677,7 +677,7 @@ describe("GTreeMenu", () => {
 
         it("clicking text area of non-link parent emits expand event", async () => {
             const onExpand = vi.fn();
-            const wrapper = slotMenu({ title: "Contents" }, [
+            const wrapper = slotMenu({ heading: "Contents" }, [
                 h(
                     GTreeMenuItem,
                     { label: "Chapter 1", onExpand },
@@ -700,7 +700,7 @@ describe("GTreeMenu", () => {
 
     describe("Keyboard Navigation Tests", () => {
         it("ArrowDown moves focus to the next item", async () => {
-            const wrapper = slotMenu({ title: "Contents" }, [
+            const wrapper = slotMenu({ heading: "Contents" }, [
                 h(
                     GTreeMenuItem,
                     { label: "Chapter 1" },
@@ -737,7 +737,7 @@ describe("GTreeMenu", () => {
         });
 
         it("ArrowUp moves focus to the previous item", async () => {
-            const wrapper = slotMenu({ title: "Contents" }, [
+            const wrapper = slotMenu({ heading: "Contents" }, [
                 h(
                     GTreeMenuItem,
                     { label: "Chapter 1" },
@@ -771,7 +771,7 @@ describe("GTreeMenu", () => {
         });
 
         it("ArrowRight expands a collapsed item", async () => {
-            const wrapper = slotMenu({ title: "Contents" }, [
+            const wrapper = slotMenu({ heading: "Contents" }, [
                 h(
                     GTreeMenuItem,
                     { label: "Chapter 1" },
@@ -794,7 +794,7 @@ describe("GTreeMenu", () => {
         });
 
         it("ArrowRight on an expanded item moves to its first child", async () => {
-            const wrapper = slotMenu({ title: "Contents" }, [
+            const wrapper = slotMenu({ heading: "Contents" }, [
                 h(
                     GTreeMenuItem,
                     { label: "Chapter 1" },
@@ -824,7 +824,7 @@ describe("GTreeMenu", () => {
         });
 
         it("ArrowLeft collapses an expanded item", async () => {
-            const wrapper = slotMenu({ title: "Contents" }, [
+            const wrapper = slotMenu({ heading: "Contents" }, [
                 h(
                     GTreeMenuItem,
                     { label: "Chapter 1" },
@@ -849,7 +849,7 @@ describe("GTreeMenu", () => {
         });
 
         it("ArrowLeft on a collapsed item moves focus to its parent", async () => {
-            const wrapper = slotMenu({ title: "Contents" }, [
+            const wrapper = slotMenu({ heading: "Contents" }, [
                 h(
                     GTreeMenuItem,
                     { label: "Chapter 1" },
@@ -874,7 +874,7 @@ describe("GTreeMenu", () => {
         });
 
         it("Home moves focus to the first item", async () => {
-            const wrapper = slotMenu({ title: "Contents" }, [
+            const wrapper = slotMenu({ heading: "Contents" }, [
                 h(
                     GTreeMenuItem,
                     { label: "Chapter 1" },
@@ -900,7 +900,7 @@ describe("GTreeMenu", () => {
         });
 
         it("End moves focus to the last visible item", async () => {
-            const wrapper = slotMenu({ title: "Contents" }, [
+            const wrapper = slotMenu({ heading: "Contents" }, [
                 h(
                     GTreeMenuItem,
                     { label: "Chapter 1" },
@@ -930,7 +930,7 @@ describe("GTreeMenu", () => {
         const STORAGE_KEY = "test-tree-menu-storage";
 
         function menuWithStorage(storageKey: string) {
-            return slotMenu({ title: "Contents", storageKey }, [
+            return slotMenu({ heading: "Contents", storageKey }, [
                 h(
                     GTreeMenuItem,
                     { label: "Chapter 1" },
@@ -1016,7 +1016,7 @@ describe("GTreeMenu", () => {
         });
 
         it("without storageKey, items still collapse and expand normally", async () => {
-            const wrapper = slotMenu({ title: "Contents" }, [
+            const wrapper = slotMenu({ heading: "Contents" }, [
                 h(
                     GTreeMenuItem,
                     { label: "Chapter 1" },
@@ -1041,7 +1041,7 @@ describe("GTreeMenu", () => {
         });
 
         it("expanded prop is used as fallback when no stored state exists for the item", async () => {
-            const wrapper = slotMenu({ title: "Contents", storageKey: STORAGE_KEY }, [
+            const wrapper = slotMenu({ heading: "Contents", storageKey: STORAGE_KEY }, [
                 h(
                     GTreeMenuItem,
                     { label: "Chapter 1", expanded: true },
@@ -1063,7 +1063,7 @@ describe("GTreeMenu", () => {
 
         it("stored state takes precedence over expanded prop", async () => {
             sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ "Chapter 1": false }));
-            const wrapper = slotMenu({ title: "Contents", storageKey: STORAGE_KEY }, [
+            const wrapper = slotMenu({ heading: "Contents", storageKey: STORAGE_KEY }, [
                 h(
                     GTreeMenuItem,
                     { label: "Chapter 1", expanded: true },
@@ -1086,7 +1086,7 @@ describe("GTreeMenu", () => {
 
     describe("Accessibility Tests", () => {
         it("flat list passes axe", async () => {
-            const wrapper = slotMenu({ title: "Navigation" }, [
+            const wrapper = slotMenu({ heading: "Navigation" }, [
                 h(GTreeMenuItem, null, () => h("a", { href: "/" }, "Home")),
                 h(GTreeMenuItem, null, () =>
                     h("a", { href: "/about" }, "About"),
@@ -1096,7 +1096,7 @@ describe("GTreeMenu", () => {
         });
 
         it("nested list (collapsed) passes axe", async () => {
-            const wrapper = slotMenu({ title: "Contents" }, [
+            const wrapper = slotMenu({ heading: "Contents" }, [
                 h(
                     GTreeMenuItem,
                     { label: "Chapter 1" },
@@ -1114,7 +1114,7 @@ describe("GTreeMenu", () => {
         });
 
         it("nested list (expanded) passes axe", async () => {
-            const wrapper = slotMenu({ title: "Contents" }, [
+            const wrapper = slotMenu({ heading: "Contents" }, [
                 h(
                     GTreeMenuItem,
                     { label: "Chapter 1" },
@@ -1152,7 +1152,7 @@ describe("GTreeMenu", () => {
         });
 
         it("linked parent items pass axe", async () => {
-            const wrapper = slotMenu({ title: "Contents" }, [
+            const wrapper = slotMenu({ heading: "Contents" }, [
                 h(
                     GTreeMenuItem,
                     { label: "Chapter 1" },
@@ -1171,7 +1171,7 @@ describe("GTreeMenu", () => {
 
         it("ol list type passes axe", async () => {
             const wrapper = slotMenu(
-                { title: "Chapters" },
+                { heading: "Chapters" },
                 [
                     h(
                         GTreeMenuItem,
@@ -1192,7 +1192,7 @@ describe("GTreeMenu", () => {
         });
 
         it("dark theme passes axe", async () => {
-            const wrapper = slotMenu({ title: "Navigation", theme: "dark" }, [
+            const wrapper = slotMenu({ heading: "Navigation", theme: "dark" }, [
                 h(GTreeMenuItem, null, () => h("a", { href: "/" }, "Home")),
                 h(GTreeMenuItem, null, () =>
                     h("a", { href: "/about" }, "About"),

@@ -1313,9 +1313,9 @@ onMounted(() => {
 ```typescript
 type Props = {
     /**
-     * Title and accessible name
+     * Heading and accessible name
      */
-    title?: string;
+    heading?: string;
     /**
      * Items for the menu
      */
@@ -1517,9 +1517,9 @@ that allows jumping to a different term.
 ```typescript
 type Props = {
     /**
-     * Title for the popover.
+     * Heading for the popover.
      */
-    title?: string;
+    heading?: string;
 
     /**
      * Label for year select.
@@ -1782,7 +1782,7 @@ works as a basic list of links even without JavaScript.
 Use `GTreeMenuList` and `GTreeMenuItem` sub-components to build the menu:
 
 ```vue-html
-<GTreeMenu title="Contents">
+<GTreeMenu heading="Contents">
     <GTreeMenuList>
         <GTreeMenuItem label="Chapter 1">
             <a href="#ch1">Chapter 1</a>
@@ -1796,7 +1796,7 @@ Use `GTreeMenuList` and `GTreeMenuItem` sub-components to build the menu:
 
 **Props**:
 
-- `title` - optional heading and accessible name for the nav landmark.
+- `heading` - optional heading and accessible name for the nav landmark.
 - `listType` - `ul` (default) or `ol`. Use `ol` for numbered
   hierarchies such as book chapters. Inherited by nested `GTreeMenuList`
   components via provide/inject.
@@ -1819,9 +1819,9 @@ Use `GTreeMenuList` and `GTreeMenuItem` sub-components to build the menu:
 ```typescript
 type Props = {
     /**
-     * Title and accessible name for the nav landmark
+     * Heading and accessible name for the nav landmark
      */
-    title?: string;
+    heading?: string;
     /**
      * List element type
      */

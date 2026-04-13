@@ -15,9 +15,9 @@ const termYears = ref(["2026", "2025", "2024"]);
             description="A button to show and select a term."
             component="GTermSelector"
             :props-config="{
-                title: {
+                heading: {
                     type: 'string',
-                    label: 'Title for the popover.',
+                    label: 'Heading for the popover.',
                     default: 'Period Selection'
                 },
                 yearLabel: {
@@ -35,9 +35,9 @@ const termYears = ref(["2026", "2025", "2024"]);
             <template #props><figure class="highlighted-code">
 <pre class="shiki light-plus" style="background-color:#FFFFFF;color:#000000" tabindex="0"><code><span class="line"><span style="color:#0000FF">type</span><span style="color:#267F99"> Props</span><span style="color:#000000"> = &lcub;</span></span>
 <span class="line"><span style="color:#008000">    /**</span></span>
-<span class="line"><span style="color:#008000">     * Title for the popover.</span></span>
+<span class="line"><span style="color:#008000">     * Heading for the popover.</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
-<span class="line"><span style="color:#001080">    title</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#001080">    heading</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#008000">    /**</span></span>
 <span class="line"><span style="color:#008000">     * Label for year select.</span></span>

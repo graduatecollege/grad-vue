@@ -12,9 +12,9 @@ import { GTreeMenu, GTreeMenuList, GTreeMenuItem } from "@illinois-grad/grad-vue
             component="GTreeMenu"
             padding="0"
             :props-config="{
-                title: {
+                heading: {
                     type: 'string',
-                    label: 'Title and accessible name for the nav landmark',
+                    label: 'Heading and accessible name for the nav landmark',
                     default: 'Tree Menu'
                 },
                 listType: {
@@ -63,9 +63,9 @@ import { GTreeMenu, GTreeMenuList, GTreeMenuItem } from "@illinois-grad/grad-vue
         <template #props><figure class="highlighted-code">
 <pre class="shiki light-plus" style="background-color:#FFFFFF;color:#000000" tabindex="0"><code><span class="line"><span style="color:#0000FF">type</span><span style="color:#267F99"> Props</span><span style="color:#000000"> = &lcub;</span></span>
 <span class="line"><span style="color:#008000">    /**</span></span>
-<span class="line"><span style="color:#008000">     * Title and accessible name for the nav landmark</span></span>
+<span class="line"><span style="color:#008000">     * Heading and accessible name for the nav landmark</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
-<span class="line"><span style="color:#001080">    title</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#001080">    heading</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#008000">    /**</span></span>
 <span class="line"><span style="color:#008000">     * List element type</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
@@ -89,7 +89,7 @@ individually.</p>
 works as a basic list of links even without JavaScript.</p>
 <p>Use <code>GTreeMenuList</code> and <code>GTreeMenuItem</code> sub-components to build the menu:</p>
 <figure class="highlighted-code">
-<pre class="shiki light-plus" style="background-color:#FFFFFF;color:#000000" tabindex="0"><code><span class="line"><span style="color:#800000">&#x3C;</span><span style="color:#267F99">GTreeMenu</span><span style="color:#E50000"> title</span><span style="color:#000000">=</span><span style="color:#0000FF">"Contents"</span><span style="color:#800000">></span></span>
+<pre class="shiki light-plus" style="background-color:#FFFFFF;color:#000000" tabindex="0"><code><span class="line"><span style="color:#800000">&#x3C;</span><span style="color:#267F99">GTreeMenu</span><span style="color:#E50000"> heading</span><span style="color:#000000">=</span><span style="color:#0000FF">"Contents"</span><span style="color:#800000">></span></span>
 <span class="line"><span style="color:#800000">    &#x3C;</span><span style="color:#267F99">GTreeMenuList</span><span style="color:#800000">></span></span>
 <span class="line"><span style="color:#800000">        &#x3C;</span><span style="color:#267F99">GTreeMenuItem</span><span style="color:#E50000"> label</span><span style="color:#000000">=</span><span style="color:#0000FF">"Chapter 1"</span><span style="color:#800000">></span></span>
 <span class="line"><span style="color:#800000">            &#x3C;a</span><span style="color:#E50000"> href</span><span style="color:#000000">=</span><span style="color:#0000FF">"#ch1"</span><span style="color:#800000">></span><span style="color:#000000">Chapter 1</span><span style="color:#800000">&#x3C;/a></span></span>
@@ -103,7 +103,7 @@ works as a basic list of links even without JavaScript.</p>
 
 <p><strong>Props</strong>:</p>
 <ul>
-<li><code>title</code> - optional heading and accessible name for the nav landmark.</li>
+<li><code>heading</code> - optional heading and accessible name for the nav landmark.</li>
 <li><code>listType</code> - <code>ul</code> (default) or <code>ol</code>. Use <code>ol</code> for numbered
 hierarchies such as book chapters. Inherited by nested <code>GTreeMenuList</code>
 components via provide/inject.</li>

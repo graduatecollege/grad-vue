@@ -10,7 +10,7 @@
  * Use `GTreeMenuList` and `GTreeMenuItem` sub-components to build the menu:
  *
  * ```vue-html
- * <GTreeMenu title="Contents">
+ * <GTreeMenu heading="Contents">
  *     <GTreeMenuList>
  *         <GTreeMenuItem label="Chapter 1">
  *             <a href="#ch1">Chapter 1</a>
@@ -24,7 +24,7 @@
  *
  * **Props**:
  *
- * - `title` - optional heading and accessible name for the nav landmark.
+ * - `heading` - optional heading and accessible name for the nav landmark.
  * - `listType` - `ul` (default) or `ol`. Use `ol` for numbered
  *   hierarchies such as book chapters. Inherited by nested `GTreeMenuList`
  *   components via provide/inject.
@@ -51,10 +51,10 @@ import { useSessionStorage } from "@vueuse/core";
 
 type Props = {
     /**
-     * Title and accessible name for the nav landmark
+     * Heading and accessible name for the nav landmark
      * @demo Tree Menu
      */
-    title?: string;
+    heading?: string;
     /**
      * List element type
      * @demo
@@ -190,12 +190,12 @@ function handleKeydown(event: KeyboardEvent) {
         class="g-tree-menu"
         :class="`g-tree-menu--${props.theme}`"
         v-bind="{
-            'aria-labelledby': title ? id : undefined,
-            'aria-label': title ? undefined : 'Tree Menu',
+            'aria-labelledby': heading ? id : undefined,
+            'aria-label': heading ? undefined : 'Tree Menu',
         }"
         @keydown="handleKeydown"
     >
-        <h2 v-if="title" :id="id" class="g-tree-menu__title">{{ title }}</h2>
+        <h2 v-if="heading" :id="id" class="g-tree-menu__title">{{ heading }}</h2>
         <div class="g-tree-menu__divider"></div>
         <div class="g-tree-menu__content">
             <slot />

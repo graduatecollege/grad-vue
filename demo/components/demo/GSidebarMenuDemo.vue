@@ -20,9 +20,9 @@ const demoItems = [
             component="GSidebarMenu"
             padding="0"
             :props-config="{
-                title: {
+                heading: {
                     type: 'string',
-                    label: 'Title and accessible name',
+                    label: 'Heading and accessible name',
                     default: 'Sidebar Menu'
                 },
                 theme: {
@@ -49,9 +49,9 @@ const demoItems = [
             <template #props><figure class="highlighted-code">
 <pre class="shiki light-plus" style="background-color:#FFFFFF;color:#000000" tabindex="0"><code><span class="line"><span style="color:#0000FF">type</span><span style="color:#267F99"> Props</span><span style="color:#000000"> = &lcub;</span></span>
 <span class="line"><span style="color:#008000">    /**</span></span>
-<span class="line"><span style="color:#008000">     * Title and accessible name</span></span>
+<span class="line"><span style="color:#008000">     * Heading and accessible name</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
-<span class="line"><span style="color:#001080">    title</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#001080">    heading</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#008000">    /**</span></span>
 <span class="line"><span style="color:#008000">     * Items for the menu</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>

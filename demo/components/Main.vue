@@ -113,7 +113,7 @@ onMounted(() => {
         <GSidebar class="sidebar" top-offset="0px">
             <GSidebarMenu
                 class="sidebar-menu"
-                title="Components"
+                heading="Components"
                 theme="dark"
                 compact
                 :items="
