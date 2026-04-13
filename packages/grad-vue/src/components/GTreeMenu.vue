@@ -53,7 +53,7 @@ export default {};
 </script>
 
 <script setup lang="ts">
-import { nextTick, provide, useId } from "vue";
+import { computed, nextTick, provide, reactive, ref, useId } from "vue";
 import { useSessionStorage } from "@vueuse/core";
 
 type Props = {
@@ -78,11 +78,17 @@ type Props = {
      * the `label` prop.
      */
     storageKey?: string;
+    /**
+     * Show an expand/collapse all button
+     * @demo
+     */
+    showExpandAll?: boolean;
 };
 
 const props = withDefaults(defineProps<Props>(), {
     listType: "ul",
     theme: "light",
+    showExpandAll: false,
 });
 
 const id = useId();
@@ -94,6 +100,33 @@ const expandedStorage = props.storageKey
     : null;
 
 provide("g-tree-menu-expanded-storage", expandedStorage);
+
+// --- Expand / Collapse All ---
+
+const expandableItems = reactive(new Map<symbol, boolean>());
+provide("g-tree-menu-expandable-items", expandableItems);
+
+const expandAllSignal = ref<{ expanded: boolean; version: number }>({
+    expanded: true,
+    version: 0,
+});
+provide("g-tree-menu-expand-all-signal", expandAllSignal);
+
+const allExpanded = computed(() => {
+    if (expandableItems.size === 0) return false;
+    for (const v of expandableItems.values()) {
+        if (!v) return false;
+    }
+    return true;
+});
+
+function toggleExpandAll() {
+    const target = !allExpanded.value;
+    expandAllSignal.value = {
+        expanded: target,
+        version: expandAllSignal.value.version + 1,
+    };
+}
 
 /**
  * Returns the best focusable element for the given [data-tree-primary] marker.
@@ -202,6 +235,27 @@ function handleKeydown(event: KeyboardEvent) {
     >
         <h2 v-if="heading" :id="id" class="g-tree-menu__title">{{ heading }}</h2>
         <div class="g-tree-menu__divider"></div>
+        <button
+            v-if="showExpandAll"
+            class="g-tree-menu__expand-all-btn"
+            @click="toggleExpandAll"
+        >
+            <svg
+                class="g-tree-menu__expand-all-icon"
+                :class="{ 'g-tree-menu__expand-all-icon--collapse': allExpanded }"
+                role="none presentation"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <polyline points="7 8 12 13 17 8" />
+                <polyline points="7 13 12 18 17 13" />
+            </svg>
+            {{ allExpanded ? "Collapse all" : "Expand all" }}
+        </button>
         <div class="g-tree-menu__content">
             <slot />
         </div>
@@ -291,6 +345,49 @@ function handleKeydown(event: KeyboardEvent) {
 
 .g-tree-menu__content {
     margin-top: 1rem;
+}
+
+.g-tree-menu__expand-all-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25em;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.85em;
+    font-weight: 600;
+    padding: 0.35em 0.5em;
+    margin: 0.75rem 2rem 0;
+    border-radius: 2px;
+    color: inherit;
+}
+
+.g-tree-menu__expand-all-btn:hover {
+    color: var(--g-accent-500);
+}
+
+.g-tree-menu__expand-all-btn:focus-visible {
+    background: var(--ilw-color--focus--background);
+    color: var(--ilw-color--focus--text);
+    outline-color: var(--g-primary-500);
+}
+
+.g-tree-menu__expand-all-icon {
+    width: 1.2em;
+    height: 1.2em;
+    flex-shrink: 0;
+    transition: transform 0.15s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .g-tree-menu__expand-all-icon {
+        transition: none;
+    }
+}
+
+.g-tree-menu__expand-all-icon--collapse {
+    transform: rotate(180deg);
 }
 
 g-tree-menu:not(:defined) {
