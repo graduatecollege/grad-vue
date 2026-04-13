@@ -362,6 +362,10 @@ const id = useId();
 </template>
 
 <style>
+g-search {
+    display: block;
+}
+
 .g-search {
     position: relative;
     min-width: 200px;

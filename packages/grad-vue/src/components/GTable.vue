@@ -621,6 +621,12 @@ watch(
     </div>
 </template>
 
+<style>
+g-table {
+    display: block;
+}
+</style>
+
 <style scoped>
 .g-table-outer-wrap {
 }

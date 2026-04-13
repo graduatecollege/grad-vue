@@ -12,7 +12,7 @@
             max-width: 800px;
             margin: 0 auto;
             line-height: 1.5;
-            --g-toolbar-height: 0;
+            padding-top: var(--g-toolbar-height);
         }
         section {
             margin-bottom: 2rem;
@@ -74,35 +74,83 @@
         g-tree-menu-item g-tree-menu-item {
             font-size: 0.875rem;
         }
+
+        .comparison-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1rem;
+            align-items: start;
+        }
+
+        .comparison-card {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: #fff;
+            padding: 0.75rem;
+        }
+
+        .comparison-card h3 {
+            margin: 0 0 0.75rem;
+            font-size: 1rem;
+            color: var(--g-primary-500);
+        }
+
+        .wc-fallback-sidebar-menu {
+            margin-top: 1rem;
+            padding: 0 2rem;
+        }
+
+        .wc-fallback-sidebar-menu h2 {
+            margin: 2rem 0 0.5rem;
+            padding-bottom: 0.65rem;
+            font-size: 2rem;
+            line-height: 1.1;
+            font-family: var(--il-font-heading);
+            color: var(--g-primary-500);
+            background-image: linear-gradient(var(--g-accent-500), var(--g-accent-500));
+            background-repeat: no-repeat;
+            background-size: 60px 4px;
+            background-position: left bottom;
+        }
+
+        .wc-fallback-sidebar-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0 0;
+        }
+
+        .wc-fallback-sidebar-menu li {
+            margin: 0;
+        }
+
+        .wc-fallback-sidebar-menu a {
+            display: block;
+            padding: 0.5rem calc(2rem - 8px);
+            border-left: 8px solid transparent;
+            text-decoration: none;
+            color: var(--g-primary-500);
+            font-size: 1.125rem;
+            font-weight: 700;
+        }
+
+        .wc-fallback-sidebar-menu a:hover {
+            text-decoration: underline;
+            color: var(--g-accent-700);
+        }
     </style>
 </head>
 <body>
+    <g-app-header brand="GRAD" illinois>
+        <a slot="title" href="#" class="app-name">Web Components Showcase</a>
+        <g-button slot="app-controls" id="header-help" size="small" theme="primary">Help</g-button>
+    </g-app-header>
+
     <h1>grad-vue Web Components Test</h1>
     <p>Testing the built web components version of <code>grad-vue</code>.</p>
 
     <g-hamburger-menu sidebar-key="wc-sidebar"></g-hamburger-menu>
     <g-sidebar theme="light" sidebar-key="wc-sidebar">
-        <g-tree-menu title="Navigation" theme="light">
-            <g-tree-menu-list>
-                <g-tree-menu-item label="Getting Started">
-                    Getting Started
-                    <g-tree-menu-item slot="children"><a href="#overview">Overview</a></g-tree-menu-item>
-                    <g-tree-menu-item slot="children"><a href="#setup">Setup</a></g-tree-menu-item>
-                </g-tree-menu-item>
-                <g-tree-menu-item label="Components">
-                    Components
-                    <g-tree-menu-item slot="children"><a href="#buttons">Buttons</a></g-tree-menu-item>
-                    <g-tree-menu-item slot="children"><a href="#inputs">Inputs</a></g-tree-menu-item>
-                    <g-tree-menu-item slot="children" label="Navigation">
-                        Navigation
-                        <g-tree-menu-item slot="children"><a href="#sidebar">Sidebar</a></g-tree-menu-item>
-                        <g-tree-menu-item slot="children"><a href="#tree-menu">Tree Menu</a></g-tree-menu-item>
-                    </g-tree-menu-item>
-                </g-tree-menu-item>
-                <g-tree-menu-item><a href="#table">Table</a></g-tree-menu-item>
-            </g-tree-menu-list>
-        </g-tree-menu>
-        <g-tree-menu title="Chapters" theme="light" class="chapters-menu">
+        <g-tree-menu heading="Chapters" theme="light" class="chapters-menu">
             <g-tree-menu-list>
                 <g-tree-menu-item class="chapter-item">
                     <a href="#">
@@ -180,6 +228,28 @@
         </g-tree-menu>
     </g-sidebar>
     <section>
+        <h2>Sidebar Menu</h2>
+        <p>Comparing component-rendered menu with a static fallback list.</p>
+        <div class="comparison-row">
+            <div class="comparison-card">
+                <h3>GSidebarMenu Component</h3>
+                <g-sidebar-menu id="sidebar-menu-demo" heading="Section Links" theme="light" compact>
+                    <nav class="wc-fallback-sidebar-menu" aria-label="Section Links">
+                        <h2>Section Links</h2>
+                        <ul>
+                            <li><a href="#buttons">Buttons</a></li>
+                            <li><a href="#inputs">Inputs</a></li>
+                            <li><a href="#table">Table</a></li>
+                            <li><a href="#detail-list">Detail List</a></li>
+                            <li><a href="#popover-compare">Popover Compare</a></li>
+                        </ul>
+                    </nav>
+                </g-sidebar-menu>
+            </div>
+        </div>
+    </section>
+
+    <section id="buttons">
         <h2>Buttons</h2>
         <div class="controls">
             <g-button id="btn-primary" theme="primary">Primary Button</g-button>
@@ -202,7 +272,7 @@
         </div>
     </section>
 
-    <section>
+    <section id="inputs">
         <h2>Inputs</h2>
         <g-text-input 
             id="text-input"
@@ -220,6 +290,47 @@
             ></g-currency-input>
     </section>
 
+    <section id="detail-list">
+        <h2>Detail List</h2>
+        <div class="comparison-row">
+            <div class="comparison-card">
+                <h3>Grid Variant</h3>
+                <g-detail-list>
+                    <g-detail-list-item label="Program">Computer Science</g-detail-list-item>
+                    <g-detail-list-item label="Term">Fall 2026</g-detail-list-item>
+                    <g-detail-list-item label="Status">Admitted</g-detail-list-item>
+                    <g-detail-list-item label="Advisor">Dr. Rivera</g-detail-list-item>
+                </g-detail-list>
+            </div>
+            <div class="comparison-card">
+                <h3>Vertical Variant</h3>
+                <g-detail-list variant="vertical">
+                    <g-detail-list-item label="Student ID">A1234567</g-detail-list-item>
+                    <g-detail-list-item label="Concentration">Data Science</g-detail-list-item>
+                    <g-detail-list-item label="Credit Hours">12</g-detail-list-item>
+                </g-detail-list>
+            </div>
+        </div>
+    </section>
+
+    <section id="popover-compare">
+        <h2>Popover Comparison</h2>
+        <div class="controls">
+            <g-popover id="popover-inline-demo">
+                <g-button slot="trigger" id="popover-inline-trigger" theme="accent" size="small">Inline Trigger Popover</g-button>
+                <h3>Inline Popover</h3>
+                <p>Opened with a trigger slot inside the component.</p>
+            </g-popover>
+
+            <g-button id="open-minimal-popover" theme="primary" size="small">Open Minimal Popover</g-button>
+            <g-popover id="minimal-popover-demo" minimal>
+                <div style="padding: 0.75rem 1rem; min-width: 180px;">
+                    Minimal popover content.
+                </div>
+            </g-popover>
+        </div>
+    </section>
+
     <section>
         <h2>Form (web component channel)</h2>
         <g-form id="wc-form" form-key="wc-form" method="post">
@@ -233,7 +344,7 @@
         </g-form>
     </section>
 
-    <section>
+    <section id="table">
         <h2>Table</h2>
         <p>This table's items are set via JavaScript properties.</p>
         <g-table id="test-table" start-index="0"></g-table>
@@ -337,6 +448,25 @@
         document.getElementById('open-programmatic-popover').addEventListener('click', () => {
             document.getElementById('programmatic-popover').show();
         });
+
+        document.getElementById('open-minimal-popover').addEventListener('click', () => {
+            document.getElementById('minimal-popover-demo').show();
+        });
+
+        document.getElementById('header-help').addEventListener('click', () => {
+            log('Header Help clicked');
+            document.getElementById('popover-inline-demo').toggle();
+        });
+
+        const sidebarMenuDemo = document.getElementById('sidebar-menu-demo');
+        sidebarMenuDemo.items = [
+            { label: 'Buttons', href: '#buttons' },
+            { label: 'Inputs', href: '#inputs' },
+            { label: 'Detail List', href: '#detail-list' },
+            { label: 'Popover Compare', href: '#popover-compare' },
+            { label: 'Table', href: '#table' },
+        ];
+        sidebarMenuDemo.spy = false;
 
         const form = document.getElementById('wc-form');
         form.addEventListener('submit', (e) => {

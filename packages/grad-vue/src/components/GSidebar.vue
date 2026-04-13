@@ -151,20 +151,29 @@ function handleEscapeKey(event: KeyboardEvent) {
     </div>
 </template>
 
-<style scoped>
+<style>
+g-sidebar,
 .g-sidebar {
     box-sizing: border-box;
     background-size: cover;
     background-position: top;
+    background-image: url('https://gradcdn.blob.core.windows.net/public/sidebar-bg2.jpg');
+    background-color: #030913;
     position: fixed;
     left: 0;
     /*noinspection CssUnresolvedCustomProperty*/
-    top: var(--g-sidebar-top-offset);
+    top: var(--g-sidebar-top-offset, var(--g-toolbar-height));
     bottom: 0;
     /*noinspection CssUnresolvedCustomProperty*/
     width: var(--g-sidebar-width, 300px);
     overflow-y: auto;
 }
+
+g-sidebar[theme="light"] {
+    background-image: none;
+    background-color: #f9f9f9;
+}
+
 .g-sidebar--open {
     transition: opacity 0.1s ease-out;
     opacity: 1;

@@ -214,6 +214,12 @@ const selectedFileNames = computed(() => model.value.map((f) => f.name));
     </div>
 </template>
 
+<style>
+g-file-input {
+    display: block;
+}
+</style>
+
 <style scoped>
 .g-file-input-wrap {
     position: relative;

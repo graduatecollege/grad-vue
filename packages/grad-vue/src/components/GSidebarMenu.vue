@@ -239,13 +239,19 @@ const id = useId();
     </nav>
 </template>
 
-<style scoped>
+<style>
+g-sidebar-menu,
 .g-sidebar-menu {
     box-sizing: border-box;
     padding-top: 2rem;
-    color: var(--g-surface-0);
     display: flex;
     flex-direction: column;
+}
+</style>
+
+<style scoped>
+.g-sidebar-menu {
+    color: var(--g-surface-0);
 }
 .g-sidebar-menu__title {
     margin: 2rem 2rem 0.5rem;

@@ -547,6 +547,12 @@ function clearValue() {
     </div>
 </template>
 
+<style>
+g-select {
+    display: block;
+}
+</style>
+
 <style scoped>
 .g-select-root {
     position: relative;

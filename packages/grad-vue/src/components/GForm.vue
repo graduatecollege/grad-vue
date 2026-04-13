@@ -128,6 +128,12 @@ async function handleSubmit(e: Event) {
     </form>
 </template>
 
+<style>
+g-form {
+    display: block;
+}
+</style>
+
 <style scoped>
 .g-form {
     display: flex;

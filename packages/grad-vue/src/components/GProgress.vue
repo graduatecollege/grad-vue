@@ -131,6 +131,13 @@ const ariaProps = computed(() =>
     </span>
 </template>
 
+<style>
+g-progress {
+    display: inline-block;
+    vertical-align: middle;
+}
+</style>
+
 <style scoped>
 .g-progress {
     display: inline-block;

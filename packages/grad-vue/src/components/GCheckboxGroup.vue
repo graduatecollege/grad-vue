@@ -241,6 +241,12 @@ function inputAriaAttrs(option: CheckboxOption, index: number): Record<string, s
     </component>
 </template>
 
+<style>
+g-checkbox-group {
+    display: block;
+}
+</style>
+
 <style scoped>
 .g-checkbox-group {
     border: none;

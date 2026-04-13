@@ -178,9 +178,9 @@ button.addEventListener('click', () => {
 - **Vue.js Runtime**: The `grad-vue-elements.js` file includes a minimal Vue runtime required to power the components.
   You do not need to include Vue separately.
 - **No Shadow DOM**: Custom elements render without Shadow DOM so that component CSS works naturally with the rest of
-  the page. Component styles are collected and injected into a `<style data-grad-vue-elements>` tag in the document
-  head. The `grad-vue-elements.css` file contains global styles and CSS custom properties (variables) used by the
-  components.
+  the page. The `grad-vue-elements.css` file contains all styles – both global CSS custom properties
+  (variables) and per-component styles (including scoped selectors). Load it via a `<link>` tag
+  in the document `<head>` to avoid any flash of unstyled content.
 - **Attributes vs Props**: Primitive types (strings, booleans, numbers) can be passed as attributes. For complex types
   like arrays or objects, you should set them as properties via JavaScript:
   ```javascript

@@ -206,10 +206,51 @@ function handleKeydown(event: KeyboardEvent) {
 <style>
 
 @layer base {
+    g-tree-menu,
     .g-tree-menu {
         font-size: 1.125rem;
         line-height: 1.2;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
     }
+
+    g-tree-menu {
+        color: var(--g-surface-0);
+    }
+
+    g-tree-menu[theme="light"] {
+        background: var(--g-surface-50);
+        color: var(--g-primary-500);
+    }
+
+    g-tree-menu[theme="light"] a {
+        color: var(--g-primary-500);
+    }
+
+    g-tree-menu[theme="dark"] a {
+        color: var(--g-surface-0);
+    }
+
+    g-tree-menu g-tree-menu-item {
+        margin: 0.25rem 0;
+    }
+
+    g-tree-menu g-tree-menu-item[slot="children"] {
+        padding-left: 1.25em;
+        font-size: 0.95em;
+        font-weight: 600;
+    }
+
+    g-tree-menu g-tree-menu-item > a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    g-tree-menu g-tree-menu-item > a:hover {
+        text-decoration: underline;
+    }
+
 }
 
 .g-tree-menu--dark {
@@ -254,16 +295,8 @@ function handleKeydown(event: KeyboardEvent) {
         background: var(--g-primary-500);
     }
 }
-</style>
 
-<style scoped>
-.g-tree-menu {
-    box-sizing: border-box;
-    padding-top: 2rem;
-    display: flex;
-    flex-direction: column;
-}
-:deep(.g-tree-menu__row-content) {
+.g-tree-menu .g-tree-menu__row-content {
     display: flex;
     align-items: stretch;
     flex: 1;
@@ -283,7 +316,7 @@ function handleKeydown(event: KeyboardEvent) {
     }
 }
 
-:deep(.g-tree-menu__row:not(.g-tree-menu__row--leaf) .g-tree-menu__row-content) {
+.g-tree-menu .g-tree-menu__row:not(.g-tree-menu__row--leaf) .g-tree-menu__row-content {
     cursor: pointer;
 }
 
@@ -304,6 +337,35 @@ function handleKeydown(event: KeyboardEvent) {
 
 .g-tree-menu__content {
     margin-top: 1rem;
+}
+
+g-tree-menu:not(:defined) {
+    padding-top: 0;
+}
+
+g-tree-menu:not(:defined) g-tree-menu-list {
+    display: block;
+    margin-top: 1rem;
+    padding: 0 2rem;
+}
+
+g-tree-menu:not(:defined) g-tree-menu-item {
+    margin: 0.4rem 0;
+}
+
+g-tree-menu:not(:defined)[heading]::before {
+    content: attr(heading);
+    display: block;
+    margin: 2rem 2rem 0.5rem;
+    padding-bottom: 0.65rem;
+    font-size: 2rem;
+    line-height: 1.1;
+    font-family: var(--il-font-heading);
+    font-weight: 700;
+    background-image: linear-gradient(var(--g-accent-500), var(--g-accent-500));
+    background-repeat: no-repeat;
+    background-size: 60px 4px;
+    background-position: left bottom;
 }
 
 </style>

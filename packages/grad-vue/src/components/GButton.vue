@@ -152,6 +152,10 @@ const classes = computed(() => [
 </template>
 
 <style>
+g-button {
+    display: inline-block;
+}
+
 .g-btn {
     display: inline-flex;
     align-items: center;

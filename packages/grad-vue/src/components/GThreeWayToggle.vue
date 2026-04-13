@@ -205,6 +205,12 @@ function onLabelKeydown(e: KeyboardEvent) {
     </div>
 </template>
 
+<style>
+g-three-way-toggle {
+    display: block;
+}
+</style>
+
 <style scoped>
 .g-three-way-toggle-control {
     display: flex;

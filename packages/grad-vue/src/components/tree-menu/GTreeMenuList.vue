@@ -36,21 +36,30 @@ const resolvedListType = computed(
     </component>
 </template>
 
-<style scoped>
-
-.g-tree-menu__list{
+<style>
+g-tree-menu-list,
+.g-tree-menu__list {
     list-style: none;
     margin: 0;
     padding: 0;
     font-weight: bold;
-
-    :deep(ul), :deep(ol) {
-        font-weight: 600 !important;
-    }
+    display: block;
+}
+.g-tree-menu__list ul,
+.g-tree-menu__list ol {
+    font-weight: 600 !important;
 }
 
-.g-tree-menu__list :deep(.g-tree-menu__list){
+.g-tree-menu__list .g-tree-menu__list {
     padding-left: 1.25em;
+}
+
+g-tree-menu-list > g-tree-menu-item {
+    margin-top: 0.4em;
+}
+
+g-tree-menu-list > g-tree-menu-item:first-of-type {
+    margin-top: 0;
 }
 
 </style>

@@ -239,6 +239,12 @@ function onPaste(e: ClipboardEvent) {
     </div>
 </template>
 
+<style>
+g-textarea {
+    display: block;
+}
+</style>
+
 <style scoped>
 .g-textarea-wrap {
     position: relative;

@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import { resolve } from "path";
+import { extractCustomElementStyles } from "./vite-plugin-extract-ce-styles.ts";
 
 export default defineConfig({
     plugins: [
@@ -9,6 +10,7 @@ export default defineConfig({
                 customElement: true,
             },
         }),
+        extractCustomElementStyles(),
     ],
     define: {
         "process.env.NODE_ENV": JSON.stringify("production"),

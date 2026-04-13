@@ -79,8 +79,42 @@ const props = withDefaults(defineProps<Props>(), {
 </template>
 
 <style>
+
+@layer base {
+    :root {
+        --g-toolbar-height: 48px;
+    }
+}
+
 html {
     scroll-padding-top: 70px;
+}
+
+g-app-header:not(:defined),
+.g-app-header {
+    box-sizing: border-box;
+    background-color: var(--g-surface-100);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    z-index: 2;
+    height: var(--g-toolbar-height);
+    border-bottom: 2px solid var(--g-accent-500);
+    box-shadow:
+        0px 1px 2px 0px rgba(0, 0, 0, 0.25),
+        0px 1px 10px 5px rgba(0, 0, 0, 0.08);
+}
+
+g-app-header:not(:defined) > [slot="title"] {
+    margin: 0;
+    margin-left: calc(78px + 20px);
+}
+
+g-app-header:not(:defined)[illinois] > [slot="title"] {
+    margin-left: calc(78px + 48px + 20px);
 }
 
 .g-app-header {
@@ -138,22 +172,8 @@ a.app-name {
 
 <style scoped>
 .g-app-header {
-    box-sizing: border-box;
-    background-color: var(--g-surface-100);
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
     /*noinspection CssUnresolvedCustomProperty*/
     padding-right: var(--g-scrollbar-width, 0px);
-    display: flex;
-    align-items: center;
-    z-index: 2;
-    height: var(--g-toolbar-height);
-    border-bottom: 2px solid var(--g-accent-500);
-    box-shadow:
-        0px 1px 2px 0px rgba(0, 0, 0, 0.25),
-        0px 1px 10px 5px rgba(0, 0, 0, 0.08);
 }
 
 .g-app-header__background {

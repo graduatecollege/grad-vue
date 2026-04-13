@@ -245,6 +245,12 @@ function onKeydown(e: KeyboardEvent) {
     </div>
 </template>
 
+<style>
+g-text-input {
+    display: block;
+}
+</style>
+
 <style scoped>
 .g-text-input-wrap {
     position: relative;
