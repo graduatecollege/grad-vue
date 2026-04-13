@@ -1836,6 +1836,10 @@ type Props = {
      * the `label` prop.
      */
     storageKey?: string;
+    /**
+     * Show an expand/collapse all button
+     */
+    showExpandAll?: boolean;
 };
 ```
 

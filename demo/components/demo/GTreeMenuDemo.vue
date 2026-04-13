@@ -34,6 +34,11 @@ import { GTreeMenu, GTreeMenuList, GTreeMenuItem } from "@illinois-grad/grad-vue
                         'light',
                         'dark'
                     ]
+                },
+                showExpandAll: {
+                    type: 'boolean',
+                    label: 'Show an expand/collapse all button',
+                    default: false
                 }
             }"
         >
@@ -78,6 +83,10 @@ import { GTreeMenu, GTreeMenuList, GTreeMenuItem } from "@illinois-grad/grad-vue
 <span class="line"><span style="color:#008000">     * When provided, expanded/collapsed states are saved to `sessionStorage` under this key and restored on page load. Item states are keyed by each the `label` prop.</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    storageKey</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Show an expand/collapse all button</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    showExpandAll</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#000000">};</span></span></code></pre>
 </figure>
 
