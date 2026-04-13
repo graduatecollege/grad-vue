@@ -56,8 +56,7 @@ const expandedStorage = inject<Ref<Record<string, boolean>> | null>(
 
 function resolveInitialExpanded(): boolean {
     if (expandedStorage && props.label !== undefined) {
-        const stored = expandedStorage.value[props.label];
-        if (stored !== undefined) return stored;
+        if (expandedStorage.value[props.label] === true) return true;
     }
     return props.expanded;
 }
@@ -74,7 +73,11 @@ watch(
 
 watch(isExpanded, (val) => {
     if (expandedStorage && props.label !== undefined) {
-        expandedStorage.value[props.label] = val;
+        if (val) {
+            expandedStorage.value[props.label] = true;
+        } else {
+            delete expandedStorage.value[props.label];
+        }
     }
 });
 
@@ -113,6 +116,7 @@ function handleContentKeydown(event: KeyboardEvent) {
                 :aria-expanded="isExpanded ? 'true' : 'false'"
                 :aria-label="label ? `${label} sub-menu` : 'Sub-menu'"
                 @click="toggle"
+                tabindex="-1"
             >
                 <svg
                     class="g-tree-menu__chevron"
