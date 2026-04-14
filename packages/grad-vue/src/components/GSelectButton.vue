@@ -158,9 +158,6 @@ function onChange(val: string | number) {
 g-select-button {
     display: block;
 }
-</style>
-
-<style scoped>
 .g-select-btn-group {
     border: none;
     margin: 0;
@@ -258,3 +255,4 @@ g-select-button {
     background: var(--g-danger-100);
 }
 </style>
+

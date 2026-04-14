@@ -159,9 +159,6 @@ watch(
 g-date-range-input {
     display: block;
 }
-</style>
-
-<style scoped>
 .g-date-range-input {
     display: flex;
     flex-direction: column;
@@ -206,3 +203,4 @@ g-date-range-input {
     padding: 0.25em 0.5em;
 }
 </style>
+

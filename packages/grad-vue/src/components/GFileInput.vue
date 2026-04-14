@@ -218,9 +218,6 @@ const selectedFileNames = computed(() => model.value.map((f) => f.name));
 g-file-input {
     display: block;
 }
-</style>
-
-<style scoped>
 .g-file-input-wrap {
     position: relative;
     display: flex;
@@ -365,3 +362,4 @@ g-file-input {
     opacity: 0.7;
 }
 </style>
+

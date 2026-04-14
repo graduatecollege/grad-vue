@@ -152,7 +152,7 @@ function handleEscapeKey(event: KeyboardEvent) {
 </template>
 
 <style>
-g-sidebar,
+g-sidebar:not(:defined),
 .g-sidebar {
     box-sizing: border-box;
     background-size: cover;

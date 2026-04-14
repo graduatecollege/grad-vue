@@ -127,11 +127,25 @@ g-app-header:not(:defined)[illinois] > [slot="title"] {
 
     .g-app-header__title > * {
         font-size: 20px;
-        font-family: "Source Sans";
+        font-family: var(--il-font-sans);
         font-style: normal;
         line-height: 30px;
         color: var(--g-primary-500);
         margin: 0;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .g-app-header__title {
+
+        a {
+            color: var(--g-primary-500);
+
+            &:hover {
+                text-decoration: underline;
+                color: var(--g-accent-700);
+            }
+        }
     }
 
     .g-app-header__app-controls-wrap {
@@ -139,38 +153,6 @@ g-app-header:not(:defined)[illinois] > [slot="title"] {
     }
 }
 
-.app-name {
-    color: var(--g-primary-500);
-    font-size: 1.25rem;
-    font-family: "Source Sans";
-    font-style: normal;
-    font-weight: 700;
-    line-height: 1.875rem;
-    margin: 0 10px 0 20px;
-    text-decoration: none;
-
-    a {
-        color: var(--g-primary-500);
-
-        &:hover {
-            text-decoration: underline;
-            color: var(--g-accent-700);
-        }
-    }
-
-    @media screen and (max-width: 640px) {
-        display: none;
-    }
-}
-a.app-name {
-    &:hover {
-        text-decoration: underline;
-        color: var(--g-accent-700);
-    }
-}
-</style>
-
-<style scoped>
 .g-app-header {
     /*noinspection CssUnresolvedCustomProperty*/
     padding-right: var(--g-scrollbar-width, 0px);
@@ -200,20 +182,6 @@ a.app-name {
     opacity: 0.5;
 }
 
-.darkmode {
-    .g-app-header__background-pattern {
-
-    }
-
-    .g-app-header__block-i-container {
-        background: var(--il-orange);
-    }
-
-    .g-app-header__block-i-fill {
-        fill: var(--il-blue);
-    }
-}
-
 .g-app-header__background-gradient {
     position: absolute;
     top: 0;
@@ -231,7 +199,7 @@ a.app-name {
     min-width: 1rem;
     margin-top: 2px;
 
-    &:deep(a) {
+    & a {
         text-decoration: none;
         padding: 10px 15px;
         font-family: var(--il-font-montserrat);
@@ -287,3 +255,4 @@ a.app-name {
     }
 }
 </style>
+

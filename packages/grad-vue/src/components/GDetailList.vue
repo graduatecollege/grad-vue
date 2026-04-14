@@ -45,9 +45,6 @@ g-detail-list,
     margin: 0;
     display: block;
 }
-</style>
-
-<style scoped>
 .g-detail-list--grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(var(--g-detail-list-item-min-width, 10rem), var(--g-detail-list-item-max-width, 1fr)));
@@ -56,14 +53,14 @@ g-detail-list,
     align-items: start;
 }
 
-.g-detail-list--grid :deep(.g-detail-list-item) {
+.g-detail-list--grid .g-detail-list-item {
     display: flex;
     flex-direction: column;
     border-left: 2px solid var(--g-accent-500);
     padding-left: 0.75rem;
 }
 
-.g-detail-list--grid :deep(.g-detail-list-item__label) {
+.g-detail-list--grid .g-detail-list-item__label {
     font-size: 0.875rem;
 }
 
@@ -72,7 +69,7 @@ g-detail-list,
     flex-direction: column;
 }
 
-.g-detail-list--vertical :deep(.g-detail-list-item) {
+.g-detail-list--vertical .g-detail-list-item {
     display: grid;
     grid-template-columns: minmax(0, 12rem) minmax(0, 1fr);
     column-gap: 1rem;
@@ -81,17 +78,18 @@ g-detail-list,
     border-bottom: 1px solid var(--g-surface-200);
 }
 
-.g-detail-list--vertical :deep(.g-detail-list-item:last-child) {
+.g-detail-list--vertical .g-detail-list-item:last-child {
     border-bottom: none;
 }
 
-.g-detail-list--vertical :deep(.g-detail-list-item__label) {
+.g-detail-list--vertical .g-detail-list-item__label {
     font-size: 1rem;
     align-self: start;
 }
 
-.g-detail-list--vertical :deep(.g-detail-list-item__value) {
+.g-detail-list--vertical .g-detail-list-item__value {
     justify-self: end;
     text-align: right;
 }
 </style>
+

@@ -46,7 +46,7 @@ defineProps<Props>();
     </div>
 </template>
 
-<style scoped>
+<style>
 .g-form-error-messages {
     display: flex;
     flex-direction: column;

@@ -249,9 +249,6 @@ function onKeydown(e: KeyboardEvent) {
 g-text-input {
     display: block;
 }
-</style>
-
-<style scoped>
 .g-text-input-wrap {
     position: relative;
     display: flex;
@@ -317,3 +314,4 @@ g-text-input {
     background: var(--g-surface-100);
 }
 </style>
+

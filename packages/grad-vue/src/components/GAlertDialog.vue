@@ -118,7 +118,7 @@ onBeforeMount(() => {
     </Teleport>
 </template>
 
-<style scoped>
+<style>
 .g-alertdialog {
     position: fixed;
     left: 50vw;
