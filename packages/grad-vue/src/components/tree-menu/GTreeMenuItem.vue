@@ -59,6 +59,9 @@ const expandedStorage = inject<Ref<Record<string, boolean>> | null>(
 function resolveInitialExpanded(): boolean {
     if (expandedStorage && props.label !== undefined) {
         if (expandedStorage.value[props.label] === true) return true;
+        if (props.expanded) {
+            expandedStorage.value[props.label] = true;
+        }
     }
     return props.expanded;
 }
