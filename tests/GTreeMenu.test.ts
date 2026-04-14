@@ -1047,6 +1047,29 @@ describe("GTreeMenu", () => {
                 .toBeVisible();
         });
 
+        it("force-expanded item writes its state to sessionStorage on mount", async () => {
+            slotMenu(
+                { heading: "Contents", storageKey: STORAGE_KEY },
+                [
+                    h(
+                        GTreeMenuItem,
+                        { label: "Chapter 1", expanded: true },
+                        {
+                            default: () => h("button", null, "Chapter 1"),
+                            children: () => [
+                                h(GTreeMenuItem, null, () =>
+                                    h("a", { href: "#ch1/s1" }, "Section 1.1"),
+                                ),
+                            ],
+                        },
+                    ),
+                ],
+            );
+
+            const stored = JSON.parse(sessionStorage.getItem(STORAGE_KEY)!);
+            expect(stored["Chapter 1"]).toBe(true);
+        });
+
         it("stored true state takes precedence over expanded=false prop", async () => {
             sessionStorage.setItem(
                 STORAGE_KEY,
