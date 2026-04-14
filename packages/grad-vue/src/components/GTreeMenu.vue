@@ -22,6 +22,13 @@
  * </GTreeMenu>
  * ```
  *
+ * > [!IMPORTANT]
+ * > All items must have a focusable element for proper accessibility. If there
+ * > is no link, it should be a button.
+ * >
+ * > To support progressive enhancement, the component applies ARIA attributes
+ * > to the focusable elements in your HTML.
+ *
  * **Props**:
  *
  * - `heading` - optional heading and accessible name for the nav landmark.
