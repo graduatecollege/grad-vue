@@ -132,13 +132,10 @@ const ariaProps = computed(() =>
 </template>
 
 <style>
-g-progress {
+g-progress:not(:defined) {
     display: inline-block;
     vertical-align: middle;
 }
-</style>
-
-<style scoped>
 .g-progress {
     display: inline-block;
     vertical-align: middle;
@@ -183,3 +180,4 @@ g-progress {
     }
 }
 </style>
+

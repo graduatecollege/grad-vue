@@ -92,10 +92,8 @@ const isSubmitting = computed(() => {
 g-submit-button {
     display: inline-block;
 }
-</style>
-
-<style scoped>
 .g-submit-button {
     align-self: flex-start;
 }
 </style>
+

@@ -66,15 +66,15 @@ const term = defineModel<{year: string, name: string}>({
                     </span>
                 </GButton>
             </template>
-            <h2 class="popover-title" tabindex="-1">{{ heading}}</h2>
+            <h2 class="g-popover-title" tabindex="-1">{{ heading}}</h2>
             <GTermSelectorControl v-bind="$props" />
         </GPopover>
     </div>
 </template>
 
-<style scoped>
+<style>
 
-.popover-title {
+.g-popover-title {
     font-size: 1rem;
     display: block;
     margin: -1.5rem -1rem 0;

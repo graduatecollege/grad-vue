@@ -176,14 +176,11 @@ defineExpose({ focusInput });
         }
     }
 }
-</style>
-
-<style scoped>
 .bubble-menu {
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
     background-color: var(--g-surface-100);
 
-    :deep(button) {
+    button {
         &:first-child {
             border-top-left-radius: 4px;
             border-bottom-left-radius: 4px;
@@ -253,3 +250,4 @@ defineExpose({ focusInput });
     }
 }
 </style>
+

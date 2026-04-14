@@ -63,7 +63,7 @@ const term = defineModel<{year: string, name: string}>({
     </div>
 </template>
 
-<style scoped>
+<style>
 .year-dropdown {
     display: flex;
     justify-content: left;

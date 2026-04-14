@@ -243,9 +243,6 @@ function onPaste(e: ClipboardEvent) {
 g-textarea {
     display: block;
 }
-</style>
-
-<style scoped>
 .g-textarea-wrap {
     position: relative;
     display: flex;
@@ -308,3 +305,4 @@ g-textarea {
     margin-top: 0.25em;
 }
 </style>
+

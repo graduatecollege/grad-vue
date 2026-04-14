@@ -174,7 +174,7 @@ const useClasses = computed(() => {
     </Teleport>
 </template>
 
-<style scoped>
+<style>
 .g-modal {
     position: fixed;
     left: 50vw;

@@ -106,7 +106,7 @@ const fallbackId = useId();
 </template>
 
 <style>
-g-hamburger-menu {
+g-hamburger-menu:not(:defined) {
     display: none;
 }
 
@@ -115,9 +115,6 @@ g-hamburger-menu {
         width: 1.6rem;
     }
 }
-</style>
-
-<style scoped>
 .g-hamburger-button {
     width: 34px;
     height: 34px;

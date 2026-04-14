@@ -463,9 +463,6 @@ const describedBy = computed(() => {
 g-multi-select {
     display: block;
 }
-</style>
-
-<style scoped>
 .g-multiselect-root {
     position: relative;
     font-size: 1rem;
@@ -684,7 +681,7 @@ g-multi-select {
     width: 1.25em;
     flex-shrink: 0;
 }
-.g-multiselect-option-check :deep(svg) {
+.g-multiselect-option-check svg {
     display: block;
     fill: currentColor;
 }
@@ -696,3 +693,4 @@ g-multi-select {
     font-style: italic;
 }
 </style>
+

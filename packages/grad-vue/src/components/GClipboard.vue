@@ -90,9 +90,6 @@ const handleTooltipHide = () => {
 g-clipboard {
     display: inline-block;
 }
-</style>
-
-<style scoped>
 .g-clipboard-text-button {
     display: inline-flex;
     align-items: center;
@@ -120,8 +117,9 @@ g-clipboard {
         outline-color: var(--g-primary-500);
     }
 
-    :deep(span) {
+    span {
         display: block;
     }
 }
 </style>
+
