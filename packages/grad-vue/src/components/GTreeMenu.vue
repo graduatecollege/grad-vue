@@ -90,11 +90,9 @@ provide("g-tree-menu-expanded-storage", expandedStorage);
 
 /**
  * Returns the best focusable element for the given [data-tree-primary] marker.
- * If the marker contains an `<a>`, focus that. If the marker is itself a button,
- * focus that. Otherwise fall back to the marker (which should have tabindex).
  */
 function getFocusTarget(primary: HTMLElement): HTMLElement {
-    const anchor = primary.querySelector<HTMLElement>("a");
+    const anchor = primary.querySelector<HTMLElement>("a, button, [tabindex='0']");
     if (anchor) return anchor;
     return primary;
 }
@@ -259,15 +257,6 @@ function handleKeydown(event: KeyboardEvent) {
     .g-tree-menu__title {
         color: var(--g-surface-0);
     }
-
-    .g-tree-menu__toggle-btn,
-    .g-tree-menu__row-content a {
-        color: var(--g-surface-0);
-
-        &:hover {
-            color: var(--g-accent-500);
-        }
-    }
 }
 
 .g-tree-menu--light {
@@ -276,48 +265,6 @@ function handleKeydown(event: KeyboardEvent) {
     .g-tree-menu__title {
         color: var(--g-primary-500);
     }
-
-    .g-tree-menu__toggle-btn,
-    .g-tree-menu__row-content,
-    .g-tree-menu__row-content a {
-        color: var(--g-primary-500);
-
-        &:hover {
-            color: var(--g-accent-700);
-        }
-        &:focus-visible {
-            color: var(--ilw-color--focus--text);
-        }
-    }
-
-    .g-tree-menu__toggle-btn:hover {
-        color: var(--g-surface-0);
-        background: var(--g-primary-500);
-    }
-}
-
-.g-tree-menu .g-tree-menu__row-content {
-    display: flex;
-    align-items: stretch;
-    flex: 1;
-    padding: 0;
-    margin: 4px 0;
-
-    a {
-        display: flex;
-        align-items: center;
-        flex: 1;
-        text-decoration: none;
-        color: inherit;
-
-        &:hover {
-            text-decoration: underline;
-        }
-    }
-}
-
-.g-tree-menu .g-tree-menu__row:not(.g-tree-menu__row--leaf) .g-tree-menu__row-content {
-    cursor: pointer;
 }
 
 .g-tree-menu__title {
@@ -346,7 +293,7 @@ g-tree-menu:not(:defined) {
 g-tree-menu:not(:defined) g-tree-menu-list {
     display: block;
     margin-top: 1rem;
-    padding: 0 2rem;
+    padding: 0 1em 0 2em;
 }
 
 g-tree-menu:not(:defined) g-tree-menu-item {
@@ -357,7 +304,7 @@ g-tree-menu:not(:defined)[heading]::before {
     content: attr(heading);
     display: block;
     margin: 2rem 2rem 0.5rem;
-    padding-bottom: 0.65rem;
+    padding-bottom: 1rem;
     font-size: 2rem;
     line-height: 1.1;
     font-family: var(--il-font-heading);

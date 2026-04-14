@@ -1,7 +1,7 @@
 {
-  "totalComponents": 41,
-  "totalTests": 445,
-  "passedTests": 445,
+  "totalComponents": 42,
+  "totalTests": 453,
+  "passedTests": 453,
   "failedTests": 0,
   "skippedTests": 0,
   "components": {
@@ -3067,13 +3067,6 @@
           ]
         },
         {
-          "title": "parent items with a link render a toggle button alongside",
-          "status": "passed",
-          "ancestors": [
-            "Functional Tests"
-          ]
-        },
-        {
           "title": "clicking chevron toggle expands a linked parent item",
           "status": "passed",
           "ancestors": [
@@ -3277,7 +3270,14 @@
           ]
         },
         {
-          "title": "stored state takes precedence over expanded prop",
+          "title": "stored true state takes precedence over expanded=false prop",
+          "status": "passed",
+          "ancestors": [
+            "Session Storage"
+          ]
+        },
+        {
+          "title": "stored false value (stale) does not override expanded=true prop",
           "status": "passed",
           "ancestors": [
             "Session Storage"
@@ -3324,6 +3324,56 @@
           "ancestors": [
             "Accessibility Tests"
           ]
+        }
+      ]
+    },
+    "GTreeMenuItem": {
+      "component": "GTreeMenuItem",
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed",
+      "tests": [
+        {
+          "title": "should have aria-expanded on the link in the slot when it has children",
+          "status": "passed",
+          "ancestors": []
+        },
+        {
+          "title": "should have aria-expanded on the button in the slot when it has children",
+          "status": "passed",
+          "ancestors": []
+        },
+        {
+          "title": "should NOT have aria-expanded on the link when it has NO children",
+          "status": "passed",
+          "ancestors": []
+        },
+        {
+          "title": "should have aria-expanded on the link when it's wrapped in another element",
+          "status": "passed",
+          "ancestors": []
+        },
+        {
+          "title": "should have aria-expanded on the button when it's wrapped in another element",
+          "status": "passed",
+          "ancestors": []
+        },
+        {
+          "title": "should have aria-expanded on the button when it contains nested elements",
+          "status": "passed",
+          "ancestors": []
+        },
+        {
+          "title": "should have aria-expanded on the link when it's deeply nested",
+          "status": "passed",
+          "ancestors": []
+        },
+        {
+          "title": "should handle multiple focusable elements by picking the first one",
+          "status": "passed",
+          "ancestors": []
         }
       ]
     },

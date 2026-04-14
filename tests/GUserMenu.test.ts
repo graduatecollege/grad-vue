@@ -11,8 +11,8 @@ const J = {
     },
     slots: {
         default: () => [
-            h("a", { href: "/profile" }, "Profile"),
-            h("a", { href: "/settings" }, "Settings"),
+            h("a", { href: "#profile" }, "Profile"),
+            h("a", { href: "#settings" }, "Settings"),
             h("button", { type: "button" }, "Logout"),
         ],
     },
@@ -36,7 +36,7 @@ describe("GUserMenu", () => {
                     label: "Account menu",
                 },
                 slots: {
-                    default: () => h("a", { href: "/profile" }, "Profile"),
+                    default: () => h("a", { href: "#profile" }, "Profile"),
                 },
             });
 

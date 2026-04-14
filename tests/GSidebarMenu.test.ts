@@ -5,7 +5,7 @@ import { page } from "vitest/browser";
 
 describe("GSidebarMenu", () => {
     const menuItems = [
-        { label: "Home", href: "/" },
+        { label: "Home", href: "#" },
         { label: "About", href: "#about" },
     ];
 
