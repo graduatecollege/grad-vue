@@ -3,7 +3,7 @@ export default { name: "GTreeMenuItem" };
 </script>
 
 <script setup lang="ts">
-import { computed, getCurrentInstance, inject, ref, useSlots, watch } from "vue";
+import { computed, getCurrentInstance, inject, onMounted, onUpdated, ref, useId, useSlots, watch } from "vue";
 import type { Ref } from "vue";
 import GTreeMenuList from "./GTreeMenuList.vue";
 
@@ -38,6 +38,8 @@ const emit = defineEmits<{
 
 const slots = useSlots();
 const instance = getCurrentInstance();
+
+const id = useId();
 
 // In CE mode without Shadow DOM, useSlots() doesn't detect slot="children"
 // on child elements. Fall back to checking the CE host's parsed _slots.
@@ -79,7 +81,24 @@ watch(isExpanded, (val) => {
             delete expandedStorage.value[props.label];
         }
     }
+    updateSlotAria();
 });
+
+const contentRef = ref<HTMLElement | null>(null);
+
+function updateSlotAria() {
+    if (!hasChildren.value || !contentRef.value) return;
+    const focusable = contentRef.value.querySelector("a, button");
+    if (focusable) {
+        focusable.setAttribute("aria-controls", id + "-children");
+        focusable.setAttribute("aria-expanded", isExpanded.value ? "true" : "false");
+    } else {
+        console.warn("No focusable element found for GTreeMenuItem with label:", props.label, "Every item must at least have a plain button to properly work for accessibility.");
+    }
+}
+
+onMounted(updateSlotAria);
+onUpdated(updateSlotAria);
 
 function toggle() {
     isExpanded.value = !isExpanded.value;
@@ -111,12 +130,9 @@ function handleContentKeydown(event: KeyboardEvent) {
     >
         <!-- Parent: has children → toggle button + slot content (which may contain a link) -->
         <div v-if="hasChildren" class="g-tree-menu__row">
-            <button
+            <div
                 class="g-tree-menu__toggle-btn"
-                :aria-expanded="isExpanded ? 'true' : 'false'"
-                :aria-label="label ? `${label} sub-menu` : 'Sub-menu'"
                 @click="toggle"
-                tabindex="-1"
             >
                 <svg
                     class="g-tree-menu__chevron"
@@ -131,10 +147,10 @@ function handleContentKeydown(event: KeyboardEvent) {
                 >
                     <polyline points="9 18 15 12 9 6" />
                 </svg>
-            </button>
+            </div>
             <span
+                ref="contentRef"
                 class="g-tree-menu__row-content"
-                tabindex="-1"
                 data-tree-primary
                 @click="handleContentClick"
                 @keydown="handleContentKeydown"
@@ -150,7 +166,6 @@ function handleContentKeydown(event: KeyboardEvent) {
             <span class="g-tree-menu__spacer"></span>
             <span
                 class="g-tree-menu__row-content"
-                tabindex="-1"
                 data-tree-primary
             >
                 <slot />
@@ -158,7 +173,7 @@ function handleContentKeydown(event: KeyboardEvent) {
         </div>
 
         <!-- Children (shown when expanded) -->
-        <GTreeMenuList v-if="hasChildren && isExpanded">
+        <GTreeMenuList v-if="hasChildren && isExpanded" :id="id + '-children'">
             <slot name="children" />
         </GTreeMenuList>
     </li>
@@ -213,7 +228,39 @@ g-tree-menu-item > a:hover {
     align-self: center;
 }
 
+.g-tree-menu__row-content {
+    display: flex;
+    align-items: stretch;
+    flex: 1;
+    padding: 0 0.5em 0 0;
+    box-sizing: border-box;
+
+    button, a {
+        border: none;
+        background: none;
+        color: inherit;
+        font: inherit;
+        padding: 2px 0;
+        margin: 0;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        flex: 1;
+        text-decoration: none;
+        height: 100%;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+.g-tree-menu__row:not(.g-tree-menu__row--leaf) .g-tree-menu__row-content {
+    cursor: pointer;
+}
+
 .g-tree-menu__row-content-text {
+    flex: 1;
     display: flex;
     align-items: center;
 }
@@ -240,16 +287,43 @@ g-tree-menu-item > a:hover {
 
 .g-tree-menu__toggle-btn:focus-visible,
 .g-tree-menu__row-content:focus-visible,
-.g-tree-menu__row-content a:focus-visible {
+.g-tree-menu__row-content a:focus-visible,
+.g-tree-menu__row-content button:focus-visible{
     background: var(--ilw-color--focus--background);
     color: var(--ilw-color--focus--text);
     outline-color: var(--g-primary-500);
 }
 
-.g-tree-menu__row button.g-tree-menu__toggle-btn {
+.g-tree-menu__row .g-tree-menu__toggle-btn {
     &:hover {
         background: var(--g-primary-500);
         color: var(--g-surface-0);
     }
 }
+
+.g-tree-menu--dark {
+    .g-tree-menu__toggle-btn,
+    .g-tree-menu__row-content a {
+        color: var(--g-surface-0);
+
+        &:hover {
+            color: var(--g-accent-500);
+        }
+    }
+}
+
+.g-tree-menu--light {
+    .g-tree-menu__row-content,
+    .g-tree-menu__row-content a {
+        color: var(--g-primary-500);
+
+        &:hover {
+            color: var(--g-accent-700);
+        }
+        &:focus-visible {
+            color: var(--ilw-color--focus--text);
+        }
+    }
+}
+
 </style>

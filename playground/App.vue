@@ -84,7 +84,7 @@ const fname = ref("heh");
                     <GTreeMenu heading="Numbered Chapters" style="min-height: 200px;" storage-key="tree-menu-state">
                         <GTreeMenuList list-type="ol">
                             <GTreeMenuItem label="Chapter 1: Introduction">
-                                Chapter 1: Introduction
+                                <button>Chapter 1: Introduction</button>
                                 <template #children>
                                     <GTreeMenuItem><a href="#ch1-background">1.1 Background</a></GTreeMenuItem>
                                     <GTreeMenuItem><a href="#ch1-motivation">1.2 Motivation</a></GTreeMenuItem>
@@ -98,14 +98,14 @@ const fname = ref("heh");
                                 </template>
                             </GTreeMenuItem>
                             <GTreeMenuItem label="Chapter 2: Methods">
-                                Chapter 2: Methods
+                                <button>Chapter 2: Methods</button>
                                 <template #children>
                                     <GTreeMenuItem><a href="#ch2-data">2.1 Data Collection</a></GTreeMenuItem>
                                     <GTreeMenuItem><a href="#ch2-analysis">2.2 Analysis</a></GTreeMenuItem>
                                 </template>
                             </GTreeMenuItem>
                             <GTreeMenuItem label="Chapter 3: Results">
-                                Chapter 3: Results
+                                <button>Chapter 3: Results</button>
                                 <template #children>
                                     <GTreeMenuItem><a href="#ch3-findings">3.1 Findings</a></GTreeMenuItem>
                                     <GTreeMenuItem><a href="#ch3-discussion">3.2 Discussion</a></GTreeMenuItem>
