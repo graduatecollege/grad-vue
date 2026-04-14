@@ -136,9 +136,6 @@ g-progress {
     display: inline-block;
     vertical-align: middle;
 }
-</style>
-
-<style scoped>
 .g-progress {
     display: inline-block;
     vertical-align: middle;
@@ -183,3 +180,4 @@ g-progress {
     }
 }
 </style>
+

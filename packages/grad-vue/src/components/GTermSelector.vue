@@ -72,7 +72,7 @@ const term = defineModel<{year: string, name: string}>({
     </div>
 </template>
 
-<style scoped>
+<style>
 
 .popover-title {
     font-size: 1rem;

@@ -132,12 +132,10 @@ async function handleSubmit(e: Event) {
 g-form {
     display: block;
 }
-</style>
-
-<style scoped>
 .g-form {
     display: flex;
     flex-direction: column;
     gap: 1rem;
 }
 </style>
+

@@ -181,7 +181,7 @@ function onPageSizeChange(e: Event) {
     </nav>
 </template>
 
-<style scoped>
+<style>
 .g-pagination {
     display: flex;
     align-items: center;

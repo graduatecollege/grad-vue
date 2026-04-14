@@ -51,7 +51,7 @@ const { rendered, hasError } = useRichTextRenderer(contentRef);
     </div>
 </template>
 
-<style scoped>
+<style>
 .g-rich-text-content {
     p {
         margin: 0.375em 0;

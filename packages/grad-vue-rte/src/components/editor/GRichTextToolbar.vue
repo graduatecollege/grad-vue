@@ -124,7 +124,7 @@ const { handleToolbarKeyDown, getButtonTabIndex } = useToolbarNavigation(
     </div>
 </template>
 
-<style scoped>
+<style>
 .g-rich-text-toolbar {
     display: flex;
 

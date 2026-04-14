@@ -625,9 +625,6 @@ watch(
 g-table {
     display: block;
 }
-</style>
-
-<style scoped>
 .g-table-outer-wrap {
 }
 
@@ -895,3 +892,4 @@ button.g-column-head:hover {
     align-items: center;
 }
 </style>
+

@@ -209,9 +209,6 @@ function onLabelKeydown(e: KeyboardEvent) {
 g-three-way-toggle {
     display: block;
 }
-</style>
-
-<style scoped>
 .g-three-way-toggle-control {
     display: flex;
     margin-bottom: 4px;
@@ -342,3 +339,4 @@ g-three-way-toggle {
     font-weight: bold;
 }
 </style>
+

@@ -551,9 +551,6 @@ function clearValue() {
 g-select {
     display: block;
 }
-</style>
-
-<style scoped>
 .g-select-root {
     position: relative;
     font-size: 1rem;
@@ -744,3 +741,4 @@ g-select {
     background: var(--g-danger-100);
 }
 </style>
+

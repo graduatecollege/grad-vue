@@ -168,9 +168,6 @@ a.app-name {
         color: var(--g-accent-700);
     }
 }
-</style>
-
-<style scoped>
 .g-app-header {
     /*noinspection CssUnresolvedCustomProperty*/
     padding-right: var(--g-scrollbar-width, 0px);
@@ -231,7 +228,7 @@ a.app-name {
     min-width: 1rem;
     margin-top: 2px;
 
-    &:deep(a) {
+    & a {
         text-decoration: none;
         padding: 10px 15px;
         font-family: var(--il-font-montserrat);
@@ -287,3 +284,4 @@ a.app-name {
     }
 }
 </style>
+

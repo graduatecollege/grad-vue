@@ -295,9 +295,6 @@ g-popover {
 .g-popover-trigger {
     display: inline-block;
 }
-</style>
-
-<style scoped>
 .g-popover {
     position: fixed;
     z-index: 1000;
@@ -420,3 +417,4 @@ g-popover {
     }
 }
 </style>
+

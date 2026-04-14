@@ -100,9 +100,6 @@ defineExpose({ focusInput });
         }
     }
 }
-</style>
-
-<style scoped>
 .g-note-input-wrap {
     display: flex;
     flex-direction: column;
@@ -123,7 +120,7 @@ defineExpose({ focusInput });
     background-color: var(--g-surface-0);
     padding: 0.25rem;
 
-    :deep(button) {
+    button {
         border-radius: 4px;
 
         &:focus {
@@ -138,3 +135,4 @@ defineExpose({ focusInput });
     min-width: 0;
 }
 </style>
+

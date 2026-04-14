@@ -255,9 +255,6 @@ defineExpose({
 g-tooltip {
     display: contents;
 }
-</style>
-
-<style scoped>
 .g-tooltip-host {
     display: contents;
 }
@@ -266,3 +263,4 @@ g-tooltip {
     display: inline-block;
 }
 </style>
+

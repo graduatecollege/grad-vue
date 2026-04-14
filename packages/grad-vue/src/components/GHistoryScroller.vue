@@ -172,9 +172,6 @@ const reversedEntries = computed(() => [...props.entries].reverse());
 g-history-scroller {
     display: block;
 }
-</style>
-
-<style scoped>
 .g-history-scroller-wrapper {
     position: relative;
 }
@@ -234,3 +231,4 @@ g-history-scroller {
     background: linear-gradient(to top, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0));
 }
 </style>
+

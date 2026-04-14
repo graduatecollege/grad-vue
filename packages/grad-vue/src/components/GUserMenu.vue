@@ -122,9 +122,6 @@ const slots = defineSlots<{
 g-user-menu {
     display: inline-block;
 }
-</style>
-
-<style scoped>
 .g-user-menu {
     display: inline-block;
 }
@@ -183,8 +180,8 @@ g-user-menu {
     gap: 0;
 }
 
-.g-user-menu__list :deep(a),
-.g-user-menu__list :deep(button) {
+.g-user-menu__list a,
+.g-user-menu__list button {
     display: block;
     padding: 0.75rem 1rem;
     box-sizing: border-box;
@@ -200,22 +197,23 @@ g-user-menu {
     width: 100%;
 }
 
-.g-user-menu__list :deep(a:hover),
-.g-user-menu__list :deep(button:hover) {
+.g-user-menu__list a:hover,
+.g-user-menu__list button:hover {
     color: var(--g-accent-700);
     text-decoration: underline;
 }
 
-.g-user-menu__list :deep(a:focus),
-.g-user-menu__list :deep(button:focus) {
+.g-user-menu__list a:focus,
+.g-user-menu__list button:focus {
     background: var(--ilw-color--focus--background);
     color: var(--ilw-color--focus--text);
     outline-color: var(--g-primary-500);
 }
 
-.g-user-menu__list :deep(a:active),
-.g-user-menu__list :deep(button:active) {
+.g-user-menu__list a:active,
+.g-user-menu__list button:active {
     background-color: var(--g-accent-700);
     color: var(--g-surface-0);
 }
 </style>
+

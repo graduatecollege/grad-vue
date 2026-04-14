@@ -247,9 +247,6 @@ g-sidebar-menu,
     display: flex;
     flex-direction: column;
 }
-</style>
-
-<style scoped>
 .g-sidebar-menu {
     color: var(--g-surface-0);
 }
@@ -339,3 +336,4 @@ g-sidebar-menu,
     }
 }
 </style>
+

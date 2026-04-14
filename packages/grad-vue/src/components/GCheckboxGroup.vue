@@ -245,9 +245,6 @@ function inputAriaAttrs(option: CheckboxOption, index: number): Record<string, s
 g-checkbox-group {
     display: block;
 }
-</style>
-
-<style scoped>
 .g-checkbox-group {
     border: none;
     padding: 0;
@@ -344,3 +341,4 @@ g-checkbox-group {
     padding-left: 0.75em;
 }
 </style>
+

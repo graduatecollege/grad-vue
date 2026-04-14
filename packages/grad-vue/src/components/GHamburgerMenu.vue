@@ -115,9 +115,6 @@ g-hamburger-menu {
         width: 1.6rem;
     }
 }
-</style>
-
-<style scoped>
 .g-hamburger-button {
     width: 34px;
     height: 34px;
