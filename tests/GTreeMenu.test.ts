@@ -1295,7 +1295,7 @@ describe("GTreeMenu", () => {
                         GTreeMenuItem,
                         { label: "Chapter 1" },
                         {
-                            default: () => "Chapter 1",
+                            default: () => h("a", { href: "#ch1" }, "Chapter 1"),
                             children: () => [
                                 h(GTreeMenuItem, null, () =>
                                     h("a", { href: "/ch1/s1" }, "Section 1.1"),
@@ -1318,7 +1318,7 @@ describe("GTreeMenu", () => {
                         GTreeMenuItem,
                         { label: "Chapter 1" },
                         {
-                            default: () => "Chapter 1",
+                            default: () => h("a", { href: "#ch1" }, "Chapter 1"),
                             children: () => [
                                 h(GTreeMenuItem, null, () =>
                                     h("a", { href: "/ch1/s1" }, "Section 1.1"),
@@ -1330,7 +1330,7 @@ describe("GTreeMenu", () => {
                         GTreeMenuItem,
                         { label: "Chapter 2" },
                         {
-                            default: () => "Chapter 2",
+                            default: () => h("a", { href: "#ch2" }, "Chapter 2"),
                             children: () => [
                                 h(GTreeMenuItem, null, () =>
                                     h("a", { href: "/ch2/s1" }, "Section 2.1"),
@@ -1361,7 +1361,7 @@ describe("GTreeMenu", () => {
                         GTreeMenuItem,
                         { label: "Chapter 1" },
                         {
-                            default: () => "Chapter 1",
+                            default: () => h("a", { href: "#ch1" }, "Chapter 1"),
                             children: () => [
                                 h(GTreeMenuItem, null, () =>
                                     h("a", { href: "/ch1/s1" }, "Section 1.1"),
@@ -1389,7 +1389,7 @@ describe("GTreeMenu", () => {
                         GTreeMenuItem,
                         { label: "Chapter 1" },
                         {
-                            default: () => "Chapter 1",
+                            default: () => h("a", { href: "#ch1" }, "Chapter 1"),
                             children: () => [
                                 h(GTreeMenuItem, null, () =>
                                     h("a", { href: "/ch1/s1" }, "Section 1.1"),
@@ -1401,7 +1401,7 @@ describe("GTreeMenu", () => {
                         GTreeMenuItem,
                         { label: "Chapter 2" },
                         {
-                            default: () => "Chapter 2",
+                            default: () => h("a", { href: "#ch2" }, "Chapter 2"),
                             children: () => [
                                 h(GTreeMenuItem, null, () =>
                                     h("a", { href: "/ch2/s1" }, "Section 2.1"),
@@ -1441,7 +1441,7 @@ describe("GTreeMenu", () => {
                         GTreeMenuItem,
                         { label: "Chapter 1" },
                         {
-                            default: () => "Chapter 1",
+                            default: () => h("a", { href: "#ch1" }, "Chapter 1"),
                             children: () => [
                                 h(GTreeMenuItem, null, () =>
                                     h("a", { href: "/ch1/s1" }, "Section 1.1"),
@@ -1472,7 +1472,7 @@ describe("GTreeMenu", () => {
                         GTreeMenuItem,
                         { label: "Chapter 1" },
                         {
-                            default: () => "Chapter 1",
+                            default: () => h("a", { href: "#ch1" }, "Chapter 1"),
                             children: () => [
                                 h(
                                     GTreeMenuItem,
@@ -1521,7 +1521,7 @@ describe("GTreeMenu", () => {
                         GTreeMenuItem,
                         { label: "Chapter 1" },
                         {
-                            default: () => "Chapter 1",
+                            default: () => h("button", null, "Chapter 1"),
                             children: () => [
                                 h(GTreeMenuItem, null, () =>
                                     h("a", { href: "/ch1/s1" }, "Section 1.1"),
@@ -1532,10 +1532,11 @@ describe("GTreeMenu", () => {
                 ],
             );
 
-            // Manually expand the item
-            await wrapper.container
-                .getByRole("button", { name: "Chapter 1 sub-menu" })
-                .click();
+            // Manually expand the item by clicking its toggle button
+            const toggleBtn = wrapper.container
+                .element()
+                .querySelector(".g-tree-menu__item .g-tree-menu__toggle-btn");
+            await userEvent.click(toggleBtn!);
 
             // Now all expandable items are expanded, button should say "Collapse all"
             await expect
@@ -1543,9 +1544,7 @@ describe("GTreeMenu", () => {
                 .toBeVisible();
 
             // Manually collapse it
-            await wrapper.container
-                .getByRole("button", { name: "Chapter 1 sub-menu" })
-                .click();
+            await userEvent.click(toggleBtn!);
 
             // Button should revert to "Expand all"
             await expect
