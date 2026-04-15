@@ -1,7 +1,7 @@
 {
   "totalComponents": 42,
-  "totalTests": 453,
-  "passedTests": 453,
+  "totalTests": 463,
+  "passedTests": 463,
   "failedTests": 0,
   "skippedTests": 0,
   "components": {
@@ -2997,8 +2997,8 @@
     },
     "GTreeMenu": {
       "component": "GTreeMenu",
-      "total": 46,
-      "passed": 46,
+      "total": 56,
+      "passed": 56,
       "failed": 0,
       "skipped": 0,
       "status": "passed",
@@ -3270,6 +3270,13 @@
           ]
         },
         {
+          "title": "force-expanded item writes its state to sessionStorage on mount",
+          "status": "passed",
+          "ancestors": [
+            "Session Storage"
+          ]
+        },
+        {
           "title": "stored true state takes precedence over expanded=false prop",
           "status": "passed",
           "ancestors": [
@@ -3323,6 +3330,69 @@
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "showExpandAll button passes axe",
+          "status": "passed",
+          "ancestors": [
+            "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "does not show button when showExpandAll is false",
+          "status": "passed",
+          "ancestors": [
+            "Expand / Collapse All"
+          ]
+        },
+        {
+          "title": "shows Expand all button when showExpandAll is true",
+          "status": "passed",
+          "ancestors": [
+            "Expand / Collapse All"
+          ]
+        },
+        {
+          "title": "clicking Expand all expands all items",
+          "status": "passed",
+          "ancestors": [
+            "Expand / Collapse All"
+          ]
+        },
+        {
+          "title": "button label changes to Collapse all after expanding",
+          "status": "passed",
+          "ancestors": [
+            "Expand / Collapse All"
+          ]
+        },
+        {
+          "title": "clicking Collapse all collapses all items",
+          "status": "passed",
+          "ancestors": [
+            "Expand / Collapse All"
+          ]
+        },
+        {
+          "title": "button reverts to Expand all after collapsing",
+          "status": "passed",
+          "ancestors": [
+            "Expand / Collapse All"
+          ]
+        },
+        {
+          "title": "expand all cascades to deeply nested items",
+          "status": "passed",
+          "ancestors": [
+            "Expand / Collapse All"
+          ]
+        },
+        {
+          "title": "button reflects actual state when items are manually toggled",
+          "status": "passed",
+          "ancestors": [
+            "Expand / Collapse All"
           ]
         }
       ]

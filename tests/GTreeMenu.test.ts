@@ -1243,5 +1243,313 @@ describe("GTreeMenu", () => {
             ]);
             await testAccessibility(wrapper.container.element() as HTMLElement);
         });
+
+        it("showExpandAll button passes axe", async () => {
+            const wrapper = slotMenu(
+                { heading: "Contents", showExpandAll: true },
+                [
+                    h(
+                        GTreeMenuItem,
+                        { label: "Chapter 1" },
+                        {
+                            default: () => "Chapter 1",
+                            children: () => [
+                                h(GTreeMenuItem, null, () =>
+                                    h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                                ),
+                            ],
+                        },
+                    ),
+                ],
+            );
+            await testAccessibility(wrapper.container.element() as HTMLElement);
+        });
+    });
+
+    describe("Expand / Collapse All", () => {
+        it("does not show button when showExpandAll is false", async () => {
+            const wrapper = slotMenu({ heading: "Contents" }, [
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 1" },
+                    {
+                        default: () => "Chapter 1",
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                            ),
+                        ],
+                    },
+                ),
+            ]);
+            await expect
+                .element(wrapper.container.getByText("Expand all"))
+                .not.toBeInTheDocument();
+        });
+
+        it("shows Expand all button when showExpandAll is true", async () => {
+            const wrapper = slotMenu(
+                { heading: "Contents", showExpandAll: true },
+                [
+                    h(
+                        GTreeMenuItem,
+                        { label: "Chapter 1" },
+                        {
+                            default: () => h("a", { href: "#ch1" }, "Chapter 1"),
+                            children: () => [
+                                h(GTreeMenuItem, null, () =>
+                                    h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                                ),
+                            ],
+                        },
+                    ),
+                ],
+            );
+            await expect
+                .element(wrapper.container.getByRole("button", { name: /Expand all/ }))
+                .toBeVisible();
+        });
+
+        it("clicking Expand all expands all items", async () => {
+            const wrapper = slotMenu(
+                { heading: "Contents", showExpandAll: true },
+                [
+                    h(
+                        GTreeMenuItem,
+                        { label: "Chapter 1" },
+                        {
+                            default: () => h("a", { href: "#ch1" }, "Chapter 1"),
+                            children: () => [
+                                h(GTreeMenuItem, null, () =>
+                                    h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                                ),
+                            ],
+                        },
+                    ),
+                    h(
+                        GTreeMenuItem,
+                        { label: "Chapter 2" },
+                        {
+                            default: () => h("a", { href: "#ch2" }, "Chapter 2"),
+                            children: () => [
+                                h(GTreeMenuItem, null, () =>
+                                    h("a", { href: "/ch2/s1" }, "Section 2.1"),
+                                ),
+                            ],
+                        },
+                    ),
+                ],
+            );
+
+            await wrapper.container
+                .getByRole("button", { name: /Expand all/ })
+                .click();
+
+            await expect
+                .element(wrapper.container.getByText("Section 1.1"))
+                .toBeVisible();
+            await expect
+                .element(wrapper.container.getByText("Section 2.1"))
+                .toBeVisible();
+        });
+
+        it("button label changes to Collapse all after expanding", async () => {
+            const wrapper = slotMenu(
+                { heading: "Contents", showExpandAll: true },
+                [
+                    h(
+                        GTreeMenuItem,
+                        { label: "Chapter 1" },
+                        {
+                            default: () => h("a", { href: "#ch1" }, "Chapter 1"),
+                            children: () => [
+                                h(GTreeMenuItem, null, () =>
+                                    h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                                ),
+                            ],
+                        },
+                    ),
+                ],
+            );
+
+            await wrapper.container
+                .getByRole("button", { name: /Expand all/ })
+                .click();
+
+            await expect
+                .element(wrapper.container.getByRole("button", { name: /Collapse all/ }))
+                .toBeVisible();
+        });
+
+        it("clicking Collapse all collapses all items", async () => {
+            const wrapper = slotMenu(
+                { heading: "Contents", showExpandAll: true },
+                [
+                    h(
+                        GTreeMenuItem,
+                        { label: "Chapter 1" },
+                        {
+                            default: () => h("a", { href: "#ch1" }, "Chapter 1"),
+                            children: () => [
+                                h(GTreeMenuItem, null, () =>
+                                    h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                                ),
+                            ],
+                        },
+                    ),
+                    h(
+                        GTreeMenuItem,
+                        { label: "Chapter 2" },
+                        {
+                            default: () => h("a", { href: "#ch2" }, "Chapter 2"),
+                            children: () => [
+                                h(GTreeMenuItem, null, () =>
+                                    h("a", { href: "/ch2/s1" }, "Section 2.1"),
+                                ),
+                            ],
+                        },
+                    ),
+                ],
+            );
+
+            // expand all first
+            await wrapper.container
+                .getByRole("button", { name: /Expand all/ })
+                .click();
+            await expect
+                .element(wrapper.container.getByText("Section 1.1"))
+                .toBeVisible();
+
+            // collapse all
+            await wrapper.container
+                .getByRole("button", { name: /Collapse all/ })
+                .click();
+
+            await expect
+                .element(wrapper.container.getByText("Section 1.1"))
+                .not.toBeInTheDocument();
+            await expect
+                .element(wrapper.container.getByText("Section 2.1"))
+                .not.toBeInTheDocument();
+        });
+
+        it("button reverts to Expand all after collapsing", async () => {
+            const wrapper = slotMenu(
+                { heading: "Contents", showExpandAll: true },
+                [
+                    h(
+                        GTreeMenuItem,
+                        { label: "Chapter 1" },
+                        {
+                            default: () => h("a", { href: "#ch1" }, "Chapter 1"),
+                            children: () => [
+                                h(GTreeMenuItem, null, () =>
+                                    h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                                ),
+                            ],
+                        },
+                    ),
+                ],
+            );
+
+            await wrapper.container
+                .getByRole("button", { name: /Expand all/ })
+                .click();
+            await wrapper.container
+                .getByRole("button", { name: /Collapse all/ })
+                .click();
+
+            await expect
+                .element(wrapper.container.getByRole("button", { name: /Expand all/ }))
+                .toBeVisible();
+        });
+
+        it("expand all cascades to deeply nested items", async () => {
+            const wrapper = slotMenu(
+                { heading: "Contents", showExpandAll: true },
+                [
+                    h(
+                        GTreeMenuItem,
+                        { label: "Chapter 1" },
+                        {
+                            default: () => h("a", { href: "#ch1" }, "Chapter 1"),
+                            children: () => [
+                                h(
+                                    GTreeMenuItem,
+                                    { label: "Section 1.1" },
+                                    {
+                                        default: () =>
+                                            h(
+                                                "a",
+                                                { href: "/ch1/s1" },
+                                                "Section 1.1",
+                                            ),
+                                        children: () => [
+                                            h(GTreeMenuItem, null, () =>
+                                                h(
+                                                    "a",
+                                                    { href: "/ch1/s1/ss1" },
+                                                    "Subsection 1.1.1",
+                                                ),
+                                            ),
+                                        ],
+                                    },
+                                ),
+                            ],
+                        },
+                    ),
+                ],
+            );
+
+            await wrapper.container
+                .getByRole("button", { name: /Expand all/ })
+                .click();
+
+            await expect
+                .element(wrapper.container.getByRole("link", { name: "Section 1.1", exact: true }))
+                .toBeVisible();
+            await expect
+                .element(wrapper.container.getByRole("link", { name: "Subsection 1.1.1" }))
+                .toBeVisible();
+        });
+
+        it("button reflects actual state when items are manually toggled", async () => {
+            const wrapper = slotMenu(
+                { heading: "Contents", showExpandAll: true },
+                [
+                    h(
+                        GTreeMenuItem,
+                        { label: "Chapter 1" },
+                        {
+                            default: () => h("button", null, "Chapter 1"),
+                            children: () => [
+                                h(GTreeMenuItem, null, () =>
+                                    h("a", { href: "/ch1/s1" }, "Section 1.1"),
+                                ),
+                            ],
+                        },
+                    ),
+                ],
+            );
+
+            // Manually expand the item by clicking its toggle button
+            const toggleBtn = wrapper.container
+                .element()
+                .querySelector(".g-tree-menu__item .g-tree-menu__toggle-btn");
+            await userEvent.click(toggleBtn!);
+
+            // Now all expandable items are expanded, button should say "Collapse all"
+            await expect
+                .element(wrapper.container.getByRole("button", { name: /Collapse all/ }))
+                .toBeVisible();
+
+            // Manually collapse it
+            await userEvent.click(toggleBtn!);
+
+            // Button should revert to "Expand all"
+            await expect
+                .element(wrapper.container.getByRole("button", { name: /Expand all/ }))
+                .toBeVisible();
+        });
     });
 });
