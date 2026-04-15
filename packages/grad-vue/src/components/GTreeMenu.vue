@@ -132,7 +132,9 @@ function toggleExpandAll() {
  * Returns the best focusable element for the given [data-tree-primary] marker.
  */
 function getFocusTarget(primary: HTMLElement): HTMLElement {
-    const anchor = primary.querySelector<HTMLElement>("a, button, [tabindex='0']");
+    const anchor = primary.querySelector<HTMLElement>(
+        "a, button, [tabindex='0']",
+    );
     if (anchor) return anchor;
     return primary;
 }
@@ -151,11 +153,19 @@ function handleKeydown(event: KeyboardEvent) {
     const focused = document.activeElement as HTMLElement;
     if (!nav.contains(focused)) return;
 
-    const handled = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Home", "End"];
+    const handled = [
+        "ArrowUp",
+        "ArrowDown",
+        "ArrowLeft",
+        "ArrowRight",
+        "Home",
+        "End",
+    ];
     if (!handled.includes(event.key)) return;
 
     const currentLi = focused.closest<HTMLElement>(".g-tree-menu__item");
-    const currentPrimary = currentLi?.querySelector<HTMLElement>("[data-tree-primary]") ?? null;
+    const currentPrimary =
+        currentLi?.querySelector<HTMLElement>("[data-tree-primary]") ?? null;
 
     const primaries = getPrimaryItems(nav);
     const primaryIdx = currentPrimary ? primaries.indexOf(currentPrimary) : -1;
@@ -197,13 +207,17 @@ function handleKeydown(event: KeyboardEvent) {
                     ".g-tree-menu__toggle-btn",
                 );
                 if (toggleBtn) toggleBtn.click();
-                if (currentPrimary) nextTick(() => getFocusTarget(currentPrimary).focus());
+                if (currentPrimary)
+                    nextTick(() => getFocusTarget(currentPrimary).focus());
             } else {
                 const parentItem =
-                    currentLi.parentElement?.closest<HTMLElement>(".g-tree-menu__item");
+                    currentLi.parentElement?.closest<HTMLElement>(
+                        ".g-tree-menu__item",
+                    );
                 if (parentItem) {
-                    const parentPrimary =
-                        parentItem.querySelector<HTMLElement>("[data-tree-primary]");
+                    const parentPrimary = parentItem.querySelector<HTMLElement>(
+                        "[data-tree-primary]",
+                    );
                     if (parentPrimary) getFocusTarget(parentPrimary).focus();
                 }
             }
@@ -214,7 +228,8 @@ function handleKeydown(event: KeyboardEvent) {
             break;
         }
         case "End": {
-            if (primaries.length > 0) getFocusTarget(primaries[primaries.length - 1]).focus();
+            if (primaries.length > 0)
+                getFocusTarget(primaries[primaries.length - 1]).focus();
             break;
         }
     }
@@ -233,29 +248,37 @@ function handleKeydown(event: KeyboardEvent) {
         }"
         @keydown="handleKeydown"
     >
-        <h2 v-if="heading" :id="id" class="g-tree-menu__title">{{ heading }}</h2>
-        <div class="g-tree-menu__divider"></div>
-        <button
-            v-if="showExpandAll"
-            class="g-tree-menu__expand-all-btn"
-            @click="toggleExpandAll"
-        >
-            <svg
-                class="g-tree-menu__expand-all-icon"
-                :class="{ 'g-tree-menu__expand-all-icon--collapse': allExpanded }"
-                role="none presentation"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-            >
-                <polyline points="7 8 12 13 17 8" />
-                <polyline points="7 13 12 18 17 13" />
-            </svg>
-            {{ allExpanded ? "Collapse all" : "Expand all" }}
-        </button>
+        <h2 v-if="heading" :id="id" class="g-tree-menu__title">
+            {{ heading }}
+        </h2>
+        <div class="g-tree-menu__divider">
+            <div class="g-tree-menu__divider-line"></div>
+            <div v-if="showExpandAll" class="g-tree-menu__expand-all-wrapper">
+                <button
+                    class="g-tree-menu__expand-all-btn"
+                    @click="toggleExpandAll"
+                >
+                    <svg
+                        class="g-tree-menu__expand-all-icon"
+                        :class="{
+                            'g-tree-menu__expand-all-icon--collapse':
+                                allExpanded,
+                        }"
+                        role="none presentation"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <polyline points="7 8 12 13 17 8" />
+                        <polyline points="7 13 12 18 17 13" />
+                    </svg>
+                    {{ allExpanded ? "Collapse all" : "Expand all" }}
+                </button>
+            </div>
+        </div>
         <div class="g-tree-menu__content">
             <slot />
         </div>
@@ -263,53 +286,12 @@ function handleKeydown(event: KeyboardEvent) {
 </template>
 
 <style>
-
-@layer base {
-    g-tree-menu,
-    .g-tree-menu {
-        font-size: 1.125rem;
-        line-height: 1.2;
-        box-sizing: border-box;
-        display: flex;
-        flex-direction: column;
-    }
-
-    g-tree-menu {
-        color: var(--g-surface-0);
-    }
-
-    g-tree-menu[theme="light"] {
-        background: var(--g-surface-50);
-        color: var(--g-primary-500);
-    }
-
-    g-tree-menu[theme="light"] a {
-        color: var(--g-primary-500);
-    }
-
-    g-tree-menu[theme="dark"] a {
-        color: var(--g-surface-0);
-    }
-
-    g-tree-menu g-tree-menu-item {
-        margin: 0.25rem 0;
-    }
-
-    g-tree-menu g-tree-menu-item[slot="children"] {
-        padding-left: 1.25em;
-        font-size: 0.95em;
-        font-weight: 600;
-    }
-
-    g-tree-menu g-tree-menu-item > a {
-        color: inherit;
-        text-decoration: none;
-    }
-
-    g-tree-menu g-tree-menu-item > a:hover {
-        text-decoration: underline;
-    }
-
+.g-tree-menu {
+    font-size: 1.125rem;
+    line-height: 1.2;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
 }
 
 .g-tree-menu--dark {
@@ -329,22 +311,29 @@ function handleKeydown(event: KeyboardEvent) {
 }
 
 .g-tree-menu__title {
-    margin: 2rem 2rem 0.5rem;
+    margin: 2rem 2rem 0;
     font-size: 2rem;
     font-family: var(--il-font-heading);
 }
 
 .g-tree-menu__divider {
-    margin-left: 2rem;
-    margin-top: 2px;
+    display: flex;
+    justify-content: space-between;
+}
+.g-tree-menu__divider-line {
+    margin: 1rem 0 1rem 2rem;
     height: 4px;
     width: 60px;
-    flex: 0 0 4px;
+    min-width: 60px;
+    max-width: 60px;
     background: var(--g-accent-500);
 }
 
-.g-tree-menu__content {
-    margin-top: 1rem;
+.g-tree-menu__expand-all-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-right: 2rem;
 }
 
 .g-tree-menu__expand-all-btn {
@@ -358,19 +347,9 @@ function handleKeydown(event: KeyboardEvent) {
     font-size: 0.85em;
     font-weight: 600;
     padding: 0.35em 0.5em;
-    margin: 0.75rem 2rem 0;
-    border-radius: 2px;
+    margin: 0;
     color: inherit;
-}
-
-.g-tree-menu__expand-all-btn:hover {
-    color: var(--g-accent-500);
-}
-
-.g-tree-menu__expand-all-btn:focus-visible {
-    background: var(--ilw-color--focus--background);
-    color: var(--ilw-color--focus--text);
-    outline-color: var(--g-primary-500);
+    min-width: 120px;
 }
 
 .g-tree-menu__expand-all-icon {
@@ -378,10 +357,8 @@ function handleKeydown(event: KeyboardEvent) {
     height: 1.2em;
     flex-shrink: 0;
     transition: transform 0.15s ease;
-}
 
-@media (prefers-reduced-motion: reduce) {
-    .g-tree-menu__expand-all-icon {
+    @media (prefers-reduced-motion: reduce) {
         transition: none;
     }
 }
@@ -389,19 +366,51 @@ function handleKeydown(event: KeyboardEvent) {
 .g-tree-menu__expand-all-icon--collapse {
     transform: rotate(180deg);
 }
-
+.g-tree-menu__expand-all-btn:focus-visible {
+    background: var(--ilw-color--focus--background);
+    color: var(--ilw-color--focus--text);
+    outline-color: var(--g-primary-500);
+}
 g-tree-menu:not(:defined) {
-    padding-top: 0;
-}
-
-g-tree-menu:not(:defined) g-tree-menu-list {
     display: block;
-    margin-top: 1rem;
-    padding: 0 1em 0 2em;
-}
+    padding-top: 0;
+    color: var(--g-surface-0);
 
-g-tree-menu:not(:defined) g-tree-menu-item {
-    margin: 0.4rem 0;
+    &[theme="light"] {
+        background: var(--g-surface-50);
+        color: var(--g-primary-500);
+    }
+
+    &[theme="light"] a {
+        color: var(--g-primary-500);
+    }
+
+    &[theme="dark"] a {
+        color: var(--g-surface-0);
+    }
+
+    g-tree-menu-item {
+        margin: 0.4em 0 0.4em 1.2em;
+    }
+
+    g-tree-menu-item[slot="children"] {
+        font-size: 0.95em;
+        font-weight: 600;
+    }
+
+    g-tree-menu-item > a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    g-tree-menu-item > a:hover {
+        text-decoration: underline;
+    }
+    g-tree-menu-list {
+        display: block;
+        margin-top: 1em;
+        padding-left: 1em;
+    }
 }
 
 g-tree-menu:not(:defined)[heading]::before {
@@ -418,5 +427,4 @@ g-tree-menu:not(:defined)[heading]::before {
     background-size: 60px 4px;
     background-position: left bottom;
 }
-
 </style>
