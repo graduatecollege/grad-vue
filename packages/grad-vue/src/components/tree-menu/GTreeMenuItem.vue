@@ -10,8 +10,9 @@ import GTreeMenuList from "./GTreeMenuList.vue";
 const props = withDefaults(
     defineProps<{
         /**
-         * Accessible label used for the toggle button's aria-label when the
-         * item has children (e.g. "Chapter 1" → "Chapter 1 sub-menu").
+         * Label for the item. Used as a stable identifier for the item.
+         * @demo
+         '
          */
         label?: string;
         /**
