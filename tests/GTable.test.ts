@@ -758,4 +758,124 @@ describe("GTable", () => {
             await testAccessibility(GTableFixture);
         });
     });
+
+    describe("Searchable Multi-Select Filter", () => {
+        interface AbbrEntry {
+            key: string;
+            name: string;
+            abbr: string;
+        }
+
+        const abbrData: AbbrEntry[] = [
+            { key: "LT", name: "Carle Illinois College of Medicine", abbr: "COM" },
+            { key: "KL", name: "College of Agricultural, Consumer and Environmental Sciences (ACES)", abbr: "ACES" },
+            { key: "KY", name: "College of Applied Health Sciences", abbr: "AHS" },
+            { key: "KN", name: "College of Education", abbr: "EDUC" },
+            { key: "LL", name: "School of Social Work", abbr: "SOCW" },
+        ];
+
+        const searchableColumns: TableColumn<AbbrEntry>[] = [
+            { key: "key", label: "Code" },
+            { key: "name", label: "Name" },
+            {
+                key: "abbr",
+                label: "Abbreviation",
+                filter: {
+                    type: "multi-select",
+                    searchable: true,
+                    options: [
+                        { label: "COM", value: "COM" },
+                        { label: "ACES", value: "ACES" },
+                        { label: "AHS", value: "AHS" },
+                        { label: "EDUC", value: "EDUC" },
+                        { label: "SOCW", value: "SOCW" },
+                    ],
+                    placeholder: "Search abbreviations…",
+                },
+            },
+        ];
+
+        function filterAbbrData(data: AbbrEntry[], filter: Record<string, any>) {
+            let filtered = [...data];
+            if (filter.abbr && filter.abbr.length > 0) {
+                filtered = filtered.filter((item) =>
+                    filter.abbr.includes(item.abbr),
+                );
+            }
+            return filtered;
+        }
+
+        function createSearchableFixture() {
+            return createGTableFixture<AbbrEntry>({
+                label: "Abbreviations",
+                columns: searchableColumns,
+                data: abbrData,
+                initialFilter: { key: undefined, name: undefined, abbr: [] },
+                filterData: filterAbbrData,
+                paginate: false,
+            });
+        }
+
+        it("renders a GMultiSelect combobox for searchable multi-select filter", async () => {
+            const { GTableFixture } = createSearchableFixture();
+            const { container } = mnt(GTableFixture);
+
+            const filterButton = container.getByRole("button", {
+                name: "Filter Column",
+            });
+            await filterButton.click();
+
+            await expect
+                .element(page.getByRole("combobox"))
+                .toBeInTheDocument();
+        });
+
+        it("does not render checkboxes for a searchable multi-select filter", async () => {
+            const { GTableFixture } = createSearchableFixture();
+            const { container } = mnt(GTableFixture);
+
+            const filterButton = container.getByRole("button", {
+                name: "Filter Column",
+            });
+            await filterButton.click();
+
+            await expect
+                .element(page.getByRole("checkbox"))
+                .not.toBeInTheDocument();
+        });
+
+        it("filters rows when values are selected in the searchable multi-select", async () => {
+            const { GTableFixture } = createSearchableFixture();
+            const { container } = mnt(GTableFixture);
+
+            const filterButton = container.getByRole("button", {
+                name: "Filter Column",
+            });
+            await filterButton.click();
+
+            await page.getByRole("combobox").click();
+
+            const comOption = page.getByRole("option", { name: "COM" });
+            await comOption.click();
+
+            expect(getColumn(container, 0)).toEqual(["LT"]);
+        });
+
+        it("filters rows by multiple values in the searchable multi-select", async () => {
+            const { GTableFixture } = createSearchableFixture();
+            const { container } = mnt(GTableFixture);
+
+            const filterButton = container.getByRole("button", {
+                name: "Filter Column",
+            });
+            await filterButton.click();
+
+            await page.getByRole("combobox").click();
+
+            await page.getByRole("option", { name: "COM" }).click();
+            await page.getByRole("option", { name: "AHS" }).click();
+
+            expect(getColumn(container, 0)).toEqual(["LT", "KY"]);
+        });
+    });
 });

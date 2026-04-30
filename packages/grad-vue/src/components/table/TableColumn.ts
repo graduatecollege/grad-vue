@@ -15,6 +15,11 @@ export interface MultiSelectColumnFilter {
     type: 'multi-select';
     options: Array<{ label: string; value: any }>;
     placeholder?: string;
+    /**
+     * When true, renders a searchable GMultiSelect combobox instead of a
+     * list of checkboxes. Recommended when there are many options.
+     */
+    searchable?: boolean;
 }
 
 export interface ToggleColumnFilter {

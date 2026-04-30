@@ -46,6 +46,7 @@ import {
     watch,
 } from "vue";
 import GSelect from "./GSelect.vue";
+import GMultiSelect from "./GMultiSelect.vue";
 import { useFiltering, UseFilteringReturn } from "../compose/useFiltering.ts";
 import {
     CellChangePayload,
@@ -533,6 +534,17 @@ watch(
                                         </span>
                                     </div>
                                 </div>
+                                <GMultiSelect
+                                    v-else-if="
+                                        col.filter.type === 'multi-select' &&
+                                        col.filter.searchable
+                                    "
+                                    v-model="filter[col.key]"
+                                    :options="col.filter.options"
+                                    label="Include values"
+                                    :placeholder="col.filter.placeholder"
+                                    class="g-multi-select-searchable"
+                                />
                                 <fieldset
                                     v-else-if="
                                         col.filter.type === 'multi-select'
@@ -809,6 +821,10 @@ button.g-column-head:hover {
     padding: 0;
     font-size: 1rem;
     line-height: 1.2;
+}
+
+.g-multi-select-searchable {
+    min-width: 16rem;
 }
 
 .g-filter-toggle {
