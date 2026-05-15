@@ -17,4 +17,7 @@ export default defineConfig({
             "@grad-vue-rte": resolve(__dirname, "packages/grad-vue-rte/src"),
         },
     },
+    server: {
+        port: 5179,
+    },
 });

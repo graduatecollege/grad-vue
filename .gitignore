@@ -46,3 +46,4 @@ playwright-report/
 *.sln
 *.sw?
 .output.txt
+.junie/memory/

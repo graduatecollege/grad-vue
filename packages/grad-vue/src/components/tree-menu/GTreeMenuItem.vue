@@ -1,11 +1,12 @@
 <script lang="ts">
-export default { name: "GTreeMenuItem" };
+export default { name: "GTreeMenuItem", inheritAttrs: false };
 </script>
 
 <script setup lang="ts">
-import { computed, getCurrentInstance, inject, onBeforeUnmount, onMounted, onUpdated, ref, useId, useSlots, watch } from "vue";
+import { computed, getCurrentInstance, inject, onBeforeUnmount, onMounted, onUpdated, ref, useAttrs, useId, watch } from "vue";
 import type { Ref } from "vue";
 import GTreeMenuList from "./GTreeMenuList.vue";
+import { isCustomElementMode } from "../../compose/useCustomElementAttrs";
 
 const props = withDefaults(
     defineProps<{
@@ -37,7 +38,10 @@ const emit = defineEmits<{
     collapse: [];
 }>();
 
-const slots = useSlots();
+const slots = defineSlots<{
+    default?: () => any;
+    children?: () => any;
+}>();
 const instance = getCurrentInstance();
 
 const id = useId();
@@ -182,10 +186,34 @@ function handleContentKeydown(event: KeyboardEvent) {
         event.preventDefault();
     }
 }
+
+// In Web Components mode an inner `<li>` would be wrapped by the custom-
+// element host `<g-tree-menu-item>`, producing invalid HTML and breaking
+// the list/listitem parent-child relationship in the accessibility tree.
+// Instead, we apply `role="listitem"` to the CE host directly (so it is a
+// direct child of the inner `div[role="list"]` inside `g-tree-menu-list`),
+// render a plain `<div role="presentation">` inner wrapper so AT skips it.
+const isCE = isCustomElementMode();
+const ceHostEl = (instance as any)?.ce as HTMLElement | undefined;
+onMounted(() => {
+    if (isCE && ceHostEl) {
+        ceHostEl.setAttribute("role", "listitem");
+    }
+});
+
+const attrs = useAttrs();
+const forwardedAttrs = computed(() => {
+    if (!isCE) return attrs;
+    const { role: _role, ...rest } = attrs as any;
+    return rest;
+});
 </script>
 
 <template>
-    <li
+    <component
+        :is="isCE ? 'div' : 'li'"
+        v-bind="forwardedAttrs"
+        :role="isCE ? 'presentation' : undefined"
         class="g-tree-menu__item"
         :data-tree-expandable="hasChildren ? 'true' : undefined"
     >
@@ -237,7 +265,7 @@ function handleContentKeydown(event: KeyboardEvent) {
         <GTreeMenuList v-if="hasChildren && isExpanded" :id="id + '-children'">
             <slot name="children" />
         </GTreeMenuList>
-    </li>
+    </component>
 </template>
 
 <style>

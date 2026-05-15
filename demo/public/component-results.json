@@ -1,7 +1,7 @@
 {
   "totalComponents": 42,
-  "totalTests": 463,
-  "passedTests": 463,
+  "totalTests": 467,
+  "passedTests": 467,
   "failedTests": 0,
   "skippedTests": 0,
   "components": {
@@ -2137,8 +2137,8 @@
     },
     "GTable": {
       "component": "GTable",
-      "total": 27,
-      "passed": 27,
+      "total": 31,
+      "passed": 31,
       "failed": 0,
       "skipped": 0,
       "status": "passed",
@@ -2330,6 +2330,34 @@
           "status": "passed",
           "ancestors": [
             "Accessibility Tests"
+          ]
+        },
+        {
+          "title": "renders a GMultiSelect combobox for searchable multi-select filter",
+          "status": "passed",
+          "ancestors": [
+            "Searchable Multi-Select Filter"
+          ]
+        },
+        {
+          "title": "does not render checkboxes for a searchable multi-select filter",
+          "status": "passed",
+          "ancestors": [
+            "Searchable Multi-Select Filter"
+          ]
+        },
+        {
+          "title": "filters rows when values are selected in the searchable multi-select",
+          "status": "passed",
+          "ancestors": [
+            "Searchable Multi-Select Filter"
+          ]
+        },
+        {
+          "title": "filters rows by multiple values in the searchable multi-select",
+          "status": "passed",
+          "ancestors": [
+            "Searchable Multi-Select Filter"
           ]
         }
       ]

@@ -411,6 +411,11 @@ type Props = {
 This component is used with the `GDetailListItem` component to display
 a list of key-value pairs in a grid or vertical layout.
 
+> [!WARNING]
+> This component is not accessible in Custom Elements mode because there
+> is no way to avoid the custom elements being nested in `<dl>` tags, which
+> is not valid HTML. You can use the classes instead for the same styling.
+
 For example:
 
 ```vue-html
