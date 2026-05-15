@@ -21,7 +21,7 @@ test.describe('Web Components Modal and Popover Tests', () => {
       }
     });
 
-    await page.goto('http://localhost:5173/wc-test.html');
+    await page.goto('http://localhost:5179/wc-test.html');
     await page.locator('g-button#danger').click();
 
     const dangerDialog = page.getByRole('dialog', { name: 'Danger' });
@@ -33,7 +33,7 @@ test.describe('Web Components Modal and Popover Tests', () => {
   });
 
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:5173/wc-test.html');
+    await page.goto('http://localhost:5179/wc-test.html');
   });
 
   test('should not duplicate host id onto inner elements in CE mode', async ({ page }) => {
