@@ -14,21 +14,25 @@
             line-height: 1.5;
             padding-top: var(--g-toolbar-height);
         }
+
         section {
             margin-bottom: 2rem;
             padding: 1rem;
             border: 1px solid #ddd;
             border-radius: 8px;
         }
+
         h1, h2 {
             margin-top: 0;
         }
+
         .controls {
             display: flex;
             gap: 1rem;
             align-items: center;
             margin-top: 1rem;
         }
+
         #event-log {
             background: #f4f4f4;
             padding: 1rem;
@@ -47,11 +51,13 @@
                 margin-top: 0;
             }
         }
+
         .chapter-link {
             display: flex;
             flex-direction: column;
             line-height: 1.1;
         }
+
         .link-wrapper:not(.chapter-link) {
             display: flex;
             align-items: center;
@@ -65,6 +71,7 @@
                 text-align: right;
             }
         }
+
         .chapter-link .item-number {
             font-size: 13px;
             font-weight: normal;
@@ -140,93 +147,94 @@
     </style>
 </head>
 <body>
-    <g-app-header brand="GRAD" illinois>
-        <a slot="title" href="#" class="app-name">Web Components Showcase</a>
-        <g-button slot="app-controls" id="header-help" size="small" theme="primary">Help</g-button>
-    </g-app-header>
+<g-app-header brand="GRAD" illinois>
+    <a slot="title" href="#" class="app-name">Web Components Showcase</a>
+    <g-button slot="app-controls" id="header-help" size="small" theme="primary">Help</g-button>
+</g-app-header>
 
-    <h1>grad-vue Web Components Test</h1>
-    <p>Testing the built web components version of <code>grad-vue</code>.</p>
+<h1>grad-vue Web Components Test</h1>
+<p>Testing the built web components version of <code>grad-vue</code>.</p>
 
-    <g-hamburger-menu sidebar-key="wc-sidebar"></g-hamburger-menu>
-    <g-sidebar theme="light" sidebar-key="wc-sidebar">
-        <g-tree-menu heading="Chapters" theme="light" class="chapters-menu" storage-key="wc-sidebar-menu">
-            <g-tree-menu-list>
-                <g-tree-menu-item class="chapter-item" label="Admission to the Graduate College">
-                    <a href="#">
+<g-hamburger-menu sidebar-key="wc-sidebar"></g-hamburger-menu>
+<g-sidebar theme="light" sidebar-key="wc-sidebar">
+    <g-tree-menu heading="Chapters" theme="light" list-type="ol" class="chapters-menu" storage-key="wc-sidebar-menu">
+        <g-tree-menu-list>
+            <g-tree-menu-item class="chapter-item" label="Admission to the Graduate College">
+                <a href="#">
                         <span class="link-wrapper chapter-link">
                             <span class="item-number">Chapter 1</span>
                             <span class="item-title">Admission to the Graduate College</span>
                         </span>
-                    </a>
-                    <g-tree-menu-item slot="children">
-                        <a href="#overview">
+                </a>
+                <g-tree-menu-item slot="children">
+                    <a href="#overview">
                             <span class="link-wrapper">
                                 <span class="item-number">1.1</span>
                                 <span class="item-title">Graduate Admission Policies</span>
                             </span>
-                        </a>
-                    </g-tree-menu-item>
-                    <g-tree-menu-item slot="children">
-                        <a href="#setup">
+                    </a>
+                </g-tree-menu-item>
+                <g-tree-menu-item slot="children">
+                    <a href="#setup">
                             <span class="link-wrapper">
                                 <span class="item-number">1.2</span>
                                 <span class="item-title">Minimum Requirements for Admission</span>
                             </span>
-                        </a>
-                    </g-tree-menu-item>
+                    </a>
                 </g-tree-menu-item>
-                <g-tree-menu-item class="chapter-item" label="Registration">
-                    <a href="#">
+            </g-tree-menu-item>
+            <g-tree-menu-item class="chapter-item" label="Registration">
+                <a href="#">
                         <span class="link-wrapper chapter-link">
                             <span class="item-number">Chapter 2</span>
                             <span class="item-title">Registration</span>
                         </span>
-                    </a>
-                    <g-tree-menu-item slot="children">
-                        <a href="#buttons">
+                </a>
+                <g-tree-menu-item slot="children">
+                    <a href="#buttons">
                             <span class="link-wrapper">
                                 <span class="item-number">2.1</span>
                                 <span class="item-title">Registration Process</span>
                             </span>
-                        </a>
-                    </g-tree-menu-item>
-                    <g-tree-menu-item slot="children">
-                        <a href="#inputs">
+                    </a>
+                </g-tree-menu-item>
+                <g-tree-menu-item slot="children">
+                    <a href="#inputs">
                             <span class="link-wrapper">
                                 <span class="item-number">2.2</span>
                                 <span class="item-title">Required Documents</span>
                             </span>
-                        </a>
-                    </g-tree-menu-item>
+                    </a>
                 </g-tree-menu-item>
-                <g-tree-menu-item class="chapter-item" label="Academic Record">
-                    <a href="#">
+            </g-tree-menu-item>
+            <g-tree-menu-item class="chapter-item" label="Academic Record">
+                <a href="#">
                         <span class="link-wrapper chapter-link">
                             <span class="item-number">Chapter 3</span>
                             <span class="item-title">Academic Record</span>
                         </span>
-                    </a>
-                    <g-tree-menu-item slot="children">
-                        <a href="#buttons">
+                </a>
+                <g-tree-menu-item slot="children">
+                    <a href="#buttons">
                             <span class="link-wrapper">
                                 <span class="item-number">3.1</span>
                                 <span class="item-title">Registration Process</span>
                             </span>
-                        </a>
-                    </g-tree-menu-item>
-                    <g-tree-menu-item slot="children">
-                        <a href="#inputs">
+                    </a>
+                </g-tree-menu-item>
+                <g-tree-menu-item slot="children">
+                    <a href="#inputs">
                             <span class="link-wrapper">
                                 <span class="item-number">3.2</span>
                                 <span class="item-title">Required Documents</span>
                             </span>
-                        </a>
-                    </g-tree-menu-item>
+                    </a>
                 </g-tree-menu-item>
-            </g-tree-menu-list>
-        </g-tree-menu>
-    </g-sidebar>
+            </g-tree-menu-item>
+        </g-tree-menu-list>
+    </g-tree-menu>
+</g-sidebar>
+<main>
     <section>
         <h2>Sidebar Menu</h2>
         <p>Comparing component-rendered menu with a static fallback list.</p>
@@ -274,9 +282,9 @@
 
     <section id="inputs">
         <h2>Inputs</h2>
-        <g-text-input 
+        <g-text-input
             id="text-input"
-            label="User Name" 
+            label="User Name"
             name="username"
             placeholder="Enter your name"
             instructions="This should emit a 'change' event when you type and blur.">
@@ -287,28 +295,53 @@
             label="Amount"
             name="amount"
             placeholder="Enter amount"
-            ></g-currency-input>
+        ></g-currency-input>
     </section>
 
     <section id="detail-list">
         <h2>Detail List</h2>
+        <p>Not compatible with custom elements mode, use classes instead.</p>
         <div class="comparison-row">
             <div class="comparison-card">
                 <h3>Grid Variant</h3>
-                <g-detail-list>
-                    <g-detail-list-item label="Program">Computer Science</g-detail-list-item>
-                    <g-detail-list-item label="Term">Fall 2026</g-detail-list-item>
-                    <g-detail-list-item label="Status">Admitted</g-detail-list-item>
-                    <g-detail-list-item label="Advisor">Dr. Rivera</g-detail-list-item>
-                </g-detail-list>
+                <dl class="g-detail-list g-detail-list--grid">
+                    <div class="g-detail-list-item">
+                        <dt class="g-detail-list-item__label">Description</dt>
+                        <dd class="g-detail-list-item__value">Engineering: Energy Systems</dd>
+                    </div>
+                    <div class="g-detail-list-item">
+                        <dt class="g-detail-list-item__label">Major</dt>
+                        <dd class="g-detail-list-item__value">Engineering</dd>
+                    </div>
+                    <div class="g-detail-list-item">
+                        <dt class="g-detail-list-item__label">Department Code</dt>
+                        <dd class="g-detail-list-item__value">123</dd>
+                    </div>
+                    <div class="g-detail-list-item">
+                        <dt class="g-detail-list-item__label">College Name</dt>
+                        <dd class="g-detail-list-item__value">Grainger Engineering</dd>
+                    </div>
+                </dl>
             </div>
             <div class="comparison-card">
                 <h3>Vertical Variant</h3>
-                <g-detail-list variant="vertical">
-                    <g-detail-list-item label="Student ID">A1234567</g-detail-list-item>
-                    <g-detail-list-item label="Concentration">Data Science</g-detail-list-item>
-                    <g-detail-list-item label="Credit Hours">12</g-detail-list-item>
-                </g-detail-list>
+                <dl class="g-detail-list g-detail-list--vertical">
+                    <div class="g-detail-list-item">
+                        <dt class="g-detail-list-item__label">Description</dt>
+                        <dd class="g-detail-list-item__value">Engineering: Energy Systems</dd>
+                    </div>
+                    <div class="g-detail-list-item">
+                        <dt class="g-detail-list-item__label">Major</dt>
+                        <dd class="g-detail-list-item__value">Engineering</dd>
+                    </div>
+                    <div class="g-detail-list-item">
+                        <dt class="g-detail-list-item__label">Department Code</dt>
+                        <dd class="g-detail-list-item__value">123</dd>
+                    </div>
+                    <div class="g-detail-list-item">
+                        <dt class="g-detail-list-item__label">College Name</dt>
+                        <dd class="g-detail-list-item__value">Grainger Engineering</dd>
+                    </div></dl>
             </div>
         </div>
     </section>
@@ -317,7 +350,9 @@
         <h2>Popover Comparison</h2>
         <div class="controls">
             <g-popover id="popover-inline-demo">
-                <g-button slot="trigger" id="popover-inline-trigger" theme="accent" size="small">Inline Trigger Popover</g-button>
+                <g-button slot="trigger" id="popover-inline-trigger" theme="accent" size="small">Inline Trigger
+                    Popover
+                </g-button>
                 <h3>Inline Popover</h3>
                 <p>Opened with a trigger slot inside the component.</p>
             </g-popover>
@@ -357,155 +392,156 @@
 
     <!-- Modal root for GModal if needed -->
     <div id="modal-root"></div>
+</main>
+<!-- Include the web components source -->
+<script type="module" src="./packages/grad-vue/dist/grad-vue-elements.js"></script>
 
-    <!-- Include the web components source -->
-    <script type="module" src="./packages/grad-vue/dist/grad-vue-elements.js"></script>
+<script>
+    // Log helper
+    const logEl = document.getElementById("event-log");
 
-    <script>
-        // Log helper
-        const logEl = document.getElementById('event-log');
-        function log(msg) {
-            const entry = document.createElement('div');
-            entry.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
-            logEl.prepend(entry);
+    function log(msg) {
+        const entry = document.createElement("div");
+        entry.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+        logEl.prepend(entry);
+    }
+
+    // Wait for custom elements to be defined if necessary, 
+    // though standard addEventListener works even before they are defined.
+
+    let dangerModal = null;
+    let anotherModal = null;
+
+    function openAnotherModal() {
+        if (anotherModal) {
+            return;
         }
 
-        // Wait for custom elements to be defined if necessary, 
-        // though standard addEventListener works even before they are defined.
-        
-        let dangerModal = null;
-        let anotherModal = null;
+        const modal = document.createElement("g-modal");
+        modal.setAttribute("label", "Another");
+        modal.innerHTML = "<p>This is another modal!</p>";
 
-        function openAnotherModal() {
-            if (anotherModal) {
-                return;
-            }
+        modal.addEventListener("close", () => {
+            anotherModal = null;
+            modal.remove();
+        }, { once: true });
 
-            const modal = document.createElement('g-modal');
-            modal.setAttribute('label', 'Another');
-            modal.innerHTML = '<p>This is another modal!</p>';
+        anotherModal = modal;
+        document.body.appendChild(modal);
+    }
 
-            modal.addEventListener('close', () => {
-                anotherModal = null;
-                modal.remove();
-            }, { once: true });
-
-            anotherModal = modal;
-            document.body.appendChild(modal);
+    function openDangerModal() {
+        if (dangerModal) {
+            return;
         }
 
-        function openDangerModal() {
-            if (dangerModal) {
-                return;
-            }
-
-            const modal = document.createElement('g-modal');
-            modal.setAttribute('label', 'Danger');
-            modal.innerHTML = `
+        const modal = document.createElement("g-modal");
+        modal.setAttribute("label", "Danger");
+        modal.innerHTML = `
                 <p>Here's a dangerous modal!</p>
                 <g-button id="another" theme="primary" size="small">Open Another Modal</g-button>
             `;
 
-            modal.addEventListener('close', () => {
-                if (anotherModal) {
-                    anotherModal.remove();
-                    anotherModal = null;
-                }
-                dangerModal = null;
-                modal.remove();
-            }, { once: true });
+        modal.addEventListener("close", () => {
+            if (anotherModal) {
+                anotherModal.remove();
+                anotherModal = null;
+            }
+            dangerModal = null;
+            modal.remove();
+        }, { once: true });
 
-            dangerModal = modal;
-            document.body.appendChild(modal);
+        dangerModal = modal;
+        document.body.appendChild(modal);
 
+    }
+
+    // Button events
+    document.getElementById("btn-primary").addEventListener("click", () => {
+        log("Primary button clicked!");
+    });
+
+    document.getElementById("btn-accent").addEventListener("click", () => {
+        log("Accent outlined button clicked!");
+    });
+
+    document.getElementById("danger").addEventListener("click", openDangerModal);
+
+    document.addEventListener("click", (event) => {
+        const target = event.target;
+        if (!(target instanceof Element)) {
+            return;
         }
+        if (target.closest("g-button#another")) {
+            openAnotherModal();
+        }
+    });
 
-        // Button events
-        document.getElementById('btn-primary').addEventListener('click', () => {
-            log('Primary button clicked!');
-        });
+    document.getElementById("popover").addEventListener("click", () => {
+        document.getElementById("popover-content").toggle();
+    });
 
-        document.getElementById('btn-accent').addEventListener('click', () => {
-            log('Accent outlined button clicked!');
-        });
+    document.getElementById("open-programmatic-popover").addEventListener("click", () => {
+        document.getElementById("programmatic-popover").show();
+    });
 
-        document.getElementById('danger').addEventListener('click', openDangerModal);
+    document.getElementById("open-minimal-popover").addEventListener("click", () => {
+        document.getElementById("minimal-popover-demo").show();
+    });
 
-        document.addEventListener('click', (event) => {
-            const target = event.target;
-            if (!(target instanceof Element)) {
-                return;
-            }
-            if (target.closest('g-button#another')) {
-                openAnotherModal();
-            }
-        });
+    document.getElementById("header-help").addEventListener("click", () => {
+        log("Header Help clicked");
+        document.getElementById("popover-inline-demo").toggle();
+    });
 
-        document.getElementById('popover').addEventListener('click', () => {
-            document.getElementById('popover-content').toggle();
-        });
+    const sidebarMenuDemo = document.getElementById("sidebar-menu-demo");
+    sidebarMenuDemo.items = [
+        { label: "Buttons", href: "#buttons" },
+        { label: "Inputs", href: "#inputs" },
+        { label: "Detail List", href: "#detail-list" },
+        { label: "Popover Compare", href: "#popover-compare" },
+        { label: "Table", href: "#table" }
+    ];
+    sidebarMenuDemo.spy = false;
 
-        document.getElementById('open-programmatic-popover').addEventListener('click', () => {
-            document.getElementById('programmatic-popover').show();
-        });
+    const form = document.getElementById("wc-form");
+    form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const payload = e.detail?.[0] || {};
+        log(`Form submitted: ${JSON.stringify(payload)}`);
+    });
 
-        document.getElementById('open-minimal-popover').addEventListener('click', () => {
-            document.getElementById('minimal-popover-demo').show();
-        });
+    // Input events
+    const textInput = document.getElementById("text-input");
+    const valueDisplay = document.getElementById("input-value");
 
-        document.getElementById('header-help').addEventListener('click', () => {
-            log('Header Help clicked');
-            document.getElementById('popover-inline-demo').toggle();
-        });
+    textInput.addEventListener("change", (e) => {
+        console.log(e);
+        // Vue custom elements emit events where data is in e.detail
+        const val = e.detail?.[0] || e.target.value;
+        log(`Input changed: ${val.to}`);
+        valueDisplay.textContent = val.to;
+    });
 
-        const sidebarMenuDemo = document.getElementById('sidebar-menu-demo');
-        sidebarMenuDemo.items = [
-            { label: 'Buttons', href: '#buttons' },
-            { label: 'Inputs', href: '#inputs' },
-            { label: 'Detail List', href: '#detail-list' },
-            { label: 'Popover Compare', href: '#popover-compare' },
-            { label: 'Table', href: '#table' },
-        ];
-        sidebarMenuDemo.spy = false;
+    // Table properties
+    const table = document.getElementById("test-table");
+    // We might need to wait for the element to be ready to set complex properties
+    // Or we can just set them, and if it's a Vue component it should pick them up when mounted.
+    table.resultCount = 3;
+    table.data = [
+        { key: 1, name: "John Doe", role: "Admin" },
+        { key: 2, name: "Jane Smith", role: "User" },
+        { key: 3, name: "Bob Johnson", role: "Editor" }
+    ];
 
-        const form = document.getElementById('wc-form');
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const payload = e.detail?.[0] || {};
-            log(`Form submitted: ${JSON.stringify(payload)}`);
-        });
+    // Define columns for the table
+    table.columns = [
+        { key: "key", label: "ID" },
+        { key: "name", label: "Name" },
+        { key: "role", label: "Role" }
+    ];
 
-        // Input events
-        const textInput = document.getElementById('text-input');
-        const valueDisplay = document.getElementById('input-value');
-        
-        textInput.addEventListener('change', (e) => {
-            console.log(e);
-            // Vue custom elements emit events where data is in e.detail
-            const val = e.detail?.[0] || e.target.value;
-            log(`Input changed: ${val.to}`);
-            valueDisplay.textContent = val.to;
-        });
-
-        // Table properties
-        const table = document.getElementById('test-table');
-        // We might need to wait for the element to be ready to set complex properties
-        // Or we can just set them, and if it's a Vue component it should pick them up when mounted.
-        table.resultCount = 3;
-        table.data = [
-            { key: 1, name: 'John Doe', role: 'Admin' },
-            { key: 2, name: 'Jane Smith', role: 'User' },
-            { key: 3, name: 'Bob Johnson', role: 'Editor' }
-        ];
-        
-        // Define columns for the table
-        table.columns = [
-            { key: 'key', label: 'ID' },
-            { key: 'name', label: 'Name' },
-            { key: 'role', label: 'Role' }
-        ];
-
-        log('Page initialized.');
-    </script>
+    log("Page initialized.");
+</script>
 </body>
 </html>
