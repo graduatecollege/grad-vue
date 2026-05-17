@@ -39,7 +39,9 @@
  * - `storageKey` - when provided, expanded/collapsed states are persisted to
  *   `sessionStorage` under this key and restored on page load. This is useful
  *   in Web Component / Drupal contexts where every page navigation is a full
- *   refresh. Item states are keyed by the item's `label` prop.
+ *   refresh. Item states are keyed by the item's `label` prop. If the menu is
+ *   inside a scrollable container such as `GSidebar`, the scroll position is
+ *   also saved and restored automatically.
  *
  * **Keyboard navigation** (tree-view style):
  *
@@ -53,7 +55,7 @@ export default {};
 </script>
 
 <script setup lang="ts">
-import { computed, nextTick, provide, reactive, ref, useId } from "vue";
+import { computed, nextTick, onMounted, onUnmounted, provide, reactive, ref, useId, useTemplateRef } from "vue";
 import { useSessionStorage } from "@vueuse/core";
 
 type Props = {
@@ -75,7 +77,8 @@ type Props = {
     /**
      * When provided, expanded/collapsed states are saved to `sessionStorage`
      * under this key and restored on page load. Item states are keyed by each
-     * the `label` prop.
+     * the `label` prop. If the menu is inside a scrollable container such as
+     * `GSidebar`, the scroll position is also saved and restored automatically.
      */
     storageKey?: string;
     /**
@@ -100,6 +103,57 @@ const expandedStorage = props.storageKey
     : null;
 
 provide("g-tree-menu-expanded-storage", expandedStorage);
+
+// --- Scroll position persistence ---
+
+const navRef = useTemplateRef<HTMLElement>("nav-el");
+
+const scrollStorage = props.storageKey
+    ? useSessionStorage<number>(`${props.storageKey}:scroll`, 0, { writeDefaults: false })
+    : null;
+
+function getScrollableParent(el: HTMLElement): HTMLElement | null {
+    let parent = el.parentElement;
+    while (parent && parent !== document.documentElement) {
+        const style = window.getComputedStyle(parent);
+        if (style.overflowY === "auto" || style.overflowY === "scroll") {
+            return parent;
+        }
+        parent = parent.parentElement;
+    }
+    return null;
+}
+
+let scrollableParent: HTMLElement | null = null;
+
+function handleParentScroll() {
+    if (scrollStorage && scrollableParent) {
+        scrollStorage.value = scrollableParent.scrollTop;
+    }
+}
+
+onMounted(() => {
+    if (!scrollStorage || !navRef.value) return;
+    scrollableParent = getScrollableParent(navRef.value);
+    if (!scrollableParent) return;
+
+    if (scrollStorage.value > 0) {
+        nextTick(() => {
+            if (scrollableParent) {
+                scrollableParent.scrollTop = scrollStorage!.value;
+            }
+        });
+    }
+
+    scrollableParent.addEventListener("scroll", handleParentScroll);
+});
+
+onUnmounted(() => {
+    if (scrollableParent) {
+        scrollableParent.removeEventListener("scroll", handleParentScroll);
+        scrollableParent = null;
+    }
+});
 
 // --- Expand / Collapse All ---
 
@@ -240,6 +294,7 @@ function handleKeydown(event: KeyboardEvent) {
 
 <template>
     <nav
+        ref="nav-el"
         class="g-tree-menu"
         :class="`g-tree-menu--${props.theme}`"
         v-bind="{
