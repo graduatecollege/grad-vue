@@ -114,7 +114,7 @@ const scrollStorage = props.storageKey
 
 function getScrollableParent(el: HTMLElement): HTMLElement | null {
     let parent = el.parentElement;
-    while (parent && parent !== document.documentElement) {
+    while (parent && parent !== document.documentElement && parent !== document.body) {
         const style = window.getComputedStyle(parent);
         if (style.overflowY === "auto" || style.overflowY === "scroll") {
             return parent;
@@ -133,9 +133,13 @@ function handleParentScroll() {
 }
 
 onMounted(() => {
-    if (!scrollStorage || !navRef.value) return;
+    if (!scrollStorage || !navRef.value) {
+        return;
+    }
     scrollableParent = getScrollableParent(navRef.value);
-    if (!scrollableParent) return;
+    if (!scrollableParent) {
+        return;
+    }
 
     if (scrollStorage.value > 0) {
         nextTick(() => {
@@ -319,7 +323,7 @@ function handleKeydown(event: KeyboardEvent) {
                             'g-tree-menu__expand-all-icon--collapse':
                                 allExpanded,
                         }"
-                        role="none presentation"
+                        role="none"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
