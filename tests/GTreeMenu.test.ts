@@ -1,10 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { page, userEvent } from "vitest/browser";
-import { h, nextTick, ref } from "vue";
+import { createApp, h, nextTick, ref } from "vue";
 import GTreeMenu from "../packages/grad-vue/src/components/GTreeMenu.vue";
 import GTreeMenuList from "../packages/grad-vue/src/components/tree-menu/GTreeMenuList.vue";
 import GTreeMenuItem from "../packages/grad-vue/src/components/tree-menu/GTreeMenuItem.vue";
 import { mnt, tabTo, testAccessibility } from "./test-utils";
+import { mounts } from "./setup";
 
 /**
  * Helper that builds a slot-based GTreeMenu using render functions.
@@ -937,6 +938,7 @@ describe("GTreeMenu", () => {
 
         afterEach(() => {
             sessionStorage.removeItem(STORAGE_KEY);
+            sessionStorage.removeItem(`${STORAGE_KEY}:scroll`);
         });
 
         it("items are collapsed by default when no stored state exists", async () => {
@@ -1124,6 +1126,145 @@ describe("GTreeMenu", () => {
             await expect
                 .element(wrapper.container.getByText("Section 1.1"))
                 .toBeVisible();
+        });
+
+        describe("Scroll Position", () => {
+            let scrollTestKeyCounter = 0;
+
+            function uniqueScrollKey() {
+                return `${STORAGE_KEY}-scroll-${++scrollTestKeyCounter}`;
+            }
+
+            afterEach(() => {
+                // Clean up any keys created by this suite
+                for (let i = 1; i <= scrollTestKeyCounter; i++) {
+                    const key = `${STORAGE_KEY}-scroll-${i}`;
+                    sessionStorage.removeItem(key);
+                    sessionStorage.removeItem(`${key}:scroll`);
+                }
+            });
+
+            function menuInScrollableContainer(storageKey: string) {
+                const scrollContainer = document.createElement("div");
+                scrollContainer.style.overflowY = "auto";
+                scrollContainer.style.height = "30px";
+                document.body.appendChild(scrollContainer);
+
+                // Tall filler so the container is actually scrollable
+                const filler = document.createElement("div");
+                filler.style.height = "500px";
+                scrollContainer.appendChild(filler);
+
+                const innerContainer = document.createElement("div");
+                scrollContainer.appendChild(innerContainer);
+
+                const app = createApp({
+                    render() {
+                        return h(
+                            GTreeMenu,
+                            { heading: "Contents", storageKey },
+                            {
+                                default: () =>
+                                    h(GTreeMenuList, {}, {
+                                        default: () => [
+                                            h(GTreeMenuItem, { label: "Chapter 1" }, {
+                                                default: () => h("button", null, "Chapter 1"),
+                                                children: () => [
+                                                    h(GTreeMenuItem, null, () =>
+                                                        h("a", { href: "#ch1/s1" }, "Section 1.1"),
+                                                    ),
+                                                ],
+                                            }),
+                                        ],
+                                    }),
+                            },
+                        );
+                    },
+                });
+                app.mount(innerContainer);
+
+                mounts.push(() => {
+                    app.unmount();
+                    scrollContainer.remove();
+                });
+
+                return { scrollContainer, innerContainer };
+            }
+
+            it("scrolling a scrollable parent saves scroll position to sessionStorage", async () => {
+                const key = uniqueScrollKey();
+                const { scrollContainer } = menuInScrollableContainer(key);
+
+                await nextTick(); // Allow browser to compute layout before scrolling
+                scrollContainer.scrollTop = 42;
+                scrollContainer.dispatchEvent(new Event("scroll"));
+                await nextTick(); // Allow VueUse to flush the write to sessionStorage
+
+                expect(JSON.parse(sessionStorage.getItem(`${key}:scroll`)!)).toBe(42);
+            });
+
+            it("restores scroll position from sessionStorage on mount", async () => {
+                const key = uniqueScrollKey();
+                sessionStorage.setItem(`${key}:scroll`, "75");
+                const { scrollContainer } = menuInScrollableContainer(key);
+
+                await nextTick();
+
+                expect(scrollContainer.scrollTop).toBe(75);
+            });
+
+            it("does not restore scroll when stored value is 0", async () => {
+                const key = uniqueScrollKey();
+                sessionStorage.setItem(`${key}:scroll`, "0");
+                const { scrollContainer } = menuInScrollableContainer(key);
+
+                await nextTick();
+
+                expect(scrollContainer.scrollTop).toBe(0);
+            });
+
+            it("does not attempt scroll save when no storageKey is set", async () => {
+                const scrollContainer = document.createElement("div");
+                scrollContainer.style.overflowY = "auto";
+                scrollContainer.style.height = "30px";
+                document.body.appendChild(scrollContainer);
+
+                const filler = document.createElement("div");
+                filler.style.height = "500px";
+                scrollContainer.appendChild(filler);
+
+                const innerContainer = document.createElement("div");
+                scrollContainer.appendChild(innerContainer);
+
+                const app = createApp({
+                    render() {
+                        return h(
+                            GTreeMenu,
+                            { heading: "Contents" },
+                            {
+                                default: () =>
+                                    h(GTreeMenuList, {}, {
+                                        default: () => [
+                                            h(GTreeMenuItem, null, () =>
+                                                h("a", { href: "#home" }, "Home"),
+                                            ),
+                                        ],
+                                    }),
+                            },
+                        );
+                    },
+                });
+                app.mount(innerContainer);
+                mounts.push(() => {
+                    app.unmount();
+                    scrollContainer.remove();
+                });
+
+                scrollContainer.scrollTop = 50;
+                scrollContainer.dispatchEvent(new Event("scroll"));
+
+                expect(sessionStorage.getItem(`${STORAGE_KEY}:scroll`)).toBeNull();
+            });
         });
     });
 
