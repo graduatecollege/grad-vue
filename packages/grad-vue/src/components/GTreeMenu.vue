@@ -140,7 +140,7 @@ onMounted(() => {
     if (scrollStorage.value > 0) {
         nextTick(() => {
             if (scrollableParent) {
-                scrollableParent.scrollTop = scrollStorage!.value;
+                scrollableParent.scrollTop = scrollStorage.value;
             }
         });
     }
