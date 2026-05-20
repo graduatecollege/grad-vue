@@ -126,6 +126,7 @@ function getScrollableParent(el: HTMLElement): HTMLElement | null {
 
 let scrollableParent: HTMLElement | null = null;
 let scrollRestoreObserver: ResizeObserver | null = null;
+let scrollRestoreMutationObserver: MutationObserver | null = null;
 let hasRestoredScroll = false;
 
 function handleParentScroll() {
@@ -139,6 +140,10 @@ function stopScrollRestoreObserver() {
         scrollRestoreObserver.disconnect();
         scrollRestoreObserver = null;
     }
+    if (scrollRestoreMutationObserver) {
+        scrollRestoreMutationObserver.disconnect();
+        scrollRestoreMutationObserver = null;
+    }
 }
 
 function restoreScrollPosition() {
@@ -150,6 +155,25 @@ function restoreScrollPosition() {
     hasRestoredScroll = scrollableParent.scrollTop > 0;
     if (hasRestoredScroll) {
         stopScrollRestoreObserver();
+    }
+}
+
+function observeVisibilityChanges(nav: HTMLElement) {
+    if (typeof MutationObserver === "undefined") {
+        return;
+    }
+
+    scrollRestoreMutationObserver = new MutationObserver(() => {
+        restoreScrollPosition();
+    });
+
+    let current: HTMLElement | null = nav;
+    while (current) {
+        scrollRestoreMutationObserver.observe(current, {
+            attributes: true,
+            attributeFilter: ["class", "style", "hidden", "open"],
+        });
+        current = current.parentElement;
     }
 }
 
@@ -173,6 +197,7 @@ onMounted(() => {
         scrollRestoreObserver.observe(navRef.value);
         scrollRestoreObserver.observe(scrollableParent);
     }
+    observeVisibilityChanges(navRef.value);
 
     scrollableParent.addEventListener("scroll", handleParentScroll);
 });
