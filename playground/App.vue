@@ -40,6 +40,9 @@ const fname = ref("heh");
         <div class="wrap">
             <main class="main" ref="main">
                 <div>
+                    <GHamburgerMenu label="Menu" style="display: flex;">
+
+                    </GHamburgerMenu>
                     <GTextarea></GTextarea>
                     <GFileInput
                         label="File Input"
@@ -123,89 +126,6 @@ const fname = ref("heh");
                         <GDetailListItem label="College Name">Grainger Engineering</GDetailListItem>
                     </GDetailList>
                 </div>
-                <section id="buttons">
-                    <h2>Buttons (with icons)</h2>
-                    <div>
-                        <GButton theme="primary"> Primary </GButton>
-                        <GButton theme="accent" outlined icon="demo-icon">
-                            Accent Outlined
-                        </GButton>
-                        <GButton theme="secondary" text icon="demo-icon">
-                            Secondary Text
-                        </GButton>
-
-                        <GButton theme="primary" outlined>
-                            <template #icon>
-                                <svg
-                                    width="16"
-                                    height="16"
-                                    viewBox="0 0 24 24"
-                                    aria-hidden="true"
-                                >
-                                    <path
-                                        stroke="currentColor"
-                                        fill="currentColor"
-                                        d="M19 11H13V5h-2v6H5v2h6v6h2v-6h6z"
-                                    />
-                                </svg>
-                            </template>
-                            With SVG Slot
-                        </GButton>
-                    </div>
-                    <div>
-                        <GButton size="small" theme="primary"> Primary </GButton>
-                        <GButton size="small" theme="accent" outlined icon="demo-icon">
-                            Accent Outlined
-                        </GButton>
-                        <GButton size="small" theme="secondary" text icon="demo-icon">
-                            Secondary Text
-                        </GButton>
-
-                        <GButton size="small" theme="primary" outlined>
-                            <template #icon>
-                                <svg
-                                    width="16"
-                                    height="16"
-                                    viewBox="0 0 24 24"
-                                    fill="currentColor"
-                                    aria-hidden="true"
-                                >
-                                    <path
-                                        d="M19 11H13V5h-2v6H5v2h6v6h2v-6h6z"
-                                    />
-                                </svg>
-                            </template>
-                            With SVG Slot
-                        </GButton>
-                    </div>
-                    <div>
-                        <GButton size="large" theme="primary"> Primary </GButton>
-                        <GButton size="large" theme="accent" outlined icon="demo-icon">
-                            Accent
-                        </GButton>
-                        <GButton size="large" theme="secondary" text icon="demo-icon">
-                            Secondary
-                        </GButton>
-
-                        <GButton size="large" theme="primary" outlined>
-                            <template #icon>
-                                <svg
-                                    width="16"
-                                    height="16"
-                                    viewBox="0 0 24 24"
-                                    fill="currentColor"
-                                    stroke="currentColor"
-                                    aria-hidden="true"
-                                >
-                                    <path
-                                        d="M19 11H13V5h-2v6H5v2h6v6h2v-6h6z"
-                                    />
-                                </svg>
-                            </template>
-                            With SVG
-                        </GButton>
-                    </div>
-                </section>
                 <section id="modal-popovers">
                     <h2>Modal and Popovers</h2>
                     <GButton v-gtooltip="'Real Button'">Button</GButton>
@@ -230,7 +150,7 @@ const fname = ref("heh");
     margin-top: var(--g-toolbar-height);
 }
 .wrap:not(.sidebar-collapsible) {
-    padding-left: 300px;
+
 }
 
 .main {

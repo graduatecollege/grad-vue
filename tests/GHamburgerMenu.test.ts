@@ -257,6 +257,35 @@ describe("GHamburgerMenu", () => {
 
     });
 
+    describe("Visible label", () => {
+        it("Does not render visible label by default", async () => {
+            await page.viewport(600, 800);
+            const { container } = mnt(GHamburgerMenu, { props: { label: "Main Navigation" } });
+
+            await expect.element(container.getByText("Main Navigation", { exact: true })).not.toBeInTheDocument();
+        });
+
+        it("Renders visible label when labelVisible is true", async () => {
+            await page.viewport(600, 800);
+            const { container } = mnt(GHamburgerMenu, {
+                props: { label: "Main Navigation", labelVisible: true },
+            });
+
+            await expect.element(container.getByText("Main Navigation", { exact: true })).toBeInTheDocument();
+        });
+
+        it("Visible label shows the provided label text", async () => {
+            await page.viewport(600, 800);
+            const { container } = mnt(GHamburgerMenu, {
+                props: { label: "Open Menu", labelVisible: true },
+            });
+
+            await expect.element(container.getByText("Open Menu", { exact: true })).toBeInTheDocument();
+            // The accessible name should still match the label.
+            await expect.element(container.getByLabelText("Open Menu")).toBeInTheDocument();
+        });
+    });
+
     describe("Accessibility Tests", () => {
         it("passes accessibility tests with open sidebar", async () => {
 

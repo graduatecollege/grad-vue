@@ -54,11 +54,18 @@ type Props = {
      * @demo
      */
     mediaQuery?: string;
+
+    /**
+     * Show a visible label
+     * @demo
+     */
+    labelVisible?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
     label: "Main Navigation",
     sidebarKey: "default",
+    labelVisible: false,
 });
 
 const injectedSidebar = inject<ReturnType<typeof useSidebar>>("sidebar");
@@ -109,6 +116,7 @@ const fallbackId = useId();
                 />
             </g>
         </svg>
+        <span v-if="labelVisible" class="g-hamburger-label">{{ label }}</span>
     </button>
 </template>
 
@@ -123,13 +131,14 @@ g-hamburger-menu:not(:defined) {
     }
 }
 .g-hamburger-button {
-    width: 34px;
+    min-width: 34px;
     height: 34px;
     padding: 0;
     display: none;
     justify-content: center;
     align-items: center;
     text-decoration: none;
+    column-gap: 0.25rem;
     border: 2px solid var(--g-primary-500);
     background: var(--g-primary-500);
     color: var(--g-primary-text);
@@ -149,6 +158,13 @@ g-hamburger-menu:not(:defined) {
         background: var(--ilw-color--focus--background);
         outline-color: var(--g-primary-500);
     }
+}
+.g-hamburger-label {
+    font-size: 20px;
+    font-weight: 600;
+    display: block;
+    text-transform: uppercase;
+    margin-right: 0.35rem;
 }
 .g-hamburger-button--collapsible {
     display: flex;
