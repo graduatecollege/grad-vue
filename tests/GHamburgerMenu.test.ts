@@ -8,7 +8,6 @@ import { useSidebar } from "../packages/grad-vue/src/compose/useSidebar";
 import { mnt, testAccessibility, tabTo } from "./test-utils";
 
 const globalScope = globalThis as typeof globalThis & {
-    __GRAD_VUE_IS_WEB_COMPONENTS_BUILD__?: boolean;
     __GRAD_VUE_WC_SIDEBAR_CHANNELS__?: Map<string, unknown>;
 };
 
@@ -89,12 +88,10 @@ function mountFixture() {
 
 describe("GHamburgerMenu", () => {
     beforeEach(() => {
-        delete globalScope.__GRAD_VUE_IS_WEB_COMPONENTS_BUILD__;
         delete globalScope.__GRAD_VUE_WC_SIDEBAR_CHANNELS__;
     });
 
     afterEach(() => {
-        delete globalScope.__GRAD_VUE_IS_WEB_COMPONENTS_BUILD__;
         delete globalScope.__GRAD_VUE_WC_SIDEBAR_CHANNELS__;
     });
 
@@ -236,41 +233,28 @@ describe("GHamburgerMenu", () => {
             await expect.element(container.getByText("First link")).not.toBeVisible();
         });
 
-        it("supports configuring sidebar media query in custom element mode", async () => {
-            await page.viewport(750, 800);
-            globalScope.__GRAD_VUE_IS_WEB_COMPONENTS_BUILD__ = true;
+        it("Clicking the hamburger menu button while the sidebar is open closes it and keeps it closed", async () => {
+            await page.viewport(600, 800);
+            const { vm, container } = mountFixture();
 
-            const Fixture = defineComponent({
-                name: "HamburgerSidebarWebComponentFixture",
-                setup() {
-                    return () =>
-                        h("div", { class: "fixture" }, [
-                            h(GHamburgerMenu, {
-                                label: "Main Navigation",
-                                sidebarKey: "web-component-sidebar",
-                                mediaQuery: "(max-width: 700px)",
-                            }),
-                            h(
-                                GSidebar,
-                                {
-                                    sidebarKey: "web-component-sidebar",
-                                    mediaQuery: "(max-width: 700px)",
-                                    theme: "light",
-                                    topOffset: "0",
-                                },
-                                {
-                                    default: () => [h("a", { href: "#first" }, "First link")],
-                                },
-                            ),
-                        ]);
-                },
-            });
+            const hamburger = container.getByLabelText("Main Navigation");
+            const element = hamburger.element();
 
-            const { container } = mnt(Fixture);
-
+            // Open it
+            await hamburger.click();
+            await tick(vm);
             await expect.element(container.getByText("First link")).toBeVisible();
-            await expect.element(container.getByLabelText("Main Navigation")).not.toBeVisible();
+
+            // Close it with a delay between mousedown and click to ensure document listener doesn't interfere
+            element.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+            await new Promise((r) => setTimeout(r, 20));
+            element.dispatchEvent(new MouseEvent("mouseup", { bubbles: true }));
+            element.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+            await tick(vm);
+
+            await expect.element(container.getByText("First link")).not.toBeVisible();
         });
+
     });
 
     describe("Accessibility Tests", () => {

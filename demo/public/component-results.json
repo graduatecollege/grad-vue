@@ -1,7 +1,7 @@
 {
   "totalComponents": 42,
-  "totalTests": 472,
-  "passedTests": 472,
+  "totalTests": 473,
+  "passedTests": 473,
   "failedTests": 0,
   "skippedTests": 0,
   "components": {
@@ -1108,8 +1108,8 @@
     },
     "GHamburgerMenu": {
       "component": "GHamburgerMenu",
-      "total": 13,
-      "passed": 13,
+      "total": 14,
+      "passed": 14,
       "failed": 0,
       "skipped": 0,
       "status": "passed",
@@ -1193,6 +1193,13 @@
         },
         {
           "title": "Moving focus past the end of the content in the sidebar closes the sidebar",
+          "status": "passed",
+          "ancestors": [
+            "Functional Tests"
+          ]
+        },
+        {
+          "title": "Clicking the hamburger menu button while the sidebar is open closes it and keeps it closed",
           "status": "passed",
           "ancestors": [
             "Functional Tests"

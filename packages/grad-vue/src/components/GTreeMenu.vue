@@ -86,12 +86,24 @@ type Props = {
      * @demo
      */
     showExpandAll?: boolean;
+    /**
+     * Heading level for the heading element
+     * @demo
+     */
+    headingLevel?: "h2" | "h3";
+    /**
+     * Render the heading in a compact style and omit the divider line
+     * @demo
+     */
+    smallHeading?: boolean;
 };
 
 const props = withDefaults(defineProps<Props>(), {
     listType: "ul",
     theme: "light",
     showExpandAll: false,
+    headingLevel: "h2",
+    smallHeading: false,
 });
 
 const id = useId();
@@ -352,18 +364,29 @@ function handleKeydown(event: KeyboardEvent) {
     <nav
         ref="nav-el"
         class="g-tree-menu"
-        :class="`g-tree-menu--${props.theme}`"
+        :class="[
+            `g-tree-menu--${props.theme}`,
+            { 'g-tree-menu--small-heading': smallHeading },
+        ]"
         v-bind="{
             'aria-labelledby': heading ? id : undefined,
             'aria-label': heading ? undefined : 'Tree Menu',
         }"
         @keydown="handleKeydown"
     >
-        <h2 v-if="heading" :id="id" class="g-tree-menu__title">
+        <component
+            :is="headingLevel"
+            v-if="heading"
+            :id="id"
+            class="g-tree-menu__title"
+        >
             {{ heading }}
-        </h2>
+        </component>
         <div class="g-tree-menu__divider">
-            <div class="g-tree-menu__divider-line"></div>
+            <div
+                v-if="!smallHeading"
+                class="g-tree-menu__divider-line"
+            ></div>
             <div v-if="showExpandAll" class="g-tree-menu__expand-all-wrapper">
                 <button
                     class="g-tree-menu__expand-all-btn"
@@ -425,6 +448,15 @@ function handleKeydown(event: KeyboardEvent) {
     margin: 2rem 2rem 0;
     font-size: 2rem;
     font-family: var(--il-font-heading);
+}
+
+.g-tree-menu--small-heading .g-tree-menu__title {
+    margin: 1rem 2rem 0;
+    font-size: 1.25rem;
+}
+
+.g-tree-menu--small-heading .g-tree-menu__divider {
+    margin-bottom: 0.5rem;
 }
 
 .g-tree-menu__divider {

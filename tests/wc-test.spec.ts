@@ -59,6 +59,46 @@ test.describe('Web Components Modal and Popover Tests', () => {
     await expect(dangerDialog).not.toBeVisible();
   });
 
+  test('should toggle the sidebar with the hamburger menu', async ({ page }) => {
+    await page.setViewportSize({ width: 600, height: 800 });
+    const hamburger = page.getByLabel('Main Navigation');
+
+    // Open it
+    await hamburger.click();
+    await expect(page.getByText('Admission to the Graduate College')).toBeVisible();
+
+    // Close it
+    await hamburger.click();
+    await expect(page.getByText('Admission to the Graduate College')).not.toBeVisible();
+  });
+
+  test('hamburger menu visibility should respect media query', async ({ page }) => {
+    const hamburger = page.locator('g-hamburger-menu');
+
+    await page.setViewportSize({ width: 1200, height: 800 });
+    await expect(hamburger).not.toBeVisible();
+
+    await page.setViewportSize({ width: 600, height: 800 });
+    await expect(hamburger).toBeVisible();
+  });
+
+  test('should stay closed when clicking hamburger menu to close it', async ({ page }) => {
+    await page.setViewportSize({ width: 600, height: 800 });
+    const hamburger = page.getByLabel('Main Navigation');
+
+    // Open it
+    await hamburger.click();
+    await expect(page.getByText('Admission to the Graduate College')).toBeVisible();
+
+    // Close it with a slightly delayed click simulation if possible, 
+    // but a standard click should be enough to verify the fix works in the real environment.
+    await hamburger.click({ delay: 50 });
+    
+    // Wait to ensure no async re-opening happens
+    await page.waitForTimeout(100);
+    await expect(page.getByText('Admission to the Graduate College')).not.toBeVisible();
+  });
+
   test('should open nested modal', async ({ page }) => {
     await page.locator('g-button#danger').click();
     await page.locator('g-button#another').click();
