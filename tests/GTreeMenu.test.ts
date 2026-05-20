@@ -1144,10 +1144,13 @@ describe("GTreeMenu", () => {
                 }
             });
 
-            function menuInScrollableContainer(storageKey: string) {
+            function menuInScrollableContainer(storageKey: string, hidden = false) {
                 const scrollContainer = document.createElement("div");
                 scrollContainer.style.overflowY = "auto";
                 scrollContainer.style.height = "30px";
+                if (hidden) {
+                    scrollContainer.style.display = "none";
+                }
                 document.body.appendChild(scrollContainer);
 
                 // Tall filler so the container is actually scrollable
@@ -1191,6 +1194,12 @@ describe("GTreeMenu", () => {
                 return { scrollContainer, innerContainer };
             }
 
+            async function waitForAnimationFrame() {
+                await new Promise<void>((resolve) => {
+                    requestAnimationFrame(() => resolve());
+                });
+            }
+
             it("scrolling a scrollable parent saves scroll position to sessionStorage", async () => {
                 const key = uniqueScrollKey();
                 const { scrollContainer } = menuInScrollableContainer(key);
@@ -1221,6 +1230,21 @@ describe("GTreeMenu", () => {
                 await nextTick();
 
                 expect(scrollContainer.scrollTop).toBe(0);
+            });
+
+            it("restores scroll after hidden container becomes visible", async () => {
+                const key = uniqueScrollKey();
+                sessionStorage.setItem(`${key}:scroll`, "75");
+                const { scrollContainer } = menuInScrollableContainer(key, true);
+
+                await nextTick();
+                expect(scrollContainer.scrollTop).toBe(0);
+
+                scrollContainer.style.display = "block";
+                await waitForAnimationFrame();
+                await nextTick();
+
+                expect(scrollContainer.scrollTop).toBe(75);
             });
 
             it("does not attempt scroll save when no storageKey is set", async () => {
