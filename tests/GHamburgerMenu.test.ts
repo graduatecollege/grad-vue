@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, provide } from "vue";
 import { page, userEvent } from "vitest/browser";
 
@@ -6,6 +6,11 @@ import GHamburgerMenu from "../packages/grad-vue/src/components/GHamburgerMenu.v
 import GSidebar from "../packages/grad-vue/src/components/GSidebar.vue";
 import { useSidebar } from "../packages/grad-vue/src/compose/useSidebar";
 import { mnt, testAccessibility, tabTo } from "./test-utils";
+
+const globalScope = globalThis as typeof globalThis & {
+    __GRAD_VUE_IS_WEB_COMPONENTS_BUILD__?: boolean;
+    __GRAD_VUE_WC_SIDEBAR_CHANNELS__?: Map<string, unknown>;
+};
 
 async function tick(vm: any) {
     await vm.$nextTick();
@@ -83,6 +88,16 @@ function mountFixture() {
 }
 
 describe("GHamburgerMenu", () => {
+    beforeEach(() => {
+        delete globalScope.__GRAD_VUE_IS_WEB_COMPONENTS_BUILD__;
+        delete globalScope.__GRAD_VUE_WC_SIDEBAR_CHANNELS__;
+    });
+
+    afterEach(() => {
+        delete globalScope.__GRAD_VUE_IS_WEB_COMPONENTS_BUILD__;
+        delete globalScope.__GRAD_VUE_WC_SIDEBAR_CHANNELS__;
+    });
+
     describe("Functional Tests", () => {
         it("Large viewport doesn't collapse the sidebar", async () => {
             await page.viewport(1200, 800);
@@ -219,6 +234,42 @@ describe("GHamburgerMenu", () => {
                 .toHaveFocus();
 
             await expect.element(container.getByText("First link")).not.toBeVisible();
+        });
+
+        it("supports configuring sidebar media query in custom element mode", async () => {
+            await page.viewport(750, 800);
+            globalScope.__GRAD_VUE_IS_WEB_COMPONENTS_BUILD__ = true;
+
+            const Fixture = defineComponent({
+                name: "HamburgerSidebarWebComponentFixture",
+                setup() {
+                    return () =>
+                        h("div", { class: "fixture" }, [
+                            h(GHamburgerMenu, {
+                                label: "Main Navigation",
+                                sidebarKey: "web-component-sidebar",
+                                mediaQuery: "(max-width: 700px)",
+                            }),
+                            h(
+                                GSidebar,
+                                {
+                                    sidebarKey: "web-component-sidebar",
+                                    mediaQuery: "(max-width: 700px)",
+                                    theme: "light",
+                                    topOffset: "0",
+                                },
+                                {
+                                    default: () => [h("a", { href: "#first" }, "First link")],
+                                },
+                            ),
+                        ]);
+                },
+            });
+
+            const { container } = mnt(Fixture);
+
+            await expect.element(container.getByText("First link")).toBeVisible();
+            await expect.element(container.getByLabelText("Main Navigation")).not.toBeVisible();
         });
     });
 

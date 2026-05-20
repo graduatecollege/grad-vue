@@ -27,7 +27,7 @@
  * > [!NOTE]
  * > This button hides itself automatically according to the useSidebar media query.
  * > In web components mode, use the `sidebar-key` prop to pair this menu with a
- * > matching GSidebar instance.
+ * > matching GSidebar instance and `media-query` to set the collapsible breakpoint.
  */
 export default {};
 </script>
@@ -36,7 +36,7 @@ export default {};
 import { useSidebar } from "../compose/useSidebar.ts";
 import { useWebComponentSidebar } from "../compose/useWebComponentSidebar.ts";
 import { isCustomElementMode } from "../compose/useCustomElementAttrs.ts";
-import { inject, useId } from "vue";
+import { inject, toRef, useId } from "vue";
 
 type Props = {
     /**
@@ -49,6 +49,11 @@ type Props = {
      * @demo
      */
     sidebarKey?: string;
+    /**
+     * Sidebar media query for custom elements mode
+     * @demo
+     */
+    mediaQuery?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -59,7 +64,9 @@ const props = withDefaults(defineProps<Props>(), {
 const injectedSidebar = inject<ReturnType<typeof useSidebar>>("sidebar");
 const sidebar =
     injectedSidebar ??
-    (isCustomElementMode() ? useWebComponentSidebar(props.sidebarKey) : undefined);
+    (isCustomElementMode()
+        ? useWebComponentSidebar(props.sidebarKey, toRef(props, "mediaQuery"))
+        : undefined);
 
 const emit = defineEmits<{
     toggle: [];
