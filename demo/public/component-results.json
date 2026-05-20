@@ -1,7 +1,7 @@
 {
   "totalComponents": 42,
-  "totalTests": 467,
-  "passedTests": 467,
+  "totalTests": 472,
+  "passedTests": 472,
   "failedTests": 0,
   "skippedTests": 0,
   "components": {
@@ -3025,8 +3025,8 @@
     },
     "GTreeMenu": {
       "component": "GTreeMenu",
-      "total": 56,
-      "passed": 56,
+      "total": 61,
+      "passed": 61,
       "failed": 0,
       "skipped": 0,
       "status": "passed",
@@ -3316,6 +3316,46 @@
           "status": "passed",
           "ancestors": [
             "Session Storage"
+          ]
+        },
+        {
+          "title": "scrolling a scrollable parent saves scroll position to sessionStorage",
+          "status": "passed",
+          "ancestors": [
+            "Session Storage",
+            "Scroll Position"
+          ]
+        },
+        {
+          "title": "restores scroll position from sessionStorage on mount",
+          "status": "passed",
+          "ancestors": [
+            "Session Storage",
+            "Scroll Position"
+          ]
+        },
+        {
+          "title": "does not restore scroll when stored value is 0",
+          "status": "passed",
+          "ancestors": [
+            "Session Storage",
+            "Scroll Position"
+          ]
+        },
+        {
+          "title": "restores scroll after hidden container becomes visible",
+          "status": "passed",
+          "ancestors": [
+            "Session Storage",
+            "Scroll Position"
+          ]
+        },
+        {
+          "title": "does not attempt scroll save when no storageKey is set",
+          "status": "passed",
+          "ancestors": [
+            "Session Storage",
+            "Scroll Position"
           ]
         },
         {

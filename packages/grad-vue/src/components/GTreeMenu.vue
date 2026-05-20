@@ -125,10 +125,55 @@ function getScrollableParent(el: HTMLElement): HTMLElement | null {
 }
 
 let scrollableParent: HTMLElement | null = null;
+let scrollRestoreObserver: ResizeObserver | null = null;
+let scrollRestoreMutationObserver: MutationObserver | null = null;
+let hasRestoredScroll = false;
 
 function handleParentScroll() {
     if (scrollStorage && scrollableParent) {
         scrollStorage.value = scrollableParent.scrollTop;
+    }
+}
+
+function stopScrollRestoreObserver() {
+    if (scrollRestoreObserver) {
+        scrollRestoreObserver.disconnect();
+        scrollRestoreObserver = null;
+    }
+    if (scrollRestoreMutationObserver) {
+        scrollRestoreMutationObserver.disconnect();
+        scrollRestoreMutationObserver = null;
+    }
+}
+
+function restoreScrollPosition() {
+    if (!scrollStorage || !scrollableParent || hasRestoredScroll || scrollStorage.value <= 0) {
+        return;
+    }
+
+    scrollableParent.scrollTop = scrollStorage.value;
+    hasRestoredScroll = scrollableParent.scrollTop > 0;
+    if (hasRestoredScroll) {
+        stopScrollRestoreObserver();
+    }
+}
+
+function observeVisibilityChanges(nav: HTMLElement) {
+    if (typeof MutationObserver === "undefined") {
+        return;
+    }
+
+    scrollRestoreMutationObserver = new MutationObserver(() => {
+        restoreScrollPosition();
+    });
+
+    let current: HTMLElement | null = nav;
+    while (current) {
+        scrollRestoreMutationObserver.observe(current, {
+            attributes: true,
+            attributeFilter: ["class", "style", "hidden", "open"],
+        });
+        current = current.parentElement;
     }
 }
 
@@ -141,22 +186,29 @@ onMounted(() => {
         return;
     }
 
-    if (scrollStorage.value > 0) {
-        nextTick(() => {
-            if (scrollableParent) {
-                scrollableParent.scrollTop = scrollStorage.value;
-            }
+    nextTick(() => {
+        restoreScrollPosition();
+    });
+
+    if (typeof ResizeObserver !== "undefined") {
+        scrollRestoreObserver = new ResizeObserver(() => {
+            restoreScrollPosition();
         });
+        scrollRestoreObserver.observe(navRef.value);
+        scrollRestoreObserver.observe(scrollableParent);
     }
+    observeVisibilityChanges(navRef.value);
 
     scrollableParent.addEventListener("scroll", handleParentScroll);
 });
 
 onUnmounted(() => {
+    stopScrollRestoreObserver();
     if (scrollableParent) {
         scrollableParent.removeEventListener("scroll", handleParentScroll);
         scrollableParent = null;
     }
+    hasRestoredScroll = false;
 });
 
 // --- Expand / Collapse All ---
