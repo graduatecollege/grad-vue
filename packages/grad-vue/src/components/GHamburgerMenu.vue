@@ -106,10 +106,10 @@ const fallbackId = useId();
         @click="toggle"
         @keydown="handleEscapeKey"
         :aria-expanded="sidebar?.open?.value ? 'true' : 'false'"
-        :aria-label="label"
+        :aria-label="labelVisible ? undefined : label"
         :aria-controls="sidebar ? `${sidebar.id}-sidebar` : undefined"
     >
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 51.26 51.26">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 51.26 51.26" role="none">
             <g fill="currentColor">
                 <path
                     d="M11.6 16.52h28.06a3.24 3.24 0 1 0 0-6.48H11.6a3.24 3.24 0 0 0 0 6.48ZM39.66 22.07H11.6a3.24 3.24 0 0 0 0 6.48h28.06a3.24 3.24 0 1 0 0-6.48ZM39.66 34.1H11.6a3.24 3.24 0 0 0 0 6.48h28.06a3.24 3.24 0 1 0 0-6.48Z"

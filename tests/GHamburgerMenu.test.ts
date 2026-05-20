@@ -281,8 +281,6 @@ describe("GHamburgerMenu", () => {
             });
 
             await expect.element(container.getByText("Open Menu", { exact: true })).toBeInTheDocument();
-            // The accessible name should still match the label.
-            await expect.element(container.getByLabelText("Open Menu")).toBeInTheDocument();
         });
     });
 
