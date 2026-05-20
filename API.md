@@ -637,7 +637,7 @@ provides the sidebar, they will be able to communicate with each other.
 > [!NOTE]
 > This button hides itself automatically according to the useSidebar media query.
 > In web components mode, use the `sidebar-key` prop to pair this menu with a
-> matching GSidebar instance.
+> matching GSidebar instance and `media-query` to set the collapsible breakpoint.
 
 ### Props
 
@@ -651,6 +651,10 @@ type Props = {
      * Sidebar channel key for custom elements mode
      */
     sidebarKey?: string;
+    /**
+     * Sidebar media query for custom elements mode
+     */
+    mediaQuery?: string;
 }
 ```
 
@@ -1199,7 +1203,8 @@ object from `useSidebar`. See the [Hamburger Menu Documentation](#use-sidebar)
 for details.
 
 In web components mode, use the `sidebar-key` prop to pair this sidebar
-with a matching GHamburgerMenu instance.
+with a matching GHamburgerMenu instance and `media-query` to set the
+collapsible breakpoint.
 
 ### Props
 
@@ -1235,6 +1240,10 @@ type Props = {
      * Sidebar channel key for custom elements mode
      */
     sidebarKey?: string;
+    /**
+     * Sidebar media query for custom elements mode
+     */
+    mediaQuery?: string;
 }
 ```
 
@@ -1816,7 +1825,9 @@ Use `GTreeMenuList` and `GTreeMenuItem` sub-components to build the menu:
 - `storageKey` - when provided, expanded/collapsed states are persisted to
   `sessionStorage` under this key and restored on page load. This is useful
   in Web Component / Drupal contexts where every page navigation is a full
-  refresh. Item states are keyed by the item's `label` prop.
+  refresh. Item states are keyed by the item's `label` prop. If the menu is
+  inside a scrollable container such as `GSidebar`, the scroll position is
+  also saved and restored automatically.
 
 **Keyboard navigation** (tree-view style):
 
@@ -1845,13 +1856,22 @@ type Props = {
     /**
      * When provided, expanded/collapsed states are saved to `sessionStorage`
      * under this key and restored on page load. Item states are keyed by each
-     * the `label` prop.
+     * the `label` prop. If the menu is inside a scrollable container such as
+     * `GSidebar`, the scroll position is also saved and restored automatically.
      */
     storageKey?: string;
     /**
      * Show an expand/collapse all button
      */
     showExpandAll?: boolean;
+    /**
+     * Heading level for the heading element
+     */
+    headingLevel?: "h2" | "h3";
+    /**
+     * Render the heading in a compact style and omit the divider line
+     */
+    smallHeading?: boolean;
 };
 ```
 

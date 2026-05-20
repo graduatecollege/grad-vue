@@ -21,10 +21,11 @@ export function useSidebar(
         }
         const target = e.target as HTMLElement;
         const sidebarEl = document.getElementById(`${id}-sidebar`);
+        const hamburgerEl = document.getElementById(`${id}-hamburger`);
         if (!sidebarEl) {
             return;
         }
-        if (sidebarEl.contains(target)) {
+        if (sidebarEl.contains(target) || hamburgerEl?.contains(target)) {
             return;
         }
         // Very slight delay means if they click the menu button to close it,

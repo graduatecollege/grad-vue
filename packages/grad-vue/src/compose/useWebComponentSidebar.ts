@@ -78,10 +78,11 @@ export function useWebComponentSidebar(
         }
         const target = e.target as HTMLElement;
         const sidebarEl = document.getElementById(`${channel.id}-sidebar`);
+        const hamburgerEl = document.getElementById(`${channel.id}-hamburger`);
         if (!sidebarEl) {
             return;
         }
-        if (sidebarEl.contains(target)) {
+        if (sidebarEl.contains(target) || hamburgerEl?.contains(target)) {
             return;
         }
         setTimeout(() => {
