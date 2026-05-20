@@ -4,6 +4,7 @@ import { useMediaQuery } from "@vueuse/core";
 type SidebarChannel = {
     id: string;
     open: Ref<boolean>;
+    breakpoint: Ref<string>;
     isCollapsible: Ref<boolean>;
     toggle: () => void;
 };
@@ -26,17 +27,26 @@ function getChannelsStore() {
 
 export function useWebComponentSidebar(
     key = "default",
-    breakpoint: Ref<string> | string = "(max-width: 800px)",
+    breakpoint?: Ref<string | undefined> | string,
 ) {
     const channels = getChannelsStore();
     const channelKey = key || "default";
+    const defaultBreakpoint = "(max-width: 800px)";
+    const incomingBreakpoint =
+        typeof breakpoint === "string" ? breakpoint : breakpoint?.value;
+    const resolvedBreakpoint =
+        incomingBreakpoint && incomingBreakpoint.trim()
+            ? incomingBreakpoint
+            : defaultBreakpoint;
 
     if (!channels.has(channelKey)) {
         const safeKey = normalizeKey(channelKey);
+        const sharedBreakpoint = ref(resolvedBreakpoint);
         channels.set(channelKey, {
             id: `g-wc-sidebar-${safeKey}`,
             open: ref(false),
-            isCollapsible: useMediaQuery(breakpoint, {
+            breakpoint: sharedBreakpoint,
+            isCollapsible: useMediaQuery(sharedBreakpoint, {
                 ssrWidth: 1000,
             }),
             toggle: () => undefined,
@@ -45,6 +55,22 @@ export function useWebComponentSidebar(
 
     const channel = channels.get(channelKey)!;
     channel.toggle = () => (channel.open.value = !channel.open.value);
+
+    if (typeof breakpoint === "string") {
+        if (breakpoint.trim()) {
+            channel.breakpoint.value = breakpoint;
+        }
+    } else if (breakpoint) {
+        watch(
+            breakpoint,
+            (value) => {
+                if (value && value.trim()) {
+                    channel.breakpoint.value = value;
+                }
+            },
+            { immediate: true },
+        );
+    }
 
     function onDocumentClick(e: MouseEvent) {
         if (!channel.isCollapsible.value || !channel.open.value) {

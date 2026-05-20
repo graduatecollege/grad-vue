@@ -14,13 +14,14 @@
  * for details.
  *
  * In web components mode, use the `sidebar-key` prop to pair this sidebar
- * with a matching GHamburgerMenu instance.
+ * with a matching GHamburgerMenu instance and `media-query` to set the
+ * collapsible breakpoint.
  */
 export default {};
 </script>
 
 <script setup lang="ts">
-import { computed, inject, useId } from "vue";
+import { computed, inject, toRef, useId } from "vue";
 import { useSidebar } from "../compose/useSidebar.ts";
 import { useWebComponentSidebar } from "../compose/useWebComponentSidebar.ts";
 import { isCustomElementMode } from "../compose/useCustomElementAttrs.ts";
@@ -61,6 +62,11 @@ type Props = {
      * @demo
      */
     sidebarKey?: string;
+    /**
+     * Sidebar media query for custom elements mode
+     * @demo
+     */
+    mediaQuery?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -82,7 +88,9 @@ const injectedSidebar = inject<ReturnType<typeof useSidebar>>(
 
 const sidebar =
     injectedSidebar ??
-    (isCustomElementMode() ? useWebComponentSidebar(props.sidebarKey) : undefined);
+    (isCustomElementMode()
+        ? useWebComponentSidebar(props.sidebarKey, toRef(props, "mediaQuery"))
+        : undefined);
 
 const bgImage = computed(() => {
     if (props.backgroundImage) {
