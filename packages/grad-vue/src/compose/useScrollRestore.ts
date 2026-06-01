@@ -140,16 +140,16 @@ export function useScrollRestore(
         }
 
         restoreScrollPosition();
-
-        if (typeof ResizeObserver !== "undefined") {
-            scrollRestoreObserver = new ResizeObserver(() => {
-                restoreScrollPosition();
-            });
-            scrollRestoreObserver.observe(elementRef.value);
-            scrollRestoreObserver.observe(scrollableParent);
+        if (isPendingScrollRestore.value) {
+            if (typeof ResizeObserver !== "undefined") {
+                scrollRestoreObserver = new ResizeObserver(() => {
+                    restoreScrollPosition();
+                });
+                scrollRestoreObserver.observe(elementRef.value);
+                scrollRestoreObserver.observe(scrollableParent);
+            }
+            observeVisibilityChanges(elementRef.value);
         }
-        observeVisibilityChanges(elementRef.value);
-
         scrollableParent.addEventListener("scroll", handleParentScroll);
     });
 
