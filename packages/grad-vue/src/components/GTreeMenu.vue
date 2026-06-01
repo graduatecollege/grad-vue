@@ -123,6 +123,7 @@ const navRef = useTemplateRef<HTMLElement>("nav-el");
 const scrollStorage = props.storageKey
     ? useSessionStorage<number>(`${props.storageKey}:scroll`, 0, { writeDefaults: false })
     : null;
+const isPendingScrollRestore = ref(Boolean(scrollStorage?.value && scrollStorage.value > 0));
 
 function getScrollableParent(el: HTMLElement): HTMLElement | null {
     let parent = el.parentElement;
@@ -158,14 +159,43 @@ function stopScrollRestoreObserver() {
     }
 }
 
+function finishScrollRestore() {
+    isPendingScrollRestore.value = false;
+}
+
+function canMeasureScrollRestore() {
+    return Boolean(navRef.value && scrollableParent)
+        && navRef.value!.getClientRects().length > 0
+        && scrollableParent!.getClientRects().length > 0
+        && scrollableParent!.clientHeight > 0;
+}
+
 function restoreScrollPosition() {
-    if (!scrollStorage || !scrollableParent || hasRestoredScroll || scrollStorage.value <= 0) {
+    if (!scrollStorage || !scrollableParent || hasRestoredScroll) {
+        finishScrollRestore();
+        return;
+    }
+
+    if (scrollStorage.value <= 0) {
+        finishScrollRestore();
+        return;
+    }
+
+    if (!canMeasureScrollRestore()) {
+        return;
+    }
+
+    const maxScrollTop = scrollableParent.scrollHeight - scrollableParent.clientHeight;
+    if (maxScrollTop <= 0) {
+        finishScrollRestore();
+        stopScrollRestoreObserver();
         return;
     }
 
     scrollableParent.scrollTop = scrollStorage.value;
     hasRestoredScroll = scrollableParent.scrollTop > 0;
     if (hasRestoredScroll) {
+        finishScrollRestore();
         stopScrollRestoreObserver();
     }
 }
@@ -190,17 +220,22 @@ function observeVisibilityChanges(nav: HTMLElement) {
 }
 
 onMounted(() => {
-    if (!scrollStorage || !navRef.value) {
+    if (!navRef.value) {
+        finishScrollRestore();
+        return;
+    }
+
+    if (!scrollStorage) {
+        finishScrollRestore();
         return;
     }
     scrollableParent = getScrollableParent(navRef.value);
     if (!scrollableParent) {
+        finishScrollRestore();
         return;
     }
 
-    nextTick(() => {
-        restoreScrollPosition();
-    });
+    restoreScrollPosition();
 
     if (typeof ResizeObserver !== "undefined") {
         scrollRestoreObserver = new ResizeObserver(() => {
@@ -366,6 +401,7 @@ function handleKeydown(event: KeyboardEvent) {
         class="g-tree-menu"
         :class="[
             `g-tree-menu--${props.theme}`,
+            { 'g-tree-menu--restore-pending': isPendingScrollRestore },
             { 'g-tree-menu--small-heading': smallHeading },
         ]"
         v-bind="{
@@ -426,6 +462,10 @@ function handleKeydown(event: KeyboardEvent) {
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
+}
+
+.g-tree-menu--restore-pending {
+    visibility: hidden;
 }
 
 .g-tree-menu--dark {
