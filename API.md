@@ -655,6 +655,11 @@ type Props = {
      * Sidebar media query for custom elements mode
      */
     mediaQuery?: string;
+
+    /**
+     * Show a visible label
+     */
+    labelVisible?: boolean;
 }
 ```
 

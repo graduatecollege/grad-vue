@@ -95,6 +95,7 @@ export {
 } from "./compose/useOverlayStack";
 
 export { useActiveLinkContent } from "./compose/useActiveLink";
+export { useScrollRestore } from "./compose/useScrollRestore";
 export { useSidebar } from "./compose/useSidebar";
 export { useWebComponentSidebar } from "./compose/useWebComponentSidebar";
 export { useForm } from "./compose/useForm";

@@ -24,6 +24,11 @@ import ComponentDemo from "../ComponentDemo.vue";
                     type: 'string',
                     label: 'Sidebar media query for custom elements mode',
                     default: null
+                },
+                labelVisible: {
+                    type: 'boolean',
+                    label: 'Show a visible label',
+                    default: false
                 }
             }"
         >
@@ -41,6 +46,11 @@ import ComponentDemo from "../ComponentDemo.vue";
 <span class="line"><span style="color:#008000">     * Sidebar media query for custom elements mode</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    mediaQuery</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Show a visible label</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    labelVisible</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#000000">}</span></span></code></pre>
 </figure>
 
