@@ -28,7 +28,7 @@ jobs:
       - name: Set Playwright path and Get playwright version
         run: |
           echo "PLAYWRIGHT_BROWSERS_PATH=$HOME/.cache/playwright-bin" >> $GITHUB_ENV
-          PLAYWRIGHT_VERSION="$(node -p \"require('playwright/package.json').version\")"
+          PLAYWRIGHT_VERSION="$(npm ls playwright --json | jq -r .dependencies.playwright.version)"
           echo "PLAYWRIGHT_VERSION=$PLAYWRIGHT_VERSION" >> $GITHUB_ENV
 
       - name: Install Playwright
