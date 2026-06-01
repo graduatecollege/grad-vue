@@ -1234,18 +1234,18 @@ describe("GTreeMenu", () => {
                 const key = uniqueScrollKey();
                 sessionStorage.setItem(`${key}:scroll`, "75");
                 const { scrollContainer, innerContainer } = menuInScrollableContainer(key, true);
-                const nav = innerContainer.querySelector("nav");
+                const treeMenuNav = innerContainer.querySelector("nav");
 
                 await nextTick();
                 expect(scrollContainer.scrollTop).toBe(0);
-                expect(nav?.classList.contains("g-tree-menu--restore-pending")).toBe(true);
+                expect(treeMenuNav?.classList.contains("g-tree-menu--restore-pending")).toBe(true);
 
                 scrollContainer.style.display = "block";
                 await waitForAnimationFrame();
                 await nextTick();
 
                 expect(scrollContainer.scrollTop).toBe(75);
-                expect(nav?.classList.contains("g-tree-menu--restore-pending")).toBe(false);
+                expect(treeMenuNav?.classList.contains("g-tree-menu--restore-pending")).toBe(false);
             });
 
             it("does not attempt scroll save when no storageKey is set", async () => {

@@ -164,10 +164,13 @@ function finishScrollRestore() {
 }
 
 function canMeasureScrollRestore() {
-    return Boolean(navRef.value && scrollableParent)
-        && navRef.value!.getClientRects().length > 0
-        && scrollableParent!.getClientRects().length > 0
-        && scrollableParent!.clientHeight > 0;
+    if (!navRef.value || !scrollableParent) {
+        return false;
+    }
+
+    return navRef.value.getClientRects().length > 0
+        && scrollableParent.getClientRects().length > 0
+        && scrollableParent.clientHeight > 0;
 }
 
 function restoreScrollPosition() {
