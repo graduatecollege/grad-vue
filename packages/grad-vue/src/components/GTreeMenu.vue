@@ -55,8 +55,9 @@ export default {};
 </script>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, onUnmounted, provide, reactive, ref, useId, useTemplateRef } from "vue";
+import { computed, nextTick, provide, reactive, ref, useId, useTemplateRef } from "vue";
 import { useSessionStorage } from "@vueuse/core";
+import { useScrollRestore } from "../compose/useScrollRestore";
 
 type Props = {
     /**
@@ -119,147 +120,7 @@ provide("g-tree-menu-expanded-storage", expandedStorage);
 // --- Scroll position persistence ---
 
 const navRef = useTemplateRef<HTMLElement>("nav-el");
-
-const scrollStorage = props.storageKey
-    ? useSessionStorage<number>(`${props.storageKey}:scroll`, 0, { writeDefaults: false })
-    : null;
-const isPendingScrollRestore = ref(Boolean(scrollStorage?.value && scrollStorage.value > 0));
-
-function getScrollableParent(el: HTMLElement): HTMLElement | null {
-    let parent = el.parentElement;
-    while (parent && parent !== document.documentElement && parent !== document.body) {
-        const style = window.getComputedStyle(parent);
-        if (style.overflowY === "auto" || style.overflowY === "scroll") {
-            return parent;
-        }
-        parent = parent.parentElement;
-    }
-    return null;
-}
-
-let scrollableParent: HTMLElement | null = null;
-let scrollRestoreObserver: ResizeObserver | null = null;
-let scrollRestoreMutationObserver: MutationObserver | null = null;
-let hasRestoredScroll = false;
-
-function handleParentScroll() {
-    if (scrollStorage && scrollableParent) {
-        scrollStorage.value = scrollableParent.scrollTop;
-    }
-}
-
-function stopScrollRestoreObserver() {
-    if (scrollRestoreObserver) {
-        scrollRestoreObserver.disconnect();
-        scrollRestoreObserver = null;
-    }
-    if (scrollRestoreMutationObserver) {
-        scrollRestoreMutationObserver.disconnect();
-        scrollRestoreMutationObserver = null;
-    }
-}
-
-function finishScrollRestore() {
-    isPendingScrollRestore.value = false;
-}
-
-function canMeasureScrollRestore() {
-    if (!navRef.value || !scrollableParent) {
-        return false;
-    }
-
-    return navRef.value.getClientRects().length > 0
-        && scrollableParent.getClientRects().length > 0
-        && scrollableParent.clientHeight > 0;
-}
-
-function restoreScrollPosition() {
-    if (!scrollStorage || !scrollableParent || hasRestoredScroll) {
-        finishScrollRestore();
-        return;
-    }
-
-    if (scrollStorage.value <= 0) {
-        finishScrollRestore();
-        return;
-    }
-
-    if (!canMeasureScrollRestore()) {
-        return;
-    }
-
-    const maxScrollTop = scrollableParent.scrollHeight - scrollableParent.clientHeight;
-    if (maxScrollTop <= 0) {
-        finishScrollRestore();
-        stopScrollRestoreObserver();
-        return;
-    }
-
-    scrollableParent.scrollTop = scrollStorage.value;
-    hasRestoredScroll = scrollableParent.scrollTop > 0;
-    if (hasRestoredScroll) {
-        finishScrollRestore();
-        stopScrollRestoreObserver();
-    }
-}
-
-function observeVisibilityChanges(nav: HTMLElement) {
-    if (typeof MutationObserver === "undefined") {
-        return;
-    }
-
-    scrollRestoreMutationObserver = new MutationObserver(() => {
-        restoreScrollPosition();
-    });
-
-    let current: HTMLElement | null = nav;
-    while (current) {
-        scrollRestoreMutationObserver.observe(current, {
-            attributes: true,
-            attributeFilter: ["class", "style", "hidden", "open"],
-        });
-        current = current.parentElement;
-    }
-}
-
-onMounted(() => {
-    if (!navRef.value) {
-        finishScrollRestore();
-        return;
-    }
-
-    if (!scrollStorage) {
-        finishScrollRestore();
-        return;
-    }
-    scrollableParent = getScrollableParent(navRef.value);
-    if (!scrollableParent) {
-        finishScrollRestore();
-        return;
-    }
-
-    restoreScrollPosition();
-
-    if (typeof ResizeObserver !== "undefined") {
-        scrollRestoreObserver = new ResizeObserver(() => {
-            restoreScrollPosition();
-        });
-        scrollRestoreObserver.observe(navRef.value);
-        scrollRestoreObserver.observe(scrollableParent);
-    }
-    observeVisibilityChanges(navRef.value);
-
-    scrollableParent.addEventListener("scroll", handleParentScroll);
-});
-
-onUnmounted(() => {
-    stopScrollRestoreObserver();
-    if (scrollableParent) {
-        scrollableParent.removeEventListener("scroll", handleParentScroll);
-        scrollableParent = null;
-    }
-    hasRestoredScroll = false;
-});
+const { isPendingScrollRestore } = useScrollRestore(navRef, props.storageKey);
 
 // --- Expand / Collapse All ---
 
