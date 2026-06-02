@@ -110,7 +110,9 @@ for details.</p>
 with a matching GHamburgerMenu instance and <code>media-query</code> to set the
 collapsible breakpoint.</p>
 <p>When <code>storageKey</code> is provided, the sidebar remembers and restores its own
-scroll position from <code>sessionStorage</code>.</p>
+scroll position from <code>sessionStorage</code>. Use the same key as nested components
+such as <code>GTreeMenu</code> if you want both scroll position and expanded state
+persistence.</p>
 </template>
             <template #default="{ props }">
                 <div style="display: flex; gap: 1rem; flex-direction: column;">
