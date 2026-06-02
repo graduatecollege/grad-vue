@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { page, userEvent } from "vitest/browser";
-import { h, ref } from "vue";
+import { h, nextTick, ref } from "vue";
 import GTreeMenu from "../packages/grad-vue/src/components/GTreeMenu.vue";
 import GTreeMenuList from "../packages/grad-vue/src/components/tree-menu/GTreeMenuList.vue";
 import GTreeMenuItem from "../packages/grad-vue/src/components/tree-menu/GTreeMenuItem.vue";
