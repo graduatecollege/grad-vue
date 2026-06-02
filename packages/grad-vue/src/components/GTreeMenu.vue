@@ -39,9 +39,7 @@
  * - `storageKey` - when provided, expanded/collapsed states are persisted to
  *   `sessionStorage` under this key and restored on page load. This is useful
  *   in Web Component / Drupal contexts where every page navigation is a full
- *   refresh. Item states are keyed by the item's `label` prop. If the menu is
- *   inside a scrollable container such as `GSidebar`, the scroll position is
- *   also saved and restored automatically.
+ *   refresh. Item states are keyed by the item's `label` prop.
  *
  * **Keyboard navigation** (tree-view style):
  *
@@ -55,9 +53,8 @@ export default {};
 </script>
 
 <script setup lang="ts">
-import { computed, nextTick, provide, reactive, ref, useId, useTemplateRef } from "vue";
+import { computed, nextTick, provide, reactive, ref, useId } from "vue";
 import { useSessionStorage } from "@vueuse/core";
-import { useScrollRestore } from "../compose/useScrollRestore";
 
 type Props = {
     /**
@@ -78,8 +75,7 @@ type Props = {
     /**
      * When provided, expanded/collapsed states are saved to `sessionStorage`
      * under this key and restored on page load. Item states are keyed by each
-     * the `label` prop. If the menu is inside a scrollable container such as
-     * `GSidebar`, the scroll position is also saved and restored automatically.
+     * the `label` prop.
      */
     storageKey?: string;
     /**
@@ -116,11 +112,6 @@ const expandedStorage = props.storageKey
     : null;
 
 provide("g-tree-menu-expanded-storage", expandedStorage);
-
-// --- Scroll position persistence ---
-
-const navRef = useTemplateRef<HTMLElement>("nav-el");
-const { isPendingScrollRestore } = useScrollRestore(navRef, props.storageKey);
 
 // --- Expand / Collapse All ---
 
@@ -261,11 +252,9 @@ function handleKeydown(event: KeyboardEvent) {
 
 <template>
     <nav
-        ref="nav-el"
         class="g-tree-menu"
         :class="[
             `g-tree-menu--${props.theme}`,
-            { 'g-tree-menu--restore-pending': isPendingScrollRestore },
             { 'g-tree-menu--small-heading': smallHeading },
         ]"
         v-bind="{
@@ -326,10 +315,6 @@ function handleKeydown(event: KeyboardEvent) {
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-}
-
-.g-tree-menu--restore-pending {
-    visibility: hidden;
 }
 
 .g-tree-menu--dark {

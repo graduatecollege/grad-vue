@@ -16,15 +16,21 @@
  * In web components mode, use the `sidebar-key` prop to pair this sidebar
  * with a matching GHamburgerMenu instance and `media-query` to set the
  * collapsible breakpoint.
+ *
+ * When `storageKey` is provided, the sidebar remembers and restores its own
+ * scroll position from `sessionStorage`. Use the same key as nested components
+ * such as `GTreeMenu` if you want both scroll position and expanded state
+ * persistence.
  */
 export default {};
 </script>
 
 <script setup lang="ts">
-import { computed, inject, toRef, useId } from "vue";
+import { computed, inject, toRef, useId, useTemplateRef } from "vue";
 import { useSidebar } from "../compose/useSidebar.ts";
 import { useWebComponentSidebar } from "../compose/useWebComponentSidebar.ts";
 import { isCustomElementMode } from "../compose/useCustomElementAttrs.ts";
+import { useScrollRestore } from "../compose/useScrollRestore.ts";
 
 type Props = {
     /**
@@ -67,6 +73,12 @@ type Props = {
      * @demo
      */
     mediaQuery?: string;
+    /**
+     * When provided, the sidebar scroll position is saved to `sessionStorage`
+     * under this key and restored on page load.
+     * @demo
+     */
+    storageKey?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -120,6 +132,8 @@ const topOff = computed(() => {
 });
 
 const fallbackId = useId();
+const sidebarRef = useTemplateRef<HTMLElement>("sidebar-ref");
+const { isPendingScrollRestore } = useScrollRestore(sidebarRef, props.storageKey);
 
 function handleEscapeKey(event: KeyboardEvent) {
     if (event.key === "Escape") {
@@ -144,6 +158,7 @@ function handleEscapeKey(event: KeyboardEvent) {
                     !sidebar?.open?.value && sidebar?.isCollapsible?.value,
                 'g-sidebar--open':
                     sidebar?.open?.value && sidebar?.isCollapsible?.value,
+                'g-sidebar--restore-pending': isPendingScrollRestore,
             },
         ]"
         :style="{
@@ -185,6 +200,10 @@ g-sidebar[theme="light"] {
 .g-sidebar--open {
     transition: opacity 0.1s ease-out;
     opacity: 1;
+}
+
+.g-sidebar--restore-pending {
+    visibility: hidden;
 }
 
 @media (prefers-reduced-motion: reduce) {
