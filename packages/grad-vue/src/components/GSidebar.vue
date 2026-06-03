@@ -17,10 +17,8 @@
  * with a matching GHamburgerMenu instance and `media-query` to set the
  * collapsible breakpoint.
  *
- * When `storageKey` is provided, the sidebar remembers and restores its own
- * scroll position from `sessionStorage`. Use the same key as nested components
- * such as `GTreeMenu` if you want both scroll position and expanded state
- * persistence.
+ * When `storage-key` is provided, the sidebar remembers and restores its own
+ * scroll position from `sessionStorage`.
  */
 export default {};
 </script>
@@ -74,8 +72,7 @@ type Props = {
      */
     mediaQuery?: string;
     /**
-     * When provided, the sidebar scroll position is saved to `sessionStorage`
-     * under this key and restored on page load.
+     * Storage key for scroll position persistence
      * @demo
      */
     storageKey?: string;

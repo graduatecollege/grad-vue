@@ -1,7 +1,7 @@
 {
   "totalComponents": 42,
-  "totalTests": 476,
-  "passedTests": 476,
+  "totalTests": 475,
+  "passedTests": 475,
   "failedTests": 0,
   "skippedTests": 0,
   "components": {
@@ -2065,12 +2065,40 @@
     },
     "GSidebar": {
       "component": "GSidebar",
-      "total": 1,
-      "passed": 1,
+      "total": 5,
+      "passed": 5,
       "failed": 0,
       "skipped": 0,
       "status": "passed",
       "tests": [
+        {
+          "title": "scrolling the sidebar saves scroll position to sessionStorage",
+          "status": "passed",
+          "ancestors": [
+            "Scroll Position"
+          ]
+        },
+        {
+          "title": "restores scroll position from sessionStorage on mount",
+          "status": "passed",
+          "ancestors": [
+            "Scroll Position"
+          ]
+        },
+        {
+          "title": "restores scroll after a hidden sidebar becomes visible",
+          "status": "passed",
+          "ancestors": [
+            "Scroll Position"
+          ]
+        },
+        {
+          "title": "does not save scroll position when no storageKey is set",
+          "status": "passed",
+          "ancestors": [
+            "Scroll Position"
+          ]
+        },
         {
           "title": "with content",
           "status": "passed",
@@ -3053,8 +3081,8 @@
     },
     "GTreeMenu": {
       "component": "GTreeMenu",
-      "total": 61,
-      "passed": 61,
+      "total": 56,
+      "passed": 56,
       "failed": 0,
       "skipped": 0,
       "status": "passed",
@@ -3344,46 +3372,6 @@
           "status": "passed",
           "ancestors": [
             "Session Storage"
-          ]
-        },
-        {
-          "title": "scrolling a scrollable parent saves scroll position to sessionStorage",
-          "status": "passed",
-          "ancestors": [
-            "Session Storage",
-            "Scroll Position"
-          ]
-        },
-        {
-          "title": "restores scroll position from sessionStorage on mount",
-          "status": "passed",
-          "ancestors": [
-            "Session Storage",
-            "Scroll Position"
-          ]
-        },
-        {
-          "title": "does not restore scroll when stored value is 0",
-          "status": "passed",
-          "ancestors": [
-            "Session Storage",
-            "Scroll Position"
-          ]
-        },
-        {
-          "title": "restores scroll after hidden container becomes visible",
-          "status": "passed",
-          "ancestors": [
-            "Session Storage",
-            "Scroll Position"
-          ]
-        },
-        {
-          "title": "does not attempt scroll save when no storageKey is set",
-          "status": "passed",
-          "ancestors": [
-            "Session Storage",
-            "Scroll Position"
           ]
         },
         {

@@ -48,7 +48,7 @@ import { GSidebar } from "@illinois-grad/grad-vue";
                 },
                 storageKey: {
                     type: 'string',
-                    label: 'Session storage key for sidebar scroll position',
+                    label: 'Storage key for scroll position persistence',
                     default: null
                 }
             }"
@@ -90,7 +90,7 @@ import { GSidebar } from "@illinois-grad/grad-vue";
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    mediaQuery</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#008000">    /**</span></span>
-<span class="line"><span style="color:#008000">     * Session storage key for sidebar scroll position</span></span>
+<span class="line"><span style="color:#008000">     * Storage key for scroll position persistence</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    storageKey</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#000000">}</span></span></code></pre>
@@ -109,10 +109,8 @@ for details.</p>
 <p>In web components mode, use the <code>sidebar-key</code> prop to pair this sidebar
 with a matching GHamburgerMenu instance and <code>media-query</code> to set the
 collapsible breakpoint.</p>
-<p>When <code>storageKey</code> is provided, the sidebar remembers and restores its own
-scroll position from <code>sessionStorage</code>. Use the same key as nested components
-such as <code>GTreeMenu</code> if you want both scroll position and expanded state
-persistence.</p>
+<p>When <code>storage-key</code> is provided, the sidebar remembers and restores its own
+scroll position from <code>sessionStorage</code>.</p>
 </template>
             <template #default="{ props }">
                 <div style="display: flex; gap: 1rem; flex-direction: column;">

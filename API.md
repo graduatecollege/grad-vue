@@ -1211,7 +1211,7 @@ In web components mode, use the `sidebar-key` prop to pair this sidebar
 with a matching GHamburgerMenu instance and `media-query` to set the
 collapsible breakpoint.
 
-When `storageKey` is provided, the sidebar remembers and restores its own
+When `storage-key` is provided, the sidebar remembers and restores its own
 scroll position from `sessionStorage`.
 
 ### Props
@@ -1253,8 +1253,7 @@ type Props = {
      */
     mediaQuery?: string;
     /**
-     * When provided, the sidebar scroll position is saved to `sessionStorage`
-     * under this key and restored on page load.
+     * Storage key for scroll position persistence
      */
     storageKey?: string;
 }
