@@ -94,7 +94,7 @@ import { GTreeMenu, GTreeMenuList, GTreeMenuItem } from "@illinois-grad/grad-vue
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    theme</span><span style="color:#000000">?: </span><span style="color:#A31515">"light"</span><span style="color:#000000"> | </span><span style="color:#A31515">"dark"</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#008000">    /**</span></span>
-<span class="line"><span style="color:#008000">     * When provided, expanded/collapsed states are saved to `sessionStorage` under this key and restored on page load. Item states are keyed by each the `label` prop. If the menu is inside a scrollable container such as `GSidebar`, the scroll position is also saved and restored automatically.</span></span>
+<span class="line"><span style="color:#008000">     * When provided, expanded/collapsed states are saved to `sessionStorage` under this key and restored on page load. Item states are keyed by each the `label` prop.</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    storageKey</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#008000">    /**</span></span>
@@ -149,9 +149,7 @@ components via provide/inject.</li>
 <li><code>storageKey</code> - when provided, expanded/collapsed states are persisted to
 <code>sessionStorage</code> under this key and restored on page load. This is useful
 in Web Component / Drupal contexts where every page navigation is a full
-refresh. Item states are keyed by the item&#39;s <code>label</code> prop. If the menu is
-inside a scrollable container such as <code>GSidebar</code>, the scroll position is
-also saved and restored automatically.</li>
+refresh. Item states are keyed by the item&#39;s <code>label</code> prop.</li>
 </ul>
 <p><strong>Keyboard navigation</strong> (tree-view style):</p>
 <ul>

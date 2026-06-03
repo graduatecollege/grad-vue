@@ -3,10 +3,11 @@ import { useSessionStorage } from "@vueuse/core";
 
 /**
  * Composable to handle scroll position storage and automatic restoration for a component.
- * Saves the scroll top of the nearest scrollable parent when scrolling,
- * and restores it automatically on mount or when the component becomes visible.
+ * Saves the scroll top of the scrollable element itself, or its nearest scrollable
+ * parent when the element is not scrollable, and restores it automatically on mount
+ * or when the component becomes visible.
  *
- * @param elementRef Ref to the element whose scrollable parent should be tracked.
+ * @param elementRef Ref to the element whose scrollable element should be tracked.
  * @param storageKey Session storage key prefix. Scroll position is saved under `${storageKey}:scroll`.
  */
 export function useScrollRestore(
@@ -28,14 +29,21 @@ export function useScrollRestore(
     let scrollRestoreMutationObserver: MutationObserver | null = null;
     let hasRestoredScroll = false;
 
+    function isScrollable(el: HTMLElement): boolean {
+        const style = window.getComputedStyle(el);
+        return style.overflowY === "auto" || style.overflowY === "scroll";
+    }
+
     function getScrollableParent(el: HTMLElement): HTMLElement | null {
         if (typeof window === "undefined") {
             return null;
         }
+        if (isScrollable(el)) {
+            return el;
+        }
         let parent = el.parentElement;
         while (parent && parent !== document.documentElement && parent !== document.body) {
-            const style = window.getComputedStyle(parent);
-            if (style.overflowY === "auto" || style.overflowY === "scroll") {
+            if (isScrollable(parent)) {
                 return parent;
             }
             parent = parent.parentElement;

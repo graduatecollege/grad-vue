@@ -1211,6 +1211,9 @@ In web components mode, use the `sidebar-key` prop to pair this sidebar
 with a matching GHamburgerMenu instance and `media-query` to set the
 collapsible breakpoint.
 
+When `storage-key` is provided, the sidebar remembers and restores its own
+scroll position from `sessionStorage`.
+
 ### Props
 
 ```typescript
@@ -1249,6 +1252,10 @@ type Props = {
      * Sidebar media query for custom elements mode
      */
     mediaQuery?: string;
+    /**
+     * Storage key for scroll position persistence
+     */
+    storageKey?: string;
 }
 ```
 
@@ -1830,9 +1837,7 @@ Use `GTreeMenuList` and `GTreeMenuItem` sub-components to build the menu:
 - `storageKey` - when provided, expanded/collapsed states are persisted to
   `sessionStorage` under this key and restored on page load. This is useful
   in Web Component / Drupal contexts where every page navigation is a full
-  refresh. Item states are keyed by the item's `label` prop. If the menu is
-  inside a scrollable container such as `GSidebar`, the scroll position is
-  also saved and restored automatically.
+  refresh. Item states are keyed by the item's `label` prop.
 
 **Keyboard navigation** (tree-view style):
 
@@ -1861,8 +1866,7 @@ type Props = {
     /**
      * When provided, expanded/collapsed states are saved to `sessionStorage`
      * under this key and restored on page load. Item states are keyed by each
-     * the `label` prop. If the menu is inside a scrollable container such as
-     * `GSidebar`, the scroll position is also saved and restored automatically.
+     * the `label` prop.
      */
     storageKey?: string;
     /**
