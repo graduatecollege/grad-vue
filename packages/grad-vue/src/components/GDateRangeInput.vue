@@ -20,7 +20,7 @@ import { useFormField } from "../compose/useFormField.ts";
 type Props = {
     /**
      * Label for the component
-     * @demo
+     * @demo Date Range Input
      */
     label?: string;
     /**

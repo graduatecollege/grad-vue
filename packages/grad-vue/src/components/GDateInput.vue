@@ -18,7 +18,7 @@ import GTextInput from "./GTextInput.vue";
 type Props = {
     /**
      * Label
-     * @demo
+     * @demo Date Input
      */
     label?: string;
     /**

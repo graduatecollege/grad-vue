@@ -124,7 +124,6 @@ function onLabelKeydown(e: KeyboardEvent) {
             <fieldset
                 class="g-three-way-toggle"
                 :class="{ 'g-has-error': error }"
-                role="radiogroup"
                 :aria-labelledby="id"
                 :aria-describedby="describedby"
                 :disabled="disabled"
