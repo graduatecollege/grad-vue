@@ -46,6 +46,7 @@ import { useOverlayFocus } from "../compose/useOverlayFocus.ts";
 import { useOverlayEscape } from "../compose/useOverlayEscape.ts";
 import { calculatePopoverPosition } from "../compose/popoverPosition.ts";
 import { useCustomElementAttrs } from "../compose/useCustomElementAttrs.ts";
+import GClientOnly from "./GClientOnly.vue";
 
 type Props = {
     /**
@@ -59,7 +60,7 @@ type Props = {
      * would revert local state.
      */
     modelValue?: boolean;
-}
+};
 
 const props = withDefaults(defineProps<Props>(), {
     minimal: false,
@@ -80,7 +81,7 @@ const popoverRef = useTemplateRef<HTMLElement | null>("popoverRef");
 // Disable Teleport inside custom elements: scoped named slots
 // break CE slot distribution when content is teleported.
 const { isCustomElement } = useCustomElementAttrs();
-const disableTeleport = isCustomElement;
+const disableTeleport = false;
 
 const id = useId();
 const { push, pop, isTop, zIndex } = useOverlayStack(id, true);
@@ -147,8 +148,18 @@ function updatePopoverPosition() {
 
     // Use offsetWidth/offsetHeight for popover dimensions to avoid getting
     // scaled values during the CSS scale() enter transition.
-    const popoverRect = new DOMRect(0, 0, popoverRef.value.offsetWidth, popoverRef.value.offsetHeight);
-    const viewportRect = new DOMRect(0, 0, window.innerWidth, window.innerHeight);
+    const popoverRect = new DOMRect(
+        0,
+        0,
+        popoverRef.value.offsetWidth,
+        popoverRef.value.offsetHeight,
+    );
+    const viewportRect = new DOMRect(
+        0,
+        0,
+        window.innerWidth,
+        window.innerHeight,
+    );
 
     const anchorEl = getAnchorElement();
 
@@ -184,7 +195,9 @@ watch(open, (val) => {
         nextTick(() => {
             updatePopoverPosition();
             window.addEventListener("resize", updatePopoverPosition);
-            window.addEventListener("scroll", updatePopoverPosition, { capture: true });
+            window.addEventListener("scroll", updatePopoverPosition, {
+                capture: true,
+            });
             if (popoverRef.value) {
                 if (resizeObserver) {
                     resizeObserver.disconnect();
@@ -197,7 +210,9 @@ watch(open, (val) => {
         });
     } else {
         window.removeEventListener("resize", updatePopoverPosition);
-        window.removeEventListener("scroll", updatePopoverPosition, { capture: true });
+        window.removeEventListener("scroll", updatePopoverPosition, {
+            capture: true,
+        });
         if (resizeObserver) {
             resizeObserver.disconnect();
         }
@@ -206,7 +221,9 @@ watch(open, (val) => {
 
 onBeforeUnmount(() => {
     window.removeEventListener("resize", updatePopoverPosition);
-    window.removeEventListener("scroll", updatePopoverPosition, { capture: true });
+    window.removeEventListener("scroll", updatePopoverPosition, {
+        capture: true,
+    });
     if (resizeObserver) {
         resizeObserver.disconnect();
     }
@@ -214,67 +231,76 @@ onBeforeUnmount(() => {
 defineExpose({
     show,
     hide,
-    toggle
-})
-
+    toggle,
+});
 </script>
 
 <template>
     <div class="g-popover-wrap">
-        <div v-if="hasTrigger" ref="triggerRef" class="g-popover-trigger" :id="`${id}-trigger`">
+        <div
+            v-if="hasTrigger"
+            ref="triggerRef"
+            class="g-popover-trigger"
+            :id="`${id}-trigger`"
+        >
             <slot name="trigger" :toggle="toggle"></slot>
         </div>
-        <Teleport to="#modal-root" :disabled="disableTeleport">
-            <transition name="g-popover-expand" appear>
-                <div
-                    v-if="isCustomElement || open" v-show="open"
-                    ref="popoverRef"
-                    :class="{
-                        'g-popover': true,
-                        'g-popover-above': popoverAbove,
-                        'g-popover-below': !popoverAbove,
-                        'g-popover-minimal': minimal,
-                    }"
-                    role="dialog"
-                    aria-modal="true"
-                    :aria-labelledby="hasTrigger ? `${id}-trigger` : undefined"
-                    :aria-label="hasTrigger ? undefined : 'Popover'"
-                    :style="{
-                        top: popoverPosition.top + 'px',
-                        left: popoverPosition.left + 'px',
-                        zIndex,
-                    }"
-                >
+        <GClientOnly>
+            <Teleport to="#modal-root" :disabled="disableTeleport">
+                <transition name="g-popover-expand" appear>
                     <div
-                        v-if="!popoverOverlay && !minimal"
-                        class="g-popover-arrow"
-                        :class="{ 'g-popover-arrow-above': popoverAbove }"
-                        :style="arrowPosition"
-                        aria-hidden="true"
-                    ></div>
-                    <slot></slot>
-                    <button
-                        v-if="!minimal"
-                        class="g-popover-close"
-                        type="button"
-                        aria-label="Close popover"
-                        @click="hide"
+                        v-if="isCustomElement || open"
+                        v-show="open"
+                        ref="popoverRef"
+                        :class="{
+                            'g-popover': true,
+                            'g-popover-above': popoverAbove,
+                            'g-popover-below': !popoverAbove,
+                            'g-popover-minimal': minimal,
+                        }"
+                        role="dialog"
+                        aria-modal="true"
+                        :aria-labelledby="
+                            hasTrigger ? `${id}-trigger` : undefined
+                        "
+                        :aria-label="hasTrigger ? undefined : 'Popover'"
+                        :style="{
+                            top: popoverPosition.top + 'px',
+                            left: popoverPosition.left + 'px',
+                            zIndex,
+                        }"
                     >
-                        <svg
-                            class="g-popover-close-icon"
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 51.26 51.26"
+                        <div
+                            v-if="!popoverOverlay && !minimal"
+                            class="g-popover-arrow"
+                            :class="{ 'g-popover-arrow-above': popoverAbove }"
+                            :style="arrowPosition"
                             aria-hidden="true"
+                        ></div>
+                        <slot></slot>
+                        <button
+                            v-if="!minimal"
+                            class="g-popover-close"
+                            type="button"
+                            aria-label="Close popover"
+                            @click="hide"
                         >
-                            <path
-                                fill="currentColor"
-                                d="m37.84 32.94-7.63-7.63 7.63-7.63a3.24 3.24 0 0 0-4.58-4.58l-7.63 7.63L18 13.1a3.24 3.24 0 0 0-4.58 4.58L21 25.31l-7.62 7.63A3.24 3.24 0 1 0 18 37.52l7.63-7.63 7.63 7.63a3.24 3.24 0 0 0 4.58-4.58Z"
-                            />
-                        </svg>
-                    </button>
-                </div>
-            </transition>
-        </Teleport>
+                            <svg
+                                class="g-popover-close-icon"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 51.26 51.26"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    fill="currentColor"
+                                    d="m37.84 32.94-7.63-7.63 7.63-7.63a3.24 3.24 0 0 0-4.58-4.58l-7.63 7.63L18 13.1a3.24 3.24 0 0 0-4.58 4.58L21 25.31l-7.62 7.63A3.24 3.24 0 1 0 18 37.52l7.63-7.63 7.63 7.63a3.24 3.24 0 0 0 4.58-4.58Z"
+                                />
+                            </svg>
+                        </button>
+                    </div>
+                </transition>
+            </Teleport>
+        </GClientOnly>
     </div>
 </template>
 
@@ -417,4 +443,3 @@ g-popover:not(:defined) {
     }
 }
 </style>
-
