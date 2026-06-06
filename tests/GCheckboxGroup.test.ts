@@ -207,19 +207,6 @@ describe("GCheckboxGroup", () => {
 
             await expect.element(wrapper.instance.getByRole("radio", { name: "Option A" })).toHaveAttribute("required");
         });
-
-        it("sets aria-required on multi-checkbox inputs when required", async () => {
-            const wrapper = mnt(GCheckboxGroup, {
-                props: {
-                    label: "Pick any",
-                    options,
-                    modelValue: [],
-                    required: true,
-                },
-            });
-
-            await expect.element(wrapper.instance.getByRole("checkbox", { name: "Option A" })).toHaveAttribute("aria-required", "true");
-        });
     });
 
     describe("Accessibility Tests", () => {

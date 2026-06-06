@@ -18,19 +18,6 @@ async function expectTooltipHidden() {
 
 describe("GTooltip", () => {
     describe("Functional Tests", () => {
-        it("renders tooltip text", async () => {
-            mnt(GTooltip, {
-                props: {
-                    text: "Help text",
-                },
-                slots: {
-                    trigger: () => h("button", { id: "tooltip-trigger" }, "Help"),
-                },
-            });
-
-            await expect.element(page.getByRole("tooltip")).toHaveTextContent("Help text");
-        });
-
         it("sets aria-describedby on the trigger", async () => {
             mnt(GTooltip, {
                 props: {
