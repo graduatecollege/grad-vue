@@ -18,7 +18,7 @@ const emailValue = ref("");
                 label: {
                     type: 'string',
                     label: 'Label',
-                    default: null
+                    default: 'Email Input'
                 },
                 placeholder: {
                     type: 'string',

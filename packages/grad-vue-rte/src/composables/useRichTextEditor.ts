@@ -38,6 +38,7 @@ export function useRichTextEditor(options: UseRichTextEditorOptions) {
             ...editorProps,
             attributes: {
                 "aria-label": labelValue,
+                "role": "textbox",
                 ...editorProps.attributes,
             },
         },

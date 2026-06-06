@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { provide } from "vue";
 import ComponentDemo from "../ComponentDemo.vue";
+
+provide("sidebar", {});
 </script>
 
 <template>

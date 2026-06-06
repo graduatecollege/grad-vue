@@ -226,7 +226,7 @@ const forwardedAttrs = computed(() => {
                 <svg
                     class="g-tree-menu__chevron"
                     :class="{ 'g-tree-menu__chevron--expanded': isExpanded }"
-                    role="none presentation"
+                    role="none"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"

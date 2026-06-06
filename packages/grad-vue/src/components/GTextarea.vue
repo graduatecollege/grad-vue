@@ -30,7 +30,7 @@ defineOptions({
 type Props = {
     /**
      * Label
-     * @demo Example Label
+     * @demo Textarea Label
      */
     label?: string;
     /**

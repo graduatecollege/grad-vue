@@ -28,7 +28,7 @@ defineOptions({
 type Props = {
     /**
      * Label
-     * @demo Example Label
+     * @demo Text Input Label
      */
     label?: string;
     /**

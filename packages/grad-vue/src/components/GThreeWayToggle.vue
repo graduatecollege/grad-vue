@@ -127,7 +127,6 @@ function onLabelKeydown(e: KeyboardEvent) {
                 :aria-labelledby="id"
                 :aria-describedby="describedby"
                 :disabled="disabled"
-                :aria-invalid="error ? 'true' : undefined"
                 :aria-errormessage="error ? id + '-error' : undefined"
             >
                 <div

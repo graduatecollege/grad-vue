@@ -5,7 +5,7 @@ import Main from "~/components/Main.vue";
 
 <template>
     <Main></Main>
-    <div id="modal-root"></div>
+    <div id="modal-root" role="region" aria-label="Overlays and Modals"></div>
 </template>
 
 <style>

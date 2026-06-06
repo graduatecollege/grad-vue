@@ -4,11 +4,13 @@ import { useId } from "vue";
 defineProps<{
     label: string;
     instructions?: string;
+    formLabel: string;
 }>();
 
 const modelValue = defineModel<boolean>();
 
 const id = useId();
+const labelId = `${id}-label`;
 </script>
 
 <template>
@@ -19,11 +21,12 @@ const id = useId();
                 type="checkbox"
                 v-model="modelValue"
                 class="checkbox-control"
+                :aria-labelledby="`${formLabel} ${labelId}`"
                 :aria-describedby="
                     instructions ? `${id}-instructions` : undefined
                 "
             />
-            <label :for="id" class="checkbox-label">
+            <label :id="labelId" :for="id" class="checkbox-label">
                 {{ label }}
             </label>
         </div>

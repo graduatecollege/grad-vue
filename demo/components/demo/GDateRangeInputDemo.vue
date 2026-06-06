@@ -18,7 +18,7 @@ const dateRange = ref({ start: null, end: null });
                 label: {
                     type: 'string',
                     label: 'Label for the component',
-                    default: null
+                    default: 'Date Range Input'
                 },
                 startLabel: {
                     type: 'string',

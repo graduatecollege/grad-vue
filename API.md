@@ -212,6 +212,15 @@ type Props = {
 
 ---
 
+## GClientOnly
+
+### Slots
+
+- `default`
+- `fallback`
+
+---
+
 ## GClipboard
 
 Displays text with a clipboard button that copies the text to the clipboard.
@@ -909,7 +918,7 @@ type Props = {
      * would revert local state.
      */
     modelValue?: boolean;
-}
+};
 ```
 
 ### Slots

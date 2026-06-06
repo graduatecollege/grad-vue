@@ -67,6 +67,8 @@ const componentResult = computed<ComponentResult | null>(() => {
     return testResults.value.components[props.component] || null;
 });
 
+const id = useId();
+
 </script>
 
 <template>
@@ -112,10 +114,10 @@ const componentResult = computed<ComponentResult | null>(() => {
             </div>
 
             <div v-if="hasPropsConfig" class="component-demo__controls">
-                <h3 class="component-demo__controls-title">
-                    Props Configuration
+                <h3 class="component-demo__controls-title" :id="`${id}-config`">
+                    {{ component }} Configuration
                 </h3>
-                <div class="component-demo__controls-form">
+                <div v-if="propsConfig" class="component-demo__controls-form">
                     <template
                         v-for="[key, config] in Object.entries(propsConfig)"
                         :key="key"
@@ -123,6 +125,7 @@ const componentResult = computed<ComponentResult | null>(() => {
                         <DemoControlCheckbox
                             v-if="config.type === 'boolean'"
                             v-model="(dynamicProps as any)[key]"
+                            :form-label="`${id}-config`"
                             :label="config.label || key"
                             :instructions="config.instructions"
                         />
@@ -130,6 +133,7 @@ const componentResult = computed<ComponentResult | null>(() => {
                         <DemoControlText
                             v-else-if="config.type === 'string'"
                             v-model="(dynamicProps as any)[key]"
+                            :form-label="`${id}-config`"
                             :label="config.label || key"
                             :instructions="config.instructions"
                         />
@@ -137,6 +141,7 @@ const componentResult = computed<ComponentResult | null>(() => {
                         <DemoControlNumber
                             v-else-if="config.type === 'number'"
                             v-model="(dynamicProps as any)[key]"
+                            :form-label="`${id}-config`"
                             :label="config.label || key"
                             :instructions="config.instructions"
                         />
@@ -144,6 +149,7 @@ const componentResult = computed<ComponentResult | null>(() => {
                         <DemoControlSelect
                             v-else-if="config.type === 'select'"
                             v-model="(dynamicProps as any)[key]"
+                            :form-label="`${id}-config`"
                             :label="config.label || key"
                             :options="config.options || []"
                             :instructions="config.instructions"
@@ -240,6 +246,7 @@ const componentResult = computed<ComponentResult | null>(() => {
 }
 
 .component-demo__controls {
+    display: block;
     padding: 1.5rem;
     background: var(--il-storm-95);
     border-left: 1px solid var(--il-storm-70);

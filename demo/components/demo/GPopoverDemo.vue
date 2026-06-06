@@ -27,7 +27,7 @@ import { GButton, GPopover } from "@illinois-grad/grad-vue";
 <span class="line"><span style="color:#008000">     * v-model binding for the open state. Also works as a plain prop/attribute in custom-element mode where `defineModel` would revert local state.</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    modelValue</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
-<span class="line"><span style="color:#000000">}</span></span></code></pre>
+<span class="line"><span style="color:#000000">};</span></span></code></pre>
 </figure>
 
 </template>

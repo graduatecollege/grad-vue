@@ -4,15 +4,17 @@ import { useId } from "vue";
 defineProps<{
     label: string;
     instructions?: string;
+    formLabel: string;
 }>();
 const id = useId();
+const labelId = `${id}-label`;
 
 const modelValue = defineModel<number>();
 </script>
 
 <template>
     <div class="demo-control">
-        <label :for="id" class="number-label">
+        <label :id="labelId" :for="id" class="number-label">
             {{ label }}
         </label>
         <input
@@ -20,6 +22,7 @@ const modelValue = defineModel<number>();
             type="number"
             v-model="modelValue"
             class="number-input"
+            :aria-labelledby="`${formLabel} ${labelId}`"
             :aria-describedby="instructions ? `${id}-instructions` : undefined"
         />
         <p
