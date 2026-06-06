@@ -394,6 +394,9 @@ function generateApiMarkdown(apiData: any[]) {
         for (const file of files) {
             if (file.endsWith('.vue')) {
                 const componentName = file.replace('.vue', '');
+                if (componentName === "GClientOnly") {
+                    continue;
+                }
                 const componentPath = path.join(componentsDir, file);
                 const content = fs.readFileSync(componentPath, 'utf8');
                 const { props, docs, rawProps, slots } = parseProps(content);

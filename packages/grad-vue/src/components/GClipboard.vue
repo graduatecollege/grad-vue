@@ -74,7 +74,7 @@ const handleTooltipHide = () => {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 640 640"
                 height="1.125rem"
-                role="none presentation"
+                role="none"
             >
                 <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
                 <path

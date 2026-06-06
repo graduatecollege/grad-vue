@@ -17,7 +17,7 @@ const textareaValue = ref("");
                 label: {
                     type: 'string',
                     label: 'Label',
-                    default: 'Example Label'
+                    default: 'Textarea Label'
                 },
                 placeholder: {
                     type: 'string',

@@ -132,7 +132,7 @@ const groupAttrs = computed(() => {
     if (props.instructions) describedParts.push(instructionsId.value);
     if (props.radio) {
         return {
-            role: "radiogroup",
+            "role": "radiogroup",
             "aria-invalid": hasErrors.value ? "true" : undefined,
             "aria-errormessage": hasErrors.value ? errorId.value : undefined,
             "aria-describedby": describedParts.length ? describedParts.join(" ") : undefined,
@@ -167,8 +167,6 @@ function inputAriaAttrs(option: CheckboxOption, index: number): Record<string, s
 
     return {
         "aria-describedby": describedParts.length ? describedParts.join(" ") : undefined,
-        "aria-required":
-            props.required && props.options.length > 1 ? "true" : undefined,
         "aria-invalid": hasErrors.value ? "true" : "false",
         "aria-errormessage": hasErrors.value ? errorId.value : undefined,
     };

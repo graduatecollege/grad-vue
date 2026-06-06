@@ -909,7 +909,7 @@ type Props = {
      * would revert local state.
      */
     modelValue?: boolean;
-}
+};
 ```
 
 ### Slots

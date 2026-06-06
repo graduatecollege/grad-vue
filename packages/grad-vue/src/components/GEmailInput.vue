@@ -14,7 +14,7 @@ import GTextInput from "./GTextInput.vue";
 type Props = {
     /**
      * Label
-     * @demo
+     * @demo Email Input
      */
     label?: string;
     /**

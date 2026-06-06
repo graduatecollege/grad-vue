@@ -196,7 +196,7 @@ const selectedFileNames = computed(() => model.value.map((f) => f.name));
                 >
                     <svg
                         class="g-file-input-pill-icon"
-                        role="none presentation"
+                        role="none"
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 640 640"
                     >

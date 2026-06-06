@@ -18,7 +18,7 @@ import GTextInput from "./GTextInput.vue";
 type Props = {
     /**
      * Label
-     * @demo
+     * @demo Currency Input
      */
     label?: string;
     /**

@@ -146,7 +146,7 @@ a link or <code>router-link</code> component from vue-router. For example:</p>
                                 viewBox="0 0 24 24"
                                 fill="currentColor"
                                 stroke="currentColor"
-                                role="none presentation"
+                                role="none"
                             >
                                 <path
                                     d="M19 11H13V5h-2v6H5v2h6v6h2v-6h6z"

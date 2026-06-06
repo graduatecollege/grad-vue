@@ -324,7 +324,7 @@ const describedBy = computed(() => {
             :class="{ 'g-multiselect-control--disabled': disabled }"
             @click="onControlClick"
         >
-            <ul class="g-multiselect-chips" :aria-labelledby="labelId">
+            <ul v-if="model.length" class="g-multiselect-chips" :aria-labelledby="labelId">
                 <li v-for="val in model" :key="val" class="g-multiselect-chip">
                     <span class="g-multiselect-chip-label">{{
                         labelForValue(val)
@@ -341,7 +341,7 @@ const describedBy = computed(() => {
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 51.26 51.26"
                             width="1em"
-                            role="none presentation"
+                            role="none"
                         >
                             <path
                                 fill="currentColor"

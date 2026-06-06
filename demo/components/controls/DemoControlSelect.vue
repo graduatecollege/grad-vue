@@ -5,22 +5,25 @@ defineProps<{
     label: string;
     options: any[];
     instructions?: string;
+    formLabel: string;
 }>();
 
 const modelValue = defineModel<string>();
 
 const id = useId();
+const labelId = `${id}-label`;
 </script>
 
 <template>
     <div class="demo-control">
-        <label :for="id" class="select-label">
+        <label :id="labelId" :for="id" class="select-label">
             {{ label }}
         </label>
         <select
             :id="id"
             v-model="modelValue"
             class="select-control"
+            :aria-labelledby="`${formLabel} ${labelId}`"
             :aria-describedby="instructions ? `${id}-instructions` : undefined"
         >
             <option v-for="option in options" :key="option" :value="option">

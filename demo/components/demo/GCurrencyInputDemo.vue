@@ -18,7 +18,7 @@ const currencyValue = ref("");
                 label: {
                     type: 'string',
                     label: 'Label',
-                    default: null
+                    default: 'Currency Input'
                 },
                 placeholder: {
                     type: 'string',

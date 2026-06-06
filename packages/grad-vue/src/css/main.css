@@ -29,6 +29,7 @@
         z-index: 102;
         pointer-events: none;
         opacity: 0;
+        visibility: hidden;
         transition: opacity 0.15s;
         background: #222;
         color: #fff;

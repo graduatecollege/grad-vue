@@ -50,9 +50,11 @@ export function showTooltip(anchor: HTMLElement, tooltip: HTMLElement) {
     tooltip.style.left = `${left}px`;
     tooltip.style.top = `${top}px`;
     tooltip.style.zIndex = `${getTopZIndex()}`;
+    tooltip.style.visibility = "visible";
     tooltip.style.opacity = "1";
 }
 
 export function hideTooltip(tooltip: HTMLElement) {
     tooltip.style.opacity = "0";
+    tooltip.style.visibility = "hidden";
 }

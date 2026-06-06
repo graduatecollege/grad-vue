@@ -43,6 +43,7 @@ const { editor, focusEditor } = useRichTextEditor({
     content: model as any,
     placeholder: computed(() => props.placeholder),
     label: computed(() => props.label),
+    multiline: true,
 });
 
 function focusInput() {

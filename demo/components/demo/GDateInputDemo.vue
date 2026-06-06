@@ -18,7 +18,7 @@ const dateValue = ref("");
                 label: {
                     type: 'string',
                     label: 'Label',
-                    default: null
+                    default: 'Date Input'
                 },
                 placeholder: {
                     type: 'string',

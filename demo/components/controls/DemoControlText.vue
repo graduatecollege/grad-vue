@@ -4,16 +4,18 @@ import { useId } from "vue";
 defineProps<{
     label: string;
     instructions?: string;
+    formLabel: string;
 }>();
 
 const modelValue = defineModel<string>();
 
 const id = useId();
+const labelId = `${id}-label`;
 </script>
 
 <template>
     <div class="demo-control">
-        <label :for="id" class="text-label">
+        <label :id="labelId" :for="id" class="text-label">
             {{ label }}
         </label>
         <p
@@ -28,6 +30,7 @@ const id = useId();
             type="text"
             v-model="modelValue"
             class="text-input"
+            :aria-labelledby="`${formLabel} ${labelId}`"
             :aria-describedby="instructions ? `${id}-instructions` : undefined"
         />
     </div>
