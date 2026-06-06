@@ -255,6 +255,7 @@ const forwardedAttrs = computed(() => {
             <span class="g-tree-menu__spacer"></span>
             <span
                 class="g-tree-menu__row-content"
+                ref="contentRef"
                 data-tree-primary
             >
                 <slot />

@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
+import { isCustomElementMode } from "../compose/useCustomElementAttrs.ts";
 
-const isMounted = ref(false);
+// We're not concerned with SSR in web-components mode, hence isCustomElementMode()
+const isMounted = ref(isCustomElementMode());
 
 onMounted(() => {
     isMounted.value = true;
