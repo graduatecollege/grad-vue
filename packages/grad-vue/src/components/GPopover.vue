@@ -81,7 +81,7 @@ const popoverRef = useTemplateRef<HTMLElement | null>("popoverRef");
 // Disable Teleport inside custom elements: scoped named slots
 // break CE slot distribution when content is teleported.
 const { isCustomElement } = useCustomElementAttrs();
-const disableTeleport = false;
+const disableTeleport = isCustomElement;
 
 const id = useId();
 const { push, pop, isTop, zIndex } = useOverlayStack(id, true);

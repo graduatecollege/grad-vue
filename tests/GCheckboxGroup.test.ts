@@ -163,7 +163,7 @@ describe("GCheckboxGroup", () => {
             await expect.element(wrapper.container.getByRole("group")).not.toBeInTheDocument();
         });
 
-        it("sets aria-errormessage on checkbox inputs when there are errors", async () => {
+        it("sets aria-invalid and aria-errormessage on checkbox inputs when there are errors", async () => {
             const wrapper = mnt(GCheckboxGroup, {
                 props: {
                     label: "Pick",
@@ -174,7 +174,24 @@ describe("GCheckboxGroup", () => {
             });
 
             const inputA = wrapper.instance.getByRole("checkbox", { name: "Option A" });
+            await expect.element(inputA).toHaveAttribute("aria-invalid", "true");
             await expect.element(inputA).toHaveAttribute("aria-errormessage");
+        });
+
+        it("sets role=radiogroup with aria-invalid on the fieldset in radio mode with errors", async () => {
+            const wrapper = mnt(GCheckboxGroup, {
+                props: {
+                    label: "Pick one",
+                    options,
+                    modelValue: [],
+                    radio: true,
+                    errors: ["Required"],
+                },
+            });
+
+            const group = wrapper.container.getByRole("radiogroup");
+            await expect.element(group).toBeInTheDocument();
+            await expect.element(group).toHaveAttribute("aria-invalid", "true");
         });
 
         it("sets required on the first radio button when required", async () => {

@@ -14,10 +14,11 @@ interface UseRichTextEditorOptions {
     label: Ref<string> | string;
     onUpdate?: (editor: any) => void;
     editorProps?: Record<string, any>;
+    multiline?: boolean;
 }
 
 export function useRichTextEditor(options: UseRichTextEditorOptions) {
-    const { content, placeholder, label, onUpdate, editorProps = {} } = options;
+    const { content, placeholder, label, onUpdate, editorProps = {}, multiline = false } = options;
 
     const placeholderValue = typeof placeholder === 'string' ? placeholder : placeholder.value;
     const labelValue = typeof label === 'string' ? label : label.value;
@@ -39,6 +40,7 @@ export function useRichTextEditor(options: UseRichTextEditorOptions) {
             attributes: {
                 "aria-label": labelValue,
                 "role": "textbox",
+                "aria-multiline": multiline ? "true" : undefined,
                 ...editorProps.attributes,
             },
         },

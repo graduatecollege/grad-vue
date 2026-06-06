@@ -208,6 +208,8 @@ function getCellError(row: T, col: C): string | undefined {
                             :value="row[col.key]"
                             @change="handleCellChange($event, row, col)"
                             :aria-labelledby="buildAriaLabelledBy(row, col)"
+                            :aria-invalid="hasCellError(row, col)"
+                            :aria-errormessage="hasCellError(row, col) ? `${tableId}-error-${row.key}-${String(col.key)}` : undefined"
                             :name="`row-${row.key}-${String(col.key)}-select`"
                             class="editable-input editable-select"
                         >

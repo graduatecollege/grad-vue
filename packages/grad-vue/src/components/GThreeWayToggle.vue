@@ -123,10 +123,12 @@ function onLabelKeydown(e: KeyboardEvent) {
             </span>
             <fieldset
                 class="g-three-way-toggle"
+                role="radiogroup"
                 :class="{ 'g-has-error': error }"
                 :aria-labelledby="id"
                 :aria-describedby="describedby"
                 :disabled="disabled"
+                :aria-invalid="error ? 'true' : undefined"
                 :aria-errormessage="error ? id + '-error' : undefined"
             >
                 <div

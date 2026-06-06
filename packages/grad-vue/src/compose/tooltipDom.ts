@@ -56,4 +56,5 @@ export function showTooltip(anchor: HTMLElement, tooltip: HTMLElement) {
 
 export function hideTooltip(tooltip: HTMLElement) {
     tooltip.style.opacity = "0";
+    tooltip.style.visibility = "hidden";
 }

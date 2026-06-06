@@ -174,6 +174,7 @@ const selectedFileNames = computed(() => model.value.map((f) => f.name));
                 :required="required"
                 :accept="accept || undefined"
                 :multiple="multiple"
+                :aria-invalid="hasErrors ? 'true' : 'false'"
                 :aria-describedby="
                     instructions ? 'instructions-' + id : undefined
                 "

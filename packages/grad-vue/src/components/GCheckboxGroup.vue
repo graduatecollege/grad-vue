@@ -132,6 +132,8 @@ const groupAttrs = computed(() => {
     if (props.instructions) describedParts.push(instructionsId.value);
     if (props.radio) {
         return {
+            "role": "radiogroup",
+            "aria-invalid": hasErrors.value ? "true" : undefined,
             "aria-errormessage": hasErrors.value ? errorId.value : undefined,
             "aria-describedby": describedParts.length ? describedParts.join(" ") : undefined,
         };
