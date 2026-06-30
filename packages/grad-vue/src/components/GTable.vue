@@ -514,6 +514,13 @@ watch(
                                     class="g-filter-search"
                                     role="search"
                                 >
+                                    <input
+                                        type="search"
+                                        class="g-filter-search-input"
+                                        v-model="filter[col.key]"
+                                        :placeholder="col.filter.placeholder"
+                                        :aria-label="`Search ${col.label}`"
+                                    />
                                     <span
                                         class="g-filter-search-icon"
                                         aria-hidden="true"
@@ -529,13 +536,6 @@ watch(
                                             />
                                         </svg>
                                     </span>
-                                    <input
-                                        type="search"
-                                        class="g-filter-search-input"
-                                        v-model="filter[col.key]"
-                                        :placeholder="col.filter.placeholder"
-                                        :aria-label="`Search ${col.label}`"
-                                    />
                                 </div>
                                 <div v-else-if="col.filter.type === 'toggle'">
                                     <div class="g-filter-toggle">
@@ -791,36 +791,42 @@ button.g-column-head:hover {
 
 .g-filter-search {
     display: flex;
-    align-items: center;
-    gap: 0.4rem;
+    align-items: stretch;
     min-width: 200px;
-    padding: 0 0.5rem;
-    border: 1px solid var(--g-surface-400, #ccc);
-    border-radius: 4px;
-    background: var(--g-surface-50, #fff);
+}
 
-    &:focus-within {
+.g-filter-search-input {
+    width: 100%;
+    flex: 1;
+    padding: 0.4rem 0.75rem;
+    line-height: 1.33rem;
+    font-size: 1rem;
+    background: var(--g-surface-0);
+    color: var(--g-surface-900);
+    border: 2px solid var(--g-primary-500);
+    border-right-width: 1px;
+    border-top-left-radius: var(--g-border-radius-m);
+    border-bottom-left-radius: var(--g-border-radius-m);
+
+    &:focus {
         outline: 2px solid var(--g-primary-500);
-        outline-offset: 1px;
+        outline-offset: 2px;
+        box-shadow: 0 0 0 2px var(--g-info-200);
     }
 }
 
 .g-filter-search-icon {
-    display: inline-flex;
+    box-sizing: border-box;
+    display: flex;
     align-items: center;
-    color: var(--g-surface-600, #666);
-}
-
-.g-filter-search-input {
-    flex: 1;
-    border: none;
-    background: transparent;
-    padding: 0.4rem 0;
-    font: inherit;
-
-    &:focus {
-        outline: none;
-    }
+    justify-content: center;
+    background: var(--g-surface-0);
+    color: var(--g-accent-700);
+    border: 2px solid var(--g-primary-500);
+    border-left-width: 1px;
+    border-top-right-radius: var(--g-border-radius-m);
+    border-bottom-right-radius: var(--g-border-radius-m);
+    padding: 0.2rem 0.5rem;
 }
 
 .g-table-controls {
