@@ -514,13 +514,6 @@ watch(
                                     class="g-filter-search"
                                     role="search"
                                 >
-                                    <input
-                                        type="search"
-                                        class="g-filter-search-input"
-                                        v-model="filter[col.key]"
-                                        :placeholder="col.filter.placeholder"
-                                        :aria-label="`Search ${col.label}`"
-                                    />
                                     <span
                                         class="g-filter-search-icon"
                                         aria-hidden="true"
@@ -536,6 +529,13 @@ watch(
                                             />
                                         </svg>
                                     </span>
+                                    <input
+                                        type="search"
+                                        class="g-filter-search-input"
+                                        v-model="filter[col.key]"
+                                        :placeholder="col.filter.placeholder"
+                                        :aria-label="`Search ${col.label}`"
+                                    />
                                 </div>
                                 <div v-else-if="col.filter.type === 'toggle'">
                                     <div class="g-filter-toggle">
@@ -790,6 +790,7 @@ button.g-column-head:hover {
 }
 
 .g-filter-search {
+    position: relative;
     display: flex;
     align-items: stretch;
     min-width: 200px;
@@ -798,15 +799,13 @@ button.g-column-head:hover {
 .g-filter-search-input {
     width: 100%;
     flex: 1;
-    padding: 0.4rem 0.75rem;
+    padding: 0.4rem 0.75rem 0.4rem 2.25rem;
     line-height: 1.33rem;
     font-size: 1rem;
     background: var(--g-surface-0);
     color: var(--g-surface-900);
     border: 2px solid var(--g-primary-500);
-    border-right-width: 1px;
-    border-top-left-radius: var(--g-border-radius-m);
-    border-bottom-left-radius: var(--g-border-radius-m);
+    border-radius: var(--g-border-radius-m);
 
     &:focus {
         outline: 2px solid var(--g-primary-500);
@@ -816,17 +815,14 @@ button.g-column-head:hover {
 }
 
 .g-filter-search-icon {
-    box-sizing: border-box;
-    display: flex;
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    background: var(--g-surface-0);
     color: var(--g-accent-700);
-    border: 2px solid var(--g-primary-500);
-    border-left-width: 1px;
-    border-top-right-radius: var(--g-border-radius-m);
-    border-bottom-right-radius: var(--g-border-radius-m);
-    padding: 0.2rem 0.5rem;
+    pointer-events: none;
 }
 
 .g-table-controls {
