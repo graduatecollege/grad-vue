@@ -108,9 +108,15 @@ function filterCollegesData(data: TableEntry[], filter: Record<string, any>) {
     let filtered = [...data];
     for (let [key, val] of Object.entries(filter)) {
         if (val) {
-            filtered = filtered.filter((item) =>
-                val === "yes" ? (item as any)[key] : !(item as any)[key],
-            );
+            if (key === "name") {
+                filtered = filtered.filter((item) =>
+                    item.name.toLowerCase().includes(String(val).toLowerCase()),
+                );
+            } else {
+                filtered = filtered.filter((item) =>
+                    val === "yes" ? (item as any)[key] : !(item as any)[key],
+                );
+            }
         }
     }
     return filtered;
@@ -301,6 +307,38 @@ describe("GTable", () => {
             await clearFiltersButton.click();
             await vm.$nextTick();
             expect(getColumn(container, 0)).toEqual(["LT", "KL", "KY"]);
+        });
+        it("filters rows by partial text match in name column", async () => {
+            const searchColumns: TableColumn<TableEntry>[] = [
+                { key: "key", label: "Code", sortable: true },
+                {
+                    key: "name",
+                    label: "Name",
+                    sortable: true,
+                    filter: { type: "search", placeholder: "Search name" },
+                },
+            ];
+            const { GTableFixture } = createGTableFixture<TableEntry>({
+                label: "Colleges",
+                columns: searchColumns,
+                data: tableData,
+                initialFilter: defaultFilter,
+                initialPageSize: 10,
+                pageSizes: [10, 50],
+                filterData: filterCollegesData,
+            });
+            const { container } = mnt(GTableFixture);
+            const filterButton = container.getByRole("button", {
+                name: "Filter Column",
+            });
+            await filterButton.click();
+
+            const searchInput = page.getByRole("searchbox", {
+                name: "Search Name",
+            });
+            await searchInput.fill("School");
+
+            expect(getColumn(container, 1)).toEqual(["School of Social Work"]);
         });
     });
     describe("Bulk Selection Tests", () => {

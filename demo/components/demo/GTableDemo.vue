@@ -35,6 +35,10 @@ const columns = computed<TableColumn<TableEntry>[]>(() => {
             key: "name",
             label: "Name",
             sortable: true,
+            filter: {
+                type: "search",
+                placeholder: "Search name",
+            },
         },
         {
             key: "collegeInName",
@@ -183,11 +187,17 @@ const filteredData = computed(() => {
     let data = [...tableData.value];
     for (let [key, val] of Object.entries(filters)) {
         if (val) {
-            data = data.filter((item) =>
-                val === "yes"
-                    ? item[key as keyof typeof item]
-                    : !item[key as keyof typeof item],
-            );
+            if (key === "name") {
+                data = data.filter((item) =>
+                    item.name.toLowerCase().includes(String(val).toLowerCase()),
+                );
+            } else {
+                data = data.filter((item) =>
+                    val === "yes"
+                        ? item[key as keyof typeof item]
+                        : !item[key as keyof typeof item],
+                );
+            }
         }
     }
     return data;

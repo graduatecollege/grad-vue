@@ -509,6 +509,34 @@ watch(
                                     searchable
                                     clear-button
                                 />
+                                <div
+                                    v-else-if="col.filter.type === 'search'"
+                                    class="g-filter-search"
+                                    role="search"
+                                >
+                                    <span
+                                        class="g-filter-search-icon"
+                                        aria-hidden="true"
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 51.26 51.26"
+                                            height="1em"
+                                        >
+                                            <path
+                                                fill="currentColor"
+                                                d="M30 9.76A14.05 14.05 0 1 0 28.3 31l11.3 13a3.34 3.34 0 0 0 4.72-4.72L31.44 27.86A14.05 14.05 0 0 0 30 9.76ZM27.27 27a10.26 10.26 0 1 1 0-14.5 10.25 10.25 0 0 1 0 14.5Z"
+                                            />
+                                        </svg>
+                                    </span>
+                                    <input
+                                        type="search"
+                                        class="g-filter-search-input"
+                                        v-model="filter[col.key]"
+                                        :placeholder="col.filter.placeholder"
+                                        :aria-label="`Search ${col.label}`"
+                                    />
+                                </div>
                                 <div v-else-if="col.filter.type === 'toggle'">
                                     <div class="g-filter-toggle">
                                         <input
@@ -759,6 +787,42 @@ button.g-column-head:hover {
 
 .g-filter-select {
     min-width: 200px;
+}
+
+.g-filter-search {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    min-width: 200px;
+}
+
+.g-filter-search-input {
+    width: 100%;
+    flex: 1;
+    padding: 0.4rem 0.75rem 0.4rem 2.25rem;
+    line-height: 1.33rem;
+    font-size: 1rem;
+    background: var(--g-surface-0);
+    color: var(--g-surface-900);
+    border: 2px solid var(--g-primary-500);
+    border-radius: var(--g-border-radius-m);
+
+    &:focus {
+        outline: 2px solid var(--g-primary-500);
+        outline-offset: 2px;
+        box-shadow: 0 0 0 2px var(--g-info-200);
+    }
+}
+
+.g-filter-search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    color: var(--g-accent-700);
+    pointer-events: none;
 }
 
 .g-table-controls {
