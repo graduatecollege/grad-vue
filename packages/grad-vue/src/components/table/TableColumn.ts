@@ -3,11 +3,20 @@ import { VNode } from "vue";
 export type TableColumnFilter =
     | SelectColumnFilter
     | MultiSelectColumnFilter
-    | ToggleColumnFilter;
+    | ToggleColumnFilter
+    | SearchColumnFilter;
 
 export interface SelectColumnFilter {
     type: 'select';
     options: Array<{ label: string; value: any }>;
+    placeholder?: string;
+}
+
+export interface SearchColumnFilter {
+    type: 'search';
+    /**
+     * Placeholder text shown in the search input.
+     */
     placeholder?: string;
 }
 
