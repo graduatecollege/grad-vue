@@ -715,7 +715,6 @@ g-multi-select {
 .g-multiselect-option-description {
     display: block;
     font-size: 0.8em;
-    opacity: 0.8;
 }
 
 .g-multiselect-no-results {

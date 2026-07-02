@@ -687,7 +687,6 @@ g-select {
 .g-select-option-description {
     display: block;
     font-size: 0.8em;
-    opacity: 0.8;
 }
 
 .g-select-option-current {
