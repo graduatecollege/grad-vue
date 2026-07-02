@@ -3,6 +3,7 @@ import { nextTick } from "vue";
 import GSelect from "../packages/grad-vue/src/components/GSelect.vue";
 import { mnt, testAccessibility } from "./test-utils";
 import { page } from "vitest/browser";
+import { userEvent } from "vitest/browser";
 
 describe("GSelect", () => {
     const options = ["Option 1", "Option 2", "Option 3"];
@@ -92,6 +93,70 @@ describe("GSelect", () => {
             });
 
             await expect.element(container.getByRole("combobox")).toHaveAttribute("aria-required", "true");
+        });
+
+        it("renders an option description as a second line when provided", async () => {
+            const { container } = mnt(GSelect, {
+                props: {
+                    label: "Filter by college",
+                    options: [
+                        { label: "KP", value: "KP", description: "Grainger College of Engineering" },
+                        { label: "KV", value: "KV" },
+                    ],
+                    modelValue: null,
+                },
+            });
+
+            await container.getByRole("combobox").click();
+            await nextTick();
+
+            await expect
+                .element(container.getByText("Grainger College of Engineering"))
+                .toBeVisible();
+        });
+
+        it("matches the option description when searching by default", async () => {
+            const { container } = mnt(GSelect, {
+                props: {
+                    label: "Filter by college",
+                    options: [
+                        { label: "KP", value: "KP", description: "Grainger College of Engineering" },
+                        { label: "KV", value: "KV", description: "College of Media" },
+                    ],
+                    modelValue: null,
+                    searchable: true,
+                },
+            });
+
+            const input = container.getByRole("combobox");
+            await input.click();
+            await userEvent.type(input, "Grainger");
+            await nextTick();
+
+            await expect.element(container.getByRole("option", { name: /KP/ })).toBeInTheDocument();
+            await expect.element(container.getByRole("option", { name: /KV/ })).not.toBeInTheDocument();
+        });
+
+        it("does not match the description when searchDescription is false", async () => {
+            const { container } = mnt(GSelect, {
+                props: {
+                    label: "Filter by college",
+                    options: [
+                        { label: "KP", value: "KP", description: "Grainger College of Engineering" },
+                        { label: "KV", value: "KV", description: "College of Media" },
+                    ],
+                    modelValue: null,
+                    searchable: true,
+                    searchDescription: false,
+                },
+            });
+
+            const input = container.getByRole("combobox");
+            await input.click();
+            await userEvent.type(input, "Grainger");
+            await nextTick();
+
+            await expect.element(container.getByText("No results found.")).toBeInTheDocument();
         });
     });
 

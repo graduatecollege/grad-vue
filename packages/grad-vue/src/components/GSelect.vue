@@ -9,10 +9,15 @@
  *
  * The component can be marked `searchable` to enable search functionality.
  * This turns it into a text input that filters the options. Filtering is
- * done with a simple lower-case string search.
+ * done with a simple lower-case string search that matches both the option
+ * label and its `description`. Set `searchDescription` to `false` to match
+ * on the label only.
  *
  * The `options` prop can be an array of strings or objects with `label`
- * and `value` properties.
+ * and `value` properties. Options may also include an optional
+ * `description`, which renders as a smaller second line beneath the label
+ * in the dropdown to give extra context (for example a code and its full
+ * name).
  */
 export default {};
 </script>
@@ -66,6 +71,12 @@ type Props = {
      */
     searchable?: boolean;
     /**
+     * Include the option `description` in the searchable text match.
+     * Enabled by default; set to `false` to match on the label only.
+     * @demo
+     */
+    searchDescription?: boolean;
+    /**
      * Show clear button
      * @demo
      */
@@ -90,6 +101,7 @@ const props = withDefaults(defineProps<Props>(), {
     disabled: false,
     required: false,
     searchable: false,
+    searchDescription: true,
     compact: false,
     errors: () => [],
 });
@@ -129,8 +141,12 @@ const filteredOptions = computed(() => {
         return normalizedOptions.value;
     }
     const q = searchQuery.value.toLowerCase();
-    return normalizedOptions.value.filter((opt) =>
-        opt.label.toLowerCase().includes(q),
+    return normalizedOptions.value.filter(
+        (opt) =>
+            opt.label.toLowerCase().includes(q) ||
+            (props.searchDescription &&
+                !!opt.description &&
+                opt.description.toLowerCase().includes(q)),
     );
 });
 
@@ -526,7 +542,11 @@ function clearValue() {
                             :selected="option.value === model"
                             :index="idx"
                         >
-                            {{ option.label }}
+                            <span class="g-select-option-label">{{ option.label }}</span>
+                            <span
+                                v-if="option.description"
+                                class="g-select-option-description"
+                            >{{ option.description }}</span>
                         </slot>
                     </div>
                 </template>
@@ -658,6 +678,15 @@ g-select {
         color: var(--g-accent-700);
         border-color: var(--g-accent-700);
     }
+}
+
+.g-select-option-label {
+    display: block;
+}
+
+.g-select-option-description {
+    display: block;
+    font-size: 0.8em;
 }
 
 .g-select-option-current {

@@ -212,6 +212,66 @@ describe("GMultiSelect", () => {
 
             await expect.element(container.getByRole("combobox")).toHaveAttribute("aria-required", "true");
         });
+
+        it("renders an option description as a second line but keeps chips to the label", async () => {
+            const model = ref<Array<string | number>>([]);
+            const collegeOptions = [
+                { label: "KP", value: "KP", description: "Grainger College of Engineering" },
+                { label: "KV", value: "KV" },
+            ];
+            const { container } = mnt(GMultiSelect, {
+                props: { label: "Filter by college", options: collegeOptions },
+                model,
+            });
+
+            await container.getByRole("combobox").click();
+            await nextTick();
+            await expect
+                .element(container.getByText("Grainger College of Engineering"))
+                .toBeVisible();
+
+            await container.getByRole("option", { name: /KP/ }).click();
+            await nextTick();
+
+            expect(model.value).toContain("KP");
+            await expect.element(container.getByRole("button", { name: "Remove KP" })).toBeInTheDocument();
+        });
+
+        it("matches the option description when searching by default", async () => {
+            const collegeOptions = [
+                { label: "KP", value: "KP", description: "Grainger College of Engineering" },
+                { label: "KV", value: "KV", description: "College of Media" },
+            ];
+            const { container } = mnt(GMultiSelect, {
+                props: { label: "Filter by college", options: collegeOptions, modelValue: [] },
+            });
+            const input = container.getByRole("combobox");
+            await input.click();
+            await userEvent.type(input, "Grainger");
+            await nextTick();
+            await expect.element(container.getByRole("option", { name: /KP/ })).toBeInTheDocument();
+            await expect.element(container.getByRole("option", { name: /KV/ })).not.toBeInTheDocument();
+        });
+
+        it("does not match the description when searchDescription is false", async () => {
+            const collegeOptions = [
+                { label: "KP", value: "KP", description: "Grainger College of Engineering" },
+                { label: "KV", value: "KV", description: "College of Media" },
+            ];
+            const { container } = mnt(GMultiSelect, {
+                props: {
+                    label: "Filter by college",
+                    options: collegeOptions,
+                    modelValue: [],
+                    searchDescription: false,
+                },
+            });
+            const input = container.getByRole("combobox");
+            await input.click();
+            await userEvent.type(input, "Grainger");
+            await nextTick();
+            await expect.element(container.getByText("No results found.")).toBeInTheDocument();
+        });
     });
 
     describe("Keyboard Tests", () => {

@@ -8,8 +8,13 @@ export type TableColumnFilter =
 
 export interface SelectColumnFilter {
     type: 'select';
-    options: Array<{ label: string; value: any }>;
+    options: Array<{ label: string; value: any; description?: string }>;
     placeholder?: string;
+    /**
+     * Include the option `description` in the searchable text match.
+     * Enabled by default; set to `false` to match on the label only.
+     */
+    searchDescription?: boolean;
 }
 
 export interface SearchColumnFilter {
@@ -22,13 +27,19 @@ export interface SearchColumnFilter {
 
 export interface MultiSelectColumnFilter {
     type: 'multi-select';
-    options: Array<{ label: string; value: any }>;
+    options: Array<{ label: string; value: any; description?: string }>;
     placeholder?: string;
     /**
      * When true, renders a searchable GMultiSelect combobox instead of a
      * list of checkboxes. Recommended when there are many options.
      */
     searchable?: boolean;
+    /**
+     * Include the option `description` in the searchable text match.
+     * Only applies when `searchable` is true. Enabled by default; set to
+     * `false` to match on the label only.
+     */
+    searchDescription?: boolean;
 }
 
 export interface ToggleColumnFilter {

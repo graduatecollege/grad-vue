@@ -12,6 +12,12 @@ const selectOptions = ref([
     { value: "option2", label: "Option 2" },
     { value: "option3", label: "Option 3" },
 ]);
+const collegeValue = ref<string | number | undefined>(undefined);
+const collegeOptions = ref([
+    { value: "KP", label: "KP", description: "Grainger College of Engineering" },
+    { value: "KV", label: "KV", description: "College of Liberal Arts & Sciences" },
+    { value: "KM", label: "KM", description: "College of Media" },
+]);
 </script>
 
 <template>
@@ -50,6 +56,12 @@ const selectOptions = ref([
                     type: 'boolean',
                     label: 'Searchable',
                     default: false
+                },
+                searchDescription: {
+                    type: 'boolean',
+                    label: 'Include the option `description` in the searchable text match.',
+                    default: true,
+                    instructions: 'Enabled by default; set to `false` to match on the label only.'
                 },
                 clearButton: {
                     type: 'boolean',
@@ -101,6 +113,10 @@ const selectOptions = ref([
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    searchable</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Include the option `description` in the searchable text match. Enabled by default; set to `false` to match on the label only.</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    searchDescription</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
 <span class="line"><span style="color:#008000">     * Show clear button</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    clearButton</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
@@ -128,9 +144,14 @@ injection. In custom-elements mode, use matching <code>form-key</code> values to
 with a <code>GForm</code>.</p>
 <p>The component can be marked <code>searchable</code> to enable search functionality.
 This turns it into a text input that filters the options. Filtering is
-done with a simple lower-case string search.</p>
+done with a simple lower-case string search that matches both the option
+label and its <code>description</code>. Set <code>searchDescription</code> to <code>false</code> to match
+on the label only.</p>
 <p>The <code>options</code> prop can be an array of strings or objects with <code>label</code>
-and <code>value</code> properties.</p>
+and <code>value</code> properties. Options may also include an optional
+<code>description</code>, which renders as a smaller second line beneath the label
+in the dropdown to give extra context (for example a code and its full
+name).</p>
 </template>
             <template #default="{ props }">
                 <GSelect
@@ -141,6 +162,22 @@ and <code>value</code> properties.</p>
                     label="Select an option"
                 />
                 <DemoResult label="Selected">{{ selectedValue }}</DemoResult>
+            </template>
+        </ComponentDemo>
+
+        <ComponentDemo
+            description="Options can include an optional description that renders as a smaller second line, useful for adding context to short codes."
+            component="GSelect"
+        >
+            <template #default>
+                <GSelect
+                    v-model="collegeValue"
+                    :options="collegeOptions"
+                    label="Filter by college"
+                    searchable
+                    clear-button
+                />
+                <DemoResult label="Selected">{{ collegeValue }}</DemoResult>
             </template>
         </ComponentDemo>
     </ComponentSection>

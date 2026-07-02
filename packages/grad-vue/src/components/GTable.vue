@@ -507,6 +507,7 @@ watch(
                                     class="g-filter-select"
                                     label="Filter select"
                                     searchable
+                                    :search-description="col.filter.searchDescription"
                                     clear-button
                                 />
                                 <div
@@ -571,6 +572,7 @@ watch(
                                     :options="col.filter.options"
                                     label="Include values"
                                     :placeholder="col.filter.placeholder"
+                                    :search-description="col.filter.searchDescription"
                                     class="g-multi-select-searchable"
                                 />
                                 <fieldset
@@ -585,6 +587,7 @@ watch(
                                     <div
                                         v-for="opt in col.filter.options"
                                         :key="opt.value"
+                                        class="g-multi-select-option"
                                     >
                                         <input
                                             type="checkbox"
@@ -595,8 +598,13 @@ watch(
                                         />
                                         <label
                                             :for="`filter-${String(col.key)}-${opt.value}`"
-                                            >{{ opt.label }}</label
                                         >
+                                            <span class="g-multi-select-option-label">{{ opt.label }}</span>
+                                            <span
+                                                v-if="opt.description"
+                                                class="g-multi-select-option-description"
+                                            >{{ opt.description }}</span>
+                                        </label>
                                     </div>
                                     <GButton
                                         class="clear-multiselect-btn"
@@ -878,6 +886,15 @@ button.g-column-head:hover {
         font-size: 1.125rem;
         flex: 1;
     }
+}
+
+.g-multi-select-option-label {
+    display: block;
+}
+
+.g-multi-select-option-description {
+    display: block;
+    font-size: 0.8em;
 }
 
 .g-multi-select-legend {
