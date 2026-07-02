@@ -507,6 +507,7 @@ watch(
                                     class="g-filter-select"
                                     label="Filter select"
                                     searchable
+                                    :search-description="col.filter.searchDescription"
                                     clear-button
                                 />
                                 <div
@@ -571,6 +572,7 @@ watch(
                                     :options="col.filter.options"
                                     label="Include values"
                                     :placeholder="col.filter.placeholder"
+                                    :search-description="col.filter.searchDescription"
                                     class="g-multi-select-searchable"
                                 />
                                 <fieldset

@@ -10,8 +10,10 @@
  * The `options` prop accepts an array of strings or `{ label, value }`
  * objects. Options may also include an optional `description`, which renders
  * as a smaller second line beneath the label in the dropdown. Selected chips
- * only show the `label` (first part) to keep the control compact. The
- * `v-model` binds to an array of `string | number` values.
+ * only show the `label` (first part) to keep the control compact. The search
+ * filter matches both the label and the `description`; set `searchDescription`
+ * to `false` to match on the label only. The `v-model` binds to an array of
+ * `string | number` values.
  *
  * In standard Vue usage, this registers with the nearest parent `GForm` via
  * injection. In custom-elements mode, use matching `form-key` values to pair
@@ -75,6 +77,12 @@ type Props = {
      */
     name?: string;
     /**
+     * Include the option `description` in the searchable text match.
+     * Enabled by default; set to `false` to match on the label only.
+     * @demo
+     */
+    searchDescription?: boolean;
+    /**
      * Error messages array (supports multiple validation errors)
      */
     errors?: string[];
@@ -93,6 +101,7 @@ const props = withDefaults(defineProps<Props>(), {
     disabled: false,
     hiddenLabel: false,
     required: false,
+    searchDescription: true,
     errors: () => [],
 });
 
@@ -134,8 +143,12 @@ const normalizedOptions = computed<SelectOption[]>(() =>
 const filteredOptions = computed<SelectOption[]>(() => {
     if (!searchQuery.value) return normalizedOptions.value;
     const q = searchQuery.value.toLowerCase();
-    return normalizedOptions.value.filter((opt) =>
-        opt.label.toLowerCase().includes(q),
+    return normalizedOptions.value.filter(
+        (opt) =>
+            opt.label.toLowerCase().includes(q) ||
+            (props.searchDescription &&
+                !!opt.description &&
+                opt.description.toLowerCase().includes(q)),
     );
 });
 

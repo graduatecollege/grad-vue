@@ -792,8 +792,10 @@ next to each selected option.
 The `options` prop accepts an array of strings or `{ label, value }`
 objects. Options may also include an optional `description`, which renders
 as a smaller second line beneath the label in the dropdown. Selected chips
-only show the `label` (first part) to keep the control compact. The
-`v-model` binds to an array of `string | number` values.
+only show the `label` (first part) to keep the control compact. The search
+filter matches both the label and the `description`; set `searchDescription`
+to `false` to match on the label only. The `v-model` binds to an array of
+`string | number` values.
 
 In standard Vue usage, this registers with the nearest parent `GForm` via
 injection. In custom-elements mode, use matching `form-key` values to pair
@@ -839,6 +841,11 @@ type Props = {
      * Name for form registration
      */
     name?: string;
+    /**
+     * Include the option `description` in the searchable text match.
+     * Enabled by default; set to `false` to match on the label only.
+     */
+    searchDescription?: boolean;
     /**
      * Error messages array (supports multiple validation errors)
      */
@@ -1069,7 +1076,9 @@ with a `GForm`.
 
 The component can be marked `searchable` to enable search functionality.
 This turns it into a text input that filters the options. Filtering is
-done with a simple lower-case string search.
+done with a simple lower-case string search that matches both the option
+label and its `description`. Set `searchDescription` to `false` to match
+on the label only.
 
 The `options` prop can be an array of strings or objects with `label`
 and `value` properties. Options may also include an optional
@@ -1116,6 +1125,11 @@ type Props = {
      * Searchable
      */
     searchable?: boolean;
+    /**
+     * Include the option `description` in the searchable text match.
+     * Enabled by default; set to `false` to match on the label only.
+     */
+    searchDescription?: boolean;
     /**
      * Show clear button
      */

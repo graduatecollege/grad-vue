@@ -9,7 +9,9 @@
  *
  * The component can be marked `searchable` to enable search functionality.
  * This turns it into a text input that filters the options. Filtering is
- * done with a simple lower-case string search.
+ * done with a simple lower-case string search that matches both the option
+ * label and its `description`. Set `searchDescription` to `false` to match
+ * on the label only.
  *
  * The `options` prop can be an array of strings or objects with `label`
  * and `value` properties. Options may also include an optional
@@ -69,6 +71,12 @@ type Props = {
      */
     searchable?: boolean;
     /**
+     * Include the option `description` in the searchable text match.
+     * Enabled by default; set to `false` to match on the label only.
+     * @demo
+     */
+    searchDescription?: boolean;
+    /**
      * Show clear button
      * @demo
      */
@@ -93,6 +101,7 @@ const props = withDefaults(defineProps<Props>(), {
     disabled: false,
     required: false,
     searchable: false,
+    searchDescription: true,
     compact: false,
     errors: () => [],
 });
@@ -132,8 +141,12 @@ const filteredOptions = computed(() => {
         return normalizedOptions.value;
     }
     const q = searchQuery.value.toLowerCase();
-    return normalizedOptions.value.filter((opt) =>
-        opt.label.toLowerCase().includes(q),
+    return normalizedOptions.value.filter(
+        (opt) =>
+            opt.label.toLowerCase().includes(q) ||
+            (props.searchDescription &&
+                !!opt.description &&
+                opt.description.toLowerCase().includes(q)),
     );
 });
 

@@ -57,6 +57,12 @@ const collegeOptions = ref([
                     label: 'Searchable',
                     default: false
                 },
+                searchDescription: {
+                    type: 'boolean',
+                    label: 'Include the option `description` in the searchable text match.',
+                    default: true,
+                    instructions: 'Enabled by default; set to `false` to match on the label only.'
+                },
                 clearButton: {
                     type: 'boolean',
                     label: 'Show clear button',
@@ -107,6 +113,10 @@ const collegeOptions = ref([
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    searchable</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Include the option `description` in the searchable text match. Enabled by default; set to `false` to match on the label only.</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    searchDescription</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
 <span class="line"><span style="color:#008000">     * Show clear button</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    clearButton</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
@@ -134,7 +144,9 @@ injection. In custom-elements mode, use matching <code>form-key</code> values to
 with a <code>GForm</code>.</p>
 <p>The component can be marked <code>searchable</code> to enable search functionality.
 This turns it into a text input that filters the options. Filtering is
-done with a simple lower-case string search.</p>
+done with a simple lower-case string search that matches both the option
+label and its <code>description</code>. Set <code>searchDescription</code> to <code>false</code> to match
+on the label only.</p>
 <p>The <code>options</code> prop can be an array of strings or objects with <code>label</code>
 and <code>value</code> properties. Options may also include an optional
 <code>description</code>, which renders as a smaller second line beneath the label

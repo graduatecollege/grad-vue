@@ -59,6 +59,12 @@ const collegeOptions = [
                     label: 'Required',
                     default: false
                 },
+                searchDescription: {
+                    type: 'boolean',
+                    label: 'Include the option `description` in the searchable text match.',
+                    default: true,
+                    instructions: 'Enabled by default; set to `false` to match on the label only.'
+                },
                 instructions: {
                     type: 'string',
                     label: 'Instructions shown below the label',
@@ -106,6 +112,10 @@ const collegeOptions = [
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    name</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Include the option `description` in the searchable text match. Enabled by default; set to `false` to match on the label only.</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    searchDescription</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
 <span class="line"><span style="color:#008000">     * Error messages array (supports multiple validation errors)</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    errors</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">[];</span></span>
@@ -129,8 +139,10 @@ next to each selected option.</p>
 <p>The <code>options</code> prop accepts an array of strings or <code>&lcub; label, value }</code>
 objects. Options may also include an optional <code>description</code>, which renders
 as a smaller second line beneath the label in the dropdown. Selected chips
-only show the <code>label</code> (first part) to keep the control compact. The
-<code>v-model</code> binds to an array of <code>string | number</code> values.</p>
+only show the <code>label</code> (first part) to keep the control compact. The search
+filter matches both the label and the <code>description</code>; set <code>searchDescription</code>
+to <code>false</code> to match on the label only. The <code>v-model</code> binds to an array of
+<code>string | number</code> values.</p>
 <p>In standard Vue usage, this registers with the nearest parent <code>GForm</code> via
 injection. In custom-elements mode, use matching <code>form-key</code> values to pair
 with a <code>GForm</code>.</p>

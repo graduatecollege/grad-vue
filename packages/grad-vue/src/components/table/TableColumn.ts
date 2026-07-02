@@ -10,6 +10,11 @@ export interface SelectColumnFilter {
     type: 'select';
     options: Array<{ label: string; value: any; description?: string }>;
     placeholder?: string;
+    /**
+     * Include the option `description` in the searchable text match.
+     * Enabled by default; set to `false` to match on the label only.
+     */
+    searchDescription?: boolean;
 }
 
 export interface SearchColumnFilter {
@@ -29,6 +34,12 @@ export interface MultiSelectColumnFilter {
      * list of checkboxes. Recommended when there are many options.
      */
     searchable?: boolean;
+    /**
+     * Include the option `description` in the searchable text match.
+     * Only applies when `searchable` is true. Enabled by default; set to
+     * `false` to match on the label only.
+     */
+    searchDescription?: boolean;
 }
 
 export interface ToggleColumnFilter {
