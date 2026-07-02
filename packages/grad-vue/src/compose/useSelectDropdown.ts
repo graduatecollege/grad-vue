@@ -5,10 +5,16 @@ import { useOverlayStack } from "./useOverlayStack.ts";
  * A normalized select option with a label and a value.
  * Both GSelect and GMultiSelect accept `Array<string | SelectOption>` and
  * normalize the strings to this shape internally.
+ *
+ * An optional `description` renders as a smaller second line beneath the
+ * label in the dropdown, useful for adding context to short codes (for
+ * example a college code `KP` with the description
+ * `Grainger College of Engineering`).
  */
 export type SelectOption = {
     label: string;
     value: string | number;
+    description?: string;
 };
 
 /**

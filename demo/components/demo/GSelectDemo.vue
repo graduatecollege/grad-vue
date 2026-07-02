@@ -12,6 +12,12 @@ const selectOptions = ref([
     { value: "option2", label: "Option 2" },
     { value: "option3", label: "Option 3" },
 ]);
+const collegeValue = ref<string | number | undefined>(undefined);
+const collegeOptions = ref([
+    { value: "KP", label: "KP", description: "Grainger College of Engineering" },
+    { value: "KV", label: "KV", description: "College of Liberal Arts & Sciences" },
+    { value: "KM", label: "KM", description: "College of Media" },
+]);
 </script>
 
 <template>
@@ -130,7 +136,10 @@ with a <code>GForm</code>.</p>
 This turns it into a text input that filters the options. Filtering is
 done with a simple lower-case string search.</p>
 <p>The <code>options</code> prop can be an array of strings or objects with <code>label</code>
-and <code>value</code> properties.</p>
+and <code>value</code> properties. Options may also include an optional
+<code>description</code>, which renders as a smaller second line beneath the label
+in the dropdown to give extra context (for example a code and its full
+name).</p>
 </template>
             <template #default="{ props }">
                 <GSelect
@@ -141,6 +150,22 @@ and <code>value</code> properties.</p>
                     label="Select an option"
                 />
                 <DemoResult label="Selected">{{ selectedValue }}</DemoResult>
+            </template>
+        </ComponentDemo>
+
+        <ComponentDemo
+            description="Options can include an optional description that renders as a smaller second line, useful for adding context to short codes."
+            component="GSelect"
+        >
+            <template #default>
+                <GSelect
+                    v-model="collegeValue"
+                    :options="collegeOptions"
+                    label="Filter by college"
+                    searchable
+                    clear-button
+                />
+                <DemoResult label="Selected">{{ collegeValue }}</DemoResult>
             </template>
         </ComponentDemo>
     </ComponentSection>

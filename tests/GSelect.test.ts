@@ -93,6 +93,26 @@ describe("GSelect", () => {
 
             await expect.element(container.getByRole("combobox")).toHaveAttribute("aria-required", "true");
         });
+
+        it("renders an option description as a second line when provided", async () => {
+            const { container } = mnt(GSelect, {
+                props: {
+                    label: "Filter by college",
+                    options: [
+                        { label: "KP", value: "KP", description: "Grainger College of Engineering" },
+                        { label: "KV", value: "KV" },
+                    ],
+                    modelValue: null,
+                },
+            });
+
+            await container.getByRole("combobox").click();
+            await nextTick();
+
+            await expect
+                .element(container.getByText("Grainger College of Engineering"))
+                .toBeVisible();
+        });
     });
 
     describe("Accessibility Tests", () => {

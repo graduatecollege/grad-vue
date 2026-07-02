@@ -212,6 +212,30 @@ describe("GMultiSelect", () => {
 
             await expect.element(container.getByRole("combobox")).toHaveAttribute("aria-required", "true");
         });
+
+        it("renders an option description as a second line but keeps chips to the label", async () => {
+            const model = ref<Array<string | number>>([]);
+            const collegeOptions = [
+                { label: "KP", value: "KP", description: "Grainger College of Engineering" },
+                { label: "KV", value: "KV" },
+            ];
+            const { container } = mnt(GMultiSelect, {
+                props: { label: "Filter by college", options: collegeOptions },
+                model,
+            });
+
+            await container.getByRole("combobox").click();
+            await nextTick();
+            await expect
+                .element(container.getByText("Grainger College of Engineering"))
+                .toBeVisible();
+
+            await container.getByRole("option", { name: /KP/ }).click();
+            await nextTick();
+
+            expect(model.value).toContain("KP");
+            await expect.element(container.getByRole("button", { name: "Remove KP" })).toBeInTheDocument();
+        });
     });
 
     describe("Keyboard Tests", () => {

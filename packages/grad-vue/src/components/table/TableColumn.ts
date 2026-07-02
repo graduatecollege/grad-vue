@@ -8,7 +8,7 @@ export type TableColumnFilter =
 
 export interface SelectColumnFilter {
     type: 'select';
-    options: Array<{ label: string; value: any }>;
+    options: Array<{ label: string; value: any; description?: string }>;
     placeholder?: string;
 }
 
@@ -22,7 +22,7 @@ export interface SearchColumnFilter {
 
 export interface MultiSelectColumnFilter {
     type: 'multi-select';
-    options: Array<{ label: string; value: any }>;
+    options: Array<{ label: string; value: any; description?: string }>;
     placeholder?: string;
     /**
      * When true, renders a searchable GMultiSelect combobox instead of a

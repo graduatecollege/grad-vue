@@ -790,7 +790,10 @@ The dropdown listbox shows all (or filtered) options with a checkmark
 next to each selected option.
 
 The `options` prop accepts an array of strings or `{ label, value }`
-objects. The `v-model` binds to an array of `string | number` values.
+objects. Options may also include an optional `description`, which renders
+as a smaller second line beneath the label in the dropdown. Selected chips
+only show the `label` (first part) to keep the control compact. The
+`v-model` binds to an array of `string | number` values.
 
 In standard Vue usage, this registers with the nearest parent `GForm` via
 injection. In custom-elements mode, use matching `form-key` values to pair
@@ -1069,7 +1072,10 @@ This turns it into a text input that filters the options. Filtering is
 done with a simple lower-case string search.
 
 The `options` prop can be an array of strings or objects with `label`
-and `value` properties.
+and `value` properties. Options may also include an optional
+`description`, which renders as a smaller second line beneath the label
+in the dropdown to give extra context (for example a code and its full
+name).
 
 ### Props
 

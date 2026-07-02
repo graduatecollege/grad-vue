@@ -12,7 +12,10 @@
  * done with a simple lower-case string search.
  *
  * The `options` prop can be an array of strings or objects with `label`
- * and `value` properties.
+ * and `value` properties. Options may also include an optional
+ * `description`, which renders as a smaller second line beneath the label
+ * in the dropdown to give extra context (for example a code and its full
+ * name).
  */
 export default {};
 </script>
@@ -526,7 +529,11 @@ function clearValue() {
                             :selected="option.value === model"
                             :index="idx"
                         >
-                            {{ option.label }}
+                            <span class="g-select-option-label">{{ option.label }}</span>
+                            <span
+                                v-if="option.description"
+                                class="g-select-option-description"
+                            >{{ option.description }}</span>
                         </slot>
                     </div>
                 </template>
@@ -658,6 +665,16 @@ g-select {
         color: var(--g-accent-700);
         border-color: var(--g-accent-700);
     }
+}
+
+.g-select-option-label {
+    display: block;
+}
+
+.g-select-option-description {
+    display: block;
+    font-size: 0.8em;
+    opacity: 0.8;
 }
 
 .g-select-option-current {

@@ -585,6 +585,7 @@ watch(
                                     <div
                                         v-for="opt in col.filter.options"
                                         :key="opt.value"
+                                        class="g-multi-select-option"
                                     >
                                         <input
                                             type="checkbox"
@@ -595,8 +596,13 @@ watch(
                                         />
                                         <label
                                             :for="`filter-${String(col.key)}-${opt.value}`"
-                                            >{{ opt.label }}</label
                                         >
+                                            <span class="g-multi-select-option-label">{{ opt.label }}</span>
+                                            <span
+                                                v-if="opt.description"
+                                                class="g-multi-select-option-description"
+                                            >{{ opt.description }}</span>
+                                        </label>
                                     </div>
                                     <GButton
                                         class="clear-multiselect-btn"
@@ -878,6 +884,16 @@ button.g-column-head:hover {
         font-size: 1.125rem;
         flex: 1;
     }
+}
+
+.g-multi-select-option-label {
+    display: block;
+}
+
+.g-multi-select-option-description {
+    display: block;
+    font-size: 0.8em;
+    opacity: 0.8;
 }
 
 .g-multi-select-legend {

@@ -19,6 +19,13 @@ const fruitOptions = [
 ];
 
 const stringOptions = ["Option 1", "Option 2", "Option 3", "Option 4"];
+
+const collegeSelections = ref<Array<string | number>>([]);
+const collegeOptions = [
+    { label: "KP", value: "KP", description: "Grainger College of Engineering" },
+    { label: "KV", value: "KV", description: "College of Liberal Arts & Sciences" },
+    { label: "KM", value: "KM", description: "College of Media" },
+];
 </script>
 
 <template>
@@ -120,7 +127,10 @@ optional search/filter support.</p>
 The dropdown listbox shows all (or filtered) options with a checkmark
 next to each selected option.</p>
 <p>The <code>options</code> prop accepts an array of strings or <code>&lcub; label, value }</code>
-objects. The <code>v-model</code> binds to an array of <code>string | number</code> values.</p>
+objects. Options may also include an optional <code>description</code>, which renders
+as a smaller second line beneath the label in the dropdown. Selected chips
+only show the <code>label</code> (first part) to keep the control compact. The
+<code>v-model</code> binds to an array of <code>string | number</code> values.</p>
 <p>In standard Vue usage, this registers with the nearest parent <code>GForm</code> via
 injection. In custom-elements mode, use matching <code>form-key</code> values to pair
 with a <code>GForm</code>.</p>
@@ -180,6 +190,21 @@ with a <code>GForm</code>.</p>
                     label="Favourite fruits (disabled)"
                     disabled
                 />
+            </template>
+        </ComponentDemo>
+        <ComponentDemo
+            description="Options can include an optional description that renders as a smaller second line in the dropdown. Selected chips show only the label."
+            component="GMultiSelect"
+            :props-config="{}"
+        >
+            <template #default>
+                <GMultiSelect
+                    v-model="collegeSelections"
+                    :options="collegeOptions"
+                    label="Filter by college"
+                    placeholder="Select colleges"
+                />
+                <DemoResult label="Selected">{{ collegeSelections }}</DemoResult>
             </template>
         </ComponentDemo>
     </ComponentSection>

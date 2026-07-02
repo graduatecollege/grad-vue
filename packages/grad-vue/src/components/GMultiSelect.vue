@@ -8,7 +8,10 @@
  * next to each selected option.
  *
  * The `options` prop accepts an array of strings or `{ label, value }`
- * objects. The `v-model` binds to an array of `string | number` values.
+ * objects. Options may also include an optional `description`, which renders
+ * as a smaller second line beneath the label in the dropdown. Selected chips
+ * only show the `label` (first part) to keep the control compact. The
+ * `v-model` binds to an array of `string | number` values.
  *
  * In standard Vue usage, this registers with the nearest parent `GForm` via
  * injection. In custom-elements mode, use matching `form-key` values to pair
@@ -440,7 +443,13 @@ const describedBy = computed(() => {
                             />
                         </svg>
                     </span>
-                        {{ opt.label }}
+                        <span class="g-multiselect-option-text">
+                            <span class="g-multiselect-option-label">{{ opt.label }}</span>
+                            <span
+                                v-if="opt.description"
+                                class="g-multiselect-option-description"
+                            >{{ opt.description }}</span>
+                        </span>
                     </div>
                 </template>
                 <template v-else>
@@ -684,6 +693,16 @@ g-multi-select {
 .g-multiselect-option-check svg {
     display: block;
     fill: currentColor;
+}
+
+.g-multiselect-option-label {
+    display: block;
+}
+
+.g-multiselect-option-description {
+    display: block;
+    font-size: 0.8em;
+    opacity: 0.8;
 }
 
 .g-multiselect-no-results {
