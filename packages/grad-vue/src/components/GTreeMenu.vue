@@ -53,7 +53,7 @@ export default {};
 </script>
 
 <script setup lang="ts">
-import { computed, nextTick, provide, reactive, ref, useId } from "vue";
+import { computed, getCurrentInstance, nextTick, provide, reactive, ref, useId } from "vue";
 import { useSessionStorage } from "@vueuse/core";
 
 type Props = {
@@ -102,8 +102,20 @@ const props = withDefaults(defineProps<Props>(), {
     headingLevel: "h2",
     smallHeading: false,
 });
+const slots = defineSlots<{
+    default?: () => any;
+    heading?: () => any;
+}>();
+const instance = getCurrentInstance();
 
 const id = useId();
+
+// In CE mode without Shadow DOM, named slots on the host are not exposed
+// through defineSlots()/useSlots() until the corresponding <slot> renders.
+// Read the parsed host slots to decide whether the heading wrapper must exist.
+const ceHost = (instance as any)?.ce as any | undefined;
+const hasCeHeading = ceHost?._slots?.heading?.length > 0;
+const hasHeading = computed(() => !!props.heading || !!slots.heading || hasCeHeading);
 
 provide("g-tree-menu-list-type", props.listType);
 
@@ -258,18 +270,18 @@ function handleKeydown(event: KeyboardEvent) {
             { 'g-tree-menu--small-heading': smallHeading },
         ]"
         v-bind="{
-            'aria-labelledby': heading ? id : undefined,
-            'aria-label': heading ? undefined : 'Tree Menu',
+            'aria-labelledby': hasHeading ? id : undefined,
+            'aria-label': hasHeading ? undefined : 'Tree Menu',
         }"
         @keydown="handleKeydown"
     >
         <component
             :is="headingLevel"
-            v-if="heading"
+            v-if="hasHeading"
             :id="id"
             class="g-tree-menu__title"
         >
-            {{ heading }}
+            <slot name="heading">{{ heading }}</slot>
         </component>
         <div class="g-tree-menu__divider">
             <div

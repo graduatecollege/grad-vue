@@ -34,6 +34,26 @@ function slotMenu(
 
 describe("GTreeMenu", () => {
     describe("Functional Tests", () => {
+        it("renders with a slotted heading", async () => {
+            const wrapper = mnt(GTreeMenu, {
+                slots: {
+                    heading: () => h("span", { class: "custom-heading" }, "Slotted Navigation"),
+                    default: () =>
+                        h(GTreeMenuList, null, {
+                            default: () => [
+                                h(GTreeMenuItem, null, () => h("a", { href: "#" }, "Home")),
+                            ],
+                        }),
+                },
+            });
+
+            await expect.element(wrapper.instance).toBeInTheDocument();
+            await expect
+                .element(page.getByRole("navigation", { name: "Slotted Navigation" }))
+                .toBeVisible();
+            await expect.element(page.getByText("Slotted Navigation")).toBeVisible();
+        });
+
         it("renders with a title and flat items", async () => {
             const wrapper = slotMenu({ heading: "Navigation" }, [
                 h(GTreeMenuItem, null, () => h("a", { href: "#" }, "Home")),

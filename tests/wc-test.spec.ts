@@ -124,6 +124,20 @@ test.describe('Web Components Modal and Popover Tests', () => {
     await expect(dangerDialog).toBeVisible();
   });
 
+  test('should render slotted heading in g-tree-menu', async ({ page }) => {
+    // The sidebar is hidden by default at some screen sizes. Let's make sure it's visible.
+    await page.setViewportSize({ width: 1200, height: 800 });
+    
+    // In CE mode without Shadow DOM, Vue retains the `slot` attribute but it moves into the template
+    const slottedHeading = page.locator('.chapters-menu span[slot="heading"]');
+    await expect(slottedHeading).toBeVisible();
+    await expect(slottedHeading).toHaveText('Slotted Chapters');
+    
+    const treeMenuNav = page.locator('g-tree-menu.chapters-menu nav');
+    const ariaLabelledBy = await treeMenuNav.getAttribute('aria-labelledby');
+    expect(ariaLabelledBy).toBeTruthy();
+  });
+
   test('should toggle popover', async ({ page }) => {
     await page.evaluate(() => {
       (document.getElementById('popover-content') as any).toggle();

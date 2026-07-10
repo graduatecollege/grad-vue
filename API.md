@@ -1906,6 +1906,7 @@ type Props = {
 
 ### Slots
 
+- `heading`
 - `default`
 
 ---
