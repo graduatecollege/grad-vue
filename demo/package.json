@@ -12,8 +12,8 @@
         "@illinois-grad/grad-vue": "file:../packages/grad-vue",
         "@pinia/nuxt": "^0.11.3",
         "pinia": "^3.0.4",
-        "nuxt": "^4.4.2",
-        "vue": "^3.5.32",
-        "vue-router": "^5.0.4"
+        "nuxt": "^4.4.8",
+        "vue": "^3.5.39",
+        "vue-router": "^5.1.0"
     }
 }
