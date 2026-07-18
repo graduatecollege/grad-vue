@@ -23,11 +23,12 @@
  * ```
  *
  * > [!IMPORTANT]
- * > All items must have a focusable element for proper accessibility. If there
- * > is no link, it should be a button.
+ * > Parent items with children render a disclosure toggle button. The default
+ * > slot should still provide either a navigable link or meaningful label
+ * > content for the item row.
  * >
- * > To support progressive enhancement, the component applies ARIA attributes
- * > to the focusable elements in your HTML.
+ * > To support progressive enhancement, nested items remain visible until the
+ * > component upgrades and enables collapsible behavior.
  *
  * **Props**:
  *
@@ -40,20 +41,12 @@
  *   `sessionStorage` under this key and restored on page load. This is useful
  *   in Web Component / Drupal contexts where every page navigation is a full
  *   refresh. Item states are keyed by the item's `label` prop.
- *
- * **Keyboard navigation** (tree-view style):
- *
- * - `Up Arrow` / `Down Arrow` - move between visible menu items.
- * - `Right Arrow` - expand a collapsed item; if already expanded, move to its first child.
- * - `Left Arrow` - collapse an expanded item; if already collapsed, move focus to its
- *   parent.
- * - `Home` / `End` - jump to the first or last visible item.
  */
 export default {};
 </script>
 
 <script setup lang="ts">
-import { computed, getCurrentInstance, nextTick, provide, reactive, ref, useId } from "vue";
+import { computed, getCurrentInstance, provide, reactive, ref, useId } from "vue";
 import { useSessionStorage } from "@vueuse/core";
 
 type Props = {
@@ -151,115 +144,6 @@ function toggleExpandAll() {
         version: expandAllSignal.value.version + 1,
     };
 }
-
-/**
- * Returns the best focusable element for the given [data-tree-primary] marker.
- */
-function getFocusTarget(primary: HTMLElement): HTMLElement {
-    const anchor = primary.querySelector<HTMLElement>(
-        "a, button, [tabindex='0']",
-    );
-    if (anchor) return anchor;
-    return primary;
-}
-
-/**
- * Returns all visible primary focusable items ([data-tree-primary]) inside nav.
- * Because collapsed children are removed from the DOM via v-if, only currently
- * visible items are returned.
- */
-function getPrimaryItems(nav: HTMLElement): HTMLElement[] {
-    return Array.from(nav.querySelectorAll<HTMLElement>("[data-tree-primary]"));
-}
-
-function handleKeydown(event: KeyboardEvent) {
-    const nav = event.currentTarget as HTMLElement;
-    const focused = document.activeElement as HTMLElement;
-    if (!nav.contains(focused)) return;
-
-    const handled = [
-        "ArrowUp",
-        "ArrowDown",
-        "ArrowLeft",
-        "ArrowRight",
-        "Home",
-        "End",
-    ];
-    if (!handled.includes(event.key)) return;
-
-    const currentLi = focused.closest<HTMLElement>(".g-tree-menu__item");
-    const currentPrimary =
-        currentLi?.querySelector<HTMLElement>("[data-tree-primary]") ?? null;
-
-    const primaries = getPrimaryItems(nav);
-    const primaryIdx = currentPrimary ? primaries.indexOf(currentPrimary) : -1;
-
-    switch (event.key) {
-        case "ArrowDown": {
-            const next = primaries[primaryIdx + 1];
-            if (next) getFocusTarget(next).focus();
-            break;
-        }
-        case "ArrowUp": {
-            const prev = primaries[primaryIdx - 1];
-            if (prev) getFocusTarget(prev).focus();
-            break;
-        }
-        case "ArrowRight": {
-            if (!currentLi) break;
-            const isExpandable = currentLi.dataset.treeExpandable === "true";
-            if (!isExpandable) break;
-            const isExpanded =
-                currentLi.querySelector("[aria-expanded='true']") !== null;
-            if (!isExpanded) {
-                const toggleBtn = currentLi.querySelector<HTMLElement>(
-                    ".g-tree-menu__toggle-btn",
-                );
-                if (toggleBtn) toggleBtn.click();
-            } else {
-                const next = primaries[primaryIdx + 1];
-                if (next) getFocusTarget(next).focus();
-            }
-            break;
-        }
-        case "ArrowLeft": {
-            if (!currentLi) break;
-            const isExpanded =
-                currentLi.querySelector("[aria-expanded='true']") !== null;
-            if (isExpanded) {
-                const toggleBtn = currentLi.querySelector<HTMLElement>(
-                    ".g-tree-menu__toggle-btn",
-                );
-                if (toggleBtn) toggleBtn.click();
-                if (currentPrimary)
-                    nextTick(() => getFocusTarget(currentPrimary).focus());
-            } else {
-                const parentItem =
-                    currentLi.parentElement?.closest<HTMLElement>(
-                        ".g-tree-menu__item",
-                    );
-                if (parentItem) {
-                    const parentPrimary = parentItem.querySelector<HTMLElement>(
-                        "[data-tree-primary]",
-                    );
-                    if (parentPrimary) getFocusTarget(parentPrimary).focus();
-                }
-            }
-            break;
-        }
-        case "Home": {
-            if (primaries.length > 0) getFocusTarget(primaries[0]).focus();
-            break;
-        }
-        case "End": {
-            if (primaries.length > 0)
-                getFocusTarget(primaries[primaries.length - 1]).focus();
-            break;
-        }
-    }
-
-    event.preventDefault();
-}
 </script>
 
 <template>
@@ -273,7 +157,6 @@ function handleKeydown(event: KeyboardEvent) {
             'aria-labelledby': hasHeading ? id : undefined,
             'aria-label': hasHeading ? undefined : 'Tree Menu',
         }"
-        @keydown="handleKeydown"
     >
         <component
             :is="headingLevel"

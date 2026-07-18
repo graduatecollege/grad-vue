@@ -3,7 +3,7 @@ export default { name: "GTreeMenuItem", inheritAttrs: false };
 </script>
 
 <script setup lang="ts">
-import { computed, getCurrentInstance, inject, onBeforeUnmount, onMounted, onUpdated, ref, useAttrs, useId, watch } from "vue";
+import { computed, getCurrentInstance, inject, onBeforeUnmount, onMounted, ref, useAttrs, useId, watch } from "vue";
 import type { Ref } from "vue";
 import GTreeMenuList from "./GTreeMenuList.vue";
 import { isCustomElementMode } from "../../compose/useCustomElementAttrs";
@@ -11,7 +11,8 @@ import { isCustomElementMode } from "../../compose/useCustomElementAttrs";
 const props = withDefaults(
     defineProps<{
         /**
-         * Label for the item. Used as a stable identifier for the item.
+         * Label for the item. Used as a stable identifier and toggle label for
+         * expandable items.
          * @demo
          '
          */
@@ -61,6 +62,15 @@ const expandedStorage = inject<Ref<Record<string, boolean>> | null>(
     null,
 );
 
+const toggleLabel = computed(() => {
+    const itemLabel = props.label?.trim();
+    if (itemLabel) {
+        return `Child items for ${itemLabel}`;
+    }
+
+    return "Child items";
+});
+
 function resolveInitialExpanded(): boolean {
     if (expandedStorage && props.label !== undefined) {
         if (expandedStorage.value[props.label] === true) return true;
@@ -89,24 +99,7 @@ watch(isExpanded, (val) => {
             delete expandedStorage.value[props.label];
         }
     }
-    updateSlotAria();
 });
-
-const contentRef = ref<HTMLElement | null>(null);
-
-function updateSlotAria() {
-    if (!hasChildren.value || !contentRef.value) return;
-    const focusable = contentRef.value.querySelector("a, button");
-    if (focusable) {
-        focusable.setAttribute("aria-controls", id + "-children");
-        focusable.setAttribute("aria-expanded", isExpanded.value ? "true" : "false");
-    } else {
-        console.warn("No focusable element found for GTreeMenuItem with label:", props.label, "Every item must at least have a plain button to properly work for accessibility.");
-    }
-}
-
-onMounted(updateSlotAria);
-onUpdated(updateSlotAria);
 
 function toggle() {
     isExpanded.value = !isExpanded.value;
@@ -175,15 +168,8 @@ onBeforeUnmount(() => {
 });
 
 function handleContentClick(event: MouseEvent) {
-    if (!(event.target as Element).closest("a")) {
+    if (!(event.target as Element).closest("a, button")) {
         toggle();
-    }
-}
-
-function handleContentKeydown(event: KeyboardEvent) {
-    if (event.key === "Enter" || event.key === " ") {
-        toggle();
-        event.preventDefault();
     }
 }
 
@@ -219,9 +205,12 @@ const forwardedAttrs = computed(() => {
     >
         <!-- Parent: has children → toggle button + slot content (which may contain a link) -->
         <div v-if="hasChildren" class="g-tree-menu__row">
-            <div
+            <button
+                type="button"
                 class="g-tree-menu__toggle-btn"
-                aria-hidden="true"
+                :aria-controls="id + '-children'"
+                :aria-expanded="isExpanded ? 'true' : 'false'"
+                :aria-label="toggleLabel"
                 @click="toggle"
             >
                 <svg
@@ -239,13 +228,11 @@ const forwardedAttrs = computed(() => {
                 >
                     <polyline points="9 18 15 12 9 6" />
                 </svg>
-            </div>
+            </button>
             <span
-                ref="contentRef"
                 class="g-tree-menu__row-content"
                 data-tree-primary
                 @click="handleContentClick"
-                @keydown="handleContentKeydown"
             >
                 <span class="g-tree-menu__row-content-text">
                     <slot />
@@ -258,7 +245,6 @@ const forwardedAttrs = computed(() => {
             <span class="g-tree-menu__spacer"></span>
             <span
                 class="g-tree-menu__row-content"
-                ref="contentRef"
                 data-tree-primary
             >
                 <slot />

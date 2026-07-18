@@ -102,6 +102,7 @@ describe("GTreeMenu", () => {
                 .element(
                     wrapper.container.getByRole("button", {
                         name: "Chapter 1",
+                        exact: true,
                     }),
                 )
                 .toBeVisible();
@@ -133,7 +134,7 @@ describe("GTreeMenu", () => {
             ]);
 
             await wrapper.container
-                .getByRole("button", { name: "Chapter 1" })
+                .getByRole("button", { name: "Child items for Chapter 1" })
                 .click();
 
             await expect
@@ -160,13 +161,15 @@ describe("GTreeMenu", () => {
                 ),
             ]);
 
-            const btn = wrapper.container.getByRole("button", {
-                name: "Chapter 1",
-            });
+            const btn = wrapper.container
+                .element()
+                .querySelector(".g-tree-menu__toggle-btn") as HTMLButtonElement;
             await expect.element(btn).toHaveAttribute("aria-expanded", "false");
-            await btn.click();
+            await userEvent.click(btn);
             await expect.element(btn).toHaveAttribute("aria-expanded", "true");
-            await btn.click();
+            await wrapper.container
+                .getByRole("button", { name: "Child items for Chapter 1" })
+                .click();
             await expect.element(btn).toHaveAttribute("aria-expanded", "false");
         });
 
@@ -199,10 +202,10 @@ describe("GTreeMenu", () => {
             ]);
 
             await wrapper.container
-                .getByRole("button", { name: "Chapter 1" })
+                .getByRole("button", { name: "Child items for Chapter 1" })
                 .click();
             await wrapper.container
-                .getByRole("button", { name: "Chapter 2" })
+                .getByRole("button", { name: "Child items for Chapter 2" })
                 .click();
 
             await expect
@@ -230,13 +233,15 @@ describe("GTreeMenu", () => {
             ]);
 
             const btn = wrapper.container.getByRole("button", {
-                name: "Chapter 1",
+                name: "Child items for Chapter 1",
             });
             await btn.click();
             await expect
                 .element(wrapper.container.getByText("Section 1.1"))
                 .toBeVisible();
-            await btn.click();
+            await wrapper.container
+                .getByRole("button", { name: "Child items for Chapter 1" })
+                .click();
             await expect
                 .element(wrapper.container.getByText("Section 1.1"))
                 .not.toBeInTheDocument();
@@ -273,10 +278,10 @@ describe("GTreeMenu", () => {
             ]);
 
             await wrapper.container
-                .getByRole("button", { name: "Chapter 2" })
+                .getByRole("button", { name: "Child items for Chapter 2" })
                 .click();
             await wrapper.container
-                .getByRole("button", { name: "Section 2.1" })
+                .getByRole("button", { name: "Child items for Section 2.1" })
                 .click();
             await expect
                 .element(wrapper.container.getByText("Subsection 2.1.1"))
@@ -334,13 +339,13 @@ describe("GTreeMenu", () => {
                 .toBeVisible();
         });
 
-        it("clicking the text area of a non-link parent item expands it", async () => {
+        it("clicking the text area of a plain-text parent item expands it", async () => {
             const wrapper = slotMenu({ heading: "Contents" }, [
                 h(
                     GTreeMenuItem,
                     { label: "Chapter 1" },
                     {
-                        default: () => h("button", null, "Chapter 1"),
+                        default: () => "Chapter 1",
                         children: () => [
                             h(GTreeMenuItem, null, () =>
                                 h("a", { href: "#ch1/s1" }, "Section 1.1"),
@@ -404,7 +409,7 @@ describe("GTreeMenu", () => {
             await expect
                 .element(
                     wrapper.container.getByRole("button", {
-                        name: "Chapter 1",
+                        name: "Child items for Chapter 1",
                     }),
                 )
                 .toHaveAttribute("aria-expanded", "true");
@@ -479,7 +484,7 @@ describe("GTreeMenu", () => {
                 .toBeVisible();
 
             await wrapper.container
-                .getByRole("button", { name: "Chapter 1" })
+                .getByRole("button", { name: "Child items for Chapter 1" })
                 .click();
 
             await expect
@@ -613,7 +618,7 @@ describe("GTreeMenu", () => {
             ]);
 
             await wrapper.container
-                .getByRole("button", { name: "Chapter 1" })
+                .getByRole("button", { name: "Child items for Chapter 1" })
                 .click();
 
             expect(onExpand).toHaveBeenCalledOnce();
@@ -637,13 +642,13 @@ describe("GTreeMenu", () => {
             ]);
 
             await wrapper.container
-                .getByRole("button", { name: "Chapter 1" })
+                .getByRole("button", { name: "Child items for Chapter 1" })
                 .click();
 
             expect(onCollapse).toHaveBeenCalledOnce();
         });
 
-        it("keyboard expand/collapse emits events on the item", async () => {
+        it("toggle button keyboard activation emits events on the item", async () => {
             const onExpand = vi.fn();
             const onCollapse = vi.fn();
             const wrapper = slotMenu({ heading: "Contents" }, [
@@ -661,25 +666,25 @@ describe("GTreeMenu", () => {
                 ),
             ]);
 
-            await tabTo("Chapter 1");
-            await userEvent.keyboard("{ArrowRight}");
+            await tabTo("Child items for Chapter 1");
+            await userEvent.keyboard("{Enter}");
 
             expect(onExpand).toHaveBeenCalledOnce();
 
-            await tabTo("Chapter 1");
-            await userEvent.keyboard("{ArrowLeft}");
+            await tabTo("Child items for Chapter 1");
+            await userEvent.keyboard(" ");
 
             expect(onCollapse).toHaveBeenCalledOnce();
         });
 
-        it("clicking text area of non-link parent emits expand event", async () => {
+        it("clicking text area of plain-text parent emits expand event", async () => {
             const onExpand = vi.fn();
             const wrapper = slotMenu({ heading: "Contents" }, [
                 h(
                     GTreeMenuItem,
                     { label: "Chapter 1", onExpand },
                     {
-                        default: () => h("button", null, "Chapter 1"),
+                        default: () => "Chapter 1",
                         children: () => [
                             h(GTreeMenuItem, null, () =>
                                 h("a", { href: "#ch1/s1" }, "Section 1.1"),
@@ -692,234 +697,6 @@ describe("GTreeMenu", () => {
             await wrapper.container.getByText("Chapter 1").click();
 
             expect(onExpand).toHaveBeenCalledOnce();
-        });
-    });
-
-    describe("Keyboard Navigation Tests", () => {
-        it("ArrowDown moves focus to the next item", async () => {
-            const wrapper = slotMenu({ heading: "Contents" }, [
-                h(
-                    GTreeMenuItem,
-                    { label: "Chapter 1" },
-                    {
-                        default: () => h("button", null, "Chapter 1"),
-                        children: () => [
-                            h(GTreeMenuItem, null, () =>
-                                h("a", { href: "#ch1/s1" }, "Section 1.1"),
-                            ),
-                        ],
-                    },
-                ),
-                h(
-                    GTreeMenuItem,
-                    { label: "Chapter 2" },
-                    {
-                        default: () => h("button", null, "Chapter 2"),
-                        children: () => [
-                            h(GTreeMenuItem, null, () =>
-                                h("a", { href: "#ch2/s1" }, "Section 2.1"),
-                            ),
-                        ],
-                    },
-                ),
-                h(GTreeMenuItem, null, () =>
-                    h("a", { href: "#appendix" }, "Appendix"),
-                ),
-            ]);
-
-            await tabTo("Chapter 1");
-            await userEvent.keyboard("{ArrowDown}");
-            const focused = document.activeElement as HTMLElement;
-            await expect.element(focused).toHaveTextContent("Chapter 2");
-        });
-
-        it("ArrowUp moves focus to the previous item", async () => {
-            const wrapper = slotMenu({ heading: "Contents" }, [
-                h(
-                    GTreeMenuItem,
-                    { label: "Chapter 1" },
-                    {
-                        default: () => h("button", null, "Chapter 1"),
-                        children: () => [
-                            h(GTreeMenuItem, null, () =>
-                                h("a", { href: "#ch1/s1" }, "Section 1.1"),
-                            ),
-                        ],
-                    },
-                ),
-                h(
-                    GTreeMenuItem,
-                    { label: "Chapter 2" },
-                    {
-                        default: () => h("button", null, "Chapter 2"),
-                        children: () => [
-                            h(GTreeMenuItem, null, () =>
-                                h("a", { href: "#ch2/s1" }, "Section 2.1"),
-                            ),
-                        ],
-                    },
-                ),
-            ]);
-
-            await tabTo("Chapter 2");
-            await userEvent.keyboard("{ArrowUp}");
-            const focused = document.activeElement as HTMLElement;
-            await expect.element(focused).toHaveTextContent("Chapter 1");
-        });
-
-        it("ArrowRight expands a collapsed item", async () => {
-            const wrapper = slotMenu({ heading: "Contents" }, [
-                h(
-                    GTreeMenuItem,
-                    { label: "Chapter 1" },
-                    {
-                        default: () => h("button", null, "Chapter 1"),
-                        children: () => [
-                            h(GTreeMenuItem, null, () =>
-                                h("a", { href: "#ch1/s1" }, "Section 1.1"),
-                            ),
-                        ],
-                    },
-                ),
-            ]);
-
-            await tabTo("Chapter 1");
-            await userEvent.keyboard("{ArrowRight}");
-            await expect
-                .element(wrapper.container.getByText("Section 1.1"))
-                .toBeVisible();
-        });
-
-        it("ArrowRight on an expanded item moves to its first child", async () => {
-            const wrapper = slotMenu({ heading: "Contents" }, [
-                h(
-                    GTreeMenuItem,
-                    { label: "Chapter 1" },
-                    {
-                        default: () => h("button", null, "Chapter 1"),
-                        children: () => [
-                            h(GTreeMenuItem, null, () =>
-                                h("a", { href: "#ch1/s1" }, "Section 1.1"),
-                            ),
-                        ],
-                    },
-                ),
-            ]);
-
-            await tabTo("Chapter 1");
-            await userEvent.keyboard("{ArrowRight}");
-            await tabTo("Chapter 1");
-            await userEvent.keyboard("{ArrowRight}");
-
-            await expect
-                .element(
-                    wrapper.container.getByRole("link", {
-                        name: "Section 1.1",
-                    }),
-                )
-                .toHaveFocus();
-        });
-
-        it("ArrowLeft collapses an expanded item", async () => {
-            const wrapper = slotMenu({ heading: "Contents" }, [
-                h(
-                    GTreeMenuItem,
-                    { label: "Chapter 1" },
-                    {
-                        default: () => h("button", null, "Chapter 1"),
-                        children: () => [
-                            h(GTreeMenuItem, null, () =>
-                                h("a", { href: "#ch1/s1" }, "Section 1.1"),
-                            ),
-                        ],
-                    },
-                ),
-            ]);
-
-            await tabTo("Chapter 1");
-            await userEvent.keyboard("{ArrowRight}");
-            await tabTo("Chapter 1");
-            await userEvent.keyboard("{ArrowLeft}");
-            await expect
-                .element(wrapper.container.getByText("Section 1.1"))
-                .not.toBeInTheDocument();
-        });
-
-        it("ArrowLeft on a collapsed item moves focus to its parent", async () => {
-            const wrapper = slotMenu({ heading: "Contents" }, [
-                h(
-                    GTreeMenuItem,
-                    { label: "Chapter 1" },
-                    {
-                        default: () => h("button", null, "Chapter 1"),
-                        children: () => [
-                            h(GTreeMenuItem, null, () =>
-                                h("a", { href: "#ch1/s1" }, "Section 1.1"),
-                            ),
-                        ],
-                    },
-                ),
-            ]);
-
-            await tabTo("Chapter 1");
-            await userEvent.keyboard("{ArrowRight}");
-            await userEvent.keyboard("{ArrowRight}");
-            await userEvent.keyboard("{ArrowLeft}");
-
-            const focused = document.activeElement as HTMLElement;
-            await expect.element(focused).toHaveTextContent("Chapter 1");
-        });
-
-        it("Home moves focus to the first item", async () => {
-            const wrapper = slotMenu({ heading: "Contents" }, [
-                h(
-                    GTreeMenuItem,
-                    { label: "Chapter 1" },
-                    {
-                        default: () => h("button", null, "Chapter 1"),
-                        children: () => [
-                            h(GTreeMenuItem, null, () =>
-                                h("a", { href: "#ch1/s1" }, "Section 1.1"),
-                            ),
-                        ],
-                    },
-                ),
-                h(GTreeMenuItem, null, () =>
-                    h("a", { href: "#appendix" }, "Appendix"),
-                ),
-            ]);
-
-            await tabTo("Appendix");
-            await userEvent.keyboard("{Home}");
-
-            const focused = document.activeElement as HTMLElement;
-            await expect.element(focused).toHaveTextContent("Chapter 1");
-        });
-
-        it("End moves focus to the last visible item", async () => {
-            const wrapper = slotMenu({ heading: "Contents" }, [
-                h(
-                    GTreeMenuItem,
-                    { label: "Chapter 1" },
-                    {
-                        default: () => h("button", null, "Chapter 1"),
-                        children: () => [
-                            h(GTreeMenuItem, null, () =>
-                                h("a", { href: "#ch1/s1" }, "Section 1.1"),
-                            ),
-                        ],
-                    },
-                ),
-                h(GTreeMenuItem, null, () =>
-                    h("a", { href: "#appendix" }, "Appendix"),
-                ),
-            ]);
-
-            await tabTo("Chapter 1");
-            await userEvent.keyboard("{End}");
-
-            const focused = document.activeElement as HTMLElement;
-            await expect.element(focused).toHaveTextContent("Appendix");
         });
     });
 
@@ -970,7 +747,7 @@ describe("GTreeMenu", () => {
         it("expanding an item saves its state to sessionStorage", async () => {
             const wrapper = menuWithStorage(STORAGE_KEY);
             await wrapper.container
-                .getByRole("button", { name: "Chapter 1" })
+                .getByRole("button", { name: "Child items for Chapter 1" })
                 .click();
 
             const stored = JSON.parse(sessionStorage.getItem(STORAGE_KEY)!);
@@ -984,7 +761,7 @@ describe("GTreeMenu", () => {
             );
             const wrapper = menuWithStorage(STORAGE_KEY);
             await wrapper.container
-                .getByRole("button", { name: "Chapter 1" })
+                .getByRole("button", { name: "Child items for Chapter 1" })
                 .click();
 
             const stored = JSON.parse(sessionStorage.getItem(STORAGE_KEY)!);
@@ -1036,7 +813,7 @@ describe("GTreeMenu", () => {
             ]);
 
             await wrapper.container
-                .getByRole("button", { name: "Chapter 1" })
+                .getByRole("button", { name: "Child items for Chapter 1" })
                 .click();
             await expect
                 .element(wrapper.container.getByText("Section 1.1"))
@@ -1207,10 +984,10 @@ describe("GTreeMenu", () => {
             ]);
 
             await wrapper.container
-                .getByRole("button", { name: "Chapter 1" })
+                .getByRole("button", { name: "Child items for Chapter 1" })
                 .click();
             await wrapper.container
-                .getByRole("button", { name: "Chapter 2" })
+                .getByRole("button", { name: "Child items for Chapter 2" })
                 .click();
 
             await testAccessibility(wrapper.container.element() as HTMLElement);

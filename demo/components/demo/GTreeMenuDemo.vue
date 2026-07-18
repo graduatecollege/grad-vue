@@ -8,7 +8,7 @@ import { GTreeMenu, GTreeMenuList, GTreeMenuItem } from "@illinois-grad/grad-vue
 <template>
     <ComponentSection title="Tree Menu">
         <ComponentDemo
-            description="A hierarchical sidebar menu for book-like or nested-section navigation. Items with children collapse and expand individually. Supports keyboard navigation (↑↓ to move, →← to expand/collapse, Home/End)."
+            description="A hierarchical sidebar menu for book-like or nested-section navigation. Items with children collapse and expand individually using dedicated disclosure buttons."
             component="GTreeMenu"
             padding="0"
             :props-config="{
@@ -134,10 +134,11 @@ works as a basic list of links even without JavaScript.</p>
 
 <div class="markdown-alert markdown-alert-important">
 <p class="markdown-alert-title"><svg class="octicon octicon-report mr-2" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M0 1.75C0 .784.784 0 1.75 0h12.5C15.216 0 16 .784 16 1.75v9.5A1.75 1.75 0 0 1 14.25 13H8.06l-2.573 2.573A1.458 1.458 0 0 1 3 14.543V13H1.75A1.75 1.75 0 0 1 0 11.25Zm1.75-.25a.25.25 0 0 0-.25.25v9.5c0 .138.112.25.25.25h2a.75.75 0 0 1 .75.75v2.19l2.72-2.72a.749.749 0 0 1 .53-.22h6.5a.25.25 0 0 0 .25-.25v-9.5a.25.25 0 0 0-.25-.25Zm7 2.25v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 9a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg>Important</p>
-<p>All items must have a focusable element for proper accessibility. If there
-is no link, it should be a button.</p>
-<p>To support progressive enhancement, the component applies ARIA attributes
-to the focusable elements in your HTML.</p>
+<p>Parent items with children render a disclosure toggle button. The default
+slot should still provide either a navigable link or meaningful label
+content for the item row.</p>
+<p>To support progressive enhancement, nested items remain visible until the
+component upgrades and enables collapsible behavior.</p>
 </div>
 <p><strong>Props</strong>:</p>
 <ul>
@@ -150,14 +151,6 @@ components via provide/inject.</li>
 <code>sessionStorage</code> under this key and restored on page load. This is useful
 in Web Component / Drupal contexts where every page navigation is a full
 refresh. Item states are keyed by the item&#39;s <code>label</code> prop.</li>
-</ul>
-<p><strong>Keyboard navigation</strong> (tree-view style):</p>
-<ul>
-<li><code>Up Arrow</code> / <code>Down Arrow</code> - move between visible menu items.</li>
-<li><code>Right Arrow</code> - expand a collapsed item; if already expanded, move to its first child.</li>
-<li><code>Left Arrow</code> - collapse an expanded item; if already collapsed, move focus to its
-parent.</li>
-<li><code>Home</code> / <code>End</code> - jump to the first or last visible item.</li>
 </ul>
 </template>
         </ComponentDemo>
