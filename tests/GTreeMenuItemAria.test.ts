@@ -22,7 +22,7 @@ function slotMenu(
 }
 
 describe("GTreeMenuItem", () => {
-    it("should have aria-expanded on the link in the slot when it has children", async () => {
+    it("should expose a disclosure button when the item has children", async () => {
         const wrapper = slotMenu({ heading: "Contents" }, [
             h(
                 GTreeMenuItem,
@@ -38,17 +38,17 @@ describe("GTreeMenuItem", () => {
             ),
         ]);
 
-        await expect.element(wrapper.container.getByRole("link", { name: "Chapter 1" }))
+        await expect.element(wrapper.container.getByRole("button", { name: "Submenu for Chapter 1" }))
             .toHaveAttribute("aria-expanded", "false");
     });
 
-    it("should have aria-expanded on the button in the slot when it has children", async () => {
+    it("should keep the slotted link free of disclosure state", async () => {
         const wrapper = slotMenu({ heading: "Contents" }, [
             h(
                 GTreeMenuItem,
                 { label: "Chapter 1" },
                 {
-                    default: () => h("button", { id: "ch1-btn" }, "Chapter 1"),
+                    default: () => h("a", { href: "#ch1", id: "ch1-link" }, "Chapter 1"),
                     children: () => [
                         h(GTreeMenuItem, null, () =>
                             h("a", { href: "#ch1/s1" }, "Section 1.1"),
@@ -58,8 +58,8 @@ describe("GTreeMenuItem", () => {
             ),
         ]);
 
-        const btnInSlot = wrapper.container.getByRole("button", { name: "Chapter 1" });
-        await expect.element(btnInSlot).toHaveAttribute("aria-expanded", "false");
+        const linkInSlot = wrapper.container.getByRole("link", { name: "Chapter 1" });
+        await expect.element(linkInSlot).not.toHaveAttribute("aria-expanded");
     });
 
     it("should NOT have aria-expanded on the link when it has NO children", async () => {
@@ -77,7 +77,7 @@ describe("GTreeMenuItem", () => {
         await expect.element(link).not.toHaveAttribute("aria-expanded");
     });
 
-    it("should have aria-expanded on the link when it's wrapped in another element", async () => {
+    it("should keep disclosure state on the dedicated toggle when the link is wrapped", async () => {
         const wrapper = slotMenu({ heading: "Contents" }, [
             h(
                 GTreeMenuItem,
@@ -95,11 +95,11 @@ describe("GTreeMenuItem", () => {
             ),
         ]);
 
-        const link = wrapper.container.getByRole("link", { name: "Chapter 1" });
-        await expect.element(link).toHaveAttribute("aria-expanded", "false");
+        await expect.element(wrapper.container.getByRole("button", { name: "Submenu for Chapter 1" }))
+            .toHaveAttribute("aria-expanded", "false");
     });
 
-    it("should have aria-expanded on the button when it's wrapped in another element", async () => {
+    it("should keep disclosure state on the dedicated toggle when the button is wrapped", async () => {
         const wrapper = slotMenu({ heading: "Contents" }, [
             h(
                 GTreeMenuItem,
@@ -117,11 +117,11 @@ describe("GTreeMenuItem", () => {
             ),
         ]);
 
-        const btn = wrapper.container.getByRole("button", { name: "Chapter 1" });
-        await expect.element(btn).toHaveAttribute("aria-expanded", "false");
+        await expect.element(wrapper.container.getByRole("button", { name: "Submenu for Chapter 1" }))
+            .toHaveAttribute("aria-expanded", "false");
     });
 
-    it("should have aria-expanded on the button when it contains nested elements", async () => {
+    it("should keep nested button content separate from disclosure semantics", async () => {
         const wrapper = slotMenu({ heading: "Contents" }, [
             h(
                 GTreeMenuItem,
@@ -139,11 +139,13 @@ describe("GTreeMenuItem", () => {
             ),
         ]);
 
-        const btn = wrapper.container.getByRole("button", { name: "Chapter 1" });
-        await expect.element(btn).toHaveAttribute("aria-expanded", "false");
+        const btn = wrapper.container.getByRole("button", { name: "Chapter 1", exact: true });
+        await expect.element(btn).not.toHaveAttribute("aria-expanded");
+        await expect.element(wrapper.container.getByRole("button", { name: "Submenu for Chapter 1" }))
+            .toHaveAttribute("aria-expanded", "false");
     });
 
-    it("should have aria-expanded on the link when it's deeply nested", async () => {
+    it("should keep deeply nested link content separate from disclosure semantics", async () => {
         const wrapper = slotMenu({ heading: "Contents" }, [
             h(
                 GTreeMenuItem,
@@ -166,10 +168,12 @@ describe("GTreeMenuItem", () => {
         ]);
 
         const link = wrapper.container.getByRole("link", { name: "Chapter 1" });
-        await expect.element(link).toHaveAttribute("aria-expanded", "false");
+        await expect.element(link).not.toHaveAttribute("aria-expanded");
+        await expect.element(wrapper.container.getByRole("button", { name: "Submenu for Chapter 1" }))
+            .toHaveAttribute("aria-expanded", "false");
     });
 
-    it("should handle multiple focusable elements by picking the first one", async () => {
+    it("should keep disclosure state off multiple slotted focusable elements", async () => {
         const wrapper = slotMenu({ heading: "Contents" }, [
             h(
                 GTreeMenuItem,
@@ -191,7 +195,36 @@ describe("GTreeMenuItem", () => {
         const firstBtn = wrapper.container.getByRole("button", { name: "Primary Action" });
         const secondLink = wrapper.container.getByRole("link", { name: "Secondary Link" });
 
-        await expect.element(firstBtn).toHaveAttribute("aria-expanded", "false");
+        await expect.element(firstBtn).not.toHaveAttribute("aria-expanded");
         await expect.element(secondLink).not.toHaveAttribute("aria-expanded");
+        await expect.element(wrapper.container.getByRole("button", { name: "Submenu for Chapter 1" }))
+            .toHaveAttribute("aria-expanded", "false");
+    });
+
+    it("should expose the chevron as a real button for assistive technology", async () => {
+        const wrapper = slotMenu({ heading: "Contents" }, [
+            h(
+                GTreeMenuItem,
+                { label: "Chapter 1" },
+                {
+                    default: () => h("a", { href: "#ch1" }, "Chapter 1"),
+                    children: () => [
+                        h(GTreeMenuItem, null, () =>
+                            h("a", { href: "#ch1/s1" }, "Section 1.1"),
+                        ),
+                    ],
+                },
+            ),
+        ]);
+
+        const root = wrapper.container.element() as HTMLElement;
+        const toggle = root.querySelector(".g-tree-menu__toggle-btn");
+        const chevron = root.querySelector(".g-tree-menu__chevron");
+
+        expect(toggle?.tagName).toBe("BUTTON");
+        expect(toggle?.getAttribute("aria-expanded")).toBe("false");
+        expect(toggle?.getAttribute("aria-label")).toBe("Submenu for Chapter 1");
+        expect(chevron?.getAttribute("aria-hidden")).toBe("true");
+        expect(chevron?.getAttribute("focusable")).toBe("false");
     });
 });

@@ -1841,11 +1841,12 @@ Use `GTreeMenuList` and `GTreeMenuItem` sub-components to build the menu:
 ```
 
 > [!IMPORTANT]
-> All items must have a focusable element for proper accessibility. If there
-> is no link, it should be a button.
+> Parent items with children render a disclosure toggle button. The default
+> slot should still provide either a navigable link or meaningful label
+> content for the item row.
 >
-> To support progressive enhancement, the component applies ARIA attributes
-> to the focusable elements in your HTML.
+> To support progressive enhancement, nested items remain visible until the
+> component upgrades and enables collapsible behavior.
 
 **Props**:
 
@@ -1858,14 +1859,6 @@ Use `GTreeMenuList` and `GTreeMenuItem` sub-components to build the menu:
   `sessionStorage` under this key and restored on page load. This is useful
   in Web Component / Drupal contexts where every page navigation is a full
   refresh. Item states are keyed by the item's `label` prop.
-
-**Keyboard navigation** (tree-view style):
-
-- `Up Arrow` / `Down Arrow` - move between visible menu items.
-- `Right Arrow` - expand a collapsed item; if already expanded, move to its first child.
-- `Left Arrow` - collapse an expanded item; if already collapsed, move focus to its
-  parent.
-- `Home` / `End` - jump to the first or last visible item.
 
 ### Props
 
