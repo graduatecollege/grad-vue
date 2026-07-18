@@ -134,7 +134,7 @@ describe("GTreeMenu", () => {
             ]);
 
             await wrapper.container
-                .getByRole("button", { name: "Child items for Chapter 1" })
+                .getByRole("button", { name: "Submenu for Chapter 1" })
                 .click();
 
             await expect
@@ -168,7 +168,7 @@ describe("GTreeMenu", () => {
             await userEvent.click(btn);
             await expect.element(btn).toHaveAttribute("aria-expanded", "true");
             await wrapper.container
-                .getByRole("button", { name: "Child items for Chapter 1" })
+                .getByRole("button", { name: "Submenu for Chapter 1" })
                 .click();
             await expect.element(btn).toHaveAttribute("aria-expanded", "false");
         });
@@ -202,10 +202,10 @@ describe("GTreeMenu", () => {
             ]);
 
             await wrapper.container
-                .getByRole("button", { name: "Child items for Chapter 1" })
+                .getByRole("button", { name: "Submenu for Chapter 1" })
                 .click();
             await wrapper.container
-                .getByRole("button", { name: "Child items for Chapter 2" })
+                .getByRole("button", { name: "Submenu for Chapter 2" })
                 .click();
 
             await expect
@@ -233,14 +233,14 @@ describe("GTreeMenu", () => {
             ]);
 
             const btn = wrapper.container.getByRole("button", {
-                name: "Child items for Chapter 1",
+                name: "Submenu for Chapter 1",
             });
             await btn.click();
             await expect
                 .element(wrapper.container.getByText("Section 1.1"))
                 .toBeVisible();
             await wrapper.container
-                .getByRole("button", { name: "Child items for Chapter 1" })
+                .getByRole("button", { name: "Submenu for Chapter 1" })
                 .click();
             await expect
                 .element(wrapper.container.getByText("Section 1.1"))
@@ -278,10 +278,10 @@ describe("GTreeMenu", () => {
             ]);
 
             await wrapper.container
-                .getByRole("button", { name: "Child items for Chapter 2" })
+                .getByRole("button", { name: "Submenu for Chapter 2" })
                 .click();
             await wrapper.container
-                .getByRole("button", { name: "Child items for Section 2.1" })
+                .getByRole("button", { name: "Submenu for Section 2.1" })
                 .click();
             await expect
                 .element(wrapper.container.getByText("Subsection 2.1.1"))
@@ -409,7 +409,7 @@ describe("GTreeMenu", () => {
             await expect
                 .element(
                     wrapper.container.getByRole("button", {
-                        name: "Child items for Chapter 1",
+                        name: "Submenu for Chapter 1",
                     }),
                 )
                 .toHaveAttribute("aria-expanded", "true");
@@ -484,7 +484,7 @@ describe("GTreeMenu", () => {
                 .toBeVisible();
 
             await wrapper.container
-                .getByRole("button", { name: "Child items for Chapter 1" })
+                .getByRole("button", { name: "Submenu for Chapter 1" })
                 .click();
 
             await expect
@@ -618,7 +618,7 @@ describe("GTreeMenu", () => {
             ]);
 
             await wrapper.container
-                .getByRole("button", { name: "Child items for Chapter 1" })
+                .getByRole("button", { name: "Submenu for Chapter 1" })
                 .click();
 
             expect(onExpand).toHaveBeenCalledOnce();
@@ -642,7 +642,7 @@ describe("GTreeMenu", () => {
             ]);
 
             await wrapper.container
-                .getByRole("button", { name: "Child items for Chapter 1" })
+                .getByRole("button", { name: "Submenu for Chapter 1" })
                 .click();
 
             expect(onCollapse).toHaveBeenCalledOnce();
@@ -666,15 +666,38 @@ describe("GTreeMenu", () => {
                 ),
             ]);
 
-            await tabTo("Child items for Chapter 1");
+            await tabTo("Submenu for Chapter 1");
             await userEvent.keyboard("{Enter}");
 
             expect(onExpand).toHaveBeenCalledOnce();
 
-            await tabTo("Child items for Chapter 1");
+            await tabTo("Submenu for Chapter 1");
             await userEvent.keyboard(" ");
 
             expect(onCollapse).toHaveBeenCalledOnce();
+        });
+
+        it("tabs to the main item before the child-items toggle", async () => {
+            slotMenu({ heading: "Contents" }, [
+                h(
+                    GTreeMenuItem,
+                    { label: "Chapter 1" },
+                    {
+                        default: () => h("a", { href: "#ch1" }, "Chapter 1"),
+                        children: () => [
+                            h(GTreeMenuItem, null, () =>
+                                h("a", { href: "#ch1/s1" }, "Section 1.1"),
+                            ),
+                        ],
+                    },
+                ),
+            ]);
+
+            await tabTo("Chapter 1");
+            await expect.element(document.activeElement as HTMLElement).toHaveTextContent("Chapter 1");
+
+            await userEvent.keyboard("{Tab}");
+            expect((document.activeElement as HTMLElement).ariaLabel).toBe("Submenu for Chapter 1");
         });
 
         it("clicking text area of plain-text parent emits expand event", async () => {
@@ -747,7 +770,7 @@ describe("GTreeMenu", () => {
         it("expanding an item saves its state to sessionStorage", async () => {
             const wrapper = menuWithStorage(STORAGE_KEY);
             await wrapper.container
-                .getByRole("button", { name: "Child items for Chapter 1" })
+                .getByRole("button", { name: "Submenu for Chapter 1" })
                 .click();
 
             const stored = JSON.parse(sessionStorage.getItem(STORAGE_KEY)!);
@@ -761,7 +784,7 @@ describe("GTreeMenu", () => {
             );
             const wrapper = menuWithStorage(STORAGE_KEY);
             await wrapper.container
-                .getByRole("button", { name: "Child items for Chapter 1" })
+                .getByRole("button", { name: "Submenu for Chapter 1" })
                 .click();
 
             const stored = JSON.parse(sessionStorage.getItem(STORAGE_KEY)!);
@@ -813,7 +836,7 @@ describe("GTreeMenu", () => {
             ]);
 
             await wrapper.container
-                .getByRole("button", { name: "Child items for Chapter 1" })
+                .getByRole("button", { name: "Submenu for Chapter 1" })
                 .click();
             await expect
                 .element(wrapper.container.getByText("Section 1.1"))
@@ -984,10 +1007,10 @@ describe("GTreeMenu", () => {
             ]);
 
             await wrapper.container
-                .getByRole("button", { name: "Child items for Chapter 1" })
+                .getByRole("button", { name: "Submenu for Chapter 1" })
                 .click();
             await wrapper.container
-                .getByRole("button", { name: "Child items for Chapter 2" })
+                .getByRole("button", { name: "Submenu for Chapter 2" })
                 .click();
 
             await testAccessibility(wrapper.container.element() as HTMLElement);

@@ -38,7 +38,7 @@ describe("GTreeMenuItem", () => {
             ),
         ]);
 
-        await expect.element(wrapper.container.getByRole("button", { name: "Child items for Chapter 1" }))
+        await expect.element(wrapper.container.getByRole("button", { name: "Submenu for Chapter 1" }))
             .toHaveAttribute("aria-expanded", "false");
     });
 
@@ -95,7 +95,7 @@ describe("GTreeMenuItem", () => {
             ),
         ]);
 
-        await expect.element(wrapper.container.getByRole("button", { name: "Child items for Chapter 1" }))
+        await expect.element(wrapper.container.getByRole("button", { name: "Submenu for Chapter 1" }))
             .toHaveAttribute("aria-expanded", "false");
     });
 
@@ -117,7 +117,7 @@ describe("GTreeMenuItem", () => {
             ),
         ]);
 
-        await expect.element(wrapper.container.getByRole("button", { name: "Child items for Chapter 1" }))
+        await expect.element(wrapper.container.getByRole("button", { name: "Submenu for Chapter 1" }))
             .toHaveAttribute("aria-expanded", "false");
     });
 
@@ -141,7 +141,7 @@ describe("GTreeMenuItem", () => {
 
         const btn = wrapper.container.getByRole("button", { name: "Chapter 1", exact: true });
         await expect.element(btn).not.toHaveAttribute("aria-expanded");
-        await expect.element(wrapper.container.getByRole("button", { name: "Child items for Chapter 1" }))
+        await expect.element(wrapper.container.getByRole("button", { name: "Submenu for Chapter 1" }))
             .toHaveAttribute("aria-expanded", "false");
     });
 
@@ -169,7 +169,7 @@ describe("GTreeMenuItem", () => {
 
         const link = wrapper.container.getByRole("link", { name: "Chapter 1" });
         await expect.element(link).not.toHaveAttribute("aria-expanded");
-        await expect.element(wrapper.container.getByRole("button", { name: "Child items for Chapter 1" }))
+        await expect.element(wrapper.container.getByRole("button", { name: "Submenu for Chapter 1" }))
             .toHaveAttribute("aria-expanded", "false");
     });
 
@@ -197,7 +197,7 @@ describe("GTreeMenuItem", () => {
 
         await expect.element(firstBtn).not.toHaveAttribute("aria-expanded");
         await expect.element(secondLink).not.toHaveAttribute("aria-expanded");
-        await expect.element(wrapper.container.getByRole("button", { name: "Child items for Chapter 1" }))
+        await expect.element(wrapper.container.getByRole("button", { name: "Submenu for Chapter 1" }))
             .toHaveAttribute("aria-expanded", "false");
     });
 
@@ -223,7 +223,7 @@ describe("GTreeMenuItem", () => {
 
         expect(toggle?.tagName).toBe("BUTTON");
         expect(toggle?.getAttribute("aria-expanded")).toBe("false");
-        expect(toggle?.getAttribute("aria-label")).toBe("Child items for Chapter 1");
+        expect(toggle?.getAttribute("aria-label")).toBe("Submenu for Chapter 1");
         expect(chevron?.getAttribute("aria-hidden")).toBe("true");
         expect(chevron?.getAttribute("focusable")).toBe("false");
     });

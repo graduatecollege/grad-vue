@@ -65,10 +65,10 @@ const expandedStorage = inject<Ref<Record<string, boolean>> | null>(
 const toggleLabel = computed(() => {
     const itemLabel = props.label?.trim();
     if (itemLabel) {
-        return `Child items for ${itemLabel}`;
+        return `Submenu for ${itemLabel}`;
     }
 
-    return "Child items";
+    return "Submenu";
 });
 
 function resolveInitialExpanded(): boolean {
@@ -205,6 +205,15 @@ const forwardedAttrs = computed(() => {
     >
         <!-- Parent: has children → toggle button + slot content (which may contain a link) -->
         <div v-if="hasChildren" class="g-tree-menu__row">
+            <span
+                class="g-tree-menu__row-content"
+                data-tree-primary
+                @click="handleContentClick"
+            >
+                <span class="g-tree-menu__row-content-text">
+                    <slot />
+                </span>
+            </span>
             <button
                 type="button"
                 class="g-tree-menu__toggle-btn"
@@ -229,15 +238,6 @@ const forwardedAttrs = computed(() => {
                     <polyline points="9 18 15 12 9 6" />
                 </svg>
             </button>
-            <span
-                class="g-tree-menu__row-content"
-                data-tree-primary
-                @click="handleContentClick"
-            >
-                <span class="g-tree-menu__row-content-text">
-                    <slot />
-                </span>
-            </span>
         </div>
 
         <!-- Leaf: no children → just render the slot content -->
@@ -281,6 +281,7 @@ g-tree-menu-item > a:hover {
 }
 
 .g-tree-menu__toggle-btn {
+    order: -1;
     flex-shrink: 0;
     align-self: center;
     background: none;
