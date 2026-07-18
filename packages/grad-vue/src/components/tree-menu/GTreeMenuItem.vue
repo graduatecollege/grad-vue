@@ -221,11 +221,14 @@ const forwardedAttrs = computed(() => {
         <div v-if="hasChildren" class="g-tree-menu__row">
             <div
                 class="g-tree-menu__toggle-btn"
+                aria-hidden="true"
                 @click="toggle"
             >
                 <svg
                     class="g-tree-menu__chevron"
                     :class="{ 'g-tree-menu__chevron--expanded': isExpanded }"
+                    aria-hidden="true"
+                    focusable="false"
                     role="none"
                     viewBox="0 0 24 24"
                     fill="none"

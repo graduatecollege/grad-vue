@@ -194,4 +194,29 @@ describe("GTreeMenuItem", () => {
         await expect.element(firstBtn).toHaveAttribute("aria-expanded", "false");
         await expect.element(secondLink).not.toHaveAttribute("aria-expanded");
     });
+
+    it("should hide the chevron click target from assistive technology", async () => {
+        const wrapper = slotMenu({ heading: "Contents" }, [
+            h(
+                GTreeMenuItem,
+                { label: "Chapter 1" },
+                {
+                    default: () => h("a", { href: "#ch1" }, "Chapter 1"),
+                    children: () => [
+                        h(GTreeMenuItem, null, () =>
+                            h("a", { href: "#ch1/s1" }, "Section 1.1"),
+                        ),
+                    ],
+                },
+            ),
+        ]);
+
+        const root = wrapper.container.element() as HTMLElement;
+        const toggle = root.querySelector(".g-tree-menu__toggle-btn");
+        const chevron = root.querySelector(".g-tree-menu__chevron");
+
+        expect(toggle?.getAttribute("aria-hidden")).toBe("true");
+        expect(chevron?.getAttribute("aria-hidden")).toBe("true");
+        expect(chevron?.getAttribute("focusable")).toBe("false");
+    });
 });
