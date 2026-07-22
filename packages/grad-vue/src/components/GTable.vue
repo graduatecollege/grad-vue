@@ -43,10 +43,10 @@ import {
     useSlots,
     useTemplateRef,
     VNode,
-    watch,
 } from "vue";
 import GSelect from "./GSelect.vue";
 import GMultiSelect from "./GMultiSelect.vue";
+import GCheckboxGroup from "./GCheckboxGroup.vue";
 import { useFiltering, UseFilteringReturn } from "../compose/useFiltering.ts";
 import {
     CellChangePayload,
@@ -320,6 +320,17 @@ const shouldShowControls = computed(() => {
     return false;
 });
 
+function multiSelectFilterOptions(col: C) {
+    if (col.filter?.type !== "multi-select") {
+        return [];
+    }
+    return col.filter.options.map((option) => ({
+        label: option.label,
+        value: option.value,
+        hint: option.description,
+    }));
+}
+
 onMounted(() => {
     if (props.rowClickable && props.bulkSelectionEnabled) {
         console.warn(
@@ -332,29 +343,8 @@ onMounted(() => {
                 `GTable: Column "${String(col.key)}" has both 'editable' and 'display' configured. 'display' will be ignored.`,
             );
         }
-        if (col.filter && col.filter.type === "multi-select") {
-            if (!Array.isArray(filter.value[col.key])) {
-                let val = filter.value[col.key];
-                filter.value[col.key] = val ? [val] : [];
-            }
-        }
     }
 });
-
-watch(
-    () => props.columns,
-    (newColumns) => {
-        for (const col of newColumns) {
-            if (col.filter && col.filter.type === "multi-select") {
-                if (!Array.isArray(filter.value[col.key])) {
-                    let val = filter.value[col.key];
-                    filter.value[col.key] = val ? [val] : [];
-                }
-            }
-        }
-    },
-    { immediate: true },
-);
 </script>
 
 <template>
@@ -575,50 +565,27 @@ watch(
                                     :search-description="col.filter.searchDescription"
                                     class="g-multi-select-searchable"
                                 />
-                                <fieldset
+                                <div
                                     v-else-if="
                                         col.filter.type === 'multi-select'
                                     "
                                     class="g-multi-select"
                                 >
-                                    <legend class="g-multi-select-legend">
-                                        Include values
-                                    </legend>
-                                    <div
-                                        v-for="opt in col.filter.options"
-                                        :key="opt.value"
-                                        class="g-multi-select-option"
-                                    >
-                                        <input
-                                            type="checkbox"
-                                            v-model="filter[col.key]"
-                                            :id="`filter-${String(col.key)}-${opt.value}`"
-                                            :value="opt.value"
-                                            name="filter-multiselect"
-                                        />
-                                        <label
-                                            :for="`filter-${String(col.key)}-${opt.value}`"
-                                        >
-                                            <span class="g-multi-select-option-label">{{ opt.label }}</span>
-                                            <span
-                                                v-if="opt.description"
-                                                class="g-multi-select-option-description"
-                                            >{{ opt.description }}</span>
-                                        </label>
-                                    </div>
+                                    <GCheckboxGroup
+                                        v-model="filter[col.key]"
+                                        :options="multiSelectFilterOptions(col)"
+                                        label="Include values"
+                                    />
                                     <GButton
                                         class="clear-multiselect-btn"
                                         theme="accent"
                                         size="small"
                                         @click="filter[col.key] = []"
-                                        v-if="
-                                            filter[col.key] &&
-                                            filter[col.key].length
-                                        "
+                                        v-if="filter[col.key]?.length"
                                     >
                                         Clear
                                     </GButton>
-                                </fieldset>
+                                </div>
                             </GPopover>
                         </div>
                     </th>
@@ -848,9 +815,6 @@ button.g-column-head:hover {
 }
 
 .g-multi-select {
-    border: none;
-    padding: 0;
-    margin: 0;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
@@ -859,49 +823,33 @@ button.g-column-head:hover {
         margin-top: 0.5rem;
     }
 
-    legend {
-        font-size: 1.125rem;
+    .g-checkbox-group__legend {
+        font-size: 1rem;
+        line-height: 1.2;
         font-weight: bold;
         margin-bottom: 0.5rem;
     }
 
-    div {
-        display: flex;
+    .g-checkbox-group__option {
+        padding: 0;
         align-items: center;
-        gap: 0.5rem;
-
-        &:has(:focus-visible) {
-            outline: 2px solid var(--g-primary-500);
-        }
     }
 
-    input {
+    .g-checkbox-group__input {
         width: 24px;
         height: 24px;
-        accent-color: var(--g-primary-500);
-        display: block;
+        margin-top: 0;
     }
 
-    label {
+    .g-checkbox-group__label-text {
         font-size: 1.125rem;
         flex: 1;
     }
-}
 
-.g-multi-select-option-label {
-    display: block;
-}
-
-.g-multi-select-option-description {
-    display: block;
-    font-size: 0.8em;
-}
-
-.g-multi-select-legend {
-    margin: 0;
-    padding: 0;
-    font-size: 1rem;
-    line-height: 1.2;
+    .g-checkbox-group__hint {
+        padding-left: 0;
+        font-size: 0.8em;
+    }
 }
 
 .g-multi-select-searchable {

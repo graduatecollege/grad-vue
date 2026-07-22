@@ -916,4 +916,97 @@ describe("GTable", () => {
             expect(getColumn(container, 0)).toEqual(["LT", "KY"]);
         });
     });
+
+    describe("Multi-Select Filter", () => {
+        interface AbbrEntry {
+            key: string;
+            name: string;
+            abbr: string;
+        }
+
+        const abbrData: AbbrEntry[] = [
+            {
+                key: "LT",
+                name: "Carle Illinois College of Medicine",
+                abbr: "COM",
+            },
+            {
+                key: "KL",
+                name: "College of Agricultural, Consumer and Environmental Sciences (ACES)",
+                abbr: "ACES",
+            },
+            { key: "LL", name: "School of Social Work", abbr: "SOCW" },
+        ];
+
+        const multiSelectColumns: TableColumn<AbbrEntry>[] = [
+            { key: "key", label: "Code" },
+            { key: "name", label: "Name" },
+            {
+                key: "abbr",
+                label: "Abbreviation",
+                filter: {
+                    type: "multi-select",
+                    options: [
+                        { label: "COM", value: "COM" },
+                        { label: "ACES", value: "ACES" },
+                        { label: "SOCW", value: "SOCW" },
+                    ],
+                },
+            },
+        ];
+
+        function filterAbbrData(data: AbbrEntry[], filter: Record<string, any>) {
+            return filter.abbr?.length
+                ? data.filter((item) => filter.abbr.includes(item.abbr))
+                : data;
+        }
+
+        it("stores checkbox selections as option values", async () => {
+            const { GTableFixture, filters } = createGTableFixture<AbbrEntry>({
+                label: "Abbreviations",
+                columns: multiSelectColumns,
+                data: abbrData,
+                initialFilter: { abbr: undefined },
+                filterData: filterAbbrData,
+                paginate: false,
+            });
+            const { container } = mnt(GTableFixture);
+
+            await container
+                .getByRole("button", { name: "Filter Column" })
+                .click();
+            await page.getByRole("checkbox", { name: "COM" }).click();
+            await page.getByRole("checkbox", { name: "ACES" }).click();
+
+            await expect
+                .element(page.getByRole("checkbox", { name: "COM" }))
+                .toBeChecked();
+            await expect
+                .element(page.getByRole("checkbox", { name: "ACES" }))
+                .toBeChecked();
+            expect(filters.abbr).toEqual(["COM", "ACES"]);
+            expect(getColumn(container, 2)).toEqual(["COM", "ACES"]);
+
+            await page.getByRole("checkbox", { name: "COM" }).click();
+            await page.getByRole("checkbox", { name: "ACES" }).click();
+
+            expect(filters.abbr).toEqual([]);
+
+            await page.getByRole("checkbox", { name: "SOCW" }).click();
+
+            expect(filters.abbr).toEqual(["SOCW"]);
+            expect(getColumn(container, 2)).toEqual(["SOCW"]);
+
+            await container
+                .getByRole("button", { name: "Clear Filters" })
+                .click();
+            await container
+                .getByRole("button", { name: "Filter Column" })
+                .click();
+            await page.getByRole("checkbox", { name: "SOCW" }).click();
+
+            expect(filters.abbr).toEqual(["SOCW"]);
+            expect(getColumn(container, 2)).toEqual(["SOCW"]);
+        });
+    });
 });
