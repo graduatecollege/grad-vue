@@ -22,7 +22,7 @@ export interface UseFormReturn {
  * Uses reactive state pattern - errors are provided as reactive props to input components.
  */
 export function useForm(): UseFormReturn {
-    const fields: Record<string, FormField> = shallowReactive({});
+    const fields = shallowReactive<Record<string, FormField>>({});
     const isSubmitting = ref(false);
 
     const values = computed(() => {
