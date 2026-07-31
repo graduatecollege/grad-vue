@@ -52,7 +52,7 @@
         "@tiptap/extensions": "^3.29.2",
         "@tiptap/vue-3": "^3.29.2",
         "@types/node": "^24.10.3",
-        "@vitejs/plugin-vue": "^6.0.7",
+        "@vitejs/plugin-vue": "^6.0.8",
         "@vitest/browser-playwright": "^4.1.10",
         "@vitest/ui": "^4.1.10",
         "axe-core": "^4.12.1",
