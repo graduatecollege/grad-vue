@@ -47,7 +47,7 @@ type Props = {
 }
 
 const props = defineProps<Props>();
-const model = defineModel<boolean | null>({default: () => null});
+const model = defineModel<boolean | null>({ default: null });
 
 const emit = defineEmits(["change"]);
 
@@ -339,4 +339,3 @@ g-three-way-toggle {
     font-weight: bold;
 }
 </style>
-
