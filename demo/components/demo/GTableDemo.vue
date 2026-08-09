@@ -169,6 +169,11 @@ const sortField = ref<keyof TableEntry | undefined>(undefined);
 const sortOrder = ref<1 | -1 | undefined>(undefined);
 const start = ref(0);
 const pageSize = ref(5);
+const columnVisibility = ref({
+    code: true,
+    name: true,
+    collegeInName: true,
+});
 const selectedRows = ref<string[]>([]);
 
 const bulkActions = [
@@ -482,6 +487,7 @@ with the link <code>href</code> from the first link in the row.</p>
                     :start-index="start"
                     v-model:sort-field="sortField"
                     v-model:sort-order="sortOrder"
+                    v-model:column-visibility="columnVisibility"
                     v-model:selected-rows="selectedRows"
                     @bulk-action="handleBulkAction"
                 >

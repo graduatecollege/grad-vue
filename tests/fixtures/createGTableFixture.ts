@@ -1,4 +1,4 @@
-import { computed, ComputedRef, defineComponent, h, ref, VNode } from "vue";
+import { computed, defineComponent, h, ref, VNode } from "vue";
 import {
     GTable,
     TableColumn,
@@ -37,6 +37,9 @@ export type CreateGTableFixtureOptions<
     initialStart?: number;
     initialPageSize?: number;
     pageSizes?: number[];
+    initialColumnVisibility?: Partial<
+        Record<Extract<keyof T, string>, boolean>
+    >;
 
     resultCount?: (filteredData: T[]) => number;
     groupBy?: keyof T;
@@ -89,6 +92,9 @@ export function createGTableFixture<
     const sortOrder = ref<1 | -1 | undefined>(options.initialSortOrder);
     const start = ref(options.initialStart ?? 0);
     const pageSize = ref(options.initialPageSize ?? 5);
+    const columnVisibility = ref<
+        Partial<Record<Extract<keyof T, string>, boolean>>
+    >(options.initialColumnVisibility || {});
     const selectedRows = ref<string[]>([]);
     const initialFilter = buildInitialFilter({
         initialFilter: options.initialFilter,
@@ -168,6 +174,18 @@ export function createGTableFixture<
                         "onUpdate:sortOrder": (value: 1 | -1 | undefined) => {
                             sortOrder.value = value;
                         },
+                        ...(options.initialColumnVisibility !== undefined
+                            ? {
+                                  columnVisibility: columnVisibility.value,
+                                  "onUpdate:columnVisibility": (
+                                      value: Partial<
+                                          Record<Extract<keyof T, string>, boolean>
+                                      >,
+                                  ) => {
+                                      columnVisibility.value = value;
+                                  },
+                              }
+                            : {}),
                         groupBy: options.groupBy,
                         groupRender: options.groupRender,
                         rowClickable: options.rowClickable,
@@ -215,6 +233,7 @@ export function createGTableFixture<
         sortOrder,
         start,
         pageSize,
+        columnVisibility,
         filters,
         selectedRows,
     };
