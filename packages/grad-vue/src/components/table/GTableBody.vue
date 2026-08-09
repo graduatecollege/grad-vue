@@ -113,6 +113,8 @@ const labelCellColumn = computed(() => {
     }
 );
 
+const groupColspan = computed(() => Math.max(props.columns.length, 1));
+
 function shouldAddCellId(col: C): boolean {
     // Check if this column is used as a label for any editable column
     return col.key === labelCellColumn.value;
@@ -148,7 +150,7 @@ function getCellError(row: T, col: C): string | undefined {
                     v-if="bulkSelectionEnabled"
                     class="table-group-checkbox"
                 ></td>
-                <td :colspan="columns.length" class="table-group-row">
+                <td :colspan="groupColspan" class="table-group-row">
                     <template v-if="groupRender">
                         <component :is="groupRender(row[groupBy], row)" />
                     </template>

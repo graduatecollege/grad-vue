@@ -36,12 +36,12 @@ import GPopover from "./GPopover.vue";
 import { TableColumn, TableRow } from "./table/TableColumn.ts";
 import {
     computed,
+    getCurrentInstance,
     onMounted,
     ref,
     toRaw,
     useId,
     useSlots,
-    useTemplateRef,
     VNode,
 } from "vue";
 import GSelect from "./GSelect.vue";
@@ -68,6 +68,8 @@ export interface BulkAction {
      */
     theme?: "primary" | "secondary" | "accent" | "danger";
 }
+
+type ColumnVisibilityKey<T extends TableRow> = Extract<keyof T, string>;
 
 type Props = {
     /**
@@ -155,6 +157,11 @@ type Props = {
 const sortField = defineModel<keyof T>("sortField");
 const sortOrder = defineModel<1 | -1>("sortOrder");
 const filter = defineModel<Partial<Record<keyof T, any>>>("filter", {
+    default: () => ({}),
+});
+const columnVisibility = defineModel<
+    Partial<Record<Extract<keyof T, string>, boolean>>
+>("columnVisibility", {
     default: () => ({}),
 });
 const selectedRows = defineModel<string[]>("selectedRows", {
@@ -297,6 +304,39 @@ function handleCellChange(change: { row: T; column: C; value: any }) {
 
 const id = useId();
 const slots = useSlots();
+const instance = getCurrentInstance();
+const columnVisibilityConfigured = computed(() => {
+    const vnodeProps = instance?.vnode.props ?? {};
+    return (
+        "columnVisibility" in vnodeProps ||
+        "column-visibility" in vnodeProps ||
+        "onUpdate:columnVisibility" in vnodeProps
+    );
+});
+
+const visibleColumns = computed(() => {
+    const visibility = columnVisibility.value;
+    return props.columns.filter(
+        (col) => visibility[col.key as ColumnVisibilityKey<T>] !== false,
+    );
+});
+const hasHiddenColumns = computed(
+    () => visibleColumns.value.length !== props.columns.length,
+);
+const shouldShowColumnVisibilityControls = computed(
+    () => columnVisibilityConfigured.value && props.columns.length > 0,
+);
+
+function isColumnVisible(col: C) {
+    return columnVisibility.value[col.key as ColumnVisibilityKey<T>] !== false;
+}
+
+function setColumnVisibility(col: C, visible: boolean) {
+    columnVisibility.value = {
+        ...columnVisibility.value,
+        [col.key]: visible,
+    };
+}
 
 const shouldShowPagination = computed(() => {
     // Show if explicitly requested via prop
@@ -314,6 +354,9 @@ const shouldShowControls = computed(() => {
     }
     // Show if pagination should be shown
     if (shouldShowPagination.value) {
+        return true;
+    }
+    if (shouldShowColumnVisibilityControls.value) {
         return true;
     }
     // Otherwise hide the entire controls bar
@@ -350,27 +393,89 @@ onMounted(() => {
 <template>
     <div class="g-table-outer-wrap">
         <div v-if="shouldShowControls" class="g-table-controls">
-            <div class="g-clear-filters-wrap">
-                <GButton
-                    v-if="isFiltered"
-                    outlined
-                    size="small"
-                    class="clear-filters"
-                    @click="clearFilters"
+            <div class="g-table-control-actions">
+                <div
+                    v-if="shouldShowColumnVisibilityControls"
+                    class="g-column-visibility-wrap"
                 >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 51.26 51.26"
-                        height="1em"
-                        aria-hidden="true"
+                    <GPopover>
+                        <template #trigger="{ toggle }">
+                            <GButton
+
+                                size="small"
+                                class="g-column-visibility-trigger"
+                                aria-label="Choose visible columns"
+                                :class="{
+                                    'g-column-visibility-trigger--active':
+                                        hasHiddenColumns,
+                                }"
+                                @click="toggle"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 640 640"
+                                    height="1.5em"
+                                    style="transform: rotate(90deg);"
+                                    aria-hidden="true"
+                                >
+                                    <!--!Font Awesome Free v7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+                                    <path
+                                        fill="currentColor"
+                                        d="M64 160C64 142.3 78.3 128 96 128L480 128C497.7 128 512 142.3 512 160C512 177.7 497.7 192 480 192L96 192C78.3 192 64 177.7 64 160zM128 320C128 302.3 142.3 288 160 288L544 288C561.7 288 576 302.3 576 320C576 337.7 561.7 352 544 352L160 352C142.3 352 128 337.7 128 320zM512 480C512 497.7 497.7 512 480 512L96 512C78.3 512 64 497.7 64 480C64 462.3 78.3 448 96 448L480 448C497.7 448 512 462.3 512 480z"/>
+                                </svg>
+                            </GButton>
+                        </template>
+                        <fieldset class="g-column-visibility-popover">
+                            <legend class="g-column-visibility-legend">
+                                Shown columns
+                            </legend>
+                            <div class="g-column-visibility-list">
+                                <label
+                                    v-for="col in columns"
+                                    :key="col.key"
+                                    class="g-column-visibility-option"
+                                >
+                                    <input
+                                        :checked="isColumnVisible(col)"
+                                        type="checkbox"
+                                        @change="
+                                            setColumnVisibility(
+                                                col,
+                                                (
+                                                    $event.target as HTMLInputElement
+                                                ).checked,
+                                            )
+                                        "
+                                    />
+                                    <span>{{ col.label }}</span>
+                                </label>
+                            </div>
+                        </fieldset>
+                    </GPopover>
+                </div>
+
+                <div class="g-clear-filters-wrap">
+                    <GButton
+                        v-if="isFiltered"
+                        outlined
+                        size="small"
+                        class="clear-filters"
+                        @click="clearFilters"
                     >
-                        <path
-                            fill="currentColor"
-                            d="m37.84 32.94-7.63-7.63 7.63-7.63a3.24 3.24 0 0 0-4.58-4.58l-7.63 7.63L18 13.1a3.24 3.24 0 0 0-4.58 4.58L21 25.31l-7.62 7.63A3.24 3.24 0 1 0 18 37.52l7.63-7.63 7.63 7.63a3.24 3.24 0 0 0 4.58-4.58Z"
-                        />
-                    </svg>
-                    <span class="g-clear-filters-text"> Clear Filters </span>
-                </GButton>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 51.26 51.26"
+                            height="1em"
+                            aria-hidden="true"
+                        >
+                            <path
+                                fill="currentColor"
+                                d="m37.84 32.94-7.63-7.63 7.63-7.63a3.24 3.24 0 0 0-4.58-4.58l-7.63 7.63L18 13.1a3.24 3.24 0 0 0-4.58 4.58L21 25.31l-7.62 7.63A3.24 3.24 0 1 0 18 37.52l7.63-7.63 7.63 7.63a3.24 3.24 0 0 0 4.58-4.58Z"
+                            />
+                        </svg>
+                        <span class="g-clear-filters-text"> Clear Filters </span>
+                    </GButton>
+                </div>
             </div>
             <div v-if="shouldShowPagination" class="pagination">
                 <slot name="pagination"></slot>
@@ -406,7 +511,7 @@ onMounted(() => {
                         />
                     </th>
                     <th
-                        v-for="col in columns"
+                        v-for="col in visibleColumns"
                         :key="col.key"
                         :id="`${id}-th-${String(col.key)}`"
                         :aria-sort="
@@ -594,7 +699,7 @@ onMounted(() => {
             <!-- @vue-generic {T, C} -->
             <GTableBody
                 :data="data"
-                :columns="columns"
+                :columns="visibleColumns"
                 :group-by="groupBy"
                 :group-render="groupRender"
                 :row-clickable="rowClickable"
@@ -811,6 +916,62 @@ button.g-column-head:hover {
     .g-result-count {
         font-size: 1rem;
         line-height: 1.2;
+        margin-left: auto;
+    }
+}
+
+.g-table-control-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
+}
+
+.g-column-visibility-wrap {
+    display: flex;
+    align-items: center;
+}
+
+.g-column-visibility-trigger {
+    min-width: auto;
+    padding: 0.25rem 0.5rem;
+}
+
+.g-column-visibility-trigger--active {
+    border-color: var(--ilw-color--link-hover);
+    color: var(--ilw-color--link-hover);
+    background: var(--g-surface-0);
+}
+
+.g-column-visibility-popover {
+    min-width: 12rem;
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.g-column-visibility-legend {
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.g-column-visibility-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.g-column-visibility-option {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1rem;
+
+    input {
+        width: 20px;
+        height: 20px;
+        margin: 0;
+        accent-color: var(--g-primary-500);
     }
 }
 
@@ -937,4 +1098,3 @@ button.g-column-head:hover {
     align-items: center;
 }
 </style>
-

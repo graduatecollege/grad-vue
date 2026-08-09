@@ -341,6 +341,127 @@ describe("GTable", () => {
             expect(getColumn(container, 1)).toEqual(["School of Social Work"]);
         });
     });
+    describe("Column Visibility Tests", () => {
+        it("hides the column chooser when column visibility is not configured", async () => {
+            const { GTableFixture } = createGTableFixture<TableEntry>({
+                label: "Colleges",
+                columns,
+                data: tableData,
+                paginate: false,
+            });
+            const { container } = mnt(GTableFixture);
+
+            await expect
+                .element(
+                    container.getByRole("button", {
+                        name: "Choose visible columns",
+                    }),
+                )
+                .not.toBeInTheDocument();
+        });
+
+        it("shows a column chooser even without pagination", async () => {
+            const { GTableFixture } = createGTableFixture<TableEntry>({
+                label: "Colleges",
+                columns,
+                data: tableData,
+                paginate: false,
+                initialColumnVisibility: {},
+            });
+            const { container } = mnt(GTableFixture);
+
+            await expect
+                .element(
+                    container.getByRole("button", {
+                        name: "Choose visible columns",
+                    }),
+                )
+                .toBeVisible();
+        });
+
+        it("omits configured hidden columns from rendering", async () => {
+            const { GTableFixture } = createGTableFixture<TableEntry>({
+                label: "Colleges",
+                columns,
+                data: tableData,
+                initialFilter: defaultFilter,
+                initialPageSize: 3,
+                pageSizes: [3, 10, 50],
+                filterData: filterCollegesData,
+                initialColumnVisibility: {
+                    abbr: false,
+                },
+            });
+            const { container } = mnt(GTableFixture);
+
+            await expect
+                .element(
+                    container.getByRole("columnheader", { name: "Abbreviation" }),
+                )
+                .not.toBeInTheDocument();
+            expect(getColumn(container, 0)).toEqual(["LT", "KL", "KY"]);
+            expect(getColumn(container, 1)).toEqual([
+                "Carle Illinois College of Medicine",
+                "College of Agricultural, Consumer and Environmental Sciences (ACES)",
+                "College of Applied Health Sciences",
+            ]);
+            expect(getColumn(container, 2)).toEqual(["Yes", "Yes", "Yes"]);
+            expect(getColumn(container, 3)).toEqual([]);
+        });
+
+        it("updates column visibility from the chooser", async () => {
+            const { GTableFixture, columnVisibility } =
+                createGTableFixture<TableEntry>({
+                    label: "Colleges",
+                    columns,
+                    data: tableData,
+                    initialFilter: defaultFilter,
+                    initialPageSize: 3,
+                    pageSizes: [3, 10, 50],
+                    filterData: filterCollegesData,
+                    initialColumnVisibility: {
+                        abbr: false,
+                    },
+                });
+            const { container } = mnt(GTableFixture);
+
+            await container
+                .getByRole("button", {
+                    name: "Choose visible columns",
+                })
+                .click();
+            await page.getByRole("checkbox", { name: "Abbreviation" }).click();
+
+            expect(columnVisibility.value.abbr).toBe(true);
+            await expect
+                .element(
+                    container.getByRole("columnheader", { name: "Abbreviation" }),
+                )
+                .toBeVisible();
+            expect(getColumn(container, 2)).toEqual(["COM", "ACES", "AHS"]);
+        });
+
+        it("uses the visible column count for grouped row colspan", async () => {
+            const { GTableFixture } = createGTableFixture<TableEntry>({
+                label: "Colleges",
+                columns,
+                data: tableData,
+                paginate: false,
+                groupBy: "collegeInName",
+                initialColumnVisibility: {
+                    name: false,
+                    abbr: false,
+                },
+            });
+            const { container } = mnt(GTableFixture);
+
+            const groupRow = container
+                .element()
+                .querySelector(".table-group-row") as HTMLTableCellElement | null;
+
+            expect(groupRow?.getAttribute("colspan")).toBe("2");
+        });
+    });
     describe("Bulk Selection Tests", () => {
         it("shows checkboxes when bulk selection is enabled", async () => {
             const { GTableFixture } = createGTableFixture<TableEntry>({
