@@ -1248,21 +1248,34 @@ button.g-column-head:hover {
 }
 
 .g-table-controls {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     align-items: center;
-    justify-content: space-between;
     gap: 1.5rem;
     padding: 0.2rem 1rem;
     background: var(--g-surface-150);
 
+    .pagination {
+        grid-column: 2;
+        justify-self: center;
+        display: flex;
+        justify-content: center;
+        min-width: 0;
+    }
+
     .g-result-count {
+        grid-column: 3;
+        justify-self: end;
         font-size: 1rem;
         line-height: 1.2;
-        margin-left: auto;
+        text-align: right;
+        white-space: nowrap;
     }
 }
 
 .g-table-control-actions {
+    grid-column: 1;
+    min-width: 0;
     display: flex;
     align-items: center;
     gap: 0.75rem;

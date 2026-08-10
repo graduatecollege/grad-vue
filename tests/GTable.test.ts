@@ -981,6 +981,53 @@ describe("GTable", () => {
                 .toBeVisible();
         });
 
+        it("keeps pagination centered and result count pinned right", async () => {
+            const { GTableFixture } = createCollegesTableFixture();
+            const { container } = mnt(GTableFixture);
+
+            const controls = container.element().querySelector(
+                ".g-table-controls",
+            ) as HTMLElement | null;
+            const pagination = controls?.querySelector(
+                ".pagination",
+            ) as HTMLElement | null;
+            const resultCount = controls?.querySelector(
+                ".g-result-count",
+            ) as HTMLElement | null;
+
+            expect(controls).not.toBeNull();
+            expect(pagination).not.toBeNull();
+            expect(resultCount).not.toBeNull();
+
+            expect(window.getComputedStyle(controls!).display).toBe("grid");
+            expect(window.getComputedStyle(pagination!).gridColumnStart).toBe(
+                "2",
+            );
+            expect(window.getComputedStyle(resultCount!).gridColumnStart).toBe(
+                "3",
+            );
+        });
+
+        it("keeps result count on the right without pagination", async () => {
+            const { GTableFixture } = createMultiSortFixture();
+            const { container } = mnt(GTableFixture);
+
+            const controls = container.element().querySelector(
+                ".g-table-controls",
+            ) as HTMLElement | null;
+            const pagination = controls?.querySelector(".pagination");
+            const resultCount = controls?.querySelector(
+                ".g-result-count",
+            ) as HTMLElement | null;
+
+            expect(controls).not.toBeNull();
+            expect(pagination).toBeNull();
+            expect(resultCount).not.toBeNull();
+            expect(window.getComputedStyle(resultCount!).gridColumnStart).toBe(
+                "3",
+            );
+        });
+
         it("shows controls bar when filters are active even without pagination", async () => {
             const GTableFixture = defineComponent({
                 setup() {
