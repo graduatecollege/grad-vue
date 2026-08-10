@@ -36,7 +36,7 @@
         "vue": "^3.5"
     },
     "overrides": {
-        "vite": "^8.1.4",
+        "vite": "^8.2.1",
         "vitest": "$vitest"
     },
     "devDependencies": {
@@ -55,22 +55,22 @@
         "@vitejs/plugin-vue": "^6.0.8",
         "@vitest/browser-playwright": "^4.1.10",
         "@vitest/ui": "^4.1.10",
-        "axe-core": "^4.12.1",
-        "happy-dom": "^20.11.1",
+        "axe-core": "^4.13.0",
+        "happy-dom": "^20.11.2",
         "jsdom": "^30.0.1",
         "marked": "^18.0.9",
         "marked-alert": "^2.1.2",
         "marked-shiki": "^1.2.1",
         "pinia": "^4.0.2",
-        "playwright": "^1.61.1",
+        "playwright": "^1.62.1",
         "prettier": "^3.9.6",
-        "shiki": "^4.4.1",
+        "shiki": "^4.4.3",
         "typescript": "6.0.3",
-        "vite": "^8.1.4",
+        "vite": "^8.2.1",
         "vite-plugin-dts": "^5.0.3",
-        "vite-plugin-vue-devtools": "^8.1.5",
+        "vite-plugin-vue-devtools": "^8.2.1",
         "vitest": "^4.1.10",
         "vitest-browser-vue": "^2.1.0",
-        "vue-tsc": "^3.3.7"
+        "vue-tsc": "^3.3.9"
     }
 }
