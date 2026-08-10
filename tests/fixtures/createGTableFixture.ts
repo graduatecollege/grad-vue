@@ -1,7 +1,8 @@
-import { computed, defineComponent, h, ref, VNode } from "vue";
+import { computed, defineComponent, h, ref, shallowRef, VNode } from "vue";
 import {
     GTable,
     TableColumn,
+    TableSort,
     useFiltering,
     UseTableChangesReturn,
     GTablePagination,
@@ -21,17 +22,12 @@ export type CreateGTableFixtureOptions<
      * Shape for the required `v-model:filter`. Keys here are also used by
      * `useFiltering()` to compute `filteredColumns`.
      */
-    initialFilter?: Record<string, any>;
-    filterKeys?: string[];
-    filterData?: (data: T[], filter: Record<string, any>) => T[];
+    initialFilter?: FixtureFilters<T>;
+    filterKeys?: Array<Extract<keyof T, string>>;
+    filterData?: (data: T[], filter: FixtureFilters<T>) => T[];
 
-    initialSortField?: keyof T;
-    initialSortOrder?: 1 | -1;
-    sortData?: (
-        data: T[],
-        sortField: keyof T | undefined,
-        sortOrder: 1 | -1 | undefined,
-    ) => T[];
+    initialSorts?: TableSort<T>[];
+    sortData?: (data: T[], sorts: TableSort<T>[]) => T[];
 
     paginate?: boolean;
     initialStart?: number;
@@ -51,62 +47,74 @@ export type CreateGTableFixtureOptions<
     changeTracker?: UseTableChangesReturn<T>;
 };
 
-function defaultSortData<T extends Record<string, any>>(
+type FilterKey<T extends TableRow> = Extract<keyof T, string>;
+type FixtureFilters<T extends TableRow> = Partial<Record<keyof T, any>>;
+
+function defaultSortData<T extends TableRow>(
     data: T[],
-    sortField: string | undefined,
-    sortOrder: 1 | -1 | undefined,
+    sorts: TableSort<T>[] = [],
 ): T[] {
-    if (!sortField) {
+    if (!sorts.length) {
         return data;
     }
 
-    const direction = sortOrder === -1 ? -1 : 1;
-    return [...data].sort((a: any, b: any) => {
-        const aVal: any = a[sortField];
-        const bVal: any = b[sortField];
-        const sortVal = (aVal?.toString() ?? "").localeCompare(
-            bVal?.toString() ?? "",
-        );
-        return sortVal * direction;
+    return [...data].sort((a, b) => {
+        for (const sort of sorts) {
+            const sortVal = String(a[sort.key] ?? "").localeCompare(
+                String(b[sort.key] ?? ""),
+            );
+
+            if (sortVal !== 0) {
+                return sortVal * sort.order;
+            }
+        }
+
+        return 0;
     });
 }
 
-function buildInitialFilter(options: {
-    initialFilter?: Record<string, any>;
-    filterKeys?: string[];
-}) {
+function buildInitialFilter<T extends TableRow>(options: {
+    initialFilter?: FixtureFilters<T>;
+    filterKeys?: FilterKey<T>[];
+}): FixtureFilters<T> {
     const fromKeys = Object.fromEntries(
         (options.filterKeys || []).map((key) => [key, undefined]),
-    );
+    ) as FixtureFilters<T>;
     return {
         ...fromKeys,
         ...(options.initialFilter || {}),
     };
 }
 
+function assignRecordValues<K extends string, V>(
+    target: Partial<Record<K, V>>,
+    source: Partial<Record<K, V>>,
+) {
+    for (const key of Object.keys(source) as K[]) {
+        target[key] = source[key] as V;
+    }
+}
+
 export function createGTableFixture<
     T extends TableRow,
     C extends TableColumn<T> = TableColumn<T>,
 >(options: CreateGTableFixtureOptions<T, C>) {
-    const sortField = ref<keyof T | undefined>(options.initialSortField);
-    const sortOrder = ref<1 | -1 | undefined>(options.initialSortOrder);
+    const initialSorts = options.initialSorts ?? [];
+    const sorts = shallowRef<TableSort<T>[]>([...initialSorts]);
     const start = ref(options.initialStart ?? 0);
     const pageSize = ref(options.initialPageSize ?? 5);
     const columnVisibility = ref<
-        Partial<Record<Extract<keyof T, string>, boolean>>
+        Partial<Record<FilterKey<T>, boolean>>
     >(options.initialColumnVisibility || {});
     const selectedRows = ref<string[]>([]);
-    const initialFilter = buildInitialFilter({
+    const initialFilter = buildInitialFilter<T>({
         initialFilter: options.initialFilter,
         filterKeys: options.filterKeys,
-    }) as T;
+    });
 
-    const filtering = useFiltering<T>(initialFilter);
-    const { filters } = filtering;
-    for (const key in initialFilter) {
-        // @ts-expect-error
-        filters[key] = initialFilter[key];
-    }
+    const filtering = useFiltering<T, FixtureFilters<T>>(initialFilter);
+    const filters = filtering.filters as FixtureFilters<T>;
+    assignRecordValues(filters, initialFilter);
 
     const GTableFixture = defineComponent({
         name: "GTableFixture",
@@ -130,11 +138,7 @@ export function createGTableFixture<
 
             const visibleData = computed(() => {
                 const sort = options.sortData || defaultSortData;
-                let data = sort(
-                    [...filteredData.value],
-                    sortField.value,
-                    sortOrder.value,
-                );
+                let data = sort([...filteredData.value], sorts.value);
 
                 if (options.paginate === false) {
                     return data;
@@ -157,22 +161,14 @@ export function createGTableFixture<
                         data: visibleData.value,
                         columns: columnsComputed.value,
                         filtering,
-                        // @ts-expect-error
                         filter: filters,
-                        "onUpdate:filter": (value: any) => {
-                            for (const key in Object.keys(value)) {
-                                // @ts-ignore
-                                filters[key] = value[key];
-                            }
+                        "onUpdate:filter": (value: FixtureFilters<T>) => {
+                            assignRecordValues(filters, value);
                         },
                         resultCount: resultCount.value,
-                        sortField: sortField.value,
-                        "onUpdate:sortField": (value: keyof T | undefined) => {
-                            sortField.value = value;
-                        },
-                        sortOrder: sortOrder.value,
-                        "onUpdate:sortOrder": (value: 1 | -1 | undefined) => {
-                            sortOrder.value = value;
+                        sorts: sorts.value,
+                        "onUpdate:sorts": (value: TableSort<T>[]) => {
+                            sorts.value = value;
                         },
                         ...(options.initialColumnVisibility !== undefined
                             ? {
@@ -229,8 +225,7 @@ export function createGTableFixture<
 
     return {
         GTableFixture,
-        sortField,
-        sortOrder,
+        sorts,
         start,
         pageSize,
         columnVisibility,

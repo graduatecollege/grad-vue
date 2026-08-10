@@ -79,6 +79,11 @@ export interface EditableColumnConfig {
 
 type ColumnKey<T> = Extract<keyof T, string>;
 
+export interface TableSort<T extends TableRow, K extends ColumnKey<T> = ColumnKey<T>> {
+    key: K;
+    order: 1 | -1;
+}
+
 export interface TableColumn<T extends TableRow, K extends ColumnKey<T> = ColumnKey<T>> {
     key: K;
     label: string;

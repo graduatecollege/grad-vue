@@ -33,10 +33,11 @@ export default {};
 <script setup lang="ts" generic="T extends TableRow, C extends TableColumn<T>">
 import GTableBody from "./table/GTableBody.vue";
 import GPopover from "./GPopover.vue";
-import { TableColumn, TableRow } from "./table/TableColumn.ts";
+import { TableColumn, TableRow, TableSort } from "./table/TableColumn.ts";
 import {
     computed,
     getCurrentInstance,
+    nextTick,
     onMounted,
     ref,
     toRaw,
@@ -70,6 +71,7 @@ export interface BulkAction {
 }
 
 type ColumnVisibilityKey<T extends TableRow> = Extract<keyof T, string>;
+type SortKey<T extends TableRow> = Extract<keyof T, string>;
 
 type Props = {
     /**
@@ -154,8 +156,9 @@ type Props = {
     showPagination?: boolean;
 };
 
-const sortField = defineModel<keyof T>("sortField");
-const sortOrder = defineModel<1 | -1>("sortOrder");
+const sorts = defineModel<TableSort<T>[]>("sorts", {
+    default: () => [],
+});
 const filter = defineModel<Partial<Record<keyof T, any>>>("filter", {
     default: () => ({}),
 });
@@ -179,23 +182,6 @@ const emit = defineEmits<{
     (e: "bulk-action", actionId: string, selectedKeys: string[]): void;
     (e: "cell-change", payload: CellChangePayload<T>): void;
 }>();
-
-function onSort(col: TableColumn<T>) {
-    if (!col.sortable) {
-        return;
-    }
-    if (sortField.value === col.key) {
-        if (sortOrder.value === 1) {
-            sortOrder.value = -1;
-        } else if (sortOrder.value === -1) {
-            sortField.value = undefined as any;
-            sortOrder.value = 1;
-        }
-    } else {
-        sortField.value = col.key;
-        sortOrder.value = 1;
-    }
-}
 
 let filtering: UseFilteringReturn<any> = props.filtering!;
 
@@ -305,6 +291,159 @@ function handleCellChange(change: { row: T; column: C; value: any }) {
 const id = useId();
 const slots = useSlots();
 const instance = getCurrentInstance();
+const sortBuilderRef = ref<HTMLFieldSetElement | null>(null);
+
+function normalizeSorts(value: TableSort<T>[]) {
+    const seen = new Set<string>();
+    return value.filter((sort): sort is TableSort<T> => {
+        if (!sort?.key || seen.has(String(sort.key))) {
+            return false;
+        }
+
+        seen.add(String(sort.key));
+        return sort.order === 1 || sort.order === -1;
+    });
+}
+
+function createSort(key: SortKey<T>, order: 1 | -1): TableSort<T> {
+    return { key, order };
+}
+
+const activeSorts = computed(() => normalizeSorts(sorts.value));
+
+function setSortState(nextSorts: TableSort<T>[]) {
+    sorts.value = normalizeSorts(nextSorts);
+}
+
+const sortableColumns = computed(() => props.columns.filter((col) => col.sortable));
+const shouldShowSortBuilder = computed(() => sortableColumns.value.length > 1);
+const inactiveSortColumns = computed(() => {
+    const sortedKeys = new Set(activeSorts.value.map((sort) => String(sort.key)));
+    return sortableColumns.value.filter((col) => !sortedKeys.has(String(col.key)));
+});
+
+function sortIndex(key: keyof T) {
+    return activeSorts.value.findIndex((sort) => sort.key === key);
+}
+
+function sortForColumn(key: keyof T) {
+    return activeSorts.value.find((sort) => sort.key === key);
+}
+
+function columnLabel(key: keyof T) {
+    return props.columns.find((col) => col.key === key)?.label || String(key);
+}
+
+function columnAriaSort(key: keyof T) {
+    const index = sortIndex(key);
+    if (index === -1) {
+        return "none";
+    }
+    if (index > 0) {
+        return "other";
+    }
+    return activeSorts.value[0]?.order === 1 ? "ascending" : "descending";
+}
+
+function columnSortDescription(key: keyof T) {
+    const index = sortIndex(key);
+    if (index === -1) {
+        return "";
+    }
+
+    const sort = activeSorts.value[index];
+    const direction = sort.order === 1 ? "ascending" : "descending";
+    return activeSorts.value.length > 1
+        ? `Sorted ${direction}, priority ${index + 1}`
+        : `Sorted ${direction}`;
+}
+
+function sortDirectionLabel(order: 1 | -1) {
+    return order === 1 ? "Ascending" : "Descending";
+}
+
+function nextPrimarySort(key: SortKey<T>) {
+    const currentPrimary =
+        activeSorts.value[0]?.key === key ? activeSorts.value[0] : undefined;
+
+    if (!currentPrimary) {
+        return [createSort(key, 1)];
+    }
+
+    if (currentPrimary.order === 1) {
+        return [createSort(key, -1)];
+    }
+
+    return [] as TableSort<T>[];
+}
+
+function nextStackSorts(key: SortKey<T>) {
+    const nextSorts = [...activeSorts.value];
+    const index = nextSorts.findIndex((sort) => sort.key === key);
+
+    if (index === -1) {
+        nextSorts.push(createSort(key, 1));
+        return nextSorts;
+    }
+
+    if (nextSorts[index].order === 1) {
+        nextSorts[index] = createSort(key, -1);
+        return nextSorts;
+    }
+
+    nextSorts.splice(index, 1);
+    return nextSorts;
+}
+
+function onSort(col: TableColumn<T>, shiftKey: boolean = false) {
+    if (!col.sortable) {
+        return;
+    }
+
+    const key = col.key as SortKey<T>;
+    setSortState(shiftKey ? nextStackSorts(key) : nextPrimarySort(key));
+}
+
+function addSortRule(key: SortKey<T>, order: 1 | -1) {
+    setSortState([...activeSorts.value, createSort(key, order)]);
+    nextTick(() => {
+        const root = sortBuilderRef.value;
+        if (!root) {
+            return;
+        }
+
+        const target =
+            root.querySelector<HTMLElement>(
+                `[data-sort-row-key="${String(key)}"]`,
+            ) ?? root;
+
+        target?.focus();
+    }).catch((err) => {
+        console.error(err);
+    });
+}
+
+function toggleSortRuleDirection(key: keyof T) {
+    setSortState(
+        activeSorts.value.map((sort) =>
+            sort.key === key
+                ? createSort(
+                      sort.key as SortKey<T>,
+                      sort.order === 1 ? -1 : 1,
+                  )
+                : sort,
+        ),
+    );
+}
+
+function removeSortRule(key: keyof T) {
+    setSortState(activeSorts.value.filter((sort) => sort.key !== key));
+}
+
+function clearSorts() {
+    setSortState([]);
+}
+
 const columnVisibilityConfigured = computed(() => {
     const vnodeProps = instance?.vnode.props ?? {};
     return (
@@ -348,6 +487,9 @@ const shouldShowPagination = computed(() => {
 });
 
 const shouldShowControls = computed(() => {
+    if (shouldShowSortBuilder.value) {
+        return true;
+    }
     // Show if filters are active (clear filters button is visible)
     if (isFiltered.value) {
         return true;
@@ -394,6 +536,210 @@ onMounted(() => {
     <div class="g-table-outer-wrap">
         <div v-if="shouldShowControls" class="g-table-controls">
             <div class="g-table-control-actions">
+                <div v-if="shouldShowSortBuilder" class="g-sort-builder-wrap">
+                    <GPopover>
+                        <template #trigger="{ toggle }">
+                            <GButton
+                                size="small"
+                                class="g-sort-builder-trigger"
+                                :class="{
+                                    'g-sort-builder-trigger--active':
+                                        activeSorts.length > 0,
+                                }"
+                                aria-label="Choose sort order"
+                                @click="toggle"
+                            >
+                                <svg
+                                    class="g-sort-builder-trigger-icon"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 640 640"
+                                    height="1.5em"
+                                    aria-hidden="true"
+                                >
+                                    <!--!Font Awesome Free v7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+                                    <path
+                                        fill="currentColor"
+                                        d="M130.4 268.2C135.4 280.2 147 288 160 288L480 288C492.9 288 504.6 280.2 509.6 268.2C514.6 256.2 511.8 242.5 502.7 233.3L342.7 73.3C330.2 60.8 309.9 60.8 297.4 73.3L137.4 233.3C128.2 242.5 125.5 256.2 130.5 268.2zM130.4 371.7C125.4 383.7 128.2 397.4 137.3 406.6L297.3 566.6C309.8 579.1 330.1 579.1 342.6 566.6L502.6 406.6C511.8 397.4 514.5 383.7 509.5 371.7C504.5 359.7 492.9 352 480 352L160 352C147.1 352 135.4 359.8 130.4 371.8z"
+                                    />
+                                </svg>
+                                <span
+                                    v-if="activeSorts.length"
+                                    class="g-sort-builder-count"
+                                >
+                                    {{ activeSorts.length }}
+                                </span>
+                            </GButton>
+                        </template>
+                        <fieldset
+                            ref="sortBuilderRef"
+                            class="g-sort-builder-popover"
+                            tabindex="-1"
+                            popover-focus
+                        >
+                            <legend class="g-sort-builder-legend">
+                                Sort order
+                            </legend>
+                            <p class="g-sort-builder-help">
+                                Click a column header to change the primary sort.
+                                Use Shift-click as a shortcut to add or update
+                                secondary sorts.
+                            </p>
+                            <ol
+                                v-if="activeSorts.length"
+                                class="g-sort-builder-list"
+                            >
+                                <li
+                                    v-for="(sort, index) in activeSorts"
+                                    :key="sort.key"
+                                    class="g-sort-builder-rule"
+                                    tabindex="-1"
+                                    :data-sort-row-key="String(sort.key)"
+                                    :aria-label="`${columnLabel(sort.key)} ${sortDirectionLabel(sort.order)} sort, priority ${index + 1}`"
+                                >
+                                    <span
+                                        class="g-sort-builder-rule-priority"
+                                        aria-hidden="true"
+                                    >
+                                        {{ index + 1 }}
+                                    </span>
+                                    <span class="g-sort-builder-rule-label">
+                                        {{ columnLabel(sort.key) }}
+                                    </span>
+                                    <button
+                                        type="button"
+                                        class="g-sort-builder-direction"
+                                        :aria-label="`Toggle ${columnLabel(sort.key)} sort direction`"
+                                        @click="toggleSortRuleDirection(sort.key)"
+                                    >
+                                        <span class="g-visually-hidden">
+                                            {{ sortDirectionLabel(sort.order) }}
+                                        </span>
+                                        <span class="sort-indicator" aria-hidden="true">
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 640 640"
+                                                height="1.25em"
+                                                :style="{
+                                                    transform: `rotate(${sort.order === 1 ? 0 : 180}deg)`,
+                                                }"
+                                            >
+                                                <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+                                                <path
+                                                    fill="currentColor"
+                                                    d="M300.3 199.2C312.9 188.9 331.4 189.7 343.1 201.4L471.1 329.4C480.3 338.6 483 352.3 478 364.3C473 376.3 461.4 384 448.5 384L192.5 384C179.6 384 167.9 376.2 162.9 364.2C157.9 352.2 160.7 338.5 169.9 329.4L297.9 201.4L300.3 199.2z"
+                                                />
+                                            </svg>
+                                        </span>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="g-sort-builder-remove"
+                                        :aria-label="`Remove ${columnLabel(sort.key)} sort`"
+                                        @click="removeSortRule(sort.key)"
+                                    >
+                                        Remove
+                                    </button>
+                                </li>
+                            </ol>
+                            <p v-else class="g-sort-builder-empty">
+                                No active sort rules.
+                            </p>
+                            <div
+                                v-if="inactiveSortColumns.length"
+                                class="g-sort-builder-add"
+                            >
+                                <p class="g-sort-builder-add-label">
+                                    Add sort column
+                                </p>
+                                <ul class="g-sort-builder-add-list">
+                                    <li
+                                        v-for="col in inactiveSortColumns"
+                                        :key="col.key"
+                                        class="g-sort-builder-add-item"
+                                    >
+                                        <span class="g-sort-builder-add-name">
+                                            {{ col.label }}
+                                        </span>
+                                        <div class="g-sort-builder-add-actions">
+                                            <button
+                                                type="button"
+                                                class="g-sort-builder-direction"
+                                                :aria-label="`Add ${col.label} ascending sort`"
+                                                @click="
+                                                    addSortRule(
+                                                        col.key as SortKey<T>,
+                                                        1,
+                                                    )
+                                                "
+                                            >
+                                                <span class="g-visually-hidden">
+                                                    Add ascending sort
+                                                </span>
+                                                <span
+                                                    class="sort-indicator"
+                                                    aria-hidden="true"
+                                                >
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        viewBox="0 0 640 640"
+                                                        height="1.25em"
+                                                    >
+                                                        <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+                                                        <path
+                                                            fill="currentColor"
+                                                            d="M300.3 199.2C312.9 188.9 331.4 189.7 343.1 201.4L471.1 329.4C480.3 338.6 483 352.3 478 364.3C473 376.3 461.4 384 448.5 384L192.5 384C179.6 384 167.9 376.2 162.9 364.2C157.9 352.2 160.7 338.5 169.9 329.4L297.9 201.4L300.3 199.2z"
+                                                        />
+                                                    </svg>
+                                                </span>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                class="g-sort-builder-direction"
+                                                :aria-label="`Add ${col.label} descending sort`"
+                                                @click="
+                                                    addSortRule(
+                                                        col.key as SortKey<T>,
+                                                        -1,
+                                                    )
+                                                "
+                                            >
+                                                <span class="g-visually-hidden">
+                                                    Add descending sort
+                                                </span>
+                                                <span
+                                                    class="sort-indicator"
+                                                    aria-hidden="true"
+                                                >
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        viewBox="0 0 640 640"
+                                                        height="1.25em"
+                                                        style="transform: rotate(180deg);"
+                                                    >
+                                                        <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+                                                        <path
+                                                            fill="currentColor"
+                                                            d="M300.3 199.2C312.9 188.9 331.4 189.7 343.1 201.4L471.1 329.4C480.3 338.6 483 352.3 478 364.3C473 376.3 461.4 384 448.5 384L192.5 384C179.6 384 167.9 376.2 162.9 364.2C157.9 352.2 160.7 338.5 169.9 329.4L297.9 201.4L300.3 199.2z"
+                                                        />
+                                                    </svg>
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <GButton
+                                v-if="activeSorts.length"
+                                outlined
+                                size="small"
+                                class="g-sort-builder-clear"
+                                @click="clearSorts"
+                            >
+                                Clear sort
+                            </GButton>
+                        </fieldset>
+                    </GPopover>
+                </div>
                 <div
                     v-if="shouldShowColumnVisibilityControls"
                     class="g-column-visibility-wrap"
@@ -514,16 +860,10 @@ onMounted(() => {
                         v-for="col in visibleColumns"
                         :key="col.key"
                         :id="`${id}-th-${String(col.key)}`"
-                        :aria-sort="
-                            sortField === col.key
-                                ? sortOrder === 1
-                                    ? 'ascending'
-                                    : 'descending'
-                                : 'none'
-                        "
+                        :aria-sort="columnAriaSort(col.key)"
                         :class="[
                             'g-th',
-                            { sorted: sortField === col.key },
+                            { sorted: sortIndex(col.key) !== -1 },
                             { filtered: filteredColumns[col.key] },
                         ]"
                         scope="col"
@@ -533,25 +873,20 @@ onMounted(() => {
                                 v-if="col.sortable"
                                 type="button"
                                 class="g-column-head"
-                                @click="onSort(col)"
+                                @click="onSort(col, $event.shiftKey)"
                             >
                                 {{ col.label }}
                                 <span
-                                    v-if="sortField === col.key"
+                                    v-if="sortIndex(col.key) !== -1"
                                     class="sort-indicator"
+                                    aria-hidden="true"
                                 >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         viewBox="0 0 640 640"
                                         height="1.5em"
-                                        role="img"
-                                        :aria-label="
-                                            sortOrder === 1
-                                                ? 'Sorted ascending'
-                                                : 'Sorted descending'
-                                        "
                                         :style="{
-                                            transform: `rotate(${sortOrder === 1 ? 0 : 180}deg)`,
+                                            transform: `rotate(${sortForColumn(col.key)?.order === 1 ? 0 : 180}deg)`,
                                         }"
                                     >
                                         <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
@@ -560,6 +895,12 @@ onMounted(() => {
                                             d="M300.3 199.2C312.9 188.9 331.4 189.7 343.1 201.4L471.1 329.4C480.3 338.6 483 352.3 478 364.3C473 376.3 461.4 384 448.5 384L192.5 384C179.6 384 167.9 376.2 162.9 364.2C157.9 352.2 160.7 338.5 169.9 329.4L297.9 201.4L300.3 199.2z"
                                         />
                                     </svg>
+                                </span>
+                                <span
+                                    v-if="sortIndex(col.key) !== -1"
+                                    class="g-visually-hidden"
+                                >
+                                    {{ columnSortDescription(col.key) }}
                                 </span>
                             </button>
                             <span v-else class="g-column-head">{{
@@ -789,7 +1130,6 @@ g-table {
 
 .g-column-head {
     color: currentColor;
-    position: relative;
     border: none;
     font-weight: 700;
     font-family: var(--il-font-sans);
@@ -798,11 +1138,13 @@ g-table {
     white-space: nowrap;
     padding-left: 4px;
     background: var(--g-surface-0);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
 
     .sort-indicator {
-        position: absolute;
-        bottom: -1.1em;
-        left: calc(50% - 0.7em);
+        display: inline-flex;
+        align-items: center;
     }
 }
 
@@ -932,6 +1274,160 @@ button.g-column-head:hover {
     align-items: center;
 }
 
+.g-sort-builder-wrap {
+    display: flex;
+    align-items: center;
+}
+
+.g-sort-builder-trigger {
+    min-width: auto;
+    padding: 0.25rem 0.5rem;
+    gap: 0.4rem;
+}
+
+.g-sort-builder-trigger-icon {
+    display: block;
+}
+
+.g-sort-builder-trigger--active {
+    border-color: var(--ilw-color--link-hover);
+    color: var(--ilw-color--link-hover);
+    background: var(--g-surface-0);
+}
+
+.g-sort-builder-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.25rem;
+    height: 1.25rem;
+    padding: 0 0.25rem;
+    border-radius: 999px;
+    background: var(--g-primary-500);
+    color: var(--g-primary-text);
+    font-size: 0.8rem;
+    line-height: 1;
+}
+
+.g-sort-builder-popover {
+    min-width: 20rem;
+    max-width: 24rem;
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.g-sort-builder-legend {
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.g-sort-builder-help,
+.g-sort-builder-empty {
+    margin: 0 0 0.75rem;
+    font-size: 0.95rem;
+}
+
+.g-sort-builder-list {
+    display: grid;
+    gap: 0.5rem;
+    list-style: none;
+    padding-left: 0;
+    margin: 0 0 1rem;
+}
+
+.g-sort-builder-rule {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+}
+
+.g-sort-builder-rule-label {
+    font-weight: 700;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.g-sort-builder-rule-priority {
+    font-variant-numeric: tabular-nums;
+    color: var(--g-surface-700);
+}
+
+.g-sort-builder-add-label {
+    margin: 0 0 0.5rem;
+    font-weight: 700;
+}
+
+.g-sort-builder-add-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.g-sort-builder-add-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.g-sort-builder-add-name {
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.g-sort-builder-add-actions {
+    display: inline-flex;
+    gap: 0.25rem;
+}
+
+.g-sort-builder-direction,
+.g-sort-builder-remove {
+    border: 0;
+    background: transparent;
+    color: currentColor;
+    font: inherit;
+    padding: 0.15rem 0.25rem;
+    border-radius: var(--g-border-radius-s);
+}
+
+.g-sort-builder-direction {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.g-sort-builder-direction:hover,
+.g-sort-builder-remove:hover {
+    color: var(--ilw-color--link-hover);
+    text-decoration: underline;
+}
+
+.g-sort-builder-direction:focus,
+.g-sort-builder-remove:focus {
+    outline: 2px solid var(--g-primary-500);
+    outline-offset: 2px;
+}
+
+.g-sort-builder-remove {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.g-sort-builder-clear {
+    margin-top: 0.75rem;
+}
+
 .g-column-visibility-trigger {
     min-width: auto;
     padding: 0.25rem 0.5rem;
@@ -973,6 +1469,18 @@ button.g-column-head:hover {
         margin: 0;
         accent-color: var(--g-primary-500);
     }
+}
+
+.g-visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
 
 .g-multi-select {

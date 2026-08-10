@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ComponentDemo from "../ComponentDemo.vue";
 import { computed, h, ref } from "vue";
-import type { TableColumn } from "@illinois-grad/grad-vue";
+import type { TableColumn, TableSort } from "@illinois-grad/grad-vue";
 import { useFiltering } from "@illinois-grad/grad-vue";
 import {
     type CellChangePayload,
@@ -165,8 +165,7 @@ const filtering = useFiltering({
 
 const { filters, isFiltered, clearFilters } = filtering;
 
-const sortField = ref<keyof TableEntry | undefined>(undefined);
-const sortOrder = ref<1 | -1 | undefined>(undefined);
+const sorts = ref<TableSort<TableEntry>[]>([]);
 const start = ref(0);
 const pageSize = ref(5);
 const columnVisibility = ref({
@@ -210,14 +209,21 @@ const filteredData = computed(() => {
 
 const computedData = computed(() => {
     let data = [...filteredData.value];
-    if (sortField.value) {
+    if (sorts.value.length) {
         data.sort((a: any, b: any) => {
-            const aVal: any = a[sortField.value!];
-            const bVal: any = b[sortField.value!];
-            const sortVal = (aVal?.toString() ?? "").localeCompare(
-                bVal?.toString() ?? "",
-            );
-            return sortOrder.value === 1 ? sortVal : sortVal * -1;
+            for (const sort of sorts.value) {
+                const aVal: any = a[sort.key];
+                const bVal: any = b[sort.key];
+                const sortVal = (aVal?.toString() ?? "").localeCompare(
+                    bVal?.toString() ?? "",
+                );
+
+                if (sortVal !== 0) {
+                    return sortVal * sort.order;
+                }
+            }
+
+            return 0;
         });
     }
 
@@ -485,8 +491,7 @@ with the link <code>href</code> from the first link in the row.</p>
                     :bulk-selection-enabled="props.bulkSelectionEnabled"
                     :bulk-actions="bulkActions"
                     :start-index="start"
-                    v-model:sort-field="sortField"
-                    v-model:sort-order="sortOrder"
+                    v-model:sorts="sorts"
                     v-model:column-visibility="columnVisibility"
                     v-model:selected-rows="selectedRows"
                     @bulk-action="handleBulkAction"

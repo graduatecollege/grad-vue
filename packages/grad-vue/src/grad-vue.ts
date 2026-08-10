@@ -131,6 +131,7 @@ export type {
     TableColumnFilter,
     ToggleColumnFilter,
     TableColumn,
+    TableSort,
     TableRow,
 } from "./components/table/TableColumn";
 export type { BulkAction } from "./components/GTable.vue";
