@@ -3,7 +3,7 @@ import { defineComponent, h } from "vue";
 import type { TableColumn } from "../packages/grad-vue/src/components/table/TableColumn";
 import { createGTableFixture } from "./fixtures/createGTableFixture";
 import { mnt, testAccessibility } from "./test-utils";
-import { Locator, page } from "vitest/browser";
+import { Locator, page, userEvent } from "vitest/browser";
 import GTable from "../packages/grad-vue/src/components/GTable.vue";
 import { useFiltering } from "../packages/grad-vue/src/compose/useFiltering";
 
@@ -12,6 +12,12 @@ interface TableEntry {
     name: string;
     abbr: string;
     collegeInName: boolean;
+}
+
+interface MultiSortEntry {
+    key: string;
+    group: string;
+    name: string;
 }
 
 const columns: TableColumn<TableEntry>[] = [
@@ -104,6 +110,46 @@ const defaultFilter = {
     collegeInName: undefined as string | undefined,
 };
 
+const multiSortColumns: TableColumn<MultiSortEntry>[] = [
+    {
+        key: "key",
+        label: "ID",
+    },
+    {
+        key: "group",
+        label: "Group",
+        sortable: true,
+    },
+    {
+        key: "name",
+        label: "Name",
+        sortable: true,
+    },
+];
+
+const multiSortData: MultiSortEntry[] = [
+    {
+        key: "1",
+        group: "A",
+        name: "Beta",
+    },
+    {
+        key: "2",
+        group: "B",
+        name: "Alpha",
+    },
+    {
+        key: "3",
+        group: "A",
+        name: "Alpha",
+    },
+    {
+        key: "4",
+        group: "B",
+        name: "Beta",
+    },
+];
+
 function filterCollegesData(data: TableEntry[], filter: Record<string, any>) {
     let filtered = [...data];
     for (let [key, val] of Object.entries(filter)) {
@@ -131,6 +177,15 @@ function createCollegesTableFixture() {
         initialPageSize: 3,
         pageSizes: [3, 10, 50],
         filterData: filterCollegesData,
+    });
+}
+
+function createMultiSortFixture() {
+    return createGTableFixture<MultiSortEntry>({
+        label: "Multi Sort",
+        columns: multiSortColumns,
+        data: multiSortData,
+        paginate: false,
     });
 }
 
@@ -257,6 +312,85 @@ describe("GTable", () => {
             await codeColumnHeader.click();
             await codeColumnHeader.click();
             expect(getColumn(container, 0)).toEqual(["LT", "KL", "KY"]);
+        });
+        it("adds a secondary sort with shift-click", async () => {
+            const { GTableFixture, sorts } = createMultiSortFixture();
+            const { container } = mnt(GTableFixture);
+
+            await container
+                .getByRole("button", { name: /^Group\b/ })
+                .click();
+            await container
+                .getByRole("button", { name: /^Name\b/ })
+                .click({ modifiers: ["Shift"] });
+
+            expect(sorts.value).toEqual([
+                { key: "group", order: 1 },
+                { key: "name", order: 1 },
+            ]);
+            expect(getColumn(container, 0)).toEqual(["3", "1", "2", "4"]);
+        });
+        it("updates the primary sort from the sort builder", async () => {
+            const { GTableFixture, sorts } = createMultiSortFixture();
+            const { container } = mnt(GTableFixture);
+
+            await container
+                .getByRole("button", { name: /^Group\b/ })
+                .click();
+            await container
+                .getByRole("button", { name: "Choose sort order" })
+                .click();
+            await page
+                .getByRole("button", { name: "Clear sort" })
+                .click();
+            await page
+                .getByRole("button", { name: "Add Name ascending sort" })
+                .click();
+            await page
+                .getByRole("button", { name: "Add Group ascending sort" })
+                .click();
+
+            expect(sorts.value).toEqual([
+                { key: "name", order: 1 },
+                { key: "group", order: 1 },
+            ]);
+            expect(getColumn(container, 0)).toEqual(["3", "2", "1", "4"]);
+        });
+        it("focuses the sort popover fieldset when opened", async () => {
+            const { GTableFixture } = createMultiSortFixture();
+            const { container } = mnt(GTableFixture);
+
+            await container
+                .getByRole("button", { name: "Choose sort order" })
+                .click();
+
+            await expect
+                .element(page.getByRole("group", { name: "Sort order" }))
+                .toHaveFocus();
+        });
+        it("focuses the new active sort row after adding with the keyboard", async () => {
+            const { GTableFixture, sorts } = createMultiSortFixture();
+            const { container } = mnt(GTableFixture);
+
+            await container
+                .getByRole("button", { name: "Choose sort order" })
+                .click();
+
+            await userEvent.keyboard("{Tab}{Tab}{Tab}");
+            await expect
+                .element(page.getByRole("button", { name: "Add Name ascending sort" }))
+                .toHaveFocus();
+
+            await userEvent.keyboard("{Enter}");
+
+            expect(sorts.value).toEqual([{ key: "name", order: 1 }]);
+            await expect
+                .element(
+                    page.getByRole("listitem", {
+                        name: "Name Ascending sort, priority 1",
+                    }),
+                )
+                .toHaveFocus();
         });
         it("filters rows by 'No' in college in name column", async () => {
             const { GTableFixture } = createCollegesTableFixture();

@@ -9,7 +9,9 @@
  * Run: node --experimental-strip-types scripts/generate-custom-element-types.ts
  */
 
+// @ts-ignore
 import fs from 'node:fs';
+// @ts-ignore
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
@@ -226,6 +228,7 @@ const KNOWN_EXTERNAL_TYPES: Record<string, string> = {
     VNode: 'vue',
     TableColumn: './components/table/TableColumn.ts',
     TableRow: './components/table/TableColumn.ts',
+    TableSort: './components/table/TableColumn.ts',
     UseFilteringReturn: './compose/useFiltering.ts',
     UseTableChangesReturn: './compose/useTableChanges.ts',
     CellChangePayload: './compose/useTableChanges.ts',
@@ -349,6 +352,13 @@ function parseSFCFile(sfcAbsPath: string): Omit<ComponentEntry, keyof TagEntry> 
             if (node.arguments.length > 0 && ts.isStringLiteral(node.arguments[0])) {
                 modelName = node.arguments[0].text;
             }
+
+            for (const imp of detectNeededImports(modelType)) {
+                if (!neededImports.some((i) => i.name === imp.name)) {
+                    neededImports.push(imp);
+                }
+            }
+
             models.push({ name: modelName, type: modelType });
         }
         ts.forEachChild(node, collectModels);
