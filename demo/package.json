@@ -10,10 +10,10 @@
     },
     "dependencies": {
         "@illinois-grad/grad-vue": "file:../packages/grad-vue",
-        "@pinia/nuxt": "^0.11.3",
-        "pinia": "^3.0.4",
-        "nuxt": "^4.4.8",
-        "vue": "^3.5.39",
-        "vue-router": "^5.1.0"
+        "@pinia/nuxt": "^1.0.1",
+        "pinia": "^4.0.2",
+        "nuxt": "^4.5.2",
+        "vue": "^3.5.41",
+        "vue-router": "^5.2.0"
     }
 }

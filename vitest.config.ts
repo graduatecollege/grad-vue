@@ -51,9 +51,9 @@ export default defineConfig({
     },
     resolve: {
         alias: {
-            "@": resolve(__dirname, "./src"),
-            "@grad-vue": resolve(__dirname, "./packages/grad-vue/src"),
-            "@grad-vue-rte": resolve(__dirname, "./packages/grad-vue-rte/src"),
+            "@": resolve(import.meta.dirname, "./src"),
+            "@grad-vue": resolve(import.meta.dirname, "./packages/grad-vue/src"),
+            "@grad-vue-rte": resolve(import.meta.dirname, "./packages/grad-vue-rte/src"),
         },
     },
 });

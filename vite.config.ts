@@ -7,8 +7,8 @@ export default defineConfig({
     plugins: [vue()],
     resolve: {
         alias: {
-            '@grad-vue': resolve(__dirname, 'packages/grad-vue/src'),
-            '@grad-vue-rte': resolve(__dirname, 'packages/grad-vue-rte/src'),
+            '@grad-vue': resolve(import.meta.dirname, 'packages/grad-vue/src'),
+            '@grad-vue-rte': resolve(import.meta.dirname, 'packages/grad-vue-rte/src'),
         }
     }
 });

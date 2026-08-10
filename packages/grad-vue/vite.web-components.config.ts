@@ -20,7 +20,7 @@ export default defineConfig({
         outDir: "dist",
         emptyOutDir: false,
         lib: {
-            entry: resolve(__dirname, "src/web-components.ts"),
+            entry: resolve(import.meta.dirname, "src/web-components.ts"),
             formats: ["es"],
             fileName: () => "grad-vue-elements.js",
             name: "GradVueElements",
