@@ -6,8 +6,6 @@ import {
     useOverlayStackState,
     useSidebar,
 } from "@illinois-grad/grad-vue";
-import { useActiveLinkStore } from "~/stores/test.store";
-import { storeToRefs } from "pinia";
 import GAlertDialogDemo from "~/components/demo/GAlertDialogDemo.vue";
 import GAppHeaderDemo from "~/components/demo/GAppHeaderDemo.vue";
 import GButtonDemo from "~/components/demo/GButtonDemo.vue";
@@ -40,7 +38,7 @@ import GNoteInputDemo from "~/components/demo/GNoteInputDemo.vue";
 import GRichTextContentDemo from "~/components/demo/GRichTextContentDemo.vue";
 import GCheckboxGroupDemo from "~/components/demo/GCheckboxGroupDemo.vue";
 import GMultiSelectDemo from "~/components/demo/GMultiSelectDemo.vue";
-import { onMounted, provide } from "vue";
+import { onMounted, provide, ref } from "vue";
 import { useTemplateRef } from "#imports";
 import GFormDemo from "~/components/demo/GFormDemo.vue";
 import GTextareaDemo from "~/components/demo/GTextareaDemo.vue";
@@ -48,7 +46,7 @@ import GTextareaDemo from "~/components/demo/GTextareaDemo.vue";
 const sidebar = useSidebar();
 provide("sidebar", sidebar);
 
-const { activeId } = storeToRefs(useActiveLinkStore());
+const activeId = ref("");
 
 const slugify = (value: string) =>
     value
