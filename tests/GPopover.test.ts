@@ -5,12 +5,12 @@ import { mnt, testAccessibility } from "./test-utils";
 import { h } from "vue";
 import { page } from "vitest/browser";
 
-function defaultWrapper() {
+function defaultWrapper(content: () => any = () => "Popover content") {
     return mnt(GPopover, {
         slots: {
             trigger: (props: { toggle: () => void }) =>
                 h("button", { onClick: props.toggle }, "Open"),
-            default: () => "Popover content",
+            default: content,
         },
     });
 }
@@ -64,6 +64,32 @@ describe("GPopover", () => {
                 .toBeInView();
 
             content.remove();
+        });
+
+        it("scrolls its contents when taller than the viewport", async () => {
+            await page.viewport(420, 320);
+
+            const wrapper = defaultWrapper(() =>
+                h("div", { style: { height: "700px" } }, "Popover content"),
+            );
+
+            await page.getByRole("button", { name: "Open" }).click();
+            await wrapper.vm.$nextTick();
+
+            const dialog = page.getByRole("dialog");
+            await expect.element(dialog).toBeInView();
+
+            const scrollContainer = dialog.element().querySelector(
+                ".g-popover-content",
+            ) as HTMLElement | null;
+
+            expect(scrollContainer).not.toBeNull();
+            expect(window.getComputedStyle(scrollContainer!).overflowY).toBe(
+                "auto",
+            );
+            expect(scrollContainer!.scrollHeight).toBeGreaterThan(
+                scrollContainer!.clientHeight,
+            );
         });
 
         it("remains in viewport when inside a modal", async () => {

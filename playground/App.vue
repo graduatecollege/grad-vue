@@ -139,6 +139,33 @@ const fname = ref("heh");
                         </p>
                     </GPopover>
                 </section>
+                <section id="popover-scroll-demo">
+                    <h2>Oversized Popover</h2>
+                    <p class="popover-scroll-demo-note">
+                        This example intentionally makes the popover taller than the viewport so you can confirm the contents scroll.
+                    </p>
+                    <GPopover>
+                        <template #trigger="{ toggle }">
+                            <GButton @click="toggle">Open Tall Popover</GButton>
+                        </template>
+                        <div class="popover-scroll-demo">
+                            <h3>Scrollable popover content</h3>
+                            <p>
+                                If the popover is taller than the screen, the
+                                outer popover should stay inside the viewport
+                                and this content area should scroll.
+                            </p>
+                            <p v-for="index in 18" :key="index">
+                                Example content block {{ index }}. Keep
+                                scrolling to make sure interactive content near
+                                the end stays reachable.
+                            </p>
+                            <GButton theme="secondary">
+                                Action near the bottom
+                            </GButton>
+                        </div>
+                    </GPopover>
+                </section>
             </main>
         </div>
     </div>
@@ -202,5 +229,18 @@ section > *:not(h2) {
 .history-entry {
     font-size: 1.125rem;
     line-height: 1.5rem;
+}
+
+.popover-scroll-demo-note {
+    max-width: 40rem;
+}
+
+.popover-scroll-demo {
+    width: min(20rem, 100%);
+}
+
+.popover-scroll-demo h3 {
+    margin: 0 0 0.75rem;
+    font-size: 1rem;
 }
 </style>

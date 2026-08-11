@@ -208,6 +208,10 @@ function onPageSizeChange(e: Event) {
                 outline-color: var(--g-primary-500);
             }
         }
+
+        svg {
+            display: block;
+        }
     }
 }
 .g-pagination button:disabled {
