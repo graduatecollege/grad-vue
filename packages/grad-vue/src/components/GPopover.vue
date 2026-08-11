@@ -277,7 +277,12 @@ defineExpose({
                             :style="arrowPosition"
                             aria-hidden="true"
                         ></div>
-                        <slot></slot>
+                        <div
+                            class="g-popover-content"
+                            :class="{ 'g-popover-content-minimal': minimal }"
+                        >
+                            <slot></slot>
+                        </div>
                         <button
                             v-if="!minimal"
                             class="g-popover-close"
@@ -331,16 +336,26 @@ g-popover:not(:defined) {
     font-size: 1rem;
     border-radius: 4px;
     box-shadow: var(--il-shadow);
-    padding: 1.5rem 1rem 1rem;
-    min-width: 200px;
-    max-width: 500px;
+    box-sizing: border-box;
+    min-width: min(200px, calc(100vw - 32px));
+    max-width: min(500px, calc(100vw - 32px));
     top: 0;
     left: 0;
     text-align: left;
 }
 .g-popover.g-popover-minimal {
-    padding: 0;
     min-width: 0;
+}
+
+.g-popover-content {
+    box-sizing: border-box;
+    max-height: calc(100vh - 32px);
+    overflow: auto;
+    padding: 1.5rem 1rem 1rem;
+}
+
+.g-popover-content.g-popover-content-minimal {
+    padding: 0;
 }
 
 .g-popover-arrow {
