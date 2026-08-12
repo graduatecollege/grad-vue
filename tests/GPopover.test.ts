@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import GPopover from "../packages/grad-vue/src/components/GPopover.vue";
 import GModal from "../packages/grad-vue/src/components/GModal.vue";
+import GTermSelector from "../packages/grad-vue/src/components/GTermSelector.vue";
 import { mnt, testAccessibility } from "./test-utils";
 import { h } from "vue";
 import { page } from "vitest/browser";
@@ -79,17 +80,59 @@ describe("GPopover", () => {
             const dialog = page.getByRole("dialog");
             await expect.element(dialog).toBeInView();
 
-            const scrollContainer = dialog.element().querySelector(
-                ".g-popover-content",
-            ) as HTMLElement | null;
-
-            expect(scrollContainer).not.toBeNull();
-            expect(window.getComputedStyle(scrollContainer!).overflowY).toBe(
+            expect(window.getComputedStyle(dialog.element()).overflowY).toBe(
                 "auto",
             );
-            expect(scrollContainer!.scrollHeight).toBeGreaterThan(
-                scrollContainer!.clientHeight,
+            expect(dialog.element().scrollHeight).toBeGreaterThan(
+                dialog.element().clientHeight,
             );
+        });
+
+        it("allows nested dropdowns to overflow when the popover fits", async () => {
+            await page.viewport(900, 700);
+
+            mnt(GTermSelector, {
+                props: {
+                    termYears: [
+                        "2020",
+                        "2021",
+                        "2022",
+                        "2023",
+                        "2024",
+                        "2025",
+                        "2026",
+                        "2027",
+                        "2028",
+                        "2029",
+                    ],
+                },
+            });
+
+            await page.getByRole("button", { name: /Spring 2026/i }).click();
+
+            const dialog = page.getByRole("dialog");
+            await expect.element(dialog).toBeVisible();
+
+            expect(window.getComputedStyle(dialog.element()).overflowY).toBe(
+                "visible",
+            );
+
+            await page.getByRole("combobox", { name: "Select Year" }).click();
+
+            const listbox = page.getByRole("listbox");
+            await expect.element(listbox).toBeVisible();
+
+            const popoverRect = dialog.element().getBoundingClientRect();
+            const listboxRect = listbox.element().getBoundingClientRect();
+            const sampleX = listboxRect.left + Math.min(16, listboxRect.width / 2);
+            const sampleY = popoverRect.bottom + 8;
+
+            expect(listboxRect.bottom).toBeGreaterThan(sampleY);
+            expect(
+                document.elementFromPoint(sampleX, sampleY)?.closest(
+                    '[role="listbox"]',
+                ),
+            ).not.toBeNull();
         });
 
         it("remains in viewport when inside a modal", async () => {
