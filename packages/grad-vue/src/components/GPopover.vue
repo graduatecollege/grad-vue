@@ -99,6 +99,8 @@ watch(open, (val) => {
         deactivate();
         pop();
         emit("hide");
+        popoverScrollable.value = false;
+        popoverMaxHeight.value = null;
     }
 });
 
@@ -121,7 +123,11 @@ const popoverPosition = ref<Record<string, any>>({ top: 0, left: 0 });
 const arrowPosition = ref<Record<string, any>>({ left: "50%" });
 const popoverAbove = ref(false);
 const popoverOverlay = ref(false);
+const popoverScrollable = ref(false);
+const popoverMaxHeight = ref<number | null>(null);
 let resizeObserver: ResizeObserver | null = null;
+// Keep a small gutter so oversized popovers do not touch the viewport edge.
+const viewportMargin = 16;
 
 function getAnchorElement() {
     if (triggerRef.value) {
@@ -146,27 +152,46 @@ function updatePopoverPosition() {
         return;
     }
 
+    const popoverEl = popoverRef.value;
     // Use offsetWidth/offsetHeight for popover dimensions to avoid getting
     // scaled values during the CSS scale() enter transition.
-    const popoverRect = new DOMRect(
-        0,
-        0,
-        popoverRef.value.offsetWidth,
-        popoverRef.value.offsetHeight,
-    );
     const viewportRect = new DOMRect(
         0,
         0,
         window.innerWidth,
         window.innerHeight,
     );
+    const maxPopoverHeight = Math.max(
+        viewportRect.height - viewportMargin * 2,
+        0,
+    );
+    const naturalPopoverHeight = popoverEl.scrollHeight;
+
+    // Only turn on scrolling when the popover would exceed the viewport.
+    popoverScrollable.value = naturalPopoverHeight > maxPopoverHeight;
+    popoverMaxHeight.value = popoverScrollable.value
+        ? maxPopoverHeight
+        : null;
+
+    const popoverRect = new DOMRect(
+        0,
+        0,
+        popoverEl.offsetWidth,
+        Math.min(naturalPopoverHeight, maxPopoverHeight),
+    );
 
     const anchorEl = getAnchorElement();
 
     if (!anchorEl) {
         popoverPosition.value = {
-            top: Math.max((viewportRect.height - popoverRect.height) / 2, 8),
-            left: Math.max((viewportRect.width - popoverRect.width) / 2, 8),
+            top: Math.max(
+                (viewportRect.height - popoverRect.height) / 2,
+                viewportMargin,
+            ),
+            left: Math.max(
+                (viewportRect.width - popoverRect.width) / 2,
+                viewportMargin,
+            ),
         };
         popoverOverlay.value = false;
         popoverAbove.value = false;
@@ -257,6 +282,7 @@ defineExpose({
                             'g-popover-above': popoverAbove,
                             'g-popover-below': !popoverAbove,
                             'g-popover-minimal': minimal,
+                            'g-popover-scrollable': popoverScrollable,
                         }"
                         role="dialog"
                         aria-modal="true"
@@ -268,21 +294,19 @@ defineExpose({
                             top: popoverPosition.top + 'px',
                             left: popoverPosition.left + 'px',
                             zIndex,
+                            maxHeight: popoverMaxHeight !== null
+                                ? `${popoverMaxHeight}px`
+                                : undefined,
                         }"
                     >
                         <div
-                            v-if="!popoverOverlay && !minimal"
+                            v-if="!popoverOverlay && !minimal && !popoverScrollable"
                             class="g-popover-arrow"
                             :class="{ 'g-popover-arrow-above': popoverAbove }"
                             :style="arrowPosition"
                             aria-hidden="true"
                         ></div>
-                        <div
-                            class="g-popover-content"
-                            :class="{ 'g-popover-content-minimal': minimal }"
-                        >
-                            <slot></slot>
-                        </div>
+                        <slot></slot>
                         <button
                             v-if="!minimal"
                             class="g-popover-close"
@@ -339,23 +363,19 @@ g-popover:not(:defined) {
     box-sizing: border-box;
     min-width: min(200px, calc(100vw - 32px));
     max-width: min(500px, calc(100vw - 32px));
+    overflow: visible;
+    padding: 1.5rem 1rem 1rem;
     top: 0;
     left: 0;
     text-align: left;
 }
 .g-popover.g-popover-minimal {
     min-width: 0;
-}
-
-.g-popover-content {
-    box-sizing: border-box;
-    max-height: calc(100vh - 32px);
-    overflow: auto;
-    padding: 1.5rem 1rem 1rem;
-}
-
-.g-popover-content.g-popover-content-minimal {
     padding: 0;
+}
+
+.g-popover.g-popover-scrollable {
+    overflow: auto;
 }
 
 .g-popover-arrow {
