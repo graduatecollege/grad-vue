@@ -92,35 +92,44 @@ export default {
 declare module "vue" {
     export interface GlobalComponents {
         GAppHeader: typeof GAppHeader;
+        GAlertDialog: typeof GAlertDialog;
         GButton: typeof GButton;
         GCheckboxGroup: typeof GCheckboxGroup;
-        GTextInput: typeof GTextInput;
+        GClipboard: typeof GClipboard;
+        GCurrencyInput: typeof GCurrencyInput;
+        GDateInput: typeof GDateInput;
+        GDateRangeInput: typeof GDateRangeInput;
+        GDetailList: typeof GDetailList;
+        GDetailListItem: typeof GDetailListItem;
+        GEmailInput: typeof GEmailInput;
+        GFileInput: typeof GFileInput;
+        GForm: typeof GForm;
+        GHamburgerMenu: typeof GHamburgerMenu;
+        GHistoryScroller: typeof GHistoryScroller;
+        GModal: typeof GModal;
+        GMultiSelect: typeof GMultiSelect;
+        GOverlay: typeof GOverlay;
         GPopover: typeof GPopover;
-        GTooltip: typeof GTooltip;
-        GSelectButton: typeof GSelectButton;
         GProgress: typeof GProgress;
-        GAlertDialog: typeof GAlertDialog;
-        GSelect: typeof GSelect;
         GSearch: typeof GSearch;
+        GSelect: typeof GSelect;
+        GSelectButton: typeof GSelectButton;
         GSidebar: typeof GSidebar;
         GSidebarMenu: typeof GSidebarMenu;
-        GClipboard: typeof GClipboard;
-        GHistoryScroller: typeof GHistoryScroller;
-        GThreeWayToggle: typeof GThreeWayToggle;
+        GSubmitButton: typeof GSubmitButton;
         GTable: typeof GTable;
         GTableBody: typeof GTableBody;
         GTablePagination: typeof GTablePagination;
-        GModal: typeof GModal;
-        GOverlay: typeof GOverlay;
-        GHamburgerMenu: typeof GHamburgerMenu;
-        GDetailList: typeof GDetailList;
-        GDetailListItem: typeof GDetailListItem;
+        GTermSelector: typeof GTermSelector;
+        GTermSelectorControl: typeof GTermSelectorControl;
+        GTextarea: typeof GTextarea;
+        GTextInput: typeof GTextInput;
+        GThreeWayToggle: typeof GThreeWayToggle;
+        GTooltip: typeof GTooltip;
         GTreeMenu: typeof GTreeMenu;
-        GTreeMenuList: typeof GTreeMenuList;
         GTreeMenuItem: typeof GTreeMenuItem;
-        GForm: typeof GForm;
-        GSubmitButton: typeof GSubmitButton;
-        GFileInput: typeof GFileInput;
+        GTreeMenuList: typeof GTreeMenuList;
+        GUserMenu: typeof GUserMenu;
     }
 
     export interface ComponentCustomProperties {
