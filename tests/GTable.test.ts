@@ -521,6 +521,35 @@ describe("GTable", () => {
                 .toBeVisible();
         });
 
+        it("hides the Show All action when every column is visible", async () => {
+            const { GTableFixture } = createGTableFixture<TableEntry>({
+                label: "Colleges",
+                columns,
+                data: tableData,
+                paginate: false,
+                initialColumnVisibility: {},
+            });
+            const { container } = mnt(GTableFixture);
+
+            await container
+                .getByRole("button", {
+                    name: "Choose visible columns",
+                })
+                .click();
+
+            await expect
+                .element(page.getByRole("group", { name: "Shown columns" }))
+                .toBeVisible();
+            await expect
+                .element(
+                    page.getByRole("button", {
+                        name: "Show All",
+                        includeHidden: true,
+                    }),
+                )
+                .not.toBeVisible();
+        });
+
         it("omits configured hidden columns from rendering", async () => {
             const { GTableFixture } = createGTableFixture<TableEntry>({
                 label: "Colleges",
@@ -581,6 +610,85 @@ describe("GTable", () => {
                 )
                 .toBeVisible();
             expect(getColumn(container, 2)).toEqual(["COM", "ACES", "AHS"]);
+        });
+
+        it("shows a Show All action when columns are hidden and restores them", async () => {
+            const { GTableFixture, columnVisibility } =
+                createGTableFixture<TableEntry>({
+                    label: "Colleges",
+                    columns,
+                    data: tableData,
+                    initialFilter: defaultFilter,
+                    initialPageSize: 3,
+                    pageSizes: [3, 10, 50],
+                    filterData: filterCollegesData,
+                    initialColumnVisibility: {
+                        abbr: false,
+                    },
+                });
+            const { container } = mnt(GTableFixture);
+
+            await container
+                .getByRole("button", {
+                    name: "Choose visible columns",
+                })
+                .click();
+
+            await expect
+                .element(page.getByRole("button", { name: "Show All" }))
+                .toBeVisible();
+
+            await page.getByRole("button", { name: "Show All" }).click();
+
+            expect(columnVisibility.value.abbr).toBe(true);
+            await expect
+                .element(
+                    container.getByRole("columnheader", { name: "Abbreviation" }),
+                )
+                .toBeVisible();
+            await expect
+                .element(
+                    page.getByRole("button", {
+                        name: "Show All",
+                        includeHidden: true,
+                    }),
+                )
+                .not.toBeVisible();
+        });
+
+        it("keeps the column chooser width stable when Show All appears", async () => {
+            const { GTableFixture } = createGTableFixture<TableEntry>({
+                label: "Colleges",
+                columns,
+                data: tableData,
+                paginate: false,
+                initialColumnVisibility: {},
+            });
+            const { container } = mnt(GTableFixture);
+
+            await container
+                .getByRole("button", {
+                    name: "Choose visible columns",
+                })
+                .click();
+
+            const chooser = page.getByRole("group", { name: "Shown columns" });
+
+            await expect.element(chooser).toBeVisible();
+            await new Promise((resolve) => setTimeout(resolve, 200));
+
+            const widthBefore = chooser.element().getBoundingClientRect().width;
+
+            await page.getByRole("checkbox", { name: "Abbreviation" }).click();
+
+            await expect
+                .element(page.getByRole("button", { name: "Show All" }))
+                .toBeVisible();
+            await new Promise((resolve) => setTimeout(resolve, 50));
+
+            const widthAfter = chooser.element().getBoundingClientRect().width;
+
+            expect(Math.abs(widthAfter - widthBefore)).toBeLessThanOrEqual(0.5);
         });
 
         it("uses the visible column count for grouped row colspan", async () => {
