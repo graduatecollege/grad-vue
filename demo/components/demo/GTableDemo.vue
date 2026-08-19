@@ -543,9 +543,11 @@ with the link <code>href</code> from the first link in the row.</p>
         min-width: 0;
     }
     .component-demo__preview-inner {
+        min-width: 0;
+    }
+    .g-table-table-wrap {
         overflow-x: auto;
         max-width: 100%;
-        min-width: 0;
     }
 }
 </style>

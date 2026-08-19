@@ -981,6 +981,25 @@ describe("GTable", () => {
                 .toBeVisible();
         });
 
+        it("renders the table in a separate wrapper from the controls", async () => {
+            const { GTableFixture } = createCollegesTableFixture();
+            const { container } = mnt(GTableFixture);
+
+            const controls = container.element().querySelector(
+                ".g-table-controls",
+            ) as HTMLElement | null;
+            const tableWrapper = container.element().querySelector(
+                ".g-table-table-wrap",
+            ) as HTMLElement | null;
+            const table = tableWrapper?.querySelector(".g-table");
+
+            expect(controls).not.toBeNull();
+            expect(tableWrapper).not.toBeNull();
+            expect(table).not.toBeNull();
+            expect(tableWrapper?.querySelector(".g-table-controls")).toBeNull();
+            expect(controls?.closest(".g-table-table-wrap")).toBeNull();
+        });
+
         it("keeps pagination centered and result count pinned right", async () => {
             const { GTableFixture } = createCollegesTableFixture();
             const { container } = mnt(GTableFixture);
