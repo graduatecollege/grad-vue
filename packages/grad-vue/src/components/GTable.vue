@@ -506,6 +506,16 @@ function setColumnVisibility(col: C, visible: boolean) {
     };
 }
 
+function showAllColumns() {
+    columnVisibility.value = props.columns.reduce(
+        (visibility, col) => ({
+            ...visibility,
+            [col.key]: true,
+        }),
+        { ...columnVisibility.value },
+    );
+}
+
 const shouldShowPagination = computed(() => {
     return props.pagination && typeof props.pageSize === "number";
 });
@@ -798,10 +808,32 @@ onMounted(() => {
                                 </svg>
                             </GButton>
                         </template>
-                        <fieldset class="g-column-visibility-popover">
-                            <legend class="g-column-visibility-legend">
-                                Shown columns
-                            </legend>
+                        <fieldset
+                            class="g-column-visibility-popover"
+                            :aria-labelledby="`${id}-column-visibility-heading`"
+                        >
+                            <div class="g-column-visibility-header">
+                                <span
+                                    :id="`${id}-column-visibility-heading`"
+                                    class="g-column-visibility-heading"
+                                >
+                                    Shown columns
+                                </span>
+                                <span class="g-column-visibility-legend-action">
+                                    <GButton
+                                        text
+                                        size="small"
+                                        class="g-column-visibility-show-all"
+                                        :class="{
+                                            'g-column-visibility-show-all--hidden':
+                                                !hasHiddenColumns,
+                                        }"
+                                        @click="showAllColumns"
+                                    >
+                                        Show All
+                                    </GButton>
+                                </span>
+                            </div>
                             <div class="g-column-visibility-list">
                                 <label
                                     v-for="col in columns"
@@ -1533,15 +1565,38 @@ button.g-column-head:hover {
     padding: 0;
 }
 
-.g-column-visibility-legend {
-    font-weight: 700;
+.g-column-visibility-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
     margin-bottom: 0.5rem;
+}
+
+.g-column-visibility-heading {
+    font-weight: 700;
+}
+
+.g-column-visibility-legend-action {
+    width: 5.5rem;
+    display: inline-flex;
+    justify-content: flex-end;
+    flex: 0 0 auto;
 }
 
 .g-column-visibility-list {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+}
+
+.g-column-visibility-show-all {
+    white-space: nowrap;
+}
+
+.g-column-visibility-show-all--hidden {
+    visibility: hidden;
+    pointer-events: none;
 }
 
 .g-column-visibility-option {
