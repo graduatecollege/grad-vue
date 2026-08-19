@@ -1463,6 +1463,8 @@ with the link `href` from the first link in the row.
 
 Grouping can be enabled by passing a column key to `groupBy`.
 
+The controls bar can be extended with the `controls` slot.
+
 ### Props
 
 ```typescript
@@ -1554,6 +1556,10 @@ type Props = {
     pagination?: boolean;
 };
 ```
+
+### Slots
+
+- `controls`
 
 ---
 

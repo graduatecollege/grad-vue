@@ -486,6 +486,7 @@ objects to use, and <code>label</code> for the column header.</li>
 cells must contain a link. Clicking a row will emit a <code>row-click</code> event
 with the link <code>href</code> from the first link in the row.</p>
 <p>Grouping can be enabled by passing a column key to <code>groupBy</code>.</p>
+<p>The controls bar can be extended with the <code>controls</code> slot.</p>
 </template>
             <template #default="{ props }">
                 <!-- @vue-generic {TableEntry, TableColumn<TableEntry>} -->
