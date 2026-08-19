@@ -30,7 +30,6 @@ import GSidebarMenu from "./components/GSidebarMenu.vue";
 import GSubmitButton from "./components/GSubmitButton.vue";
 import GTable from "./components/GTable.vue";
 import GTableBody from "./components/table/GTableBody.vue";
-import GTablePagination from "./components/table/GTablePagination.vue";
 import GTermSelector from "./components/GTermSelector.vue";
 import GTermSelectorControl from "./components/term/GTermSelectorControl.vue";
 import GTextInput from "./components/GTextInput.vue";
@@ -87,7 +86,6 @@ const components: [string, Component][] = [
     ["g-submit-button", GSubmitButton],
     ["g-table", GTable],
     ["g-table-body", GTableBody],
-    ["g-table-pagination", GTablePagination],
     ["g-term-selector", GTermSelector],
     ["g-term-selector-control", GTermSelectorControl],
     ["g-text-input", GTextInput],

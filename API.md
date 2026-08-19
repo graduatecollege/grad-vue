@@ -1489,7 +1489,7 @@ type Props = {
     /**
      * Result count for all of the possible results (not just the current page)
      *
-     * This is shown in the toolbar.
+     * This is shown in the toolbar and used by built-in pagination.
      */
     resultCount?: number;
     /**
@@ -1526,6 +1526,14 @@ type Props = {
      */
     startIndex: number;
     /**
+     * Current page size for the built-in pagination controls.
+     */
+    pageSize?: number;
+    /**
+     * Available page sizes for the built-in pagination controls.
+     */
+    pageSizes?: number[];
+    /**
      * Enable bulk selection with checkboxes
      */
     bulkSelectionEnabled?: boolean;
@@ -1541,15 +1549,11 @@ type Props = {
     changeTracker?: UseTableChangesReturn<T>;
 
     /**
-     * Explicitly show the pagination bar even if the slot is empty
+     * Enable the built-in pagination controls.
      */
-    showPagination?: boolean;
+    pagination?: boolean;
 };
 ```
-
-### Slots
-
-- `pagination`
 
 ---
 

@@ -17,7 +17,6 @@ import GClipboard from "./components/GClipboard.vue";
 import GHistoryScroller from "./components/GHistoryScroller.vue";
 import GThreeWayToggle from "./components/GThreeWayToggle.vue";
 import GTable from "./components/GTable.vue";
-import GTablePagination from "./components/table/GTablePagination.vue";
 import GTableBody from "./components/table/GTableBody.vue";
 import GModal from "./components/GModal.vue";
 import GHamburgerMenu from "./components/GHamburgerMenu.vue";
@@ -61,7 +60,6 @@ export {
     GThreeWayToggle,
     GTable,
     GTableBody,
-    GTablePagination,
     GModal,
     VGtooltip,
     GOverlay,

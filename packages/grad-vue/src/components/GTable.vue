@@ -26,6 +26,8 @@
  * with the link `href` from the first link in the row.
  *
  * Grouping can be enabled by passing a column key to `groupBy`.
+ *
+ * The controls bar can be extended with the `controls` slot.
  */
 export default {};
 </script>
@@ -33,7 +35,7 @@ export default {};
 <script setup lang="ts" generic="T extends TableRow, C extends TableColumn<T>">
 import GTableBody from "./table/GTableBody.vue";
 import GPopover from "./GPopover.vue";
-import { TableColumn, TableRow, TableSort } from "./table/TableColumn.ts";
+import type { TableColumn, TableRow, TableSort } from "./table/TableColumn.ts";
 import {
     computed,
     getCurrentInstance,
@@ -42,14 +44,15 @@ import {
     ref,
     toRaw,
     useId,
-    useSlots,
-    VNode,
 } from "vue";
+import type { VNode } from "vue";
 import GSelect from "./GSelect.vue";
 import GMultiSelect from "./GMultiSelect.vue";
 import GCheckboxGroup from "./GCheckboxGroup.vue";
-import { useFiltering, UseFilteringReturn } from "../compose/useFiltering.ts";
-import {
+import GTablePagination from "./table/GTablePagination.vue";
+import { useFiltering } from "../compose/useFiltering.ts";
+import type { UseFilteringReturn } from "../compose/useFiltering.ts";
+import type {
     CellChangePayload,
     UseTableChangesReturn,
 } from "../compose/useTableChanges.ts";
@@ -97,7 +100,7 @@ type Props = {
     /**
      * Result count for all of the possible results (not just the current page)
      *
-     * This is shown in the toolbar.
+     * This is shown in the toolbar and used by built-in pagination.
      */
     resultCount?: number;
     /**
@@ -134,6 +137,14 @@ type Props = {
      */
     startIndex: number;
     /**
+     * Current page size for the built-in pagination controls.
+     */
+    pageSize?: number;
+    /**
+     * Available page sizes for the built-in pagination controls.
+     */
+    pageSizes?: number[];
+    /**
      * Enable bulk selection with checkboxes
      * @demo
      */
@@ -150,10 +161,10 @@ type Props = {
     changeTracker?: UseTableChangesReturn<T>;
 
     /**
-     * Explicitly show the pagination bar even if the slot is empty
+     * Enable the built-in pagination controls.
      * @demo
      */
-    showPagination?: boolean;
+    pagination?: boolean;
 };
 
 const sorts = defineModel<TableSort<T>[]>("sorts", {
@@ -174,13 +185,16 @@ const selectedRows = defineModel<string[]>("selectedRows", {
 const props = withDefaults(defineProps<Props>(), {
     bulkSelectionEnabled: false,
     bulkActions: () => [],
-    showPagination: false,
+    pageSizes: () => [10, 25, 50, 100],
+    pagination: false,
 });
 
 const emit = defineEmits<{
     (e: "row-click", link: string): void;
     (e: "bulk-action", actionId: string, selectedKeys: string[]): void;
     (e: "cell-change", payload: CellChangePayload<T>): void;
+    (e: "update:startIndex", value: number): void;
+    (e: "update:pageSize", value: number): void;
 }>();
 
 let filtering: UseFilteringReturn<any> = props.filtering!;
@@ -288,8 +302,18 @@ function handleCellChange(change: { row: T; column: C; value: any }) {
     emit("cell-change", payload);
 }
 
+function updateStartIndex(value: number | undefined) {
+    emit("update:startIndex", value ?? 0);
+}
+
+function updatePageSize(value: number | undefined) {
+    if (value === undefined) {
+        return;
+    }
+    emit("update:pageSize", value);
+}
+
 const id = useId();
-const slots = useSlots();
 const instance = getCurrentInstance();
 const sortBuilderRef = ref<HTMLFieldSetElement | null>(null);
 
@@ -459,12 +483,17 @@ const visibleColumns = computed(() => {
         (col) => visibility[col.key as ColumnVisibilityKey<T>] !== false,
     );
 });
+const slots = defineSlots<{
+    controls?: () => any;
+}>();
 const hasHiddenColumns = computed(
     () => visibleColumns.value.length !== props.columns.length,
 );
 const shouldShowColumnVisibilityControls = computed(
     () => columnVisibilityConfigured.value && props.columns.length > 0,
 );
+const shouldShowCustomControls = computed(() => !!slots.controls);
+const totalResults = computed(() => props.resultCount ?? props.data.length);
 
 function isColumnVisible(col: C) {
     return columnVisibility.value[col.key as ColumnVisibilityKey<T>] !== false;
@@ -478,12 +507,7 @@ function setColumnVisibility(col: C, visible: boolean) {
 }
 
 const shouldShowPagination = computed(() => {
-    // Show if explicitly requested via prop
-    if (props.showPagination) {
-        return true;
-    }
-    // Show if the pagination slot has content
-    return !!slots.pagination;
+    return props.pagination && typeof props.pageSize === "number";
 });
 
 const shouldShowControls = computed(() => {
@@ -499,6 +523,9 @@ const shouldShowControls = computed(() => {
         return true;
     }
     if (shouldShowColumnVisibilityControls.value) {
+        return true;
+    }
+    if (shouldShowCustomControls.value) {
         return true;
     }
     // Otherwise hide the entire controls bar
@@ -799,6 +826,9 @@ onMounted(() => {
                         </fieldset>
                     </GPopover>
                 </div>
+                <div v-if="shouldShowCustomControls" class="g-table-custom-controls">
+                    <slot name="controls"></slot>
+                </div>
 
                 <div class="g-clear-filters-wrap">
                     <GButton
@@ -806,17 +836,19 @@ onMounted(() => {
                         outlined
                         size="small"
                         class="clear-filters"
+                        aria-label="Clear Filters"
                         @click="clearFilters"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 51.26 51.26"
-                            height="1em"
+                            viewBox="0 0 640 640"
+                            height="1.5em"
                             aria-hidden="true"
                         >
+                            <!--!Font Awesome Free v7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
                             <path
                                 fill="currentColor"
-                                d="m37.84 32.94-7.63-7.63 7.63-7.63a3.24 3.24 0 0 0-4.58-4.58l-7.63 7.63L18 13.1a3.24 3.24 0 0 0-4.58 4.58L21 25.31l-7.62 7.63A3.24 3.24 0 1 0 18 37.52l7.63-7.63 7.63 7.63a3.24 3.24 0 0 0 4.58-4.58Z"
+                                d="M64 128C51.1 128 39.4 135.8 34.4 147.8C29.4 159.8 32.2 173.5 41.4 182.6L224 365.3L224 480C224 488.5 227.4 496.6 233.4 502.6L297.4 566.6C299.9 569.1 302.7 571.1 305.7 572.6C284.5 541.7 272.1 504.3 272.1 464C272.1 364.6 347.6 282.9 444.4 273L534.8 182.6C544 173.4 546.7 159.7 541.7 147.7C536.7 135.7 524.9 128 512 128L64 128zM464 608C543.5 608 608 543.5 608 464C608 384.5 543.5 320 464 320C384.5 320 320 384.5 320 464C320 543.5 384.5 608 464 608zM523.3 427.3L486.6 464L523.3 500.7C529.5 506.9 529.5 517.1 523.3 523.3C517.1 529.5 506.9 529.5 500.7 523.3L464 486.6L427.3 523.3C421.1 529.5 410.9 529.5 404.7 523.3C398.5 517.1 398.5 506.9 404.7 500.7L441.4 464L404.7 427.3C398.5 421.1 398.5 410.9 404.7 404.7C410.9 398.5 421.1 398.5 427.3 404.7L464 441.4L500.7 404.7C506.9 398.5 517.1 398.5 523.3 404.7C529.5 410.9 529.5 421.1 523.3 427.3z"
                             />
                         </svg>
                         <span class="g-clear-filters-text"> Clear Filters </span>
@@ -824,10 +856,17 @@ onMounted(() => {
                 </div>
             </div>
             <div v-if="shouldShowPagination" class="pagination">
-                <slot name="pagination"></slot>
+                <GTablePagination
+                    :start="startIndex"
+                    :page-size="pageSize!"
+                    :page-sizes="pageSizes"
+                    :total="totalResults"
+                    @update:start="updateStartIndex"
+                    @update:page-size="updatePageSize"
+                />
             </div>
             <span class="g-result-count"
-                >{{ props.resultCount || data.length }} results</span
+                >{{ totalResults }} results</span
             >
         </div>
         <div class="g-table-table-wrap">
@@ -835,7 +874,7 @@ onMounted(() => {
                 class="g-table"
                 ref="tableRef"
                 :aria-label="label"
-                :aria-rowcount="props.resultCount || data.length"
+                :aria-rowcount="totalResults"
             >
                 <thead class="g-table-head">
                     <tr aria-rowindex="1">
@@ -1089,6 +1128,8 @@ g-table {
     display: block;
 }
 .g-table-outer-wrap {
+    container-type: inline-size;
+    container-name: g-table;
 }
 
 .g-table-controls {
@@ -1204,15 +1245,6 @@ button.g-column-head:hover {
     white-space: nowrap;
 }
 
-@media screen and (max-width: 600px) {
-    .g-clear-filters-text {
-        opacity: 0;
-        width: 1px;
-        height: 1px;
-        overflow: hidden;
-    }
-}
-
 .g-filter-select {
     min-width: 200px;
 }
@@ -1276,6 +1308,42 @@ button.g-column-head:hover {
         line-height: 1.2;
         text-align: right;
         white-space: nowrap;
+    }
+
+    .clear-filters {
+        padding: 0.25rem 0.5rem;
+    }
+    .g-clear-filters-text {
+        margin-left: 0.25rem;
+    }
+}
+
+@container g-table (max-width: 1000px) {
+    .g-table-controls {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .g-table-controls .pagination {
+        grid-column: auto;
+        justify-self: auto;
+        justify-content: flex-start;
+    }
+
+    .g-table-controls .g-result-count {
+        grid-column: auto;
+        justify-self: auto;
+    }
+}
+
+@container g-table (max-width: 760px) {
+    .g-table-controls .clear-filters {
+        min-width: auto;
+        padding-inline: 0.45rem;
+    }
+
+    .g-table-controls .g-clear-filters-text {
+        display: none;
     }
 }
 

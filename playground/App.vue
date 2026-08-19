@@ -278,19 +278,15 @@ const fname = ref("heh");
                         :filtering="playgroundFiltering"
                         :filter="playgroundFilters"
                         :result-count="playgroundFilteredRows.length"
+                        :page-size="playgroundPageSize"
+                        :page-sizes="[5, 10, 25]"
+                        :pagination="true"
                         :start-index="playgroundStart"
                         v-model:sorts="playgroundSorts"
                         v-model:column-visibility="playgroundColumnVisibility"
-                    >
-                        <template #pagination>
-                            <GTablePagination
-                                v-model:start="playgroundStart"
-                                v-model:page-size="playgroundPageSize"
-                                :total="playgroundFilteredRows.length"
-                                :page-sizes="[5, 10, 25]"
-                            />
-                        </template>
-                    </GTable>
+                        @update:start-index="playgroundStart = $event"
+                        @update:page-size="playgroundPageSize = $event"
+                    />
                 </section>
                 <div>
                     <GHamburgerMenu label="Menu" style="display: flex;">
