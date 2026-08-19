@@ -1,5 +1,229 @@
 <script setup lang="ts">
-import { computed, h, onMounted, provide, ref, useTemplateRef } from "vue";
+import {
+    computed,
+    h,
+    onMounted,
+    provide,
+    ref,
+    useTemplateRef,
+    watch,
+} from "vue";
+import {
+    useFiltering,
+    type TableColumn,
+    type TableSort,
+} from "../packages/grad-vue/src/grad-vue";
+
+interface PlaygroundTableEntry {
+    key: string;
+    code: string;
+    name: string;
+    abbr: string;
+    unitType: string;
+    collegeInName: boolean;
+}
+
+const playgroundTableColumns: TableColumn<PlaygroundTableEntry>[] = [
+    {
+        key: "code",
+        label: "Code",
+        sortable: true,
+    },
+    {
+        key: "name",
+        label: "Name",
+        sortable: true,
+        filter: {
+            type: "search",
+            placeholder: "Search name",
+        },
+    },
+    {
+        key: "abbr",
+        label: "Abbreviation",
+        sortable: true,
+    },
+    {
+        key: "unitType",
+        label: "Unit Type",
+        sortable: true,
+        filter: {
+            type: "select",
+            options: [
+                { label: "College", value: "College" },
+                { label: "School", value: "School" },
+                { label: "Institute", value: "Institute" },
+                { label: "Division", value: "Division" },
+            ],
+            placeholder: "Any type",
+        },
+    },
+    {
+        key: "collegeInName",
+        label: "'College' in Name",
+        sortable: true,
+        display: (row) => h("span", row.collegeInName ? "Yes" : "No"),
+        filter: {
+            type: "select",
+            options: [
+                { label: "Yes", value: "yes" },
+                { label: "No", value: "no" },
+            ],
+            placeholder: "Any",
+        },
+    },
+];
+
+const playgroundTableRows: PlaygroundTableEntry[] = [
+    {
+        key: "LT",
+        code: "LT",
+        name: "Carle Illinois College of Medicine",
+        abbr: "COM",
+        unitType: "College",
+        collegeInName: true,
+    },
+    {
+        key: "KL",
+        code: "KL",
+        name: "College of Agricultural, Consumer and Environmental Sciences (ACES)",
+        abbr: "ACES",
+        unitType: "College",
+        collegeInName: true,
+    },
+    {
+        key: "KY",
+        code: "KY",
+        name: "College of Applied Health Sciences",
+        abbr: "AHS",
+        unitType: "College",
+        collegeInName: true,
+    },
+    {
+        key: "KN",
+        code: "KN",
+        name: "College of Education",
+        abbr: "EDUC",
+        unitType: "College",
+        collegeInName: true,
+    },
+    {
+        key: "KO",
+        code: "KO",
+        name: "Gies College of Business",
+        abbr: "GIES",
+        unitType: "College",
+        collegeInName: true,
+    },
+    {
+        key: "KP",
+        code: "KP",
+        name: "Grainger College of Engineering",
+        abbr: "ENGR",
+        unitType: "College",
+        collegeInName: true,
+    },
+    {
+        key: "LP",
+        code: "LP",
+        name: "School of Information Sciences",
+        abbr: "IS",
+        unitType: "School",
+        collegeInName: false,
+    },
+    {
+        key: "KW",
+        code: "KW",
+        name: "Division of Exploratory Studies",
+        abbr: "DES",
+        unitType: "Division",
+        collegeInName: false,
+    },
+];
+
+const playgroundFiltering = useFiltering({
+    code: undefined as string | undefined,
+    name: undefined as string | undefined,
+    abbr: undefined as string | undefined,
+    unitType: undefined as string | undefined,
+    collegeInName: undefined as string | undefined,
+});
+
+const { filters: playgroundFilters } = playgroundFiltering;
+const playgroundSorts = ref<TableSort<PlaygroundTableEntry>[]>([]);
+const playgroundStart = ref(0);
+const playgroundPageSize = ref(5);
+const playgroundColumnVisibility = ref({
+    code: true,
+    name: true,
+    abbr: true,
+    unitType: true,
+    collegeInName: true,
+});
+
+const playgroundFilteredRows = computed(() => {
+    return playgroundTableRows.filter((row) => {
+        if (
+            playgroundFilters.name &&
+            !row.name
+                .toLowerCase()
+                .includes(playgroundFilters.name.toLowerCase())
+        ) {
+            return false;
+        }
+
+        if (
+            playgroundFilters.unitType &&
+            row.unitType !== playgroundFilters.unitType
+        ) {
+            return false;
+        }
+
+        if (playgroundFilters.collegeInName) {
+            const expectsCollege = playgroundFilters.collegeInName === "yes";
+            if (row.collegeInName !== expectsCollege) {
+                return false;
+            }
+        }
+
+        return true;
+    });
+});
+
+const playgroundSortedRows = computed(() => {
+    const sortedRows = [...playgroundFilteredRows.value];
+
+    if (!playgroundSorts.value.length) {
+        return sortedRows;
+    }
+
+    return sortedRows.sort((a, b) => {
+        for (const sort of playgroundSorts.value) {
+            const sortValue = String(a[sort.key] ?? "").localeCompare(
+                String(b[sort.key] ?? ""),
+            );
+
+            if (sortValue !== 0) {
+                return sortValue * sort.order;
+            }
+        }
+
+        return 0;
+    });
+});
+
+const playgroundVisibleRows = computed(() => {
+    return playgroundSortedRows.value.slice(
+        playgroundStart.value,
+        playgroundStart.value + playgroundPageSize.value,
+    );
+});
+
+watch([playgroundFilteredRows, playgroundPageSize], ([rows]) => {
+    if (playgroundStart.value >= rows.length) {
+        playgroundStart.value = 0;
+    }
+});
 
 const formData = ref<Record<string, any>>({});
 const submitResult = ref<string>("");
@@ -39,6 +263,31 @@ const fname = ref("heh");
 
         <div class="wrap">
             <main class="main" ref="main">
+                <section class="playground-table-demo">
+                    <h2>GTable Playground</h2>
+                    <p class="playground-table-demo__note">
+                        Keep a live table at the top of the playground for
+                        faster iteration on table layout, filters, and
+                        pagination.
+                    </p>
+                    <!-- @vue-generic {PlaygroundTableEntry, TableColumn<PlaygroundTableEntry>} -->
+                    <GTable
+                        label="Playground development table"
+                        :data="playgroundVisibleRows"
+                        :columns="playgroundTableColumns"
+                        :filtering="playgroundFiltering"
+                        :filter="playgroundFilters"
+                        :result-count="playgroundFilteredRows.length"
+                        :page-size="playgroundPageSize"
+                        :page-sizes="[5, 10, 25]"
+                        :pagination="true"
+                        :start-index="playgroundStart"
+                        v-model:sorts="playgroundSorts"
+                        v-model:column-visibility="playgroundColumnVisibility"
+                        @update:start-index="playgroundStart = $event"
+                        @update:page-size="playgroundPageSize = $event"
+                    />
+                </section>
                 <div>
                     <GHamburgerMenu label="Menu" style="display: flex;">
 
@@ -233,6 +482,23 @@ section > *:not(h2) {
 
 .popover-scroll-demo-note {
     max-width: 40rem;
+}
+
+.playground-table-demo__note {
+    max-width: 42rem;
+}
+
+.playground-table-demo :deep(.g-table-controls),
+.playground-table-demo :deep(.g-table-head) {
+    position: static;
+}
+
+.playground-table-demo :deep(.g-table-table-wrap) {
+    overflow-x: auto;
+}
+
+.playground-table-demo :deep(#v-0-th-name) {
+    min-width: 22rem;
 }
 
 .popover-scroll-demo {

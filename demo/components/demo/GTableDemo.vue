@@ -371,9 +371,9 @@ function handleCellChange(payload: CellChangePayload<ProductRow>) {
                     label: 'Enable bulk selection with checkboxes',
                     default: false
                 },
-                showPagination: {
+                pagination: {
                     type: 'boolean',
-                    label: 'Explicitly show the pagination bar even if the slot is empty',
+                    label: 'Enable the built-in pagination controls.',
                     default: false
                 }
             }"
@@ -399,7 +399,7 @@ function handleCellChange(payload: CellChangePayload<ProductRow>) {
 <span class="line"><span style="color:#008000">    /**</span></span>
 <span class="line"><span style="color:#008000">     * Result count for all of the possible results (not just the current page)</span></span>
 <span class="line"><span style="color:#008000">     *</span></span>
-<span class="line"><span style="color:#008000">     * This is shown in the toolbar.</span></span>
+<span class="line"><span style="color:#008000">     * This is shown in the toolbar and used by built-in pagination.</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    resultCount</span><span style="color:#000000">?: </span><span style="color:#267F99">number</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#008000">    /**</span></span>
@@ -433,6 +433,14 @@ function handleCellChange(payload: CellChangePayload<ProductRow>) {
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    startIndex</span><span style="color:#000000">: </span><span style="color:#267F99">number</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Current page size for the built-in pagination controls.</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    pageSize</span><span style="color:#000000">?: </span><span style="color:#267F99">number</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Available page sizes for the built-in pagination controls.</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    pageSizes</span><span style="color:#000000">?: </span><span style="color:#267F99">number</span><span style="color:#000000">[];</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
 <span class="line"><span style="color:#008000">     * Enable bulk selection with checkboxes</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    bulkSelectionEnabled</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
@@ -447,9 +455,9 @@ function handleCellChange(payload: CellChangePayload<ProductRow>) {
 <span class="line"><span style="color:#001080">    changeTracker</span><span style="color:#000000">?: </span><span style="color:#267F99">UseTableChangesReturn</span><span style="color:#000000">&#x3C;</span><span style="color:#267F99">T</span><span style="color:#000000">>;</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#008000">    /**</span></span>
-<span class="line"><span style="color:#008000">     * Explicitly show the pagination bar even if the slot is empty</span></span>
+<span class="line"><span style="color:#008000">     * Enable the built-in pagination controls.</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
-<span class="line"><span style="color:#001080">    showPagination</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#001080">    pagination</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#000000">};</span></span></code></pre>
 </figure>
 
@@ -478,6 +486,7 @@ objects to use, and <code>label</code> for the column header.</li>
 cells must contain a link. Clicking a row will emit a <code>row-click</code> event
 with the link <code>href</code> from the first link in the row.</p>
 <p>Grouping can be enabled by passing a column key to <code>groupBy</code>.</p>
+<p>The controls bar can be extended with the <code>controls</code> slot.</p>
 </template>
             <template #default="{ props }">
                 <!-- @vue-generic {TableEntry, TableColumn<TableEntry>} -->
@@ -488,23 +497,19 @@ with the link <code>href</code> from the first link in the row.</p>
                     :filtering="filtering"
                     :filter="filters"
                     :result-count="filteredData.length"
+                    :page-size="pageSize"
+                    :page-sizes="[5, 10, 50]"
+                    :pagination="true"
                     :bulk-selection-enabled="props.bulkSelectionEnabled"
                     :bulk-actions="bulkActions"
                     :start-index="start"
                     v-model:sorts="sorts"
                     v-model:column-visibility="columnVisibility"
                     v-model:selected-rows="selectedRows"
+                    @update:start-index="start = $event"
+                    @update:page-size="pageSize = $event"
                     @bulk-action="handleBulkAction"
-                >
-                    <template #pagination>
-                        <GTablePagination
-                            v-model:start="start"
-                            v-model:page-size="pageSize"
-                            :total="filteredData.length"
-                            :page-sizes="[5, 10, 50]"
-                        />
-                    </template>
-                </GTable>
+                />
             </template>
         </ComponentDemo>
 
@@ -525,11 +530,7 @@ with the link <code>href</code> from the first link in the row.</p>
                     :start-index="0"
                     :change-tracker="productChanges"
                     @cell-change="handleCellChange"
-                >
-                    <template #pagination>
-                        Edited cells are highlighted and changes are tracked.
-                    </template>
-                </GTable>
+                />
             </template>
         </ComponentDemo>
     </section>
@@ -543,9 +544,11 @@ with the link <code>href</code> from the first link in the row.</p>
         min-width: 0;
     }
     .component-demo__preview-inner {
+        min-width: 0;
+    }
+    .g-table-table-wrap {
         overflow-x: auto;
         max-width: 100%;
-        min-width: 0;
     }
 }
 </style>

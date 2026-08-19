@@ -20,7 +20,6 @@ import {
     GSidebarMenu,
     GTable,
     GTableBody,
-    GTablePagination,
     GTextInput,
     GThreeWayToggle,
     GTermSelector,
@@ -64,7 +63,6 @@ export default {
         app.component("GThreeWayToggle", GThreeWayToggle);
         app.component("GTable", GTable);
         app.component("GTableBody", GTableBody);
-        app.component("GTablePagination", GTablePagination);
         app.component("GModal", GModal);
         app.component("GOverlay", GOverlay);
         app.component("GHamburgerMenu", GHamburgerMenu);
@@ -119,7 +117,6 @@ declare module "vue" {
         GSubmitButton: typeof GSubmitButton;
         GTable: typeof GTable;
         GTableBody: typeof GTableBody;
-        GTablePagination: typeof GTablePagination;
         GTermSelector: typeof GTermSelector;
         GTermSelectorControl: typeof GTermSelectorControl;
         GTextarea: typeof GTextarea;

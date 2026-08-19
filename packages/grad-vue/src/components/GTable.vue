@@ -26,6 +26,8 @@
  * with the link `href` from the first link in the row.
  *
  * Grouping can be enabled by passing a column key to `groupBy`.
+ *
+ * The controls bar can be extended with the `controls` slot.
  */
 export default {};
 </script>
@@ -33,7 +35,7 @@ export default {};
 <script setup lang="ts" generic="T extends TableRow, C extends TableColumn<T>">
 import GTableBody from "./table/GTableBody.vue";
 import GPopover from "./GPopover.vue";
-import { TableColumn, TableRow, TableSort } from "./table/TableColumn.ts";
+import type { TableColumn, TableRow, TableSort } from "./table/TableColumn.ts";
 import {
     computed,
     getCurrentInstance,
@@ -42,14 +44,15 @@ import {
     ref,
     toRaw,
     useId,
-    useSlots,
-    VNode,
 } from "vue";
+import type { VNode } from "vue";
 import GSelect from "./GSelect.vue";
 import GMultiSelect from "./GMultiSelect.vue";
 import GCheckboxGroup from "./GCheckboxGroup.vue";
-import { useFiltering, UseFilteringReturn } from "../compose/useFiltering.ts";
-import {
+import GTablePagination from "./table/GTablePagination.vue";
+import { useFiltering } from "../compose/useFiltering.ts";
+import type { UseFilteringReturn } from "../compose/useFiltering.ts";
+import type {
     CellChangePayload,
     UseTableChangesReturn,
 } from "../compose/useTableChanges.ts";
@@ -97,7 +100,7 @@ type Props = {
     /**
      * Result count for all of the possible results (not just the current page)
      *
-     * This is shown in the toolbar.
+     * This is shown in the toolbar and used by built-in pagination.
      */
     resultCount?: number;
     /**
@@ -134,6 +137,14 @@ type Props = {
      */
     startIndex: number;
     /**
+     * Current page size for the built-in pagination controls.
+     */
+    pageSize?: number;
+    /**
+     * Available page sizes for the built-in pagination controls.
+     */
+    pageSizes?: number[];
+    /**
      * Enable bulk selection with checkboxes
      * @demo
      */
@@ -150,10 +161,10 @@ type Props = {
     changeTracker?: UseTableChangesReturn<T>;
 
     /**
-     * Explicitly show the pagination bar even if the slot is empty
+     * Enable the built-in pagination controls.
      * @demo
      */
-    showPagination?: boolean;
+    pagination?: boolean;
 };
 
 const sorts = defineModel<TableSort<T>[]>("sorts", {
@@ -174,13 +185,16 @@ const selectedRows = defineModel<string[]>("selectedRows", {
 const props = withDefaults(defineProps<Props>(), {
     bulkSelectionEnabled: false,
     bulkActions: () => [],
-    showPagination: false,
+    pageSizes: () => [10, 25, 50, 100],
+    pagination: false,
 });
 
 const emit = defineEmits<{
     (e: "row-click", link: string): void;
     (e: "bulk-action", actionId: string, selectedKeys: string[]): void;
     (e: "cell-change", payload: CellChangePayload<T>): void;
+    (e: "update:startIndex", value: number): void;
+    (e: "update:pageSize", value: number): void;
 }>();
 
 let filtering: UseFilteringReturn<any> = props.filtering!;
@@ -288,8 +302,18 @@ function handleCellChange(change: { row: T; column: C; value: any }) {
     emit("cell-change", payload);
 }
 
+function updateStartIndex(value: number | undefined) {
+    emit("update:startIndex", value ?? 0);
+}
+
+function updatePageSize(value: number | undefined) {
+    if (value === undefined) {
+        return;
+    }
+    emit("update:pageSize", value);
+}
+
 const id = useId();
-const slots = useSlots();
 const instance = getCurrentInstance();
 const sortBuilderRef = ref<HTMLFieldSetElement | null>(null);
 
@@ -459,12 +483,17 @@ const visibleColumns = computed(() => {
         (col) => visibility[col.key as ColumnVisibilityKey<T>] !== false,
     );
 });
+const slots = defineSlots<{
+    controls?: () => any;
+}>();
 const hasHiddenColumns = computed(
     () => visibleColumns.value.length !== props.columns.length,
 );
 const shouldShowColumnVisibilityControls = computed(
     () => columnVisibilityConfigured.value && props.columns.length > 0,
 );
+const shouldShowCustomControls = computed(() => !!slots.controls);
+const totalResults = computed(() => props.resultCount ?? props.data.length);
 
 function isColumnVisible(col: C) {
     return columnVisibility.value[col.key as ColumnVisibilityKey<T>] !== false;
@@ -478,12 +507,7 @@ function setColumnVisibility(col: C, visible: boolean) {
 }
 
 const shouldShowPagination = computed(() => {
-    // Show if explicitly requested via prop
-    if (props.showPagination) {
-        return true;
-    }
-    // Show if the pagination slot has content
-    return !!slots.pagination;
+    return props.pagination && typeof props.pageSize === "number";
 });
 
 const shouldShowControls = computed(() => {
@@ -499,6 +523,9 @@ const shouldShowControls = computed(() => {
         return true;
     }
     if (shouldShowColumnVisibilityControls.value) {
+        return true;
+    }
+    if (shouldShowCustomControls.value) {
         return true;
     }
     // Otherwise hide the entire controls bar
@@ -799,6 +826,9 @@ onMounted(() => {
                         </fieldset>
                     </GPopover>
                 </div>
+                <div v-if="shouldShowCustomControls" class="g-table-custom-controls">
+                    <slot name="controls"></slot>
+                </div>
 
                 <div class="g-clear-filters-wrap">
                     <GButton
@@ -806,17 +836,19 @@ onMounted(() => {
                         outlined
                         size="small"
                         class="clear-filters"
+                        aria-label="Clear Filters"
                         @click="clearFilters"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 51.26 51.26"
-                            height="1em"
+                            viewBox="0 0 640 640"
+                            height="1.5em"
                             aria-hidden="true"
                         >
+                            <!--!Font Awesome Free v7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
                             <path
                                 fill="currentColor"
-                                d="m37.84 32.94-7.63-7.63 7.63-7.63a3.24 3.24 0 0 0-4.58-4.58l-7.63 7.63L18 13.1a3.24 3.24 0 0 0-4.58 4.58L21 25.31l-7.62 7.63A3.24 3.24 0 1 0 18 37.52l7.63-7.63 7.63 7.63a3.24 3.24 0 0 0 4.58-4.58Z"
+                                d="M64 128C51.1 128 39.4 135.8 34.4 147.8C29.4 159.8 32.2 173.5 41.4 182.6L224 365.3L224 480C224 488.5 227.4 496.6 233.4 502.6L297.4 566.6C299.9 569.1 302.7 571.1 305.7 572.6C284.5 541.7 272.1 504.3 272.1 464C272.1 364.6 347.6 282.9 444.4 273L534.8 182.6C544 173.4 546.7 159.7 541.7 147.7C536.7 135.7 524.9 128 512 128L64 128zM464 608C543.5 608 608 543.5 608 464C608 384.5 543.5 320 464 320C384.5 320 320 384.5 320 464C320 543.5 384.5 608 464 608zM523.3 427.3L486.6 464L523.3 500.7C529.5 506.9 529.5 517.1 523.3 523.3C517.1 529.5 506.9 529.5 500.7 523.3L464 486.6L427.3 523.3C421.1 529.5 410.9 529.5 404.7 523.3C398.5 517.1 398.5 506.9 404.7 500.7L441.4 464L404.7 427.3C398.5 421.1 398.5 410.9 404.7 404.7C410.9 398.5 421.1 398.5 427.3 404.7L464 441.4L500.7 404.7C506.9 398.5 517.1 398.5 523.3 404.7C529.5 410.9 529.5 421.1 523.3 427.3z"
                             />
                         </svg>
                         <span class="g-clear-filters-text"> Clear Filters </span>
@@ -824,237 +856,246 @@ onMounted(() => {
                 </div>
             </div>
             <div v-if="shouldShowPagination" class="pagination">
-                <slot name="pagination"></slot>
+                <GTablePagination
+                    :start="startIndex"
+                    :page-size="pageSize!"
+                    :page-sizes="pageSizes"
+                    :total="totalResults"
+                    @update:start="updateStartIndex"
+                    @update:page-size="updatePageSize"
+                />
             </div>
             <span class="g-result-count"
-                >{{ props.resultCount || data.length }} results</span
+                >{{ totalResults }} results</span
             >
         </div>
-        <table
-            class="g-table"
-            ref="tableRef"
-            :aria-label="label"
-            :aria-rowcount="props.resultCount || data.length"
-        >
-            <thead class="g-table-head">
-                <tr aria-rowindex="1">
-                    <th
-                        v-if="bulkSelectionEnabled"
-                        scope="col"
-                        class="g-th g-th-checkbox"
-                    >
-                        <input
-                            type="checkbox"
-                            :checked="allSelected"
-                            :indeterminate="someSelected"
-                            @change="toggleAllRows"
-                            :aria-label="
-                                allSelected
-                                    ? 'Deselect all rows'
-                                    : 'Select all rows'
-                            "
-                            class="g-bulk-select-checkbox"
-                        />
-                    </th>
-                    <th
-                        v-for="col in visibleColumns"
-                        :key="col.key"
-                        :id="`${id}-th-${String(col.key)}`"
-                        :aria-sort="columnAriaSort(col.key)"
-                        :class="[
-                            'g-th',
-                            { sorted: sortIndex(col.key) !== -1 },
-                            { filtered: filteredColumns[col.key] },
-                        ]"
-                        scope="col"
-                    >
-                        <div class="th-inner">
-                            <button
-                                v-if="col.sortable"
-                                type="button"
-                                class="g-column-head"
-                                @click="onSort(col, $event.shiftKey)"
-                            >
-                                {{ col.label }}
-                                <span
-                                    v-if="sortIndex(col.key) !== -1"
-                                    class="sort-indicator"
-                                    aria-hidden="true"
+        <div class="g-table-table-wrap">
+            <table
+                class="g-table"
+                ref="tableRef"
+                :aria-label="label"
+                :aria-rowcount="totalResults"
+            >
+                <thead class="g-table-head">
+                    <tr aria-rowindex="1">
+                        <th
+                            v-if="bulkSelectionEnabled"
+                            scope="col"
+                            class="g-th g-th-checkbox"
+                        >
+                            <input
+                                type="checkbox"
+                                :checked="allSelected"
+                                :indeterminate="someSelected"
+                                @change="toggleAllRows"
+                                :aria-label="
+                                    allSelected
+                                        ? 'Deselect all rows'
+                                        : 'Select all rows'
+                                "
+                                class="g-bulk-select-checkbox"
+                            />
+                        </th>
+                        <th
+                            v-for="col in visibleColumns"
+                            :key="col.key"
+                            :id="`${id}-th-${String(col.key)}`"
+                            :aria-sort="columnAriaSort(col.key)"
+                            :class="[
+                                'g-th',
+                                { sorted: sortIndex(col.key) !== -1 },
+                                { filtered: filteredColumns[col.key] },
+                            ]"
+                            scope="col"
+                        >
+                            <div class="th-inner">
+                                <button
+                                    v-if="col.sortable"
+                                    type="button"
+                                    class="g-column-head"
+                                    @click="onSort(col, $event.shiftKey)"
                                 >
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 640 640"
-                                        height="1.5em"
-                                        :style="{
-                                            transform: `rotate(${sortForColumn(col.key)?.order === 1 ? 0 : 180}deg)`,
-                                        }"
-                                    >
-                                        <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
-                                        <path
-                                            fill="currentColor"
-                                            d="M300.3 199.2C312.9 188.9 331.4 189.7 343.1 201.4L471.1 329.4C480.3 338.6 483 352.3 478 364.3C473 376.3 461.4 384 448.5 384L192.5 384C179.6 384 167.9 376.2 162.9 364.2C157.9 352.2 160.7 338.5 169.9 329.4L297.9 201.4L300.3 199.2z"
-                                        />
-                                    </svg>
-                                </span>
-                                <span
-                                    v-if="sortIndex(col.key) !== -1"
-                                    class="g-visually-hidden"
-                                >
-                                    {{ columnSortDescription(col.key) }}
-                                </span>
-                            </button>
-                            <span v-else class="g-column-head">{{
-                                col.label
-                            }}</span>
-                            <GPopover v-if="col.filter">
-                                <template #trigger="{ toggle }">
-                                    <button
-                                        @click.stop="toggle"
-                                        :aria-label="
-                                            filteredColumns[col.key]
-                                                ? 'Column Filtered'
-                                                : 'Filter Column'
-                                        "
-                                        class="g-filter-btn"
-                                        :class="{
-                                            'g-active':
-                                                filteredColumns[col.key],
-                                        }"
-                                        type="button"
+                                    {{ col.label }}
+                                    <span
+                                        v-if="sortIndex(col.key) !== -1"
+                                        class="sort-indicator"
+                                        aria-hidden="true"
                                     >
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
                                             viewBox="0 0 640 640"
                                             height="1.5em"
-                                            aria-hidden="true"
+                                            :style="{
+                                                transform: `rotate(${sortForColumn(col.key)?.order === 1 ? 0 : 180}deg)`,
+                                            }"
                                         >
                                             <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
                                             <path
                                                 fill="currentColor"
-                                                d="M96 128C83.1 128 71.4 135.8 66.4 147.8C61.4 159.8 64.2 173.5 73.4 182.6L256 365.3L256 480C256 488.5 259.4 496.6 265.4 502.6L329.4 566.6C338.6 575.8 352.3 578.5 364.3 573.5C376.3 568.5 384 556.9 384 544L384 365.3L566.6 182.7C575.8 173.5 578.5 159.8 573.5 147.8C568.5 135.8 556.9 128 544 128L96 128z"
-                                            />
-                                        </svg>
-                                    </button>
-                                </template>
-                                <GSelect
-                                    v-if="col.filter.type === 'select'"
-                                    v-model="filter[col.key]"
-                                    :options="col.filter.options"
-                                    class="g-filter-select"
-                                    label="Filter select"
-                                    searchable
-                                    :search-description="col.filter.searchDescription"
-                                    clear-button
-                                />
-                                <div
-                                    v-else-if="col.filter.type === 'search'"
-                                    class="g-filter-search"
-                                    role="search"
-                                >
-                                    <span
-                                        class="g-filter-search-icon"
-                                        aria-hidden="true"
-                                    >
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 51.26 51.26"
-                                            height="1em"
-                                        >
-                                            <path
-                                                fill="currentColor"
-                                                d="M30 9.76A14.05 14.05 0 1 0 28.3 31l11.3 13a3.34 3.34 0 0 0 4.72-4.72L31.44 27.86A14.05 14.05 0 0 0 30 9.76ZM27.27 27a10.26 10.26 0 1 1 0-14.5 10.25 10.25 0 0 1 0 14.5Z"
+                                                d="M300.3 199.2C312.9 188.9 331.4 189.7 343.1 201.4L471.1 329.4C480.3 338.6 483 352.3 478 364.3C473 376.3 461.4 384 448.5 384L192.5 384C179.6 384 167.9 376.2 162.9 364.2C157.9 352.2 160.7 338.5 169.9 329.4L297.9 201.4L300.3 199.2z"
                                             />
                                         </svg>
                                     </span>
-                                    <input
-                                        type="search"
-                                        class="g-filter-search-input"
-                                        v-model="filter[col.key]"
-                                        :placeholder="col.filter.placeholder"
-                                        :aria-label="`Search ${col.label}`"
-                                    />
-                                </div>
-                                <div v-else-if="col.filter.type === 'toggle'">
-                                    <div class="g-filter-toggle">
-                                        <input
-                                            type="checkbox"
-                                            v-model="filter[col.key]"
-                                            :id="`${id}-filter-${String(col.key)}`"
-                                            :aria-describedby="
-                                                col.filter.description
-                                                    ? `${id}-filter-description-${String(col.key)}`
-                                                    : undefined
-                                            "
-                                        />
-                                        <label
-                                            :for="`${id}-filter-${String(col.key)}`"
-                                            >{{ col.filter.label }}</label
-                                        >
-                                        <span
-                                            class="g-filter-description"
-                                            v-if="col.filter.description"
-                                            :id="`${id}-filter-description-${String(col.key)}`"
-                                        >
-                                            {{ col.filter.description }}
-                                        </span>
-                                    </div>
-                                </div>
-                                <GMultiSelect
-                                    v-else-if="
-                                        col.filter.type === 'multi-select' &&
-                                        col.filter.searchable
-                                    "
-                                    v-model="filter[col.key]"
-                                    :options="col.filter.options"
-                                    label="Include values"
-                                    :placeholder="col.filter.placeholder"
-                                    :search-description="col.filter.searchDescription"
-                                    class="g-multi-select-searchable"
-                                />
-                                <div
-                                    v-else-if="
-                                        col.filter.type === 'multi-select'
-                                    "
-                                    class="g-multi-select"
-                                >
-                                    <GCheckboxGroup
-                                        v-model="filter[col.key]"
-                                        :options="multiSelectFilterOptions(col)"
-                                        label="Include values"
-                                    />
-                                    <GButton
-                                        class="clear-multiselect-btn"
-                                        theme="accent"
-                                        size="small"
-                                        @click="filter[col.key] = []"
-                                        v-if="filter[col.key]?.length"
+                                    <span
+                                        v-if="sortIndex(col.key) !== -1"
+                                        class="g-visually-hidden"
                                     >
-                                        Clear
-                                    </GButton>
-                                </div>
-                            </GPopover>
-                        </div>
-                    </th>
-                </tr>
-            </thead>
-            <!-- @vue-generic {T, C} -->
-            <GTableBody
-                :data="data"
-                :columns="visibleColumns"
-                :group-by="groupBy"
-                :group-render="groupRender"
-                :row-clickable="rowClickable"
-                :row-class="rowClass as any"
-                :start-index="startIndex"
-                :bulk-selection-enabled="bulkSelectionEnabled"
-                :selected-rows="selectedRows"
-                :table-id="id"
-                :change-tracker="changeTracker"
-                @row-click="clickRow"
-                @toggle-row="toggleRow"
-                @cell-change="handleCellChange"
-            />
-        </table>
+                                        {{ columnSortDescription(col.key) }}
+                                    </span>
+                                </button>
+                                <span v-else class="g-column-head">{{
+                                    col.label
+                                }}</span>
+                                <GPopover v-if="col.filter">
+                                    <template #trigger="{ toggle }">
+                                        <button
+                                            @click.stop="toggle"
+                                            :aria-label="
+                                                filteredColumns[col.key]
+                                                    ? 'Column Filtered'
+                                                    : 'Filter Column'
+                                            "
+                                            class="g-filter-btn"
+                                            :class="{
+                                                'g-active':
+                                                    filteredColumns[col.key],
+                                            }"
+                                            type="button"
+                                        >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 640 640"
+                                                height="1.5em"
+                                                aria-hidden="true"
+                                            >
+                                                <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+                                                <path
+                                                    fill="currentColor"
+                                                    d="M96 128C83.1 128 71.4 135.8 66.4 147.8C61.4 159.8 64.2 173.5 73.4 182.6L256 365.3L256 480C256 488.5 259.4 496.6 265.4 502.6L329.4 566.6C338.6 575.8 352.3 578.5 364.3 573.5C376.3 568.5 384 556.9 384 544L384 365.3L566.6 182.7C575.8 173.5 578.5 159.8 573.5 147.8C568.5 135.8 556.9 128 544 128L96 128z"
+                                                />
+                                            </svg>
+                                        </button>
+                                    </template>
+                                    <GSelect
+                                        v-if="col.filter.type === 'select'"
+                                        v-model="filter[col.key]"
+                                        :options="col.filter.options"
+                                        class="g-filter-select"
+                                        label="Filter select"
+                                        searchable
+                                        :search-description="col.filter.searchDescription"
+                                        clear-button
+                                    />
+                                    <div
+                                        v-else-if="col.filter.type === 'search'"
+                                        class="g-filter-search"
+                                        role="search"
+                                    >
+                                        <span
+                                            class="g-filter-search-icon"
+                                            aria-hidden="true"
+                                        >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 51.26 51.26"
+                                                height="1em"
+                                            >
+                                                <path
+                                                    fill="currentColor"
+                                                    d="M30 9.76A14.05 14.05 0 1 0 28.3 31l11.3 13a3.34 3.34 0 0 0 4.72-4.72L31.44 27.86A14.05 14.05 0 0 0 30 9.76ZM27.27 27a10.26 10.26 0 1 1 0-14.5 10.25 10.25 0 0 1 0 14.5Z"
+                                                />
+                                            </svg>
+                                        </span>
+                                        <input
+                                            type="search"
+                                            class="g-filter-search-input"
+                                            v-model="filter[col.key]"
+                                            :placeholder="col.filter.placeholder"
+                                            :aria-label="`Search ${col.label}`"
+                                        />
+                                    </div>
+                                    <div v-else-if="col.filter.type === 'toggle'">
+                                        <div class="g-filter-toggle">
+                                            <input
+                                                type="checkbox"
+                                                v-model="filter[col.key]"
+                                                :id="`${id}-filter-${String(col.key)}`"
+                                                :aria-describedby="
+                                                    col.filter.description
+                                                        ? `${id}-filter-description-${String(col.key)}`
+                                                        : undefined
+                                                "
+                                            />
+                                            <label
+                                                :for="`${id}-filter-${String(col.key)}`"
+                                                >{{ col.filter.label }}</label
+                                            >
+                                            <span
+                                                class="g-filter-description"
+                                                v-if="col.filter.description"
+                                                :id="`${id}-filter-description-${String(col.key)}`"
+                                            >
+                                                {{ col.filter.description }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <GMultiSelect
+                                        v-else-if="
+                                            col.filter.type === 'multi-select' &&
+                                            col.filter.searchable
+                                        "
+                                        v-model="filter[col.key]"
+                                        :options="col.filter.options"
+                                        label="Include values"
+                                        :placeholder="col.filter.placeholder"
+                                        :search-description="col.filter.searchDescription"
+                                        class="g-multi-select-searchable"
+                                    />
+                                    <div
+                                        v-else-if="
+                                            col.filter.type === 'multi-select'
+                                        "
+                                        class="g-multi-select"
+                                    >
+                                        <GCheckboxGroup
+                                            v-model="filter[col.key]"
+                                            :options="multiSelectFilterOptions(col)"
+                                            label="Include values"
+                                        />
+                                        <GButton
+                                            class="clear-multiselect-btn"
+                                            theme="accent"
+                                            size="small"
+                                            @click="filter[col.key] = []"
+                                            v-if="filter[col.key]?.length"
+                                        >
+                                            Clear
+                                        </GButton>
+                                    </div>
+                                </GPopover>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <!-- @vue-generic {T, C} -->
+                <GTableBody
+                    :data="data"
+                    :columns="visibleColumns"
+                    :group-by="groupBy"
+                    :group-render="groupRender"
+                    :row-clickable="rowClickable"
+                    :row-class="rowClass as any"
+                    :start-index="startIndex"
+                    :bulk-selection-enabled="bulkSelectionEnabled"
+                    :selected-rows="selectedRows"
+                    :table-id="id"
+                    :change-tracker="changeTracker"
+                    @row-click="clickRow"
+                    @toggle-row="toggleRow"
+                    @cell-change="handleCellChange"
+                />
+            </table>
+        </div>
         <div
             v-if="bulkSelectionEnabled && selectedRows.length > 0"
             class="g-bulk-actions-toolbar"
@@ -1087,6 +1128,8 @@ g-table {
     display: block;
 }
 .g-table-outer-wrap {
+    container-type: inline-size;
+    container-name: g-table;
 }
 
 .g-table-controls {
@@ -1167,6 +1210,10 @@ button.g-column-head:hover {
     min-width: 100%;
 }
 
+.g-table-table-wrap {
+    min-width: 0;
+}
+
 .g-filter-btn {
     border: none;
     background: transparent;
@@ -1196,15 +1243,6 @@ button.g-column-head:hover {
 
 .g-clear-filters-text {
     white-space: nowrap;
-}
-
-@media screen and (max-width: 600px) {
-    .g-clear-filters-text {
-        opacity: 0;
-        width: 1px;
-        height: 1px;
-        overflow: hidden;
-    }
 }
 
 .g-filter-select {
@@ -1251,8 +1289,8 @@ button.g-column-head:hover {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     align-items: center;
-    gap: 1.5rem;
-    padding: 0.2rem 1rem;
+    gap: 1rem;
+    padding: 0.2rem 0.5rem;
     background: var(--g-surface-150);
 
     .pagination {
@@ -1271,6 +1309,42 @@ button.g-column-head:hover {
         text-align: right;
         white-space: nowrap;
     }
+
+    .clear-filters {
+        padding: 0.25rem 0.5rem;
+    }
+    .g-clear-filters-text {
+        margin-left: 0.25rem;
+    }
+}
+
+@container g-table (max-width: 1000px) {
+    .g-table-controls {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .g-table-controls .pagination {
+        grid-column: auto;
+        justify-self: auto;
+        justify-content: flex-start;
+    }
+
+    .g-table-controls .g-result-count {
+        grid-column: auto;
+        justify-self: auto;
+    }
+}
+
+@container g-table (max-width: 760px) {
+    .g-table-controls .clear-filters {
+        min-width: auto;
+        padding-inline: 0.45rem;
+    }
+
+    .g-table-controls .g-clear-filters-text {
+        display: none;
+    }
 }
 
 .g-table-control-actions {
@@ -1278,7 +1352,7 @@ button.g-column-head:hover {
     min-width: 0;
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.25rem;
     flex-shrink: 0;
 }
 

@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it } from "vitest";
-import { defineComponent, h } from "vue";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { Component, defineComponent, h } from "vue";
 import type { TableColumn } from "../packages/grad-vue/src/components/table/TableColumn";
 import { createGTableFixture } from "./fixtures/createGTableFixture";
 import { mnt, testAccessibility } from "./test-utils";
@@ -197,9 +197,17 @@ function getColumn(container: Locator, index: number = 0) {
     return [...cells].map((cell) => cell.textContent);
 }
 
+function wrapInWidth(component: Component, width: number) {
+    return defineComponent({
+        name: "GTableWidthWrapper",
+        render() {
+            return h("div", { style: { width: `${width}px` } }, [h(component)]);
+        },
+    });
+}
+
 beforeEach(() => {
-    // Make the viewport a little bigger
-    return page.viewport(600, 800);
+    return page.viewport(1200, 800);
 });
 
 describe("GTable", () => {
@@ -286,31 +294,31 @@ describe("GTable", () => {
         it("sorts rows by code in ascending order after clicking on code column header", async () => {
             const { GTableFixture } = createCollegesTableFixture();
             const { container } = mnt(GTableFixture);
-            const codeColumnHeader = container.getByRole("columnheader", {
-                name: "Code",
+            const codeSortButton = container.getByRole("button", {
+                name: /^Code\b/,
             });
-            await codeColumnHeader.click();
+            await codeSortButton.click();
             expect(getColumn(container, 0)).toEqual(["KL", "KM", "KN"]);
         });
         it("sorts rows by code in descending order after clicking on code column header twice", async () => {
             const { GTableFixture } = createCollegesTableFixture();
             const { container } = mnt(GTableFixture);
-            const codeColumnHeader = container.getByRole("columnheader", {
-                name: "Code",
+            const codeSortButton = container.getByRole("button", {
+                name: /^Code\b/,
             });
-            await codeColumnHeader.click();
-            await codeColumnHeader.click();
+            await codeSortButton.click();
+            await codeSortButton.click();
             expect(getColumn(container, 0)).toEqual(["LT", "LL", "KY"]);
         });
         it("removes sorting after clicking on code column header thrice", async () => {
             const { GTableFixture } = createCollegesTableFixture();
             const { container } = mnt(GTableFixture);
-            const codeColumnHeader = container.getByRole("columnheader", {
-                name: "Code",
+            const codeSortButton = container.getByRole("button", {
+                name: /^Code\b/,
             });
-            await codeColumnHeader.click();
-            await codeColumnHeader.click();
-            await codeColumnHeader.click();
+            await codeSortButton.click();
+            await codeSortButton.click();
+            await codeSortButton.click();
             expect(getColumn(container, 0)).toEqual(["LT", "KL", "KY"]);
         });
         it("adds a secondary sort with shift-click", async () => {
@@ -853,7 +861,7 @@ describe("GTable", () => {
     });
 
     describe("Pagination Visibility Tests", () => {
-        it("shows controls bar when slot has content", async () => {
+        it("shows built-in pagination when enabled", async () => {
             const { GTableFixture } = createCollegesTableFixture();
             const { container } = mnt(GTableFixture);
 
@@ -871,21 +879,36 @@ describe("GTable", () => {
                 .toBeInTheDocument();
         });
 
-        it("hides entire controls bar when slot is empty and showPagination is false", async () => {
-            const { GTableFixture } = createGTableFixture<TableEntry>({
-                label: "Test Table",
-                columns,
-                data: tableData,
-                paginate: false, // Don't provide pagination slot
+        it("hides the controls bar when pagination is disabled and no other controls are needed", async () => {
+            const GTableFixture = defineComponent({
+                setup() {
+                    const filtering = useFiltering(defaultFilter);
+                    const { filters } = filtering;
+
+                    return () =>
+                        h(
+                            GTable<TableEntry, TableColumn<TableEntry>>,
+                            {
+                                label: "Test Table",
+                                data: tableData,
+                                columns: [{ key: "name", label: "Name" }],
+                                filtering,
+                                filter: filters,
+                                startIndex: 0,
+                                pagination: false,
+                            },
+                        );
+                },
             });
+
             const { container } = mnt(GTableFixture);
 
             await expect
-                .element(container.getByRole("button", { name: "First Page" }))
+                .element(container.getByText("results"))
                 .not.toBeInTheDocument();
         });
 
-        it("shows controls bar when showPagination prop is true even with empty slot", async () => {
+        it("shows controls bar when pagination is enabled even without other controls", async () => {
             const GTableFixture = defineComponent({
                 setup() {
                     const filtering = useFiltering(defaultFilter);
@@ -897,45 +920,14 @@ describe("GTable", () => {
                             {
                                 label: "Test Table",
                                 data: tableData,
-                                columns,
+                                columns: [{ key: "name", label: "Name" }],
                                 filtering,
                                 filter: filters,
                                 startIndex: 0,
-                                showPagination: true, // Explicitly show pagination
-                            },
-                            {
-                                // Empty pagination slot
-                            },
-                        );
-                },
-            });
-
-            const { container } = mnt(GTableFixture);
-
-            // The pagination status should be visible even though the slot is empty
-            await expect.element(container.getByText("results")).toBeVisible();
-        });
-
-        it("hides controls bar when showPagination is false and slot is empty", async () => {
-            const GTableFixture = defineComponent({
-                setup() {
-                    const filtering = useFiltering(defaultFilter);
-                    const { filters } = filtering;
-
-                    return () =>
-                        h(
-                            GTable<TableEntry, TableColumn<TableEntry>>,
-                            {
-                                label: "Test Table",
-                                data: tableData,
-                                columns,
-                                filtering,
-                                filter: filters,
-                                startIndex: 0,
-                                showPagination: false, // Explicitly hide pagination
-                            },
-                            {
-                                // Empty pagination slot
+                                pageSize: 3,
+                                pageSizes: [3, 10],
+                                resultCount: tableData.length,
+                                pagination: true,
                             },
                         );
                 },
@@ -944,41 +936,27 @@ describe("GTable", () => {
             const { container } = mnt(GTableFixture);
 
             await expect
-                .element(container.getByRole("button", { name: "First Page" }))
-                .not.toBeInTheDocument();
-        });
-
-        it("shows controls bar with custom content in slot", async () => {
-            const GTableFixture = defineComponent({
-                setup() {
-                    const filtering = useFiltering(defaultFilter);
-                    const { filters } = filtering;
-
-                    return () =>
-                        h(
-                            GTable<TableEntry, TableColumn<TableEntry>>,
-                            {
-                                label: "Test Table",
-                                data: tableData,
-                                columns,
-                                filtering,
-                                filter: filters,
-                                startIndex: 0,
-                            },
-                            {
-                                pagination: () =>
-                                    h("span", "Custom pagination content"),
-                            },
-                        );
-                },
-            });
-
-            const { container } = mnt(GTableFixture);
-
-            // The pagination div should be visible with custom content
-            await expect
-                .element(container.getByText("Custom pagination content"))
+                .element(container.getByRole("navigation", { name: "Pagination" }))
                 .toBeVisible();
+        });
+
+        it("renders the table in a separate wrapper from the controls", async () => {
+            const { GTableFixture } = createCollegesTableFixture();
+            const { container } = mnt(GTableFixture);
+
+            const controls = container.element().querySelector(
+                ".g-table-controls",
+            ) as HTMLElement | null;
+            const tableWrapper = container.element().querySelector(
+                ".g-table-table-wrap",
+            ) as HTMLElement | null;
+            const table = tableWrapper?.querySelector(".g-table");
+
+            expect(controls).not.toBeNull();
+            expect(tableWrapper).not.toBeNull();
+            expect(table).not.toBeNull();
+            expect(tableWrapper?.querySelector(".g-table-controls")).toBeNull();
+            expect(controls?.closest(".g-table-table-wrap")).toBeNull();
         });
 
         it("keeps pagination centered and result count pinned right", async () => {
@@ -1005,6 +983,21 @@ describe("GTable", () => {
             );
             expect(window.getComputedStyle(resultCount!).gridColumnStart).toBe(
                 "3",
+            );
+        });
+
+        it("switches the controls bar to flex layout below 1000px", async () => {
+            const { GTableFixture } = createCollegesTableFixture();
+            const { container } = mnt(wrapInWidth(GTableFixture, 980));
+
+            const controls = container.element().querySelector(
+                ".g-table-controls",
+            ) as HTMLElement | null;
+
+            expect(controls).not.toBeNull();
+            expect(window.getComputedStyle(controls!).display).toBe("flex");
+            expect(window.getComputedStyle(controls!).justifyContent).toBe(
+                "space-between",
             );
         });
 
@@ -1054,9 +1047,6 @@ describe("GTable", () => {
                                 },
                                 startIndex: 0,
                             },
-                            {
-                                // No pagination slot
-                            },
                         );
                 },
             });
@@ -1067,6 +1057,172 @@ describe("GTable", () => {
             await expect
                 .element(container.getByText("Clear Filters"))
                 .toBeVisible();
+        });
+
+        it("renders custom controls between column visibility and clear filters", async () => {
+            const GTableFixture = defineComponent({
+                setup() {
+                    const filtering = useFiltering(defaultFilter);
+                    const { filters } = filtering;
+                    const columnVisibility = {
+                        key: true,
+                        name: true,
+                    };
+
+                    filters.collegeInName = "yes";
+
+                    return () =>
+                        h(
+                            GTable<TableEntry, TableColumn<TableEntry>>,
+                            {
+                                label: "Test Table",
+                                data: tableData,
+                                columns: [
+                                    { key: "key", label: "Code" },
+                                    { key: "name", label: "Name" },
+                                ],
+                                filtering,
+                                filter: filters,
+                                startIndex: 0,
+                                columnVisibility,
+                                "onUpdate:columnVisibility": () => undefined,
+                            },
+                            {
+                                controls: () =>
+                                    h(
+                                        "button",
+                                        { type: "button", class: "test-custom-control" },
+                                        "Custom Control",
+                                    ),
+                            },
+                        );
+                },
+            });
+
+            const { container } = mnt(GTableFixture);
+            const actions = container.element().querySelector(
+                ".g-table-control-actions",
+            ) as HTMLElement | null;
+            const customControl = container.element().querySelector(
+                ".test-custom-control",
+            ) as HTMLElement | null;
+
+            await expect
+                .element(container.getByRole("button", { name: "Custom Control" }))
+                .toBeVisible();
+            expect(actions).not.toBeNull();
+            expect(customControl).not.toBeNull();
+            expect(customControl?.closest(".g-table-custom-controls")).not.toBeNull();
+
+            const childClasses = Array.from(actions!.children).map((child) =>
+                child.className.toString(),
+            );
+            expect(childClasses).toEqual([
+                "g-column-visibility-wrap",
+                "g-table-custom-controls",
+                "g-clear-filters-wrap",
+            ]);
+        });
+
+        it("collapses clear filters to icon-only below 760px", async () => {
+            const GTableFixture = defineComponent({
+                setup() {
+                    const filtering = useFiltering(defaultFilter);
+                    const { filters } = filtering;
+
+                    filters.collegeInName = "yes";
+
+                    return () =>
+                        h(
+                            GTable<TableEntry, TableColumn<TableEntry>>,
+                            {
+                                label: "Test Table",
+                                data: tableData,
+                                columns,
+                                filtering,
+                                filter: filters,
+                                startIndex: 0,
+                            },
+                            {},
+                        );
+                },
+            });
+
+            const { container } = mnt(wrapInWidth(GTableFixture, 750));
+
+            const clearFiltersButton = container.getByRole("button", {
+                name: "Clear Filters",
+            });
+            const clearFiltersText = container
+                .element()
+                .querySelector(".g-clear-filters-text") as HTMLElement | null;
+
+            await expect.element(clearFiltersButton).toBeVisible();
+            expect(clearFiltersText).not.toBeNull();
+            expect(window.getComputedStyle(clearFiltersText!).display).toBe(
+                "none",
+            );
+        });
+
+        it("moves first, last, and page size controls into the overflow menu below 720px", async () => {
+            const { GTableFixture, pageSize, start } = createCollegesTableFixture();
+            const { container } = mnt(wrapInWidth(GTableFixture, 700));
+
+            await expect
+                .element(
+                    container.getByRole("button", {
+                        name: "More pagination options",
+                    }),
+                )
+                .toBeVisible();
+            await expect
+                .element(container.getByRole("button", { name: "First Page" }))
+                .not.toBeInTheDocument();
+
+            await container
+                .getByRole("button", {
+                    name: "More pagination options",
+                })
+                .click();
+
+            await expect
+                .element(page.getByRole("heading", { name: "Pagination options" }))
+                .toHaveFocus();
+
+            const overflowPageSizeSelect = document.body.querySelector(
+                "#modal-root .page-size-select",
+            ) as HTMLSelectElement | null;
+
+            expect(overflowPageSizeSelect).not.toBeNull();
+            expect(
+                window.getComputedStyle(overflowPageSizeSelect!).borderTopWidth,
+            ).toBe("2px");
+            expect(
+                window.getComputedStyle(overflowPageSizeSelect!).borderTopLeftRadius,
+            ).not.toBe("0px");
+
+            await page.getByRole("button", { name: "Last Page" }).click();
+            await expect.element(container.getByText("7 to 8")).toBeVisible();
+
+            await page.getByRole("button", { name: "More pagination options" }).click();
+            await page
+                .getByRole("combobox", { name: "Rows per page" })
+                .selectOptions("10");
+            await vi.waitUntil(
+                () => pageSize.value === 10 && start.value === 0,
+            );
+            await expect.element(container.getByText("1 to 8")).toBeVisible();
+
+            expect(getColumn(container, 0)).toEqual([
+                "LT",
+                "KL",
+                "KY",
+                "KN",
+                "KM",
+                "KO",
+                "KV",
+                "LL",
+            ]);
         });
     });
 

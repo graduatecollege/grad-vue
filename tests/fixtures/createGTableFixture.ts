@@ -5,7 +5,6 @@ import {
     TableSort,
     useFiltering,
     UseTableChangesReturn,
-    GTablePagination,
     BulkAction,
     TableRow,
 } from "../../packages/grad-vue/src/grad-vue";
@@ -166,6 +165,13 @@ export function createGTableFixture<
                             assignRecordValues(filters, value);
                         },
                         resultCount: resultCount.value,
+                        pageSize:
+                            options.paginate === false ? undefined : pageSize.value,
+                        pageSizes:
+                            options.paginate === false
+                                ? undefined
+                                : options.pageSizes || [5, 10, 50],
+                        pagination: options.paginate !== false,
                         sorts: sorts.value,
                         "onUpdate:sorts": (value: TableSort<T>[]) => {
                             sorts.value = value;
@@ -187,6 +193,9 @@ export function createGTableFixture<
                         rowClickable: options.rowClickable,
                         rowClass: options.rowClass,
                         startIndex: start.value,
+                        "onUpdate:startIndex": (value: number) => {
+                            start.value = value;
+                        },
                         bulkSelectionEnabled: options.bulkSelectionEnabled,
                         bulkActions: options.bulkActions,
                         selectedRows: selectedRows.value,
@@ -194,31 +203,11 @@ export function createGTableFixture<
                             selectedRows.value = value;
                         },
                         changeTracker: options.changeTracker,
+                        "onUpdate:pageSize": (value: number) => {
+                            pageSize.value = value;
+                        },
                     },
-                    {
-                        pagination:
-                            options.paginate === false
-                                ? undefined
-                                : () =>
-                                      h(GTablePagination, {
-                                          start: start.value,
-                                          pageSize: pageSize.value,
-                                          total: resultCount.value,
-                                          pageSizes: options.pageSizes || [
-                                              5, 10, 50,
-                                          ],
-                                          "onUpdate:start": (
-                                              value: number | undefined,
-                                          ) => {
-                                              start.value = value || 0;
-                                          },
-                                          "onUpdate:pageSize": (
-                                              value: number | undefined,
-                                          ) => {
-                                              pageSize.value = value || 5;
-                                          },
-                                      }),
-                    },
+                    {},
                 );
         },
     });
