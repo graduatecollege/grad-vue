@@ -657,6 +657,7 @@ const visibleColumns = computed(() => {
 });
 const slots = defineSlots<{
     controls?: () => any;
+    "right-controls"?: () => any;
 }>();
 const hasHiddenColumns = computed(
     () => visibleColumns.value.length !== props.columns.length,
@@ -664,7 +665,7 @@ const hasHiddenColumns = computed(
 const shouldShowColumnVisibilityControls = computed(
     () => columnStateConfigured.value && props.columns.length > 0,
 );
-const shouldShowCustomControls = computed(() => !!slots.controls);
+const shouldShowCustomControls = computed(() => !!slots.controls || !!slots["right-controls"]);
 const totalResults = computed(() => props.resultCount ?? props.data.length);
 
 function isColumnVisible(col: C) {
@@ -1073,9 +1074,12 @@ onMounted(() => {
                     @update:page-size="updatePageSize"
                 />
             </div>
-            <span class="g-result-count"
-                >{{ totalResults }} results</span
-            >
+            <div class="g-table-controls-right">
+                <span class="g-result-count"
+                    >{{ totalResults }} results</span
+                >
+                <slot name="right-controls"></slot>
+            </div>
         </div>
         <div ref="tableWrapRef" class="g-table-table-wrap">
             <table
