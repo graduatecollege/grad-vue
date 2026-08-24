@@ -2,6 +2,7 @@ import { computed, defineComponent, h, ref, shallowRef, VNode } from "vue";
 import {
     GTable,
     TableColumn,
+    TableColumnState,
     TableSort,
     useFiltering,
     UseTableChangesReturn,
@@ -32,9 +33,8 @@ export type CreateGTableFixtureOptions<
     initialStart?: number;
     initialPageSize?: number;
     pageSizes?: number[];
-    initialColumnVisibility?: Partial<
-        Record<Extract<keyof T, string>, boolean>
-    >;
+    initialColumnState?: TableColumnState<T>;
+    resizableColumns?: boolean;
 
     resultCount?: (filteredData: T[]) => number;
     groupBy?: keyof T;
@@ -102,9 +102,7 @@ export function createGTableFixture<
     const sorts = shallowRef<TableSort<T>[]>([...initialSorts]);
     const start = ref(options.initialStart ?? 0);
     const pageSize = ref(options.initialPageSize ?? 5);
-    const columnVisibility = ref<
-        Partial<Record<FilterKey<T>, boolean>>
-    >(options.initialColumnVisibility || {});
+    const columnState = ref<TableColumnState<T>>(options.initialColumnState || {});
     const selectedRows = ref<string[]>([]);
     const initialFilter = buildInitialFilter<T>({
         initialFilter: options.initialFilter,
@@ -176,18 +174,18 @@ export function createGTableFixture<
                         "onUpdate:sorts": (value: TableSort<T>[]) => {
                             sorts.value = value;
                         },
-                        ...(options.initialColumnVisibility !== undefined
+                        ...((options.initialColumnState !== undefined ||
+                            options.resizableColumns)
                             ? {
-                                  columnVisibility: columnVisibility.value,
-                                  "onUpdate:columnVisibility": (
-                                      value: Partial<
-                                          Record<Extract<keyof T, string>, boolean>
-                                      >,
+                                  columnState: columnState.value,
+                                  "onUpdate:columnState": (
+                                      value: TableColumnState<T>,
                                   ) => {
-                                      columnVisibility.value = value;
+                                      columnState.value = value;
                                   },
                               }
                             : {}),
+                        resizableColumns: options.resizableColumns,
                         groupBy: options.groupBy,
                         groupRender: options.groupRender,
                         rowClickable: options.rowClickable,
@@ -217,7 +215,7 @@ export function createGTableFixture<
         sorts,
         start,
         pageSize,
-        columnVisibility,
+        columnState,
         filters,
         selectedRows,
     };

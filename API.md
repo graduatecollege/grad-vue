@@ -1554,6 +1554,10 @@ type Props = {
      * Enable the built-in pagination controls.
      */
     pagination?: boolean;
+    /**
+     * Enable keyboard and pointer resizing for visible columns.
+     */
+    resizableColumns?: boolean;
 };
 ```
 

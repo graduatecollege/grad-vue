@@ -168,10 +168,10 @@ const { filters, isFiltered, clearFilters } = filtering;
 const sorts = ref<TableSort<TableEntry>[]>([]);
 const start = ref(0);
 const pageSize = ref(5);
-const columnVisibility = ref({
-    code: true,
-    name: true,
-    collegeInName: true,
+const columnState = ref({
+    code: { visible: true, width: 120 },
+    name: { visible: true, width: 420 },
+    collegeInName: { visible: true, width: 180 },
 });
 const selectedRows = ref<string[]>([]);
 
@@ -458,6 +458,10 @@ function handleCellChange(payload: CellChangePayload<ProductRow>) {
 <span class="line"><span style="color:#008000">     * Enable the built-in pagination controls.</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    pagination</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Enable keyboard and pointer resizing for visible columns.</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    resizableColumns</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#000000">};</span></span></code></pre>
 </figure>
 
@@ -503,8 +507,9 @@ with the link <code>href</code> from the first link in the row.</p>
                     :bulk-selection-enabled="props.bulkSelectionEnabled"
                     :bulk-actions="bulkActions"
                     :start-index="start"
+                    :resizable-columns="true"
                     v-model:sorts="sorts"
-                    v-model:column-visibility="columnVisibility"
+                    v-model:column-state="columnState"
                     v-model:selected-rows="selectedRows"
                     @update:start-index="start = $event"
                     @update:page-size="pageSize = $event"
