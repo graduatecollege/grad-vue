@@ -35,11 +35,17 @@ export default {};
 <script setup lang="ts" generic="T extends TableRow, C extends TableColumn<T>">
 import GTableBody from "./table/GTableBody.vue";
 import GPopover from "./GPopover.vue";
-import type { TableColumn, TableRow, TableSort } from "./table/TableColumn.ts";
+import type {
+    TableColumn,
+    TableColumnState,
+    TableRow,
+    TableSort,
+} from "./table/TableColumn.ts";
 import {
     computed,
     getCurrentInstance,
     nextTick,
+    onBeforeUnmount,
     onMounted,
     ref,
     toRaw,
@@ -73,8 +79,17 @@ export interface BulkAction {
     theme?: "primary" | "secondary" | "accent" | "danger";
 }
 
-type ColumnVisibilityKey<T extends TableRow> = Extract<keyof T, string>;
+type ColumnStateKey<T extends TableRow> = Extract<keyof T, string>;
 type SortKey<T extends TableRow> = Extract<keyof T, string>;
+type ActiveColumnResize<T extends TableRow> = {
+    key: ColumnStateKey<T>;
+    startX: number;
+    startWidth: number;
+};
+
+const MIN_COLUMN_WIDTH = 50;
+const COLUMN_RESIZE_STEP = 16;
+const LARGE_COLUMN_RESIZE_STEP = 48;
 
 type Props = {
     /**
@@ -165,6 +180,10 @@ type Props = {
      * @demo
      */
     pagination?: boolean;
+    /**
+     * Enable keyboard and pointer resizing for visible columns.
+     */
+    resizableColumns?: boolean;
 };
 
 const sorts = defineModel<TableSort<T>[]>("sorts", {
@@ -173,9 +192,7 @@ const sorts = defineModel<TableSort<T>[]>("sorts", {
 const filter = defineModel<Partial<Record<keyof T, any>>>("filter", {
     default: () => ({}),
 });
-const columnVisibility = defineModel<
-    Partial<Record<Extract<keyof T, string>, boolean>>
->("columnVisibility", {
+const columnState = defineModel<TableColumnState<T>>("columnState", {
     default: () => ({}),
 });
 const selectedRows = defineModel<string[]>("selectedRows", {
@@ -187,6 +204,7 @@ const props = withDefaults(defineProps<Props>(), {
     bulkActions: () => [],
     pageSizes: () => [10, 25, 50, 100],
     pagination: false,
+    resizableColumns: false,
 });
 
 const emit = defineEmits<{
@@ -316,6 +334,10 @@ function updatePageSize(value: number | undefined) {
 const id = useId();
 const instance = getCurrentInstance();
 const sortBuilderRef = ref<HTMLFieldSetElement | null>(null);
+const tableRef = ref<HTMLTableElement | null>(null);
+const tableWrapRef = ref<HTMLDivElement | null>(null);
+const activeResize = ref<ActiveColumnResize<T> | null>(null);
+const tableElementId = `${id}-table`;
 
 function normalizeSorts(value: TableSort<T>[]) {
     const seen = new Set<string>();
@@ -468,19 +490,169 @@ function clearSorts() {
     setSortState([]);
 }
 
-const columnVisibilityConfigured = computed(() => {
+function columnStateFor(key: ColumnStateKey<T>) {
+    return columnState.value[key] ?? {};
+}
+
+function setColumnState(
+    key: ColumnStateKey<T>,
+    patch: Partial<NonNullable<TableColumnState<T>[ColumnStateKey<T>]>>,
+) {
+    columnState.value = {
+        ...columnState.value,
+        [key]: {
+            ...columnStateFor(key),
+            ...patch,
+        },
+    };
+}
+
+function normalizeColumnWidth(width: number) {
+    return Math.max(MIN_COLUMN_WIDTH, Math.round(width));
+}
+
+function storedColumnWidth(key: ColumnStateKey<T>) {
+    const width = columnStateFor(key).width;
+    if (typeof width !== "number" || !Number.isFinite(width)) {
+        return undefined;
+    }
+    return normalizeColumnWidth(width);
+}
+
+function columnHeaderElement(key: keyof T) {
+    return document.getElementById(
+        `${id}-th-${String(key)}`,
+    ) as HTMLTableCellElement | null;
+}
+
+function measuredColumnWidth(key: ColumnStateKey<T>) {
+    const cellWidth = columnHeaderElement(key)?.getBoundingClientRect().width;
+    return normalizeColumnWidth(cellWidth ?? MIN_COLUMN_WIDTH);
+}
+
+function currentColumnWidth(key: ColumnStateKey<T>) {
+    return storedColumnWidth(key) ?? measuredColumnWidth(key);
+}
+
+function columnResizeMax(key: ColumnStateKey<T>) {
+    const currentWidth = currentColumnWidth(key);
+    const wrapWidth =
+        tableWrapRef.value?.getBoundingClientRect().width ??
+        tableRef.value?.getBoundingClientRect().width ??
+        currentWidth;
+    return normalizeColumnWidth(Math.max(currentWidth, wrapWidth));
+}
+
+function setColumnWidth(key: ColumnStateKey<T>, width: number) {
+    setColumnState(key, { width: normalizeColumnWidth(width) });
+}
+
+function resizeColumnBy(key: ColumnStateKey<T>, delta: number) {
+    setColumnWidth(key, currentColumnWidth(key) + delta);
+}
+
+function stopColumnResize() {
+    activeResize.value = null;
+    window.removeEventListener("pointermove", onColumnResizePointerMove);
+    window.removeEventListener("pointerup", stopColumnResize);
+    window.removeEventListener("pointercancel", stopColumnResize);
+}
+
+function onColumnResizePointerMove(event: PointerEvent) {
+    if (!activeResize.value) {
+        return;
+    }
+
+    const width =
+        activeResize.value.startWidth + (event.clientX - activeResize.value.startX);
+    setColumnWidth(activeResize.value.key as ColumnStateKey<T>, width);
+}
+
+function startColumnResize(event: PointerEvent, key: ColumnStateKey<T>) {
+    if (!props.resizableColumns) {
+        return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    const startWidth = currentColumnWidth(key);
+    setColumnWidth(key, startWidth);
+    activeResize.value = {
+        key,
+        startX: event.clientX,
+        startWidth,
+    };
+
+    (event.currentTarget as HTMLElement | null)?.focus();
+    window.addEventListener("pointermove", onColumnResizePointerMove);
+    window.addEventListener("pointerup", stopColumnResize);
+    window.addEventListener("pointercancel", stopColumnResize);
+}
+
+function onColumnResizeKeydown(
+    event: KeyboardEvent,
+    key: ColumnStateKey<T>,
+) {
+    const step = event.shiftKey ? LARGE_COLUMN_RESIZE_STEP : COLUMN_RESIZE_STEP;
+
+    switch (event.key) {
+        case "ArrowLeft":
+            event.preventDefault();
+            resizeColumnBy(key, -step);
+            return;
+        case "ArrowRight":
+            event.preventDefault();
+            resizeColumnBy(key, step);
+            return;
+        case "Home":
+            event.preventDefault();
+            setColumnWidth(key, MIN_COLUMN_WIDTH);
+            return;
+        case "End":
+            event.preventDefault();
+            setColumnWidth(key, columnResizeMax(key));
+            return;
+        default:
+            return;
+    }
+}
+
+function columnWidthStyle(col: C) {
+    if (!props.resizableColumns) {
+        return undefined;
+    }
+
+    const width = storedColumnWidth(col.key as ColumnStateKey<T>);
+    if (width === undefined) {
+        return undefined;
+    }
+
+    return {
+        width: `${width}px`,
+        minWidth: `${width}px`,
+    };
+}
+
+function resizeHandleValue(key: ColumnStateKey<T>) {
+    return currentColumnWidth(key);
+}
+
+function resizeHandleValueText(key: ColumnStateKey<T>) {
+    return `${resizeHandleValue(key)} pixels`;
+}
+
+const columnStateConfigured = computed(() => {
     const vnodeProps = instance?.vnode.props ?? {};
     return (
-        "columnVisibility" in vnodeProps ||
-        "column-visibility" in vnodeProps ||
-        "onUpdate:columnVisibility" in vnodeProps
+        "columnState" in vnodeProps ||
+        "column-state" in vnodeProps ||
+        "onUpdate:columnState" in vnodeProps
     );
 });
 
 const visibleColumns = computed(() => {
-    const visibility = columnVisibility.value;
     return props.columns.filter(
-        (col) => visibility[col.key as ColumnVisibilityKey<T>] !== false,
+        (col) => columnStateFor(col.key as ColumnStateKey<T>).visible !== false,
     );
 });
 const slots = defineSlots<{
@@ -490,29 +662,29 @@ const hasHiddenColumns = computed(
     () => visibleColumns.value.length !== props.columns.length,
 );
 const shouldShowColumnVisibilityControls = computed(
-    () => columnVisibilityConfigured.value && props.columns.length > 0,
+    () => columnStateConfigured.value && props.columns.length > 0,
 );
 const shouldShowCustomControls = computed(() => !!slots.controls);
 const totalResults = computed(() => props.resultCount ?? props.data.length);
 
 function isColumnVisible(col: C) {
-    return columnVisibility.value[col.key as ColumnVisibilityKey<T>] !== false;
+    return columnStateFor(col.key as ColumnStateKey<T>).visible !== false;
 }
 
 function setColumnVisibility(col: C, visible: boolean) {
-    columnVisibility.value = {
-        ...columnVisibility.value,
-        [col.key]: visible,
-    };
+    setColumnState(col.key as ColumnStateKey<T>, { visible });
 }
 
 function showAllColumns() {
-    columnVisibility.value = props.columns.reduce(
-        (visibility, col) => ({
-            ...visibility,
-            [col.key]: true,
+    columnState.value = props.columns.reduce(
+        (state, col) => ({
+            ...state,
+            [col.key]: {
+                ...columnStateFor(col.key as ColumnStateKey<T>),
+                visible: true,
+            },
         }),
-        { ...columnVisibility.value },
+        { ...columnState.value },
     );
 }
 
@@ -552,6 +724,10 @@ function multiSelectFilterOptions(col: C) {
         hint: option.description,
     }));
 }
+
+onBeforeUnmount(() => {
+    stopColumnResize();
+});
 
 onMounted(() => {
     if (props.rowClickable && props.bulkSelectionEnabled) {
@@ -901,13 +1077,23 @@ onMounted(() => {
                 >{{ totalResults }} results</span
             >
         </div>
-        <div class="g-table-table-wrap">
+        <div ref="tableWrapRef" class="g-table-table-wrap">
             <table
-                class="g-table"
+                :id="tableElementId"
+                :class="['g-table', { 'g-table--resizable': resizableColumns }]"
                 ref="tableRef"
                 :aria-label="label"
                 :aria-rowcount="totalResults"
             >
+                <colgroup>
+                    <col v-if="bulkSelectionEnabled" />
+                    <col
+                        v-for="col in visibleColumns"
+                        :key="col.key"
+                        :data-column-key="String(col.key)"
+                        :style="columnWidthStyle(col)"
+                    />
+                </colgroup>
                 <thead class="g-table-head">
                     <tr aria-rowindex="1">
                         <th
@@ -935,6 +1121,7 @@ onMounted(() => {
                             :aria-sort="columnAriaSort(col.key)"
                             :class="[
                                 'g-th',
+                                { 'g-th--resizable': resizableColumns },
                                 { sorted: sortIndex(col.key) !== -1 },
                                 { filtered: filteredColumns[col.key] },
                             ]"
@@ -1106,6 +1293,45 @@ onMounted(() => {
                                     </div>
                                 </GPopover>
                             </div>
+                            <div
+                               v-if="resizableColumns"
+                               :data-column-key="String(col.key)"
+                               class="g-column-resize-handle"
+                               :class="{
+                                   'g-column-resize-handle--active':
+                                       activeResize?.key === col.key,
+                               }"
+                               role="separator"
+                               tabindex="0"
+                               aria-orientation="vertical"
+                               :aria-controls="tableElementId"
+                               :aria-label="`Resize ${col.label} column`"
+                               :aria-valuemin="MIN_COLUMN_WIDTH"
+                               :aria-valuemax="
+                                   columnResizeMax(col.key as ColumnStateKey<T>)
+                               "
+                               :aria-valuenow="
+                                   resizeHandleValue(col.key as ColumnStateKey<T>)
+                               "
+                               :aria-valuetext="
+                                   resizeHandleValueText(
+                                       col.key as ColumnStateKey<T>,
+                                   )
+                               "
+                               @click.stop.prevent
+                               @keydown="
+                                   onColumnResizeKeydown(
+                                       $event,
+                                       col.key as ColumnStateKey<T>,
+                                   )
+                               "
+                               @pointerdown="
+                                   startColumnResize(
+                                       $event,
+                                       col.key as ColumnStateKey<T>,
+                                   )
+                               "
+                            ></div>
                         </th>
                     </tr>
                 </thead>
@@ -1186,6 +1412,7 @@ g-table {
     border: 0;
     border-bottom: 2px solid var(--g-surface-900);
     background: var(--g-surface-0);
+    position: relative;
 
     &.sorted {
         color: var(--ilw-color--link-hover);
@@ -1200,6 +1427,11 @@ g-table {
     .th-inner {
         display: flex;
         align-items: center;
+        min-height: 2rem;
+    }
+
+    &.g-th--resizable .th-inner {
+        padding-right: 24px;
     }
 }
 
@@ -1221,6 +1453,17 @@ g-table {
         display: inline-flex;
         align-items: center;
     }
+
+    &:hover {
+        text-decoration: underline;
+        color: var(--ilw-color--link-hover);
+    }
+
+    &:focus-visible {
+        background: var(--ilw-color--focus--background);
+        color: var(--ilw-color--focus--text);
+        outline-color: var(--ilw-color--focus--outline);
+    }
 }
 
 th:first-of-type .g-column-head {
@@ -1232,18 +1475,53 @@ button.g-column-head {
     height: 2rem;
 }
 
-button.g-column-head:hover {
-    text-decoration: underline;
-    color: var(--ilw-color--link-hover);
-}
-
 .g-table {
     border-spacing: 0;
     min-width: 100%;
 }
 
+.g-table--resizable {
+    table-layout: fixed;
+}
+
 .g-table-table-wrap {
     min-width: 0;
+}
+
+.g-column-resize-handle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 24px;
+    cursor: col-resize;
+    touch-action: none;
+    z-index: 2;
+    outline: none;
+
+    &::before {
+        content: "";
+        position: absolute;
+        top: 20%;
+        bottom: 20%;
+        left: 50%;
+        width: 2px;
+        transform: translateX(-50%);
+        border-radius: 999px;
+        background: var(--g-surface-400);
+    }
+
+    &:hover::before,
+    &:focus::before,
+    &.g-column-resize-handle--active::before {
+        background: var(--g-primary-500);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--g-primary-500);
+        background: var(--ilw-color--focus--background);
+        outline-offset: -2px;
+    }
 }
 
 .g-filter-btn {

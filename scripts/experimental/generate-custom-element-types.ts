@@ -227,6 +227,8 @@ function applySubstitutions(typeStr: string, subs: Record<string, string>): stri
 const KNOWN_EXTERNAL_TYPES: Record<string, string> = {
     VNode: 'vue',
     TableColumn: './components/table/TableColumn.ts',
+    TableColumnState: './components/table/TableColumn.ts',
+    TableColumnStateValue: './components/table/TableColumn.ts',
     TableRow: './components/table/TableColumn.ts',
     TableSort: './components/table/TableColumn.ts',
     UseFilteringReturn: './compose/useFiltering.ts',

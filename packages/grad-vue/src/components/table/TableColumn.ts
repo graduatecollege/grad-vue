@@ -79,6 +79,16 @@ export interface EditableColumnConfig {
 
 type ColumnKey<T> = Extract<keyof T, string>;
 
+export interface TableColumnStateValue {
+    visible?: boolean;
+    width?: number;
+}
+
+export type TableColumnState<
+    T extends TableRow,
+    K extends ColumnKey<T> = ColumnKey<T>,
+> = Partial<Record<K, TableColumnStateValue>>;
+
 export interface TableSort<T extends TableRow, K extends ColumnKey<T> = ColumnKey<T>> {
     key: K;
     order: 1 | -1;

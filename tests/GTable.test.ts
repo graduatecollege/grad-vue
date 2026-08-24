@@ -508,7 +508,7 @@ describe("GTable", () => {
                 columns,
                 data: tableData,
                 paginate: false,
-                initialColumnVisibility: {},
+                initialColumnState: {},
             });
             const { container } = mnt(GTableFixture);
 
@@ -527,7 +527,7 @@ describe("GTable", () => {
                 columns,
                 data: tableData,
                 paginate: false,
-                initialColumnVisibility: {},
+                initialColumnState: {},
             });
             const { container } = mnt(GTableFixture);
 
@@ -559,8 +559,8 @@ describe("GTable", () => {
                 initialPageSize: 3,
                 pageSizes: [3, 10, 50],
                 filterData: filterCollegesData,
-                initialColumnVisibility: {
-                    abbr: false,
+                initialColumnState: {
+                    abbr: { visible: false },
                 },
             });
             const { container } = mnt(GTableFixture);
@@ -581,7 +581,7 @@ describe("GTable", () => {
         });
 
         it("updates column visibility from the chooser", async () => {
-            const { GTableFixture, columnVisibility } =
+            const { GTableFixture, columnState } =
                 createGTableFixture<TableEntry>({
                     label: "Colleges",
                     columns,
@@ -590,8 +590,8 @@ describe("GTable", () => {
                     initialPageSize: 3,
                     pageSizes: [3, 10, 50],
                     filterData: filterCollegesData,
-                    initialColumnVisibility: {
-                        abbr: false,
+                    initialColumnState: {
+                        abbr: { visible: false },
                     },
                 });
             const { container } = mnt(GTableFixture);
@@ -603,7 +603,7 @@ describe("GTable", () => {
                 .click();
             await page.getByRole("checkbox", { name: "Abbreviation" }).click();
 
-            expect(columnVisibility.value.abbr).toBe(true);
+            expect(columnState.value.abbr?.visible).toBe(true);
             await expect
                 .element(
                     container.getByRole("columnheader", { name: "Abbreviation" }),
@@ -613,7 +613,7 @@ describe("GTable", () => {
         });
 
         it("shows a Show All action when columns are hidden and restores them", async () => {
-            const { GTableFixture, columnVisibility } =
+            const { GTableFixture, columnState } =
                 createGTableFixture<TableEntry>({
                     label: "Colleges",
                     columns,
@@ -622,8 +622,8 @@ describe("GTable", () => {
                     initialPageSize: 3,
                     pageSizes: [3, 10, 50],
                     filterData: filterCollegesData,
-                    initialColumnVisibility: {
-                        abbr: false,
+                    initialColumnState: {
+                        abbr: { visible: false },
                     },
                 });
             const { container } = mnt(GTableFixture);
@@ -640,7 +640,7 @@ describe("GTable", () => {
 
             await page.getByRole("button", { name: "Show All" }).click();
 
-            expect(columnVisibility.value.abbr).toBe(true);
+            expect(columnState.value.abbr?.visible).toBe(true);
             await expect
                 .element(
                     container.getByRole("columnheader", { name: "Abbreviation" }),
@@ -662,7 +662,7 @@ describe("GTable", () => {
                 columns,
                 data: tableData,
                 paginate: false,
-                initialColumnVisibility: {},
+                initialColumnState: {},
             });
             const { container } = mnt(GTableFixture);
 
@@ -698,9 +698,9 @@ describe("GTable", () => {
                 data: tableData,
                 paginate: false,
                 groupBy: "collegeInName",
-                initialColumnVisibility: {
-                    name: false,
-                    abbr: false,
+                initialColumnState: {
+                    name: { visible: false },
+                    abbr: { visible: false },
                 },
             });
             const { container } = mnt(GTableFixture);
@@ -710,6 +710,120 @@ describe("GTable", () => {
                 .querySelector(".table-group-row") as HTMLTableCellElement | null;
 
             expect(groupRow?.getAttribute("colspan")).toBe("2");
+        });
+    });
+    describe("Resizable Column Tests", () => {
+        it("applies stored widths from column state", async () => {
+            const { GTableFixture } = createGTableFixture<TableEntry>({
+                label: "Colleges",
+                columns,
+                data: tableData,
+                paginate: false,
+                resizableColumns: true,
+                initialColumnState: {
+                    key: { width: 160 },
+                    name: { width: 320 },
+                },
+            });
+            const { container } = mnt(wrapInWidth(GTableFixture, 900));
+
+            const keyColumn = container.element().querySelector(
+                'col[data-column-key="key"]',
+            ) as HTMLTableColElement | null;
+
+            expect(keyColumn?.style.width).toBe("160px");
+            expect(keyColumn?.style.minWidth).toBe("160px");
+        });
+
+        it("updates column width from keyboard input", async () => {
+            const { GTableFixture, columnState } = createGTableFixture<TableEntry>({
+                label: "Colleges",
+                columns,
+                data: tableData,
+                paginate: false,
+                resizableColumns: true,
+                initialColumnState: {
+                    key: { width: 160 },
+                },
+            });
+            const { container } = mnt(wrapInWidth(GTableFixture, 900));
+
+            const resizeHandle = container.getByRole("separator", {
+                name: "Resize Code column",
+            });
+            resizeHandle.element().focus();
+            await userEvent.keyboard("{ArrowRight}");
+
+            expect(columnState.value.key?.width).toBe(176);
+            await expect.element(resizeHandle).toHaveAttribute("aria-valuenow", "176");
+        });
+
+        it("updates column width from pointer drag", async () => {
+            const { GTableFixture, columnState } = createGTableFixture<TableEntry>({
+                label: "Colleges",
+                columns,
+                data: tableData,
+                paginate: false,
+                resizableColumns: true,
+                initialColumnState: {
+                    key: { width: 160 },
+                },
+            });
+            const { container } = mnt(wrapInWidth(GTableFixture, 900));
+
+            const resizeHandle = container.getByRole("separator", {
+                name: "Resize Code column",
+            });
+
+            resizeHandle.element().dispatchEvent(
+                new PointerEvent("pointerdown", {
+                    bubbles: true,
+                    clientX: 200,
+                }),
+            );
+            window.dispatchEvent(
+                new PointerEvent("pointermove", {
+                    bubbles: true,
+                    clientX: 244,
+                }),
+            );
+            window.dispatchEvent(
+                new PointerEvent("pointerup", {
+                    bubbles: true,
+                    clientX: 244,
+                }),
+            );
+
+            await vi.waitUntil(() => columnState.value.key?.width === 204);
+        });
+
+        it("keeps the last resize handle inside the table wrapper", async () => {
+            const { GTableFixture } = createGTableFixture<TableEntry>({
+                label: "Colleges",
+                columns,
+                data: tableData,
+                paginate: false,
+                resizableColumns: true,
+            });
+            const { container } = mnt(wrapInWidth(GTableFixture, 900));
+
+            const wrap = container.element().querySelector(
+                ".g-table-table-wrap",
+            ) as HTMLDivElement | null;
+            const handles = container.element().querySelectorAll(
+                ".g-column-resize-handle",
+            );
+            const lastHandle = handles.item(handles.length - 1) as HTMLElement | null;
+
+            expect(wrap).not.toBeNull();
+            expect(lastHandle).not.toBeNull();
+
+            const wrapRect = wrap!.getBoundingClientRect();
+            const handleRect = lastHandle!.getBoundingClientRect();
+
+            expect(handleRect.right).toBeLessThanOrEqual(wrapRect.right + 0.5);
+            expect(wrap!.scrollWidth).toBeLessThanOrEqual(wrap!.clientWidth + 1);
+            expect(handleRect.width).toBeGreaterThanOrEqual(24);
         });
     });
     describe("Bulk Selection Tests", () => {
@@ -1172,9 +1286,9 @@ describe("GTable", () => {
                 setup() {
                     const filtering = useFiltering(defaultFilter);
                     const { filters } = filtering;
-                    const columnVisibility = {
-                        key: true,
-                        name: true,
+                    const columnState = {
+                        key: { visible: true },
+                        name: { visible: true },
                     };
 
                     filters.collegeInName = "yes";
@@ -1192,8 +1306,8 @@ describe("GTable", () => {
                                 filtering,
                                 filter: filters,
                                 startIndex: 0,
-                                columnVisibility,
-                                "onUpdate:columnVisibility": () => undefined,
+                                columnState,
+                                "onUpdate:columnState": () => undefined,
                             },
                             {
                                 controls: () =>

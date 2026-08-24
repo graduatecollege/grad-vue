@@ -127,6 +127,8 @@ export type {
     SelectColumnFilter,
     MultiSelectColumnFilter,
     TableColumnFilter,
+    TableColumnState,
+    TableColumnStateValue,
     ToggleColumnFilter,
     TableColumn,
     TableSort,

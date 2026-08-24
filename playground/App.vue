@@ -153,12 +153,12 @@ const { filters: playgroundFilters } = playgroundFiltering;
 const playgroundSorts = ref<TableSort<PlaygroundTableEntry>[]>([]);
 const playgroundStart = ref(0);
 const playgroundPageSize = ref(5);
-const playgroundColumnVisibility = ref({
-    code: true,
-    name: true,
-    abbr: true,
-    unitType: true,
-    collegeInName: true,
+const playgroundColumnState = ref({
+    code: { visible: true, width: 120 },
+    name: { visible: true, width: 360 },
+    abbr: { visible: true, width: 140 },
+    unitType: { visible: true, width: 180 },
+    collegeInName: { visible: true, width: 180 },
 });
 
 const playgroundFilteredRows = computed(() => {
@@ -282,8 +282,9 @@ const fname = ref("heh");
                         :page-sizes="[5, 10, 25]"
                         :pagination="true"
                         :start-index="playgroundStart"
+                        :resizable-columns="true"
                         v-model:sorts="playgroundSorts"
-                        v-model:column-visibility="playgroundColumnVisibility"
+                        v-model:column-state="playgroundColumnState"
                         @update:start-index="playgroundStart = $event"
                         @update:page-size="playgroundPageSize = $event"
                     />
