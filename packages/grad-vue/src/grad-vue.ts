@@ -102,16 +102,34 @@ export type { UseFormReturn, FormField } from "./compose/useForm";
 export { useFormField } from "./compose/useFormField";
 export type { UseFormFieldReturn, UseFormFieldOptions } from "./compose/useFormField";
 export {
+    usePaging,
+    normalizeSorts,
+    parseSortQueryValue,
+    serializeSortQueryValue,
+    buildSortBy,
+} from "./compose/usePaging";
+export {
     useFiltering,
+    useQueryFiltering,
     filtersToQueryParams,
     filterOmitEmpty,
     filterAsQuery,
     asArray,
     emptyAsUndefined,
+    parseQueryArrayValue,
 } from "./compose/useFiltering";
 export { useTableChanges } from "./compose/useTableChanges";
 export type {
+    RawSortQuery,
+    PagingSort,
+    UsePagingOptions,
+    UsePagingReturn,
+} from "./compose/usePaging";
+export type {
     FilteringOptions,
+    QueryFilteringOptions,
+    FilterRouteQuery,
+    FilterRouteQueryValue,
     UseFilteringReturn,
     FiltersForRecord,
 } from "./compose/useFiltering";
