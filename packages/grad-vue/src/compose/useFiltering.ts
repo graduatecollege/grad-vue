@@ -6,11 +6,17 @@ import {
     type Ref,
     toRaw,
     toValue,
-    unref,
     watch,
 } from "vue";
 
 export type FilterLocationQueryValueRaw = string | number;
+export type FilterRouteQueryValue = string | null;
+export type FilterRouteQuery = {
+    [p: string]:
+        | FilterRouteQueryValue
+        | undefined
+        | FilterRouteQueryValue[];
+};
 
 /**
  * Query representation for filtering, compatible with vue-router
@@ -21,13 +27,23 @@ export type FilterLocationQuery = {
         | null
         | number
         | undefined
-        | FilterLocationQueryValueRaw[];
+        | (FilterLocationQueryValueRaw | null)[];
 };
 
 export interface FilteringOptions {
-    syncWith?: Ref<{
-        [p: string]: string | null | (string | null)[] | undefined;
-    }>;
+    syncWith?: Ref<FilterRouteQuery>;
+}
+
+export interface QueryFilteringOptions<
+    F extends Record<string, any> = Record<string, any>,
+> {
+    route: {
+        query: FilterRouteQuery;
+    };
+    router: {
+        replace: (location: { query: FilterLocationQuery }) => unknown;
+    };
+    booleanArrayKeys?: readonly Extract<keyof F, string>[];
 }
 
 /**
@@ -86,7 +102,7 @@ export function emptyAsUndefined<
 
 export function filterOmitEmpty<T extends object>(value: T): Partial<T> {
     return Object.fromEntries(
-        Object.entries(value).filter(([k, v]) => {
+        Object.entries(value).filter(([, v]) => {
             return  v && (!Array.isArray(v) || v.length > 0);
         }),
     ) as Partial<T>;
@@ -107,6 +123,73 @@ export function asArray<T>(value: T | T[]): NonNullable<T>[] | undefined {
         ) as NonNullable<T>[];
     }
     return [value];
+}
+
+/**
+ * Normalizes a route query value into a string array.
+ *
+ * Accepts either repeated query params (`?tag=a&tag=b`) or comma-separated
+ * values (`?tag=a,b`) and removes null entries from array values.
+ */
+export function parseQueryArrayValue(
+    value:
+        | FilterRouteQueryValue
+        | FilterRouteQueryValue[]
+        | readonly FilterRouteQueryValue[]
+        | undefined,
+): string[] | undefined {
+    if (value === null || value === undefined) {
+        return undefined;
+    }
+
+    if (typeof value === "string") {
+        return value.includes(",") ? value.split(",") : [value];
+    }
+
+    const values: string[] = [];
+    for (const item of value) {
+        if (item !== null) {
+            values.push(item);
+        }
+    }
+    return values.length > 0 ? values : undefined;
+}
+
+function cloneQueryValue<T>(value: T): T {
+    if (Array.isArray(value)) {
+        return [...value] as T;
+    }
+    return value;
+}
+
+function areFilterValuesEqual(left: unknown, right: unknown): boolean {
+    if (Array.isArray(left) || Array.isArray(right)) {
+        if (!Array.isArray(left) || !Array.isArray(right)) {
+            return false;
+        }
+
+        return (
+            left.length === right.length &&
+            left.every((value, index) => value === right[index])
+        );
+    }
+
+    return left === right;
+}
+
+function areFilterRecordsEqual(
+    left: Record<string, unknown>,
+    right: Record<string, unknown>,
+): boolean {
+    const keys = new Set([...Object.keys(left), ...Object.keys(right)]);
+
+    for (const key of keys) {
+        if (!areFilterValuesEqual(left[key], right[key])) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 /**
@@ -160,6 +243,127 @@ export function filtersToQueryParams<T extends Record<string, any>>(
         }
     });
     return query as Record<keyof T, string | string[]>;
+}
+
+/**
+ * Provides a router-agnostic wrapper for syncing filter state with route query params.
+ *
+ * Pass in `route` and `router` objects from your app so grad-vue does not need
+ * a direct dependency on vue-router. Filters whose defaults are arrays are
+ * read from and written to query params as arrays, and `booleanArrayKeys` can
+ * be used for multi-value filters that should be converted to boolean values
+ * inside the filter state.
+ */
+export function useQueryFiltering<
+    T extends Record<string, any>,
+    F extends { [K in keyof T]?: any } = Record<keyof T, any>,
+>(filters: F, options: QueryFilteringOptions<F>): UseFilteringReturn<T, F> {
+    const filterKeys = Object.keys(filters) as Array<Extract<keyof F, string>>;
+    const arrayFilterKeys = new Set(
+        filterKeys.filter((key) => Array.isArray(filters[key])),
+    );
+    const booleanArrayKeys = new Set(options.booleanArrayKeys ?? []);
+
+    const parseFilterValue = (
+        key: Extract<keyof F, string>,
+        value: FilterRouteQuery[string] | undefined,
+    ) => {
+        if (value === null || value === undefined) {
+            return undefined;
+        }
+
+        if (arrayFilterKeys.has(key)) {
+            return parseQueryArrayValue(value);
+        }
+
+        if (typeof value === "string" && value.includes(",")) {
+            return value.split(",");
+        }
+
+        return cloneQueryValue(value);
+    };
+
+    const getFilterQuery = (query: FilterRouteQuery) => {
+        const nextQuery: Partial<FilterRouteQuery> = {};
+
+        for (const key of filterKeys) {
+            const value = query[key];
+
+            if (value !== undefined) {
+                nextQuery[key] = parseFilterValue(key, value) as
+                    | FilterRouteQueryValue
+                    | FilterRouteQueryValue[]
+                    | undefined;
+            }
+        }
+
+        return nextQuery;
+    };
+
+    const syncWith = ref(getFilterQuery(options.route.query));
+    const filtering = useFiltering<T, F>(filters, { syncWith });
+    const filteringState = filtering.filters as Record<string, unknown>;
+
+    const parseFilterStateValue = (
+        key: Extract<keyof F, string>,
+        value: FilterRouteQuery[string] | undefined,
+    ) => {
+        const parsedValue = parseFilterValue(key, value);
+
+        if (!booleanArrayKeys.has(key) || parsedValue === undefined) {
+            return parsedValue;
+        }
+
+        const values = Array.isArray(parsedValue) ? parsedValue : [parsedValue];
+        return values
+            .map((item) => {
+                if (item === "true") {
+                    return true;
+                }
+                if (item === "false") {
+                    return false;
+                }
+                return undefined;
+            })
+            .filter((item): item is boolean => item !== undefined);
+    };
+
+    watch(
+        () => getFilterQuery(options.route.query),
+        (query) => {
+            for (const key of filterKeys) {
+                const nextValue = parseFilterStateValue(key, query[key]);
+
+                if (!areFilterValuesEqual(filteringState[key], nextValue)) {
+                    filteringState[key] = nextValue;
+                }
+            }
+        },
+        { immediate: true },
+    );
+
+    watch(syncWith, (query) => {
+        const queryReplacement: FilterLocationQuery = { ...options.route.query };
+
+        for (const key of filterKeys) {
+            if (query[key] === undefined) {
+                delete queryReplacement[key];
+            } else {
+                queryReplacement[key] = cloneQueryValue(query[key]);
+            }
+        }
+
+        if (
+            !areFilterRecordsEqual(
+                options.route.query as Record<string, unknown>,
+                queryReplacement as Record<string, unknown>,
+            )
+        ) {
+            options.router.replace({ query: queryReplacement });
+        }
+    });
+
+    return filtering;
 }
 
 /**

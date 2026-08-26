@@ -1564,6 +1564,7 @@ type Props = {
 ### Slots
 
 - `controls`
+- `right-controls`
 
 ---
 
