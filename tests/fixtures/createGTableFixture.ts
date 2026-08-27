@@ -27,7 +27,7 @@ export type CreateGTableFixtureOptions<
     filterData?: (data: T[], filter: FixtureFilters<T>) => T[];
 
     initialSorts?: TableSort<T>[];
-    sortData?: (data: T[], sorts: TableSort<T>[]) => T[];
+    sortData?: (data: T[], sort: TableSort<T>[]) => T[];
 
     paginate?: boolean;
     initialStart?: number;
@@ -99,7 +99,7 @@ export function createGTableFixture<
     C extends TableColumn<T> = TableColumn<T>,
 >(options: CreateGTableFixtureOptions<T, C>) {
     const initialSorts = options.initialSorts ?? [];
-    const sorts = shallowRef<TableSort<T>[]>([...initialSorts]);
+    const sortState = shallowRef<TableSort<T>[]>([...initialSorts]);
     const start = ref(options.initialStart ?? 0);
     const pageSize = ref(options.initialPageSize ?? 5);
     const columnState = ref<TableColumnState<T>>(options.initialColumnState || {});
@@ -135,7 +135,7 @@ export function createGTableFixture<
 
             const visibleData = computed(() => {
                 const sort = options.sortData || defaultSortData;
-                let data = sort([...filteredData.value], sorts.value);
+                let data = sort([...filteredData.value], sortState.value);
 
                 if (options.paginate === false) {
                     return data;
@@ -170,9 +170,9 @@ export function createGTableFixture<
                                 ? undefined
                                 : options.pageSizes || [5, 10, 50],
                         pagination: options.paginate !== false,
-                        sorts: sorts.value,
-                        "onUpdate:sorts": (value: TableSort<T>[]) => {
-                            sorts.value = value;
+                        sort: sortState.value,
+                        "onUpdate:sort": (value: TableSort<T>[]) => {
+                            sortState.value = value;
                         },
                         ...((options.initialColumnState !== undefined ||
                             options.resizableColumns)
@@ -212,7 +212,7 @@ export function createGTableFixture<
 
     return {
         GTableFixture,
-        sorts,
+        sort: sortState,
         start,
         pageSize,
         columnState,

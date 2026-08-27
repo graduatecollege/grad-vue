@@ -54,7 +54,7 @@ describe("usePaging", () => {
     it("syncs paging state with route query params", async () => {
         const { route, router, replacements } = createQueryContext({
             keep: "1",
-            sorts: ["-name", "status"],
+            sort: ["-name", "status"],
             pageSize: "25",
             pageOffset: "50",
         });
@@ -65,21 +65,21 @@ describe("usePaging", () => {
 
         await flushPaging();
 
-        expect(paging.sorts.value).toEqual([
+        expect(paging.sort.value).toEqual([
             { key: "name", order: -1 },
             { key: "status", order: 1 },
         ]);
         expect(paging.pageSize.value).toBe(25);
         expect(paging.pageOffset.value).toBe(50);
 
-        paging.sorts.value = [{ key: "updatedAt", order: 1 }];
+        paging.sort.value = [{ key: "updatedAt", order: 1 }];
         paging.pageSize.value = 50;
         paging.pageOffset.value = 0;
         await flushPaging();
 
-        expect(replacements.at(-1)).toEqual({
+        expect(replacements.pop()).toEqual({
             keep: "1",
-            sorts: ["updatedAt"],
+            sort: ["updatedAt"],
         });
     });
 });

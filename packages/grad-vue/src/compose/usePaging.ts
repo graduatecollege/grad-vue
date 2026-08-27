@@ -24,7 +24,7 @@ export interface UsePagingOptions {
     router?: {
         replace: (location: { query: FilterLocationQuery }) => unknown;
     };
-    sortsKey?: string;
+    sortKey?: string;
     pageSizeKey?: string;
     pageOffsetKey?: string;
     defaultPageSize?: number;
@@ -32,7 +32,7 @@ export interface UsePagingOptions {
 }
 
 export interface UsePagingReturn<K extends SortKey = SortKey> {
-    sorts: Ref<PagingSort<K>[]>;
+    sort: Ref<PagingSort<K>[]>;
     pageSize: Ref<number>;
     pageOffset: Ref<number>;
 }
@@ -198,22 +198,22 @@ export function usePaging<K extends SortKey = SortKey>(
 ): UsePagingReturn<K> {
     const defaultPageSize = options.defaultPageSize ?? 50;
     const defaultPageOffset = options.defaultPageOffset ?? 0;
-    const sortsKey = options.sortsKey ?? "sorts";
+    const sortKey = options.sortKey ?? "sort";
     const pageSizeKey = options.pageSizeKey ?? "pageSize";
     const pageOffsetKey = options.pageOffsetKey ?? "pageOffset";
 
-    const sortsState = shallowRef<PagingSort<K>[]>([]);
+    const sortState = shallowRef<PagingSort<K>[]>([]);
     const pageSize = ref(defaultPageSize);
     const pageOffset = ref(defaultPageOffset);
 
     if (options.route && options.router) {
         watch(
-            () => options.route?.query[sortsKey],
+            () => options.route?.query[sortKey],
             (value) => {
                 const nextSorts = parseSortQueryValue<K>(value);
 
-                if (!areSortArraysEqual(sortsState.value, nextSorts)) {
-                    sortsState.value = nextSorts;
+                if (!areSortArraysEqual(sortState.value, nextSorts)) {
+                    sortState.value = nextSorts;
                 }
             },
             { immediate: true },
@@ -250,7 +250,7 @@ export function usePaging<K extends SortKey = SortKey>(
         );
 
         watch(
-            [sortsState, pageSize, pageOffset],
+            [sortState, pageSize, pageOffset],
             ([nextSorts, nextPageSize, nextPageOffset]) => {
                 const queryReplacement: FilterLocationQuery = {
                     ...options.route!.query,
@@ -258,9 +258,9 @@ export function usePaging<K extends SortKey = SortKey>(
                 const serializedSorts = serializeSortQueryValue(nextSorts);
 
                 if (serializedSorts === undefined) {
-                    delete queryReplacement[sortsKey];
+                    delete queryReplacement[sortKey];
                 } else {
-                    queryReplacement[sortsKey] = cloneQueryValue(serializedSorts);
+                    queryReplacement[sortKey] = cloneQueryValue(serializedSorts);
                 }
 
                 if (
@@ -306,15 +306,15 @@ export function usePaging<K extends SortKey = SortKey>(
         );
     }
 
-    const sorts = computed<PagingSort<K>[]>({
-        get: (): PagingSort<K>[] => normalizeSorts(sortsState.value),
+    const sort = computed<PagingSort<K>[]>({
+        get: (): PagingSort<K>[] => normalizeSorts(sortState.value),
         set: (value: PagingSort<K>[]) => {
-            sortsState.value = normalizeSorts(value);
+            sortState.value = normalizeSorts(value);
         },
     });
 
     return {
-        sorts,
+        sort,
         pageSize,
         pageOffset,
     };

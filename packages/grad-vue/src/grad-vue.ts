@@ -132,6 +132,7 @@ export type {
     FilterRouteQueryValue,
     UseFilteringReturn,
     FiltersForRecord,
+    FilterLocationQuery,
 } from "./compose/useFiltering";
 export type {
     UseTableChangesReturn,

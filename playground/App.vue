@@ -283,7 +283,7 @@ const fname = ref("heh");
                         :pagination="true"
                         :start-index="playgroundStart"
                         :resizable-columns="true"
-                        v-model:sorts="playgroundSorts"
+                        v-model:sort="playgroundSorts"
                         v-model:column-state="playgroundColumnState"
                         @update:start-index="playgroundStart = $event"
                         @update:page-size="playgroundPageSize = $event"

@@ -165,7 +165,7 @@ const filtering = useFiltering({
 
 const { filters, isFiltered, clearFilters } = filtering;
 
-const sorts = ref<TableSort<TableEntry>[]>([]);
+const sort = ref<TableSort<TableEntry>[]>([]);
 const start = ref(0);
 const pageSize = ref(5);
 const columnState = ref({
@@ -209,9 +209,9 @@ const filteredData = computed(() => {
 
 const computedData = computed(() => {
     let data = [...filteredData.value];
-    if (sorts.value.length) {
+    if (sort.value.length) {
         data.sort((a: any, b: any) => {
-            for (const sort of sorts.value) {
+            for (const sort of sort.value) {
                 const aVal: any = a[sort.key];
                 const bVal: any = b[sort.key];
                 const sortVal = (aVal?.toString() ?? "").localeCompare(
@@ -508,7 +508,7 @@ with the link <code>href</code> from the first link in the row.</p>
                     :bulk-actions="bulkActions"
                     :start-index="start"
                     :resizable-columns="true"
-                    v-model:sorts="sorts"
+                    v-model:sort="sort"
                     v-model:column-state="columnState"
                     v-model:selected-rows="selectedRows"
                     @update:start-index="start = $event"

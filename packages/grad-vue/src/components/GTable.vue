@@ -186,7 +186,7 @@ type Props = {
     resizableColumns?: boolean;
 };
 
-const sorts = defineModel<TableSort<T>[]>("sorts", {
+const sort = defineModel<TableSort<T>[]>("sort", {
     default: () => [],
 });
 const filter = defineModel<Partial<Record<keyof T, any>>>("filter", {
@@ -355,10 +355,10 @@ function createSort(key: SortKey<T>, order: 1 | -1): TableSort<T> {
     return { key, order };
 }
 
-const activeSorts = computed(() => normalizeSorts(sorts.value));
+const activeSorts = computed(() => normalizeSorts(sort.value));
 
 function setSortState(nextSorts: TableSort<T>[]) {
-    sorts.value = normalizeSorts(nextSorts);
+    sort.value = normalizeSorts(nextSorts);
 }
 
 const sortableColumns = computed(() => props.columns.filter((col) => col.sortable));

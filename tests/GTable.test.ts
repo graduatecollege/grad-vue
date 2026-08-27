@@ -322,7 +322,7 @@ describe("GTable", () => {
             expect(getColumn(container, 0)).toEqual(["LT", "KL", "KY"]);
         });
         it("adds a secondary sort with shift-click", async () => {
-            const { GTableFixture, sorts } = createMultiSortFixture();
+            const { GTableFixture, sort } = createMultiSortFixture();
             const { container } = mnt(GTableFixture);
 
             await container
@@ -332,14 +332,14 @@ describe("GTable", () => {
                 .getByRole("button", { name: /^Name\b/ })
                 .click({ modifiers: ["Shift"] });
 
-            expect(sorts.value).toEqual([
+            expect(sort.value).toEqual([
                 { key: "group", order: 1 },
                 { key: "name", order: 1 },
             ]);
             expect(getColumn(container, 0)).toEqual(["3", "1", "2", "4"]);
         });
         it("updates the primary sort from the sort builder", async () => {
-            const { GTableFixture, sorts } = createMultiSortFixture();
+            const { GTableFixture, sort } = createMultiSortFixture();
             const { container } = mnt(GTableFixture);
 
             await container
@@ -358,7 +358,7 @@ describe("GTable", () => {
                 .getByRole("button", { name: "Add Group ascending sort" })
                 .click();
 
-            expect(sorts.value).toEqual([
+            expect(sort.value).toEqual([
                 { key: "name", order: 1 },
                 { key: "group", order: 1 },
             ]);
@@ -377,7 +377,7 @@ describe("GTable", () => {
                 .toHaveFocus();
         });
         it("focuses the new active sort row after adding with the keyboard", async () => {
-            const { GTableFixture, sorts } = createMultiSortFixture();
+            const { GTableFixture, sort } = createMultiSortFixture();
             const { container } = mnt(GTableFixture);
 
             await container
@@ -391,7 +391,7 @@ describe("GTable", () => {
 
             await userEvent.keyboard("{Enter}");
 
-            expect(sorts.value).toEqual([{ key: "name", order: 1 }]);
+            expect(sort.value).toEqual([{ key: "name", order: 1 }]);
             await expect
                 .element(
                     page.getByRole("listitem", {
