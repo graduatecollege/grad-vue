@@ -1,5 +1,5 @@
 import { unrefElement, useIntersectionObserver, useMutationObserver } from "@vueuse/core";
-import { ref, Ref } from "vue";
+import { ref, Ref, watch } from "vue";
 
 /**
  * Monitor a list of elements' intersection with the viewport to update active links.
@@ -25,15 +25,34 @@ export function useActiveLinkContent(
         Array.from(unrefElement(element)?.children || []) as HTMLElement[],
     );
 
+    const syncElements = () => {
+        const nextElements = Array.from(
+            unrefElement(element)?.children || [],
+        ) as HTMLElement[];
+        const currentElements = new Set<Element>(nextElements);
+
+        for (const observedElement of visibility.keys()) {
+            if (!currentElements.has(observedElement)) {
+                visibility.delete(observedElement);
+            }
+        }
+
+        elements.value = nextElements;
+    };
+
+    watch(
+        () => unrefElement(element),
+        () => {
+            syncElements();
+        },
+        { immediate: true, flush: "post" },
+    );
+
     // To maintain reactivity, observe for changes in child elements.
     // This works better with Nuxt's rendering than passing an array of refs.
     useMutationObserver(
         element,
-        () => {
-            elements.value = Array.from(
-                unrefElement(element)?.children || [],
-            ) as HTMLElement[];
-        },
+        syncElements,
         { childList: true },
     );
 
@@ -66,7 +85,6 @@ export function useActiveLinkContent(
                 if (score <= bestScore) {
                     continue;
                 }
-                const rect = (el as HTMLElement).getBoundingClientRect();
                 bestEl = el;
                 bestScore = score;
             }
