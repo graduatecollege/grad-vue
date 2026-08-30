@@ -14,12 +14,28 @@ import { GAppHeader, GButton } from "@illinois-grad/grad-vue";
                     type: 'string',
                     label: 'Top-left corner text',
                     default: 'GRAD',
-                    instructions: 'You can customize this text element with the \'left\' slot.'
-                }
+                    instructions:
+                        'You can customize this text element with the \'left\' slot.',
+                },
+                navigationLabel: {
+                    type: 'string',
+                    label: 'Accessible label for navigation',
+                    default: 'Main navigation',
+                },
+                navigationMediaQuery: {
+                    type: 'string',
+                    label: 'Navigation collapse media query',
+                    default: '(max-width: 800px)',
+                },
             }"
         >
-            <template #props><figure class="highlighted-code">
-<pre class="shiki light-plus" style="background-color:#FFFFFF;color:#000000" tabindex="0"><code><span class="line"><span style="color:#0000FF">type</span><span style="color:#267F99"> Props</span><span style="color:#000000"> = &lcub;</span></span>
+            <template #props
+                ><figure class="highlighted-code">
+                    <pre
+                        class="shiki light-plus"
+                        style="background-color: #ffffff; color: #000000"
+                        tabindex="0"
+                    ><code><span class="line"><span style="color:#0000FF">type</span><span style="color:#267F99"> Props</span><span style="color:#000000"> = &lcub;</span></span>
 <span class="line"><span style="color:#008000">    /**</span></span>
 <span class="line"><span style="color:#008000">     * Whether to show the Illinois logo</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
@@ -30,20 +46,48 @@ import { GAppHeader, GButton } from "@illinois-grad/grad-vue";
 <span class="line"><span style="color:#008000">     * You can customize this text element with the "left" slot.</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    brand</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Accessible label for the main navigation</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    navigationLabel</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Media query for when the main navigation should collapse</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    navigationMediaQuery</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#000000">};</span></span></code></pre>
-</figure>
-
-</template>
-            <template #docs><p>This is a minimal header meant for web apps where a full Illinois
-brand header would be too large.</p>
-<p><strong>Slot</strong> <code>left</code> allows replacing the link element in the top-left corner.</p>
-<p><strong>Slot</strong> <code>title</code> is to the right of the logo.</p>
-<p><strong>Slot</strong> <code>app-controls</code> is the remaining area to the right.</p>
-</template>
+                </figure>
+            </template>
+            <template #docs
+                ><p>
+                    This is a minimal header meant for web apps where a full
+                    Illinois brand header would be too large.
+                </p>
+                <p>
+                    <strong>Slot</strong> <code>left</code> allows replacing the
+                    link element in the top-left corner.
+                </p>
+                <p>
+                    <strong>Slot</strong> <code>title</code> is to the right of
+                    the logo.
+                </p>
+                <p>
+                    <strong>Slot</strong> <code>navigation</code> shows a short
+                    main navigation and collapses into a hamburger popover on
+                    small screens.
+                </p>
+                <p>
+                    <strong>Slot</strong> <code>app-controls</code> is the
+                    remaining area to the right.
+                </p>
+            </template>
             <template #default="{ props }">
                 <GAppHeader v-bind="props" class="app-header-demo">
                     <template #title>
                         <span class="header-title">Portal</span>
+                    </template>
+                    <template #navigation>
+                        <a href="#students">Students</a>
+                        <a href="#hooders">Hooders</a>
                     </template>
                     <template #app-controls>
                         <nav class="header-controls">

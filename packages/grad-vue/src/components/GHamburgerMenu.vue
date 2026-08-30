@@ -3,6 +3,8 @@
  * A hamburger menu button that toggles a sidebar, intended for the
  * GAppHeader and GSidebar components.
  *
+ * When `mode="popover"`, the default slot becomes the popover content.
+ *
  * <span id="use-sidebar">Use with the `useSidebar`</span> composable function
  * that takes care of passing state between the different components.
  *
@@ -36,7 +38,22 @@ export default {};
 import { useSidebar } from "../compose/useSidebar.ts";
 import { useWebComponentSidebar } from "../compose/useWebComponentSidebar.ts";
 import { isCustomElementMode } from "../compose/useCustomElementAttrs.ts";
-import { inject, toRef, useId } from "vue";
+import {
+    getFocusableElements,
+    getFocusedItemIndex as findFocusedItemIndex,
+} from "../compose/focusable.ts";
+import GPopover from "./GPopover.vue";
+import GHamburgerMenuButton from "./hamburger/GHamburgerMenuButton.vue";
+import {
+    computed,
+    inject,
+    nextTick,
+    ref,
+    toRef,
+    useId,
+    useTemplateRef,
+    watch,
+} from "vue";
 
 type Props = {
     /**
@@ -60,15 +77,29 @@ type Props = {
      * @demo
      */
     labelVisible?: boolean;
-}
+    /**
+     * Whether the menu controls a sidebar or shows a popover
+     * @demo
+     */
+    mode?: "sidebar" | "popover";
+    /**
+     * Open state for popover mode
+     */
+    modelValue?: boolean;
+};
 
 const props = withDefaults(defineProps<Props>(), {
     label: "Main Navigation",
     sidebarKey: "default",
     labelVisible: false,
+    mode: "sidebar",
+    modelValue: false,
 });
 
-const injectedSidebar = inject<ReturnType<typeof useSidebar>>("sidebar");
+const injectedSidebar = inject<ReturnType<typeof useSidebar> | undefined>(
+    "sidebar",
+    undefined,
+);
 const sidebar =
     injectedSidebar ??
     (isCustomElementMode()
@@ -77,47 +108,152 @@ const sidebar =
 
 const emit = defineEmits<{
     toggle: [];
+    "update:modelValue": [value: boolean];
 }>();
+
+const isPopover = computed(() => props.mode === "popover");
+const popoverOpen = ref(props.modelValue);
+watch(toRef(props, "modelValue"), (value) => {
+    popoverOpen.value = value;
+});
+
+const triggerButtonRef = useTemplateRef<InstanceType<
+    typeof GHamburgerMenuButton
+> | null>("triggerButtonRef");
+const popoverMenuRef = useTemplateRef<HTMLElement | null>("popoverMenuRef");
+
+function setPopoverOpen(value: boolean) {
+    if (popoverOpen.value === value) {
+        return;
+    }
+
+    popoverOpen.value = value;
+    emit("update:modelValue", value);
+}
+
+function show() {
+    if (isPopover.value) {
+        setPopoverOpen(true);
+        return;
+    }
+
+    if (sidebar?.open) {
+        sidebar.open.value = true;
+    }
+}
+
+function hide() {
+    if (isPopover.value) {
+        setPopoverOpen(false);
+        return;
+    }
+
+    if (sidebar?.open) {
+        sidebar.open.value = false;
+    }
+}
 
 function toggle() {
     emit("toggle");
+
+    if (isPopover.value) {
+        setPopoverOpen(!popoverOpen.value);
+        return;
+    }
+
     sidebar?.toggle();
 }
 
 // Close menu on escape
 function handleEscapeKey(event: KeyboardEvent) {
     if (event.key === "Escape") {
-        if (sidebar?.open?.value) {
-            sidebar.open.value = false;
-        }
+        hide();
     }
 }
 
 const fallbackId = useId();
+const triggerId = computed(() => `${sidebar?.id ?? fallbackId}-hamburger`);
+const expanded = computed(() =>
+    isPopover.value ? popoverOpen.value : !!sidebar?.open?.value,
+);
+const controlsId = computed(() =>
+    isPopover.value
+        ? `${fallbackId}-popover`
+        : sidebar
+          ? `${sidebar.id}-sidebar`
+          : undefined,
+);
+
+function getFocusedItemIndex() {
+    return findFocusedItemIndex(getFocusableElements(popoverMenuRef.value));
+}
+
+async function focusItem(index: number) {
+    if (index < 0) {
+        return false;
+    }
+
+    await nextTick();
+
+    const item = getFocusableElements(popoverMenuRef.value)[index];
+
+    if (!item) {
+        return false;
+    }
+
+    item.focus();
+    return true;
+}
+
+function focusTrigger() {
+    triggerButtonRef.value?.focus();
+}
+
+defineExpose({
+    show,
+    hide,
+    toggle,
+    focusItem,
+    focusTrigger,
+    getFocusedItemIndex,
+});
 </script>
 <template>
-    <button
-        :id="`${sidebar?.id ?? fallbackId}-hamburger`"
-        class="g-hamburger-button"
-        :class="{
-            'g-hamburger-button--open': sidebar?.open?.value,
-            'g-hamburger-button--collapsible': sidebar?.isCollapsible?.value
-        }"
+    <GPopover
+        v-if="isPopover"
+        minimal
+        :model-value="popoverOpen"
+        @update:modelValue="setPopoverOpen"
+    >
+        <template #trigger>
+            <GHamburgerMenuButton
+                ref="triggerButtonRef"
+                :id="triggerId"
+                :controls-id="controlsId"
+                :expanded="expanded"
+                :label="label"
+                :label-visible="labelVisible"
+                popover
+                @click="toggle"
+                @keydown="handleEscapeKey"
+            />
+        </template>
+        <div :id="controlsId" ref="popoverMenuRef" class="g-hamburger-popover">
+            <slot></slot>
+        </div>
+    </GPopover>
+    <GHamburgerMenuButton
+        v-else
+        ref="triggerButtonRef"
+        :id="triggerId"
+        :controls-id="controlsId"
+        :expanded="expanded"
+        :label="label"
+        :label-visible="labelVisible"
+        :collapsible="sidebar?.isCollapsible?.value"
         @click="toggle"
         @keydown="handleEscapeKey"
-        :aria-expanded="sidebar?.open?.value ? 'true' : 'false'"
-        :aria-label="labelVisible ? undefined : label"
-        :aria-controls="sidebar ? `${sidebar.id}-sidebar` : undefined"
-    >
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 51.26 51.26" role="none">
-            <g fill="currentColor">
-                <path
-                    d="M11.6 16.52h28.06a3.24 3.24 0 1 0 0-6.48H11.6a3.24 3.24 0 0 0 0 6.48ZM39.66 22.07H11.6a3.24 3.24 0 0 0 0 6.48h28.06a3.24 3.24 0 1 0 0-6.48ZM39.66 34.1H11.6a3.24 3.24 0 0 0 0 6.48h28.06a3.24 3.24 0 1 0 0-6.48Z"
-                />
-            </g>
-        </svg>
-        <span v-if="labelVisible" class="g-hamburger-label">{{ label }}</span>
-    </button>
+    />
 </template>
 
 <style>
@@ -125,11 +261,6 @@ g-hamburger-menu:not(:defined) {
     display: none;
 }
 
-.g-hamburger-button {
-    svg {
-        width: 1.6rem;
-    }
-}
 .g-hamburger-button {
     min-width: 34px;
     height: 34px;
@@ -144,6 +275,10 @@ g-hamburger-menu:not(:defined) {
     color: var(--g-primary-text);
     border-radius: 4px;
     cursor: pointer;
+
+    svg {
+        width: 1.6rem;
+    }
 
     &:hover {
         background: var(--g-primary-text);
@@ -166,7 +301,11 @@ g-hamburger-menu:not(:defined) {
     text-transform: uppercase;
     margin-right: 0.35rem;
 }
-.g-hamburger-button--collapsible {
+.g-hamburger-popover {
+    display: block;
+}
+.g-hamburger-button--collapsible,
+.g-hamburger-button--popover {
     display: flex;
 }
 </style>

@@ -1,5 +1,5 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { defineComponent, h, provide } from "vue";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { defineComponent, h, provide, ref } from "vue";
 import { page, userEvent } from "vitest/browser";
 
 import GHamburgerMenu from "../packages/grad-vue/src/components/GHamburgerMenu.vue";
@@ -17,7 +17,6 @@ async function tick(vm: any) {
     await new Promise((r) => setTimeout(r, 10));
     await vm.$nextTick();
 }
-
 
 function mountFixture() {
     const Fixture = defineComponent({
@@ -86,6 +85,21 @@ function mountFixture() {
     return mnt(Fixture);
 }
 
+function mountPopoverFixture() {
+    return mnt(GHamburgerMenu, {
+        props: {
+            label: "Main Navigation",
+            mode: "popover",
+        },
+        slots: {
+            default: () => [
+                h("a", { href: "#students" }, "Students"),
+                h("a", { href: "#hooders" }, "Hooders"),
+            ],
+        },
+    });
+}
+
 describe("GHamburgerMenu", () => {
     beforeEach(() => {
         delete globalScope.__GRAD_VUE_WC_SIDEBAR_CHANNELS__;
@@ -100,21 +114,27 @@ describe("GHamburgerMenu", () => {
             await page.viewport(1200, 800);
             const { container } = mountFixture();
 
-            await expect.element(container.getByText("First link")).toBeVisible();
+            await expect
+                .element(container.getByText("First link"))
+                .toBeVisible();
         });
 
         it("Large viewport hides hamburger menu button", async () => {
             await page.viewport(1200, 800);
             const { container } = mountFixture();
 
-            await expect.element(container.getByLabelText("Main Navigation")).not.toBeVisible();
+            await expect
+                .element(container.getByLabelText("Main Navigation"))
+                .not.toBeVisible();
         });
 
         it("Small viewport collapses sidebar", async () => {
             await page.viewport(600, 800);
             const { container } = mountFixture();
 
-            await expect.element(container.getByText("First link")).not.toBeVisible();
+            await expect
+                .element(container.getByText("First link"))
+                .not.toBeVisible();
         });
 
         it("Small viewport shows hamburger menu button", async () => {
@@ -132,7 +152,9 @@ describe("GHamburgerMenu", () => {
             await container.getByLabelText("Main Navigation").click();
             await tick(vm);
 
-            await expect.element(container.getByText("First link")).toBeVisible();
+            await expect
+                .element(container.getByText("First link"))
+                .toBeVisible();
         });
 
         it("Pressing escape after clicking closes the sidebar", async () => {
@@ -145,7 +167,9 @@ describe("GHamburgerMenu", () => {
             await userEvent.keyboard("{Escape}");
             await tick(vm);
 
-            await expect.element(container.getByText("First link")).not.toBeVisible();
+            await expect
+                .element(container.getByText("First link"))
+                .not.toBeVisible();
         });
 
         it("Clicking anywhere outside of the sidebar closes the sidebar", async () => {
@@ -158,7 +182,9 @@ describe("GHamburgerMenu", () => {
             await container.getByRole("button", { name: "Outside" }).click();
             await tick(vm);
 
-            await expect.element(container.getByText("First link")).not.toBeVisible();
+            await expect
+                .element(container.getByText("First link"))
+                .not.toBeVisible();
         });
 
         it("Focusing and activating the hamburger menu shows the sidebar", async () => {
@@ -168,7 +194,9 @@ describe("GHamburgerMenu", () => {
             await tabTo("Main Navigation");
             await userEvent.keyboard("{Enter}");
             await tick(vm);
-            await expect.element(container.getByText("First link")).toBeVisible();
+            await expect
+                .element(container.getByText("First link"))
+                .toBeVisible();
         });
 
         it("Focusing, activating and then tabbing moves focus into the sidebar", async () => {
@@ -194,7 +222,9 @@ describe("GHamburgerMenu", () => {
             await userEvent.keyboard("{Escape}");
             await tick(vm);
 
-            await expect.element(container.getByText("First link")).not.toBeVisible();
+            await expect
+                .element(container.getByText("First link"))
+                .not.toBeVisible();
         });
 
         it("Pressing escape with focus in the sidebar moves focus to hamburger menu button", async () => {
@@ -210,9 +240,7 @@ describe("GHamburgerMenu", () => {
             await tick(vm);
 
             await expect
-                .element(
-                    container.getByLabelText("Main Navigation"),
-                )
+                .element(container.getByLabelText("Main Navigation"))
                 .toHaveFocus();
         });
 
@@ -230,7 +258,9 @@ describe("GHamburgerMenu", () => {
                 .element(container.getByRole("button", { name: "Outside" }))
                 .toHaveFocus();
 
-            await expect.element(container.getByText("First link")).not.toBeVisible();
+            await expect
+                .element(container.getByText("First link"))
+                .not.toBeVisible();
         });
 
         it("Clicking the hamburger menu button while the sidebar is open closes it and keeps it closed", async () => {
@@ -243,26 +273,37 @@ describe("GHamburgerMenu", () => {
             // Open it
             await hamburger.click();
             await tick(vm);
-            await expect.element(container.getByText("First link")).toBeVisible();
+            await expect
+                .element(container.getByText("First link"))
+                .toBeVisible();
 
             // Close it with a delay between mousedown and click to ensure document listener doesn't interfere
-            element.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+            element.dispatchEvent(
+                new MouseEvent("mousedown", { bubbles: true }),
+            );
             await new Promise((r) => setTimeout(r, 20));
             element.dispatchEvent(new MouseEvent("mouseup", { bubbles: true }));
             element.dispatchEvent(new MouseEvent("click", { bubbles: true }));
             await tick(vm);
 
-            await expect.element(container.getByText("First link")).not.toBeVisible();
+            await expect
+                .element(container.getByText("First link"))
+                .not.toBeVisible();
         });
-
     });
 
     describe("Visible label", () => {
         it("Does not render visible label by default", async () => {
             await page.viewport(600, 800);
-            const { container } = mnt(GHamburgerMenu, { props: { label: "Main Navigation" } });
+            const { container } = mnt(GHamburgerMenu, {
+                props: { label: "Main Navigation" },
+            });
 
-            await expect.element(container.getByText("Main Navigation", { exact: true })).not.toBeInTheDocument();
+            await expect
+                .element(
+                    container.getByText("Main Navigation", { exact: true }),
+                )
+                .not.toBeInTheDocument();
         });
 
         it("Renders visible label when labelVisible is true", async () => {
@@ -271,7 +312,11 @@ describe("GHamburgerMenu", () => {
                 props: { label: "Main Navigation", labelVisible: true },
             });
 
-            await expect.element(container.getByText("Main Navigation", { exact: true })).toBeInTheDocument();
+            await expect
+                .element(
+                    container.getByText("Main Navigation", { exact: true }),
+                )
+                .toBeInTheDocument();
         });
 
         it("Visible label shows the provided label text", async () => {
@@ -280,13 +325,126 @@ describe("GHamburgerMenu", () => {
                 props: { label: "Open Menu", labelVisible: true },
             });
 
-            await expect.element(container.getByText("Open Menu", { exact: true })).toBeInTheDocument();
+            await expect
+                .element(container.getByText("Open Menu", { exact: true }))
+                .toBeInTheDocument();
+        });
+    });
+
+    describe("Popover mode", () => {
+        it("Shows slotted content in a popover", async () => {
+            await page.viewport(600, 800);
+            const { vm } = mountPopoverFixture();
+
+            await page.getByLabelText("Main Navigation").click();
+            await tick(vm);
+
+            await expect
+                .element(page.getByRole("link", { name: "Students" }))
+                .toBeVisible();
+        });
+
+        it("Closing the popover returns focus to the trigger button", async () => {
+            await page.viewport(600, 800);
+            const { vm } = mountPopoverFixture();
+
+            await page.getByLabelText("Main Navigation").click();
+            await tick(vm);
+
+            page.getByRole("link", { name: "Hooders" }).element().focus();
+            await userEvent.keyboard("{Escape}");
+            await tick(vm);
+
+            await expect
+                .element(page.getByLabelText("Main Navigation"))
+                .toHaveFocus();
+        });
+
+        it("Synchronizes controlled open state", async () => {
+            await page.viewport(600, 800);
+            const { vm, setProps } = mnt(GHamburgerMenu, {
+                props: {
+                    label: "Main Navigation",
+                    mode: "popover",
+                    modelValue: true,
+                },
+                slots: {
+                    default: () => h("a", { href: "#students" }, "Students"),
+                },
+            });
+
+            await tick(vm);
+            await expect
+                .element(page.getByRole("link", { name: "Students" }))
+                .toBeVisible();
+
+            setProps({ modelValue: false });
+            await tick(vm);
+
+            await expect
+                .element(page.getByRole("link", { name: "Students" }))
+                .not.toBeInTheDocument();
+        });
+
+        it("Exposes show and hide methods", async () => {
+            await page.viewport(600, 800);
+            const menu = ref<InstanceType<typeof GHamburgerMenu>>();
+            const Fixture = defineComponent(
+                () => () =>
+                    h(
+                        GHamburgerMenu,
+                        {
+                            ref: menu,
+                            label: "Main Navigation",
+                            mode: "popover",
+                        },
+                        {
+                            default: () =>
+                                h("a", { href: "#students" }, "Students"),
+                        },
+                    ),
+            );
+            const { vm } = mnt(Fixture);
+
+            menu.value?.show();
+            await tick(vm);
+            await expect
+                .element(page.getByRole("link", { name: "Students" }))
+                .toBeVisible();
+
+            menu.value?.hide();
+            await tick(vm);
+            await expect
+                .element(page.getByRole("link", { name: "Students" }))
+                .not.toBeInTheDocument();
+        });
+
+        it("Uses the current model value after switching to popover mode", async () => {
+            await page.viewport(600, 800);
+            const { vm, setProps } = mnt(GHamburgerMenu, {
+                props: {
+                    label: "Main Navigation",
+                    mode: "sidebar",
+                    modelValue: false,
+                },
+                slots: {
+                    default: () => h("a", { href: "#students" }, "Students"),
+                },
+            });
+
+            setProps({ modelValue: true });
+            await tick(vm);
+            setProps({ mode: "popover" });
+            await tick(vm);
+
+            await expect
+                .element(page.getByRole("link", { name: "Students" }))
+                .toBeVisible();
         });
     });
 
     describe("Accessibility Tests", () => {
         it("passes accessibility tests with open sidebar", async () => {
-
             await page.viewport(600, 800);
             const { vm, container } = mountFixture();
 
