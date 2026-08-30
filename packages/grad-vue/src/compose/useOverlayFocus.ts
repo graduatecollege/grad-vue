@@ -1,15 +1,6 @@
 import { nextTick, Ref, ref, watch } from "vue";
 import { useFocusTrap } from "@vueuse/integrations/useFocusTrap";
-
-const tabbableSelector = [
-    "a[href]",
-    "button:not([disabled])",
-    "input:not([disabled])",
-    "select:not([disabled])",
-    "textarea:not([disabled])",
-    "[tabindex]:not([tabindex='-1'])",
-    "[contenteditable='true']",
-].join(",");
+import { focusableSelector } from "./focusable.ts";
 
 export function useOverlayFocus(
     element: Ref<HTMLElement | null>,
@@ -19,7 +10,7 @@ export function useOverlayFocus(
     const unpausing = ref(false);
 
     const hasTabbableNodes = () =>
-        !!element.value?.querySelector(tabbableSelector);
+        !!element.value?.querySelector(focusableSelector);
 
     const { activate, deactivate, pause, unpause } = useFocusTrap(element, {
         immediate: false,

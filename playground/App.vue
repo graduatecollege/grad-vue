@@ -259,10 +259,33 @@ const fname = ref("heh");
 
 <template>
     <div class="playground">
-        <GAppHeader title="grad-vue playground" illinois> </GAppHeader>
+        <GAppHeader illinois>
+            <template #title>
+                <span>Sandbox Header</span>
+            </template>
+            <template #navigation>
+                <a href="#students">Students</a>
+                <a href="#hooders">Hooders</a>
+            </template>
+        </GAppHeader>
 
         <div class="wrap">
             <main class="main" ref="main">
+                <section id="students" class="playground-header-pattern">
+                    <h2>Students</h2>
+                    <p>
+                        Resize the viewport to watch the main navigation switch
+                        between the inline links and the hamburger popover.
+                    </p>
+                </section>
+                <section id="hooders" class="playground-header-pattern">
+                    <h2>Hooders</h2>
+                    <p>
+                        Resize the viewport to confirm the focused navigation
+                        item stays consistent as the header switches between the
+                        inline links and the mobile menu.
+                    </p>
+                </section>
                 <section class="playground-table-demo">
                     <h2>GTable Playground</h2>
                     <p class="playground-table-demo__note">
@@ -290,9 +313,6 @@ const fname = ref("heh");
                     />
                 </section>
                 <div>
-                    <GHamburgerMenu label="Menu" style="display: flex;">
-
-                    </GHamburgerMenu>
                     <GTextarea></GTextarea>
                     <GFileInput
                         label="File Input"
@@ -315,37 +335,82 @@ const fname = ref("heh");
                     />
                 </div>
                 <div style="max-width: 320px">
-                    <GTreeMenu heading="With Linked Parents" style="min-height: 240px;" show-expand-all>
+                    <GTreeMenu
+                        heading="With Linked Parents"
+                        style="min-height: 240px"
+                        show-expand-all
+                    >
                         <GTreeMenuList>
                             <GTreeMenuItem label="Chapter 1">
                                 <a href="#ch1">Chapter 1</a>
                                 <template #children>
-                                    <GTreeMenuItem><a href="#ch1-s1">Section 1.1</a></GTreeMenuItem>
-                                    <GTreeMenuItem><a href="#ch1-s2">Section 1.2</a></GTreeMenuItem>
+                                    <GTreeMenuItem
+                                        ><a href="#ch1-s1"
+                                            >Section 1.1</a
+                                        ></GTreeMenuItem
+                                    >
+                                    <GTreeMenuItem
+                                        ><a href="#ch1-s2"
+                                            >Section 1.2</a
+                                        ></GTreeMenuItem
+                                    >
                                 </template>
                             </GTreeMenuItem>
                             <GTreeMenuItem label="Chapter 2">
                                 <a href="#ch2">Chapter 2</a>
                                 <template #children>
-                                    <GTreeMenuItem><a href="#ch2-s1">Minimum Requirements for Admission</a></GTreeMenuItem>
-                                    <GTreeMenuItem><a href="#ch2-s2">Minimum Requirements for Admission</a></GTreeMenuItem>
+                                    <GTreeMenuItem
+                                        ><a href="#ch2-s1"
+                                            >Minimum Requirements for
+                                            Admission</a
+                                        ></GTreeMenuItem
+                                    >
+                                    <GTreeMenuItem
+                                        ><a href="#ch2-s2"
+                                            >Minimum Requirements for
+                                            Admission</a
+                                        ></GTreeMenuItem
+                                    >
                                 </template>
                             </GTreeMenuItem>
-                            <GTreeMenuItem><a href="#refs">References</a></GTreeMenuItem>
+                            <GTreeMenuItem
+                                ><a href="#refs">References</a></GTreeMenuItem
+                            >
                         </GTreeMenuList>
                     </GTreeMenu>
-                    <GTreeMenu heading="Numbered Chapters" small-heading style="min-height: 200px;" storage-key="tree-menu-state">
+                    <GTreeMenu
+                        heading="Numbered Chapters"
+                        small-heading
+                        style="min-height: 200px"
+                        storage-key="tree-menu-state"
+                    >
                         <GTreeMenuList list-type="ol">
                             <GTreeMenuItem label="Chapter 1: Introduction">
                                 <button>Chapter 1: Introduction</button>
                                 <template #children>
-                                    <GTreeMenuItem><a href="#ch1-background">1.1 Background</a></GTreeMenuItem>
-                                    <GTreeMenuItem><a href="#ch1-motivation">1.2 Motivation</a></GTreeMenuItem>
+                                    <GTreeMenuItem
+                                        ><a href="#ch1-background"
+                                            >1.1 Background</a
+                                        ></GTreeMenuItem
+                                    >
+                                    <GTreeMenuItem
+                                        ><a href="#ch1-motivation"
+                                            >1.2 Motivation</a
+                                        ></GTreeMenuItem
+                                    >
                                     <GTreeMenuItem label="1.3 Overview">
                                         1.3 Overview
                                         <template #children>
-                                            <GTreeMenuItem><a href="#ch1-part1">1.3.1 Part One</a></GTreeMenuItem>
-                                            <GTreeMenuItem><a href="#ch1-part2">1.3.2 Part Two</a></GTreeMenuItem>
+                                            <GTreeMenuItem
+                                                ><a href="#ch1-part1"
+                                                    >1.3.1 Part One</a
+                                                ></GTreeMenuItem
+                                            >
+                                            <GTreeMenuItem
+                                                ><a href="#ch1-part2"
+                                                    >1.3.2 Part Two</a
+                                                ></GTreeMenuItem
+                                            >
                                         </template>
                                     </GTreeMenuItem>
                                 </template>
@@ -353,27 +418,53 @@ const fname = ref("heh");
                             <GTreeMenuItem label="Chapter 2: Methods">
                                 <button>Chapter 2: Methods</button>
                                 <template #children>
-                                    <GTreeMenuItem><a href="#ch2-data">2.1 Data Collection</a></GTreeMenuItem>
-                                    <GTreeMenuItem><a href="#ch2-analysis">2.2 Analysis</a></GTreeMenuItem>
+                                    <GTreeMenuItem
+                                        ><a href="#ch2-data"
+                                            >2.1 Data Collection</a
+                                        ></GTreeMenuItem
+                                    >
+                                    <GTreeMenuItem
+                                        ><a href="#ch2-analysis"
+                                            >2.2 Analysis</a
+                                        ></GTreeMenuItem
+                                    >
                                 </template>
                             </GTreeMenuItem>
                             <GTreeMenuItem label="Chapter 3: Results">
                                 <button>Chapter 3: Results</button>
                                 <template #children>
-                                    <GTreeMenuItem><a href="#ch3-findings">3.1 Findings</a></GTreeMenuItem>
-                                    <GTreeMenuItem><a href="#ch3-discussion">3.2 Discussion</a></GTreeMenuItem>
+                                    <GTreeMenuItem
+                                        ><a href="#ch3-findings"
+                                            >3.1 Findings</a
+                                        ></GTreeMenuItem
+                                    >
+                                    <GTreeMenuItem
+                                        ><a href="#ch3-discussion"
+                                            >3.2 Discussion</a
+                                        ></GTreeMenuItem
+                                    >
                                 </template>
                             </GTreeMenuItem>
-                            <GTreeMenuItem><a href="#appendix">Appendix</a></GTreeMenuItem>
+                            <GTreeMenuItem
+                                ><a href="#appendix">Appendix</a></GTreeMenuItem
+                            >
                         </GTreeMenuList>
                     </GTreeMenu>
                 </div>
-                <div style="max-width: 500px;">
+                <div style="max-width: 500px">
                     <GDetailList>
-                        <GDetailListItem label="Description">Engineering: Energy Systems</GDetailListItem>
-                        <GDetailListItem label="Major">Engineering</GDetailListItem>
-                        <GDetailListItem label="Department Code">123</GDetailListItem>
-                        <GDetailListItem label="College Name">Grainger Engineering</GDetailListItem>
+                        <GDetailListItem label="Description"
+                            >Engineering: Energy Systems</GDetailListItem
+                        >
+                        <GDetailListItem label="Major"
+                            >Engineering</GDetailListItem
+                        >
+                        <GDetailListItem label="Department Code"
+                            >123</GDetailListItem
+                        >
+                        <GDetailListItem label="College Name"
+                            >Grainger Engineering</GDetailListItem
+                        >
                     </GDetailList>
                 </div>
                 <section id="modal-popovers">
@@ -382,17 +473,22 @@ const fname = ref("heh");
                     <GPopover>
                         <template #trigger="{ toggle }">
                             <GButton @click="toggle">Open Popover</GButton>
-                            <GTooltip text="Sibling tooltip"/>
+                            <GTooltip text="Sibling tooltip" />
                         </template>
-                        <p>This popover is inside a modal and should be positioned correctly.
-                            <GButton v-gtooltip="'Real Button 2'">Button</GButton>
+                        <p>
+                            This popover is inside a modal and should be
+                            positioned correctly.
+                            <GButton v-gtooltip="'Real Button 2'"
+                                >Button</GButton
+                            >
                         </p>
                     </GPopover>
                 </section>
                 <section id="popover-scroll-demo">
                     <h2>Oversized Popover</h2>
                     <p class="popover-scroll-demo-note">
-                        This example intentionally makes the popover taller than the viewport so you can confirm the contents scroll.
+                        This example intentionally makes the popover taller than
+                        the viewport so you can confirm the contents scroll.
                     </p>
                     <GPopover>
                         <template #trigger="{ toggle }">
@@ -427,11 +523,18 @@ const fname = ref("heh");
     margin-top: var(--g-toolbar-height);
 }
 .wrap:not(.sidebar-collapsible) {
-
 }
 
 .main {
     padding: 2rem;
+}
+
+.playground-header-pattern {
+    max-width: 42rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--g-surface-200);
+    border-radius: 0.5rem;
+    background: var(--g-surface-0);
 }
 
 section {
