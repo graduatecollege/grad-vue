@@ -304,7 +304,6 @@ function onComboKeydown(e: KeyboardEvent) {
             scrollOptionIntoView();
             break;
         case "Enter":
-        case " ":
             e.preventDefault();
             if (open.value) {
                 selectOption(activeIndex.value);
