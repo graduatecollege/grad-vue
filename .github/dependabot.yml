@@ -14,10 +14,6 @@ updates:
     schedule:
       interval: "weekly"
     groups:
-      tiptap:
+      all:
         patterns:
-          - "@tiptap/*"
-      monorepo-dependencies:
-        group-by: dependency-name
-        exclude-patterns:
-          - "@tiptap/*"
+          - "*"
