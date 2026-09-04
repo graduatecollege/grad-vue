@@ -100,7 +100,10 @@ export { useForm } from "./compose/useForm";
 export { useWebComponentForm } from "./compose/useWebComponentForm";
 export type { UseFormReturn, FormField } from "./compose/useForm";
 export { useFormField } from "./compose/useFormField";
-export type { UseFormFieldReturn, UseFormFieldOptions } from "./compose/useFormField";
+export type {
+    UseFormFieldReturn,
+    UseFormFieldOptions,
+} from "./compose/useFormField";
 export {
     usePaging,
     normalizeSorts,
@@ -153,5 +156,6 @@ export type {
     TableSort,
     TableRow,
 } from "./components/table/TableColumn";
+export { usePersistentTableColumnState } from "./compose/usePersistentTableColumnState";
 export type { BulkAction } from "./components/GTable.vue";
 export type { CheckboxOption } from "./components/GCheckboxGroup.vue";
