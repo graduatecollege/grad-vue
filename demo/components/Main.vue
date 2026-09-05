@@ -20,6 +20,7 @@ import GTextInputDemo from "~/components/demo/GTextInputDemo.vue";
 import GClipboardDemo from "~/components/demo/GClipboardDemo.vue";
 import GHistoryScrollerDemo from "~/components/demo/GHistoryScrollerDemo.vue";
 import GThreeWayToggleDemo from "~/components/demo/GThreeWayToggleDemo.vue";
+import GToggleDemo from "~/components/demo/GToggleDemo.vue";
 import GTableDemo from "~/components/demo/GTableDemo.vue";
 import GModalDemo from "~/components/demo/GModalDemo.vue";
 import GHamburgerMenuDemo from "~/components/demo/GHamburgerMenuDemo.vue";
@@ -87,6 +88,7 @@ const demoComponents = [
     { label: "Text Input", component: GTextInputDemo },
     { label: "Textarea", component: GTextareaDemo },
     { label: "Three Way Toggle", component: GThreeWayToggleDemo },
+    { label: "Toggle", component: GToggleDemo },
     { label: "Tree Menu", component: GTreeMenuDemo },
     { label: "User Menu", component: GUserMenuDemo },
 ];

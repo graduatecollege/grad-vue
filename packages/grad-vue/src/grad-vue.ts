@@ -37,6 +37,7 @@ import GSubmitButton from "./components/GSubmitButton.vue";
 import GCheckboxGroup from "./components/GCheckboxGroup.vue";
 import GTextarea from "./components/GTextarea.vue";
 import GMultiSelect from "./components/GMultiSelect.vue";
+import GToggle from "./components/GToggle.vue";
 
 import "./css/main.css";
 import VGtooltip from "./directives/v-gtooltip.ts";
@@ -82,6 +83,7 @@ export {
     GCheckboxGroup,
     GTextarea,
     GMultiSelect,
+    GToggle,
 };
 
 export { calculatePopoverPosition } from "./compose/popoverPosition";

@@ -38,6 +38,7 @@ import {
     GCheckboxGroup,
     GTextarea,
     GMultiSelect,
+    GToggle,
     VGtooltip,
     VGtooltipDirective,
 } from "./grad-vue.ts";
@@ -84,6 +85,7 @@ export default {
         app.component("GCheckboxGroup", GCheckboxGroup);
         app.component("GTextarea", GTextarea);
         app.component("GMultiSelect", GMultiSelect);
+        app.component("GToggle", GToggle);
     },
 };
 
@@ -122,6 +124,7 @@ declare module "vue" {
         GTextarea: typeof GTextarea;
         GTextInput: typeof GTextInput;
         GThreeWayToggle: typeof GThreeWayToggle;
+        GToggle: typeof GToggle;
         GTooltip: typeof GTooltip;
         GTreeMenu: typeof GTreeMenu;
         GTreeMenuItem: typeof GTreeMenuItem;

@@ -53,6 +53,9 @@ brand header would be too large.
 
 **Slot** `title` is to the right of the logo.
 
+**Slot** `navigation` shows a short set of main navigation links. On small
+screens it automatically switches to a popover menu.
+
 **Slot** `app-controls` is the remaining area to the right.
 
 ### Props
@@ -69,6 +72,14 @@ type Props = {
      * You can customize this text element with the "left" slot.
      */
     brand?: string;
+    /**
+     * Accessible label for the main navigation
+     */
+    navigationLabel?: string;
+    /**
+     * Media query for when the main navigation should collapse
+     */
+    navigationMediaQuery?: string;
 };
 ```
 
@@ -77,6 +88,7 @@ type Props = {
 - `left`
 - `icon`
 - `title`
+- `navigation`
 - `app-controls`
 
 ---
@@ -613,6 +625,8 @@ type Props = {
 A hamburger menu button that toggles a sidebar, intended for the
 GAppHeader and GSidebar components.
 
+When `mode="popover"`, the default slot becomes the popover content.
+
 <span id="use-sidebar">Use with the `useSidebar`</span> composable function
 that takes care of passing state between the different components.
 
@@ -660,8 +674,20 @@ type Props = {
      * Show a visible label
      */
     labelVisible?: boolean;
-}
+    /**
+     * Whether the menu controls a sidebar or shows a popover
+     */
+    mode?: "sidebar" | "popover";
+    /**
+     * Open state for popover mode
+     */
+    modelValue?: boolean;
+};
 ```
+
+### Slots
+
+- `default`
 
 ---
 
@@ -1798,6 +1824,52 @@ type Props = {
      */
     disabled?: boolean;
 }
+```
+
+### Slots
+
+- `label`
+
+---
+
+## GToggle
+
+A compact two-state toggle for boolean values.
+
+Arrow keys and the 'y' and 'n' keys can be used to set the value when the
+toggle has focus. A `describedby` prop can be passed with an ID to an
+element to be used as the `aria-describedby` for the toggle group.
+
+When the value changes, `v-model` is updated. A `change` event is also
+emitted if the value changed from user interaction.
+
+Slots:
+- `label`: Custom label content. Defaults to `label` prop if not provided.
+
+### Props
+
+```typescript
+type Props = {
+    /**
+     * Accessible label
+     */
+    label: string;
+
+    /**
+     * ID of an element that describes the input
+     */
+    describedby?: string;
+
+    /**
+     * Error message
+     */
+    error?: string;
+
+    /**
+     * Disabled
+     */
+    disabled?: boolean;
+};
 ```
 
 ### Slots

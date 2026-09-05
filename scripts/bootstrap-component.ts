@@ -250,11 +250,38 @@ function insertIntoPlaygroundItems(
 ): { content: string; changed: boolean } {
     const itemsStart = content.indexOf(':items="[');
     if (itemsStart === -1) {
-        throw new Error(
-            'Could not find :items="[ ... ]" in playground/App.vue',
+        const navigationStart = content.indexOf(
+            "<template #navigation>",
         );
+        if (navigationStart === -1) {
+            return { content, changed: false };
+        }
+
+        const navigationEnd = content.indexOf(
+            "</template>",
+            navigationStart,
+        );
+        if (navigationEnd === -1) {
+            throw new Error(
+                "Could not find the end of the playground navigation slot.",
+            );
+        }
+
+        const newLink = `                <a href="#${anchorId}">${label}</a>\n`;
+        const navigationText = content.slice(navigationStart, navigationEnd);
+        if (navigationText.includes(`href="#${anchorId}"`)) {
+            return { content, changed: false };
+        }
+
+        return {
+            content:
+                content.slice(0, navigationEnd) +
+                newLink +
+                content.slice(navigationEnd),
+            changed: true,
+        };
     }
-    const itemsEnd = content.indexOf(']"', itemsStart);
+    const itemsEnd = content.indexOf("]", itemsStart);
     if (itemsEnd === -1) {
         throw new Error(
             "Could not find end of :items array in playground/App.vue",

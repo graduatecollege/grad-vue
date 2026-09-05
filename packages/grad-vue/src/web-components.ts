@@ -35,6 +35,7 @@ import GTermSelectorControl from "./components/term/GTermSelectorControl.vue";
 import GTextInput from "./components/GTextInput.vue";
 import GTextarea from "./components/GTextarea.vue";
 import GThreeWayToggle from "./components/GThreeWayToggle.vue";
+import GToggle from "./components/GToggle.vue";
 import GTreeMenu from "./components/GTreeMenu.vue";
 import GTreeMenuList from "./components/tree-menu/GTreeMenuList.vue";
 import GTreeMenuItem from "./components/tree-menu/GTreeMenuItem.vue";
@@ -91,6 +92,7 @@ const components: [string, Component][] = [
     ["g-text-input", GTextInput],
     ["g-textarea", GTextarea],
     ["g-three-way-toggle", GThreeWayToggle],
+    ["g-toggle", GToggle],
     ["g-tree-menu", GTreeMenu],
     ["g-tree-menu-list", GTreeMenuList],
     ["g-tree-menu-item", GTreeMenuItem],
