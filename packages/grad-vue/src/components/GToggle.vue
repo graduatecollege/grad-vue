@@ -23,7 +23,12 @@ type Props = {
      * Accessible label
      * @demo Toggle
      */
-    label: string;
+    label?: string;
+
+    /**
+     * Use an externally provided label element
+     */
+    externalLabel?: boolean;
 
     /**
      * ID of an element that describes the input
@@ -90,8 +95,8 @@ const inputId = useId();
 
 <template>
     <div class="g-toggle-wrapper">
-        <div class="g-toggle-control">
-            <label class="g-label" :for="inputId">
+        <div class="g-toggle-control" :class="{ 'g-external-label': externalLabel }">
+            <label v-if="!externalLabel" class="g-label" :for="inputId">
                 <slot name="label">
                     {{ label }}
                 </slot>
@@ -137,6 +142,10 @@ const inputId = useId();
     display: flex;
     margin-bottom: 4px;
     column-gap: 8px;
+
+    &.g-external-label {
+        display: block;
+    }
 
     .g-label {
         flex: 1;

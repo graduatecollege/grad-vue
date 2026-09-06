@@ -35,6 +35,19 @@ describe("GToggle", () => {
         expect(model.value).toBe(false);
     });
 
+    it("supports an external label", async () => {
+        const { instance } = mnt(GToggle, {
+            props: { externalLabel: true },
+        });
+
+        await expect
+            .element(instance.locator(".g-label"))
+            .not.toBeInTheDocument();
+        await expect
+            .element(instance.locator(".g-toggle-control"))
+            .toHaveStyle({ display: "block" });
+    });
+
     it("sets the model to true with ArrowRight", async () => {
         const model = ref(false);
         const { vm } = mnt(GToggle, {

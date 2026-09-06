@@ -1853,7 +1853,12 @@ type Props = {
     /**
      * Accessible label
      */
-    label: string;
+    label?: string;
+
+    /**
+     * Use an externally provided label element
+     */
+    externalLabel?: boolean;
 
     /**
      * ID of an element that describes the input

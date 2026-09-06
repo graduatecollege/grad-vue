@@ -31,7 +31,12 @@ import ComponentDemo from "../ComponentDemo.vue";
 <span class="line"><span style="color:#008000">    /**</span></span>
 <span class="line"><span style="color:#008000">     * Accessible label</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
-<span class="line"><span style="color:#001080">    label</span><span style="color:#000000">: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#001080">    label</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Use an externally provided label element</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    externalLabel</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#008000">    /**</span></span>
 <span class="line"><span style="color:#008000">     * ID of an element that describes the input</span></span>
