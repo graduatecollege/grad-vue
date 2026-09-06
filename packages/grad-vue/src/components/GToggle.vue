@@ -26,9 +26,9 @@ type Props = {
     label?: string;
 
     /**
-     * Use an externally provided label element
+     * ID of an externally provided label element
      */
-    externalLabel?: boolean;
+    externalLabel?: string;
 
     /**
      * ID of an element that describes the input
@@ -116,6 +116,7 @@ const inputId = useId();
                         type="checkbox"
                         :checked="model"
                         :disabled="disabled"
+                        :aria-labelledby="externalLabel"
                         :aria-describedby="describedby"
                         :aria-invalid="error ? 'true' : undefined"
                         :aria-errormessage="error ? id + '-error' : undefined"

@@ -36,16 +36,17 @@ describe("GToggle", () => {
     });
 
     it("supports an external label", async () => {
-        const { instance } = mnt(GToggle, {
-            props: { externalLabel: true },
+        const { instance, container } = mnt(GToggle, {
+            props: { externalLabel: "external-toggle-label" },
         });
+        const label = document.createElement("span");
+        label.id = "external-toggle-label";
+        label.textContent = "External toggle";
+        container.element().prepend(label);
 
         await expect
-            .element(instance.locator(".g-label"))
-            .not.toBeInTheDocument();
-        await expect
-            .element(instance.locator(".g-toggle-control"))
-            .toHaveStyle({ display: "block" });
+            .element(instance.getByRole("checkbox", { name: "External toggle" }))
+            .toHaveAttribute("aria-labelledby", "external-toggle-label");
     });
 
     it("sets the model to true with ArrowRight", async () => {
