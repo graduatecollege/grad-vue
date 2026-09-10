@@ -21,6 +21,7 @@ const handleClick = () => {
                     label: 'Button size',
                     default: 'medium',
                     options: [
+                        'tiny',
                         'small',
                         'medium',
                         'large'
@@ -47,6 +48,11 @@ const handleClick = () => {
                     type: 'boolean',
                     label: 'Use text style',
                     default: false
+                },
+                disabled: {
+                    type: 'boolean',
+                    label: 'Prevent interaction with the button',
+                    default: false
                 }
             }"
             docs=""
@@ -56,7 +62,7 @@ const handleClick = () => {
 <span class="line"><span style="color:#008000">    /**</span></span>
 <span class="line"><span style="color:#008000">     * Button size</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
-<span class="line"><span style="color:#001080">    size</span><span style="color:#000000">?: </span><span style="color:#A31515">"small"</span><span style="color:#000000"> | </span><span style="color:#A31515">"medium"</span><span style="color:#000000"> | </span><span style="color:#A31515">"large"</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#001080">    size</span><span style="color:#000000">?: </span><span style="color:#A31515">"tiny"</span><span style="color:#000000"> | </span><span style="color:#A31515">"small"</span><span style="color:#000000"> | </span><span style="color:#A31515">"medium"</span><span style="color:#000000"> | </span><span style="color:#A31515">"large"</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#008000">    /**</span></span>
 <span class="line"><span style="color:#008000">     * Button color theme</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
@@ -69,6 +75,11 @@ const handleClick = () => {
 <span class="line"><span style="color:#008000">     * Use text style</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    text</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Prevent interaction with the button</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    disabled</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#008000">    /**</span></span>
 <span class="line"><span style="color:#008000">     * The to target for when using the button as a router-link</span></span>

@@ -30,6 +30,15 @@ describe("GButton", () => {
             expect(onClick).toHaveBeenCalled();
         });
 
+        it("can be disabled", async () => {
+            const wrapper = mnt(GButton, {
+                props: { disabled: true },
+                slots: { default: () => "Click me" },
+            });
+
+            await expect.element(wrapper.instance).toBeDisabled();
+        });
+
         it("works with different sizes (renders and is clickable)", async () => {
             const sizes = ["small", "medium", "large"] as const;
             const dims: Record<string, { width: number; height: number }> = {};
@@ -122,6 +131,14 @@ describe("GButton", () => {
     describe("Accessibility Tests", () => {
         it("with default props", async () => {
             await testAccessibility(GButton, {}, { default: () => "Click me" });
+        });
+
+        it("when disabled", async () => {
+            await testAccessibility(
+                GButton,
+                { disabled: true },
+                { default: () => "Click me" },
+            );
         });
 
         describe.for(["small", "medium", "large"] as const)(

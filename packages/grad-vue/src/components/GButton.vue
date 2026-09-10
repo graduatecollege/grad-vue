@@ -33,7 +33,7 @@ type Props = {
      * Button size
      * @demo
      */
-    size?: "small" | "medium" | "large";
+    size?: "tiny" | "small" | "medium" | "large";
     /**
      * Button color theme
      * @demo
@@ -49,6 +49,12 @@ type Props = {
      * @demo
      */
     text?: boolean;
+
+    /**
+     * Prevent interaction with the button
+     * @demo
+     */
+    disabled?: boolean;
 
     /**
      * The to target for when using the button as a router-link
@@ -77,6 +83,7 @@ const props = withDefaults(defineProps<Props>(), {
     theme: "primary",
     outlined: false,
     text: false,
+    disabled: false,
     to: undefined,
     component: undefined,
     icon: undefined,
@@ -88,7 +95,7 @@ const slots = defineSlots<{
     icon?: () => any;
 }>();
 
-defineEmits([
+const emit = defineEmits([
     "click",
     "focus",
     "blur",
@@ -115,8 +122,19 @@ const classes = computed(() => [
         "g-btn-has-text": props.text,
         "g-btn-has-icon-class": props.icon,
         "g-btn-has-icon-svg": !!slots.icon,
+        "g-btn--disabled": props.disabled,
     },
 ]);
+
+function handleClick(event: MouseEvent) {
+    if (props.disabled) {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+    }
+
+    emit("click", event);
+}
 </script>
 
 <template>
@@ -126,7 +144,9 @@ const classes = computed(() => [
         :to="props.to"
         :class="classes"
         :type="props.to ? undefined : props.type"
-        @click="$emit('click', $event)"
+        :disabled="props.disabled"
+        :aria-disabled="props.disabled || undefined"
+        @click="handleClick"
         @focus="$emit('focus', $event)"
         @blur="$emit('blur', $event)"
         @keydown="$emit('keydown', $event)"
@@ -172,14 +192,14 @@ g-button {
     border-radius: var(--g-border-radius-m);
     text-decoration: none;
 
-    &:hover {
+    &:hover:not(:disabled) {
         color: var(--ilw-color--background);
         background: var(--ilw-color--heading);
         border-color: var(--ilw-color--background);
         text-decoration: underline;
     }
 
-    &:active {
+    &:active:not(:disabled)  {
         background: var(--ilw-color--heading-link-hover);
         color: var(--ilw-color--heading);
     }
@@ -190,8 +210,21 @@ g-button {
         background: var(--ilw-color--focus--background);
         outline-color: var(--g-primary-500);
     }
+
+    &:disabled,
+    &[aria-disabled="true"] {
+        cursor: default;
+        opacity: 0.8;
+    }
 }
 
+
+.g-btn--tiny {
+    font-size: 12px;
+    line-height: 16px;
+    padding: 4px 10px;
+    --g-accent-500: var(--il-altgeld);
+}
 
 .g-btn--small {
     font-size: 14px;
@@ -210,6 +243,9 @@ g-button {
     gap: 2px;
     padding: 6px 20px 6px 6px;
 
+    &.g-btn--tiny {
+        padding: 0 10px;
+    }
     &.g-btn--small {
         padding: 0 14px 1px 0;
     }
@@ -217,7 +253,7 @@ g-button {
         padding: 12px 24px 12px 10px;
     }
 
-    &:hover {
+    &:hover:not(:disabled) {
         text-decoration: none;
 
         .g-btn--label {

@@ -119,7 +119,7 @@ type Props = {
     /**
      * Button size
      */
-    size?: "small" | "medium" | "large";
+    size?: "tiny" | "small" | "medium" | "large";
     /**
      * Button color theme
      */
@@ -132,6 +132,11 @@ type Props = {
      * Use text style
      */
     text?: boolean;
+
+    /**
+     * Prevent interaction with the button
+     */
+    disabled?: boolean;
 
     /**
      * The to target for when using the button as a router-link
@@ -1856,9 +1861,9 @@ type Props = {
     label?: string;
 
     /**
-     * Use an externally provided label element
+     * ID of an externally provided label element
      */
-    externalLabel?: boolean;
+    externalLabel?: string;
 
     /**
      * ID of an element that describes the input
