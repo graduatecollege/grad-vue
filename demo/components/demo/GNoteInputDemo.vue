@@ -21,6 +21,11 @@ const note = ref<object | "">("");
                     type: 'string',
                     label: 'Accessible label',
                     default: 'Note input'
+                },
+                headingLevels: {
+                    type: 'string',
+                    label: 'Heading levels available in the editor toolbar.',
+                    default: null
                 }
             }"
         >
@@ -34,6 +39,10 @@ const note = ref<object | "">("");
 <span class="line"><span style="color:#008000">     * Accessible label</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    label</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Heading levels available in the editor toolbar.</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    headingLevels</span><span style="color:#000000">?: </span><span style="color:#267F99">Level</span><span style="color:#000000">[];</span></span>
 <span class="line"><span style="color:#000000">}</span></span></code></pre>
 </figure>
 
@@ -42,6 +51,7 @@ const note = ref<object | "">("");
 <ul>
 <li><strong>Bold</strong> and <em>italic</em> text formatting</li>
 <li>Bullet and numbered lists</li>
+<li>Configurable heading levels</li>
 <li>Always visible toolbar for formatting</li>
 <li>Undo/redo support</li>
 </ul>

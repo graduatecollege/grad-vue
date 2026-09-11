@@ -4,6 +4,7 @@ import Document from "@tiptap/extension-document";
 import Paragraph from "@tiptap/extension-paragraph";
 import Text from "@tiptap/extension-text";
 import Bold from "@tiptap/extension-bold";
+import Heading, { type Level } from "@tiptap/extension-heading";
 import Italic from "@tiptap/extension-italic";
 import { ListKit } from "@tiptap/extension-list";
 import { UndoRedo, Placeholder } from "@tiptap/extensions";
@@ -15,10 +16,19 @@ interface UseRichTextEditorOptions {
     onUpdate?: (editor: any) => void;
     editorProps?: Record<string, any>;
     multiline?: boolean;
+    headingLevels?: Level[];
 }
 
 export function useRichTextEditor(options: UseRichTextEditorOptions) {
-    const { content, placeholder, label, onUpdate, editorProps = {}, multiline = false } = options;
+    const {
+        content,
+        placeholder,
+        label,
+        onUpdate,
+        editorProps = {},
+        multiline = false,
+        headingLevels,
+    } = options;
 
     const placeholderValue = typeof placeholder === 'string' ? placeholder : placeholder.value;
     const labelValue = typeof label === 'string' ? label : label.value;
@@ -32,6 +42,9 @@ export function useRichTextEditor(options: UseRichTextEditorOptions) {
             Bold,
             Italic,
             ListKit,
+            ...(headingLevels?.length
+                ? [Heading.configure({ levels: headingLevels })]
+                : []),
             UndoRedo,
             Placeholder.configure({ placeholder: placeholderValue }),
         ],

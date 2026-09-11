@@ -15,6 +15,7 @@ export default defineConfig({
             "@tiptap/extension-paragraph",
             "@tiptap/extension-text",
             "@tiptap/extension-bold",
+            "@tiptap/extension-heading",
             "@tiptap/extension-italic",
             "@tiptap/extension-list",
             "@tiptap/extension-placeholder",

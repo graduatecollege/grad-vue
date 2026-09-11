@@ -2099,6 +2099,7 @@ The GNoteInput component provides a rich text editing experience using Tiptap fo
 
  - **Bold** and *italic* text formatting
  - Bullet and numbered lists
+ - Configurable heading levels
  - Always visible toolbar for formatting
  - Undo/redo support
 
@@ -2116,6 +2117,10 @@ type Props = {
      * Accessible label
      */
     label?: string;
+    /**
+     * Heading levels available in the editor toolbar.
+     */
+    headingLevels?: Level[];
 }
 ```
 
@@ -2125,7 +2130,7 @@ type Props = {
 
 Renders a JSON string of tiptap content as HTML.
 Supports all formatting produced by GChatInput and GNoteInput:
-bold, italic, ordered lists, and bullet lists.
+bold, italic, headings, ordered lists, and bullet lists.
 
 - Empty content is handled gracefully (renders nothing).
 - Displays an error message when the content cannot be parsed or rendered.

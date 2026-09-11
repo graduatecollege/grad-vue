@@ -1,10 +1,12 @@
 <script lang="ts" setup>
 import { ref, computed } from "vue";
 import type { Editor } from "@tiptap/vue-3";
+import type { Level } from "@tiptap/extension-heading";
 import { useToolbarNavigation } from "../../composables/useToolbarNavigation.ts";
 
 interface Props {
     editor: Editor | undefined;
+    headingLevels?: Level[];
 }
 
 const props = defineProps<Props>();
@@ -121,6 +123,22 @@ const { handleToolbarKeyDown, getButtonTabIndex } = useToolbarNavigation(
                 />
             </svg>
         </button>
+        <button
+            v-for="(level, index) in headingLevels"
+            :key="level"
+            @click="editor.chain().focus().toggleHeading({ level }).run()"
+            :class="{
+                'heading-button': true,
+                'is-active': editor.isActive('heading', { level }),
+            }"
+            :aria-pressed="editor.isActive('heading', { level })"
+            :title="`Heading ${level}`"
+            :aria-label="`Heading ${level}`"
+            type="button"
+            :tabindex="getButtonTabIndex(4 + index)"
+        >
+            <span aria-hidden="true">H{{ level }}</span>
+        </button>
     </div>
 </template>
 
@@ -154,6 +172,10 @@ const { handleToolbarKeyDown, getButtonTabIndex } = useToolbarNavigation(
             background-color: var(--g-primary-300);
             color: var(--g-primary-text);
         }
+    }
+
+    .heading-button {
+        font-weight: 700;
     }
 }
 </style>

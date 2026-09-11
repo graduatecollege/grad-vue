@@ -41,7 +41,7 @@ const exampleJson = ref(JSON.stringify({
 </template>
             <template #docs><p>Renders a JSON string of tiptap content as HTML.
 Supports all formatting produced by GChatInput and GNoteInput:
-bold, italic, ordered lists, and bullet lists.</p>
+bold, italic, headings, ordered lists, and bullet lists.</p>
 <ul>
 <li>Empty content is handled gracefully (renders nothing).</li>
 <li>Displays an error message when the content cannot be parsed or rendered.</li>

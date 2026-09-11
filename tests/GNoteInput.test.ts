@@ -44,6 +44,34 @@ describe("GNoteInput", () => {
             await expect.element(buttons.nth(3)).toBeInTheDocument();
         });
 
+        it("renders configured heading buttons and applies the selected heading", async () => {
+            const model = ref<any>("");
+            const { container } = mnt(GNoteInput, {
+                props: {
+                    modelValue: "",
+                    headingLevels: [2, 3],
+                },
+                model,
+            });
+
+            const toolbar = container.getByRole("toolbar", { name: /text formatting/i });
+            await expect.element(toolbar.getByRole("button", { name: "Heading 2", exact: true })).toBeInTheDocument();
+            await expect.element(toolbar.getByRole("button", { name: "Heading 3", exact: true })).toBeInTheDocument();
+            await expect.element(toolbar.getByRole("button", { name: "Heading 1", exact: true })).not.toBeInTheDocument();
+
+            await container.getByLabelText("Note Input").click();
+            await userEvent.keyboard("Heading text");
+            await userEvent.click(toolbar.getByRole("button", { name: "Heading 2", exact: true }));
+
+            expect(model.value).toMatchObject({
+                content: [{
+                    type: "heading",
+                    attrs: { level: 2 },
+                    content: [{ type: "text", text: "Heading text" }],
+                }],
+            });
+        });
+
         it("updates model when text is typed in editor", async () => {
             const model = ref<any>("");
             const {container} = mnt(GNoteInput, {

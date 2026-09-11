@@ -4,6 +4,7 @@
  *
  *  - **Bold** and *italic* text formatting
  *  - Bullet and numbered lists
+ *  - Configurable heading levels
  *  - Always visible toolbar for formatting
  *  - Undo/redo support
  *
@@ -15,6 +16,7 @@ export default {};
 <script lang="ts" setup>
 import { computed } from "vue";
 import { EditorContent } from "@tiptap/vue-3";
+import type { Level } from "@tiptap/extension-heading";
 import { useRichTextEditor } from "../composables/useRichTextEditor";
 import GRichTextToolbar from "./editor/GRichTextToolbar.vue";
 
@@ -31,6 +33,11 @@ type Props = {
      * @demo
      */
     label?: string;
+    /**
+     * Heading levels available in the editor toolbar.
+     * @demo
+     */
+    headingLevels?: Level[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -44,6 +51,7 @@ const { editor, focusEditor } = useRichTextEditor({
     placeholder: computed(() => props.placeholder),
     label: computed(() => props.label),
     multiline: true,
+    headingLevels: props.headingLevels,
 });
 
 function focusInput() {
@@ -55,7 +63,11 @@ defineExpose({ focusInput });
 
 <template>
     <div class="g-note-input-wrap">
-        <GRichTextToolbar :editor="editor" class="toolbar" />
+        <GRichTextToolbar
+            :editor="editor"
+            :heading-levels="headingLevels"
+            class="toolbar"
+        />
         <EditorContent :editor="editor" class="editor-content" />
     </div>
 </template>
@@ -136,4 +148,3 @@ defineExpose({ focusInput });
     min-width: 0;
 }
 </style>
-

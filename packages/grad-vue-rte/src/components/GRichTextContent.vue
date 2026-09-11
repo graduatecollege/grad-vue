@@ -2,7 +2,7 @@
 /**
  * Renders a JSON string of tiptap content as HTML.
  * Supports all formatting produced by GChatInput and GNoteInput:
- * bold, italic, ordered lists, and bullet lists.
+ * bold, italic, headings, ordered lists, and bullet lists.
  *
  * - Empty content is handled gracefully (renders nothing).
  * - Displays an error message when the content cannot be parsed or rendered.

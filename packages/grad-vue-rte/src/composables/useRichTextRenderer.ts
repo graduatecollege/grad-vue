@@ -3,11 +3,12 @@ import Document from "@tiptap/extension-document";
 import Paragraph from "@tiptap/extension-paragraph";
 import Text from "@tiptap/extension-text";
 import Bold from "@tiptap/extension-bold";
+import Heading from "@tiptap/extension-heading";
 import Italic from "@tiptap/extension-italic";
 import { ListKit } from "@tiptap/extension-list";
 import { generateHTML } from "@tiptap/core";
 
-const extensions = [Document, Paragraph, Text, Bold, Italic, ListKit];
+const extensions = [Document, Paragraph, Text, Bold, Italic, ListKit, Heading];
 
 /**
  * Composable for rendering a JSON string of tiptap content to HTML.

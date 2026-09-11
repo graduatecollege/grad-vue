@@ -286,6 +286,7 @@ const fname = ref("heh");
                         inline links and the mobile menu.
                     </p>
                 </section>
+                <GNoteInput :heading-levels="[2]"/>
                 <section class="playground-table-demo">
                     <h2>GTable Playground</h2>
                     <p class="playground-table-demo__note">
