@@ -143,6 +143,7 @@ defineExpose({ focusInput });
         padding: 0.15em 0;
         font-size: 15px;
         max-height: 10em;
+        overflow-y: auto;
         flex: 1;
         outline: none;
 
@@ -212,6 +213,7 @@ defineExpose({ focusInput });
 .editor-content {
     flex: 1;
     min-width: 0;
+    min-height: 0;
 }
 
 .g-chat-send-btn {
@@ -250,4 +252,3 @@ defineExpose({ focusInput });
     }
 }
 </style>
-
