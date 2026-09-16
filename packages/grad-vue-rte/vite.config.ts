@@ -30,6 +30,7 @@ export default defineConfig({
                 "@tiptap/extension-placeholder",
                 "@tiptap/extensions",
                 "@tiptap/vue-3/menus",
+                "focus-trap",
             ],
         },
     },

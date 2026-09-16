@@ -6,6 +6,7 @@
  *  - Bullet and numbered lists
  *  - Bubble menu for formatting (appears when text is selected)
  *  - Press <kbd>Enter</kbd> to send, <kbd>Shift+Enter</kbd> for new line
+ *  - Optional expanded composer toggled with <kbd>Ctrl+Shift+F</kbd>
  *  - Undo/redo support
  *
  *  **Note**: This component is part of the `@illinois-grad/grad-vue-rte` package, which includes Tiptap dependencies.
@@ -14,7 +15,16 @@ export default {};
 </script>
 
 <script lang="ts" setup>
-import { computed } from "vue";
+import {
+    computed,
+    nextTick,
+    onBeforeUnmount,
+    ref,
+    useId,
+    useTemplateRef,
+    watch,
+} from "vue";
+import { createFocusTrap, type FocusTrap } from "focus-trap";
 import { EditorContent } from "@tiptap/vue-3";
 import { BubbleMenu } from "@tiptap/vue-3/menus";
 import { useRichTextEditor } from "../composables/useRichTextEditor";
@@ -43,21 +53,33 @@ type Props = {
      * @demo
      */
     label?: string;
-}
+    /**
+     * Allow the editor to expand into a large viewport overlay
+     * @demo
+     */
+    expandable?: boolean;
+};
 
 const props = withDefaults(defineProps<Props>(), {
     placeholder: "Type a comment",
     label: "Comment input",
     disabled: false,
     maxRows: 5,
+    expandable: false,
 });
 const model = defineModel<object | "">();
 const emit = defineEmits<{ send: [content: object] }>();
+const expanded = ref(false);
+const composer = useTemplateRef<HTMLElement>("composer");
+const expandButton = useTemplateRef<HTMLButtonElement>("expandButton");
+const composerId = `g-chat-input-${useId()}`;
+let focusTrap: FocusTrap | null = null;
 
 const { editor, focusEditor } = useRichTextEditor({
     content: model as any,
     placeholder: computed(() => props.placeholder),
     label: computed(() => props.label),
+    multiline: true,
     editorProps: {
         handleKeyDown(view: any, event: any) {
             if (editor.value && event.key === "Enter") {
@@ -98,15 +120,160 @@ function focusInput() {
     focusEditor();
 }
 
+function appendBubbleMenuTo() {
+    return composer.value ?? document.body;
+}
+
+function activateFocusTrap() {
+    if (!expanded.value || !composer.value) {
+        return;
+    }
+
+    focusTrap = createFocusTrap(composer.value, {
+        clickOutsideDeactivates: true,
+        escapeDeactivates: false,
+        fallbackFocus: composer.value,
+        initialFocus: () => editor.value?.view.dom ?? composer.value!,
+        returnFocusOnDeactivate: false,
+        onDeactivate() {
+            expanded.value = false;
+            focusTrap = null;
+        },
+    });
+    focusTrap.activate();
+}
+
+function expand() {
+    if (!props.expandable || props.disabled || expanded.value) {
+        return;
+    }
+
+    expanded.value = true;
+    nextTick(activateFocusTrap).catch((error) => {
+        console.error(error);
+    });
+}
+
+function collapse(restoreFocus = true) {
+    if (!expanded.value) {
+        return;
+    }
+
+    expanded.value = false;
+    focusTrap?.deactivate({ returnFocus: false });
+    focusTrap = null;
+
+    if (restoreFocus) {
+        nextTick(() => expandButton.value?.focus()).catch((error) => {
+            console.error(error);
+        });
+    }
+}
+
+function toggleExpanded() {
+    if (expanded.value) {
+        collapse();
+    } else {
+        expand();
+    }
+}
+
+function onComposerKeydown(event: KeyboardEvent) {
+    if (
+        props.expandable &&
+        !props.disabled &&
+        event.ctrlKey &&
+        event.shiftKey &&
+        event.key.toLowerCase() === "f"
+    ) {
+        event.preventDefault();
+        toggleExpanded();
+        return;
+    }
+
+    if (expanded.value && event.key === "Escape") {
+        event.preventDefault();
+        event.stopPropagation();
+        collapse();
+    }
+}
+
+watch(
+    () => [props.expandable, props.disabled],
+    ([expandable, disabled]) => {
+        if (!expandable || disabled) {
+            collapse(false);
+        }
+    },
+);
+
+onBeforeUnmount(() => {
+    focusTrap?.deactivate({ returnFocus: false });
+});
+
 defineExpose({ focusInput });
 </script>
 
 <template>
-    <div class="g-chat-input-wrap">
-        <BubbleMenu :editor="editor" v-if="editor">
+    <div
+        :id="composerId"
+        ref="composer"
+        class="g-chat-input-wrap"
+        :class="{ 'g-chat-input-wrap--expanded': expanded }"
+        :role="expanded ? 'dialog' : undefined"
+        :aria-label="expanded ? `${props.label} expanded` : undefined"
+        :tabindex="expanded ? -1 : undefined"
+        @keydown.capture="onComposerKeydown"
+    >
+        <BubbleMenu
+            :editor="editor"
+            :append-to="props.expandable ? appendBubbleMenuTo : undefined"
+            v-if="editor"
+        >
             <GRichTextToolbar :editor="editor" class="bubble-menu" />
         </BubbleMenu>
         <EditorContent :editor="editor" class="editor-content" />
+        <button
+            v-if="props.expandable"
+            ref="expandButton"
+            class="g-chat-expand-btn"
+            :disabled="props.disabled"
+            :title="expanded ? 'Collapse editor' : 'Expand editor'"
+            :aria-label="expanded ? 'Collapse editor' : 'Expand editor'"
+            :aria-expanded="expanded"
+            :aria-controls="composerId"
+            aria-haspopup="dialog"
+            aria-keyshortcuts="Control+Shift+F"
+            type="button"
+            @click="toggleExpanded"
+        >
+            <svg
+                v-if="expanded"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="18"
+                height="18"
+                fill="currentColor"
+                aria-hidden="true"
+            >
+                <path
+                    d="M7 10h3V7h2v5H7v-2Zm7 7v-5h5v2h-3v3h-2ZM5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm0 2v14h14V5H5Z"
+                />
+            </svg>
+            <svg
+                v-else
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="18"
+                height="18"
+                fill="currentColor"
+                aria-hidden="true"
+            >
+                <path
+                    d="M5 5v4H3V3h6v2H5Zm14 0h-4V3h6v6h-2V5ZM5 19h4v2H3v-6h2v4Zm14 0v-4h2v6h-6v-2h4Z"
+                />
+            </svg>
+        </button>
         <button
             class="g-chat-send-btn"
             :disabled="
@@ -210,12 +377,36 @@ defineExpose({ focusInput });
     }
 }
 
+.g-chat-input-wrap--expanded {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 1000;
+    width: min(48rem, calc(100vw - 2rem));
+    height: min(32rem, calc(100dvh - 2rem));
+    box-sizing: border-box;
+    align-items: stretch;
+    padding: 0.75rem;
+    box-shadow: var(--il-shadow, 0 10px 30px rgba(0, 0, 0, 0.25));
+
+    .tiptap {
+        height: 100%;
+        max-height: none;
+    }
+}
+
 .editor-content {
     flex: 1;
     min-width: 0;
     min-height: 0;
 }
 
+.g-chat-input-wrap--expanded .editor-content {
+    align-self: stretch;
+    overflow: hidden;
+}
+
+.g-chat-expand-btn,
 .g-chat-send-btn {
     color: var(--g-primary-500);
     font-size: 1em;
@@ -249,6 +440,20 @@ defineExpose({ focusInput });
     &:disabled {
         color: var(--g-surface-300);
         cursor: not-allowed;
+    }
+}
+
+@media (max-width: 640px) {
+    .g-chat-input-wrap--expanded {
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+        border-radius: 0;
+        padding: max(0.75rem, env(safe-area-inset-top))
+            max(0.75rem, env(safe-area-inset-right))
+            max(0.75rem, env(safe-area-inset-bottom))
+            max(0.75rem, env(safe-area-inset-left));
     }
 }
 </style>

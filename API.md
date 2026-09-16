@@ -2064,6 +2064,7 @@ The GChatInput component provides a rich text editing experience using Tiptap. I
  - Bullet and numbered lists
  - Bubble menu for formatting (appears when text is selected)
  - Press <kbd>Enter</kbd> to send, <kbd>Shift+Enter</kbd> for new line
+ - Optional expanded composer toggled with <kbd>Ctrl+Shift+F</kbd>
  - Undo/redo support
 
  **Note**: This component is part of the `@illinois-grad/grad-vue-rte` package, which includes Tiptap dependencies.
@@ -2088,6 +2089,10 @@ type Props = {
      * Accessible label
      */
     label?: string;
+    /**
+     * Allow the editor to expand into a large viewport overlay
+     */
+    expandable?: boolean;
 }
 ```
 

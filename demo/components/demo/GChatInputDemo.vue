@@ -42,6 +42,11 @@ function handleSend(content: object) {
                     type: 'string',
                     label: 'Accessible label',
                     default: 'Comment input'
+                },
+                expandable: {
+                    type: 'boolean',
+                    label: 'Allow the editor to expand into a large viewport overlay',
+                    default: false
                 }
             }"
         >
@@ -63,6 +68,10 @@ function handleSend(content: object) {
 <span class="line"><span style="color:#008000">     * Accessible label</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    label</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * Allow the editor to expand into a large viewport overlay</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    expandable</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#000000">}</span></span></code></pre>
 </figure>
 
@@ -73,6 +82,7 @@ function handleSend(content: object) {
 <li>Bullet and numbered lists</li>
 <li>Bubble menu for formatting (appears when text is selected)</li>
 <li>Press <kbd>Enter</kbd> to send, <kbd>Shift+Enter</kbd> for new line</li>
+<li>Optional expanded composer toggled with <kbd>Ctrl+Shift+F</kbd></li>
 <li>Undo/redo support</li>
 </ul>
 <p> <strong>Note</strong>: This component is part of the <code>@illinois-grad/grad-vue-rte</code> package, which includes Tiptap dependencies.</p>

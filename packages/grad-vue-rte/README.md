@@ -63,12 +63,18 @@ A chat input component with rich text editing capabilities.
 - `disabled` (boolean, default: false): Whether the input is disabled
 - `maxRows` (number, default: 5): Maximum number of rows for the editor
 - `label` (string, default: "Comment input"): Accessible label for the editor
+- `expandable` (boolean, default: false): Adds a large, responsive composer for long messages
 
 **Events:**
 - `send`: Emitted when the user presses Enter (without Shift) or clicks the send button
 
 **v-model:**
 - Binds to the editor content as a Tiptap JSON object
+
+When `expandable` is enabled, use the expand button or press `Ctrl+Shift+F`
+while focus is inside the input. The expanded composer opens as a bottom-right
+popover on desktop and fills the viewport on small screens. Press `Escape` or
+click outside the composer to close it.
 
 **Example:**
 
@@ -77,6 +83,7 @@ A chat input component with rich text editing capabilities.
   <GChatInput 
     v-model="comment"
     placeholder="Enter your comment"
+    expandable
     @send="handleSend"
   />
 </template>
