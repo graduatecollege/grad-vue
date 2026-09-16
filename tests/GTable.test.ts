@@ -212,6 +212,41 @@ beforeEach(() => {
 
 describe("GTable", () => {
     describe("Functional Tests", () => {
+        it("renders empty slot content in a row spanning the table", async () => {
+            const EmptyStateTable = defineComponent({
+                setup() {
+                    return () =>
+                        h(
+                            GTable<TableEntry>,
+                            {
+                                label: "Colleges",
+                                data: [],
+                                columns,
+                                startIndex: 0,
+                                bulkSelectionEnabled: true,
+                            },
+                            {
+                                empty: () =>
+                                    h("button", { type: "button" }, "Add college"),
+                            },
+                        );
+                },
+            });
+            const { container } = mnt(EmptyStateTable);
+
+            await expect
+                .element(
+                    container.getByRole("button", { name: "Add college" }),
+                )
+                .toBeVisible();
+
+            const emptyCell = container
+                .element()
+                .querySelector(".g-table-empty") as HTMLTableCellElement;
+            expect(emptyCell.colSpan).toBe(columns.length + 1);
+            expect(container.element().querySelectorAll("tbody tr")).toHaveLength(1);
+        });
+
         it("shows first page by default", async () => {
             const { GTableFixture } = createCollegesTableFixture();
             const { instance, container } = mnt(GTableFixture);

@@ -287,6 +287,7 @@ const fname = ref("heh");
                     </p>
                 </section>
                 <GNoteInput :heading-levels="[2]"/>
+                <GChatInput />
                 <section class="playground-table-demo">
                     <h2>GTable Playground</h2>
                     <p class="playground-table-demo__note">
@@ -312,6 +313,21 @@ const fname = ref("heh");
                         @update:start-index="playgroundStart = $event"
                         @update:page-size="playgroundPageSize = $event"
                     />
+                    <h3>Empty state</h3>
+                    <!-- @vue-generic {PlaygroundTableEntry, TableColumn<PlaygroundTableEntry>} -->
+                    <GTable
+                        label="Empty table example"
+                        :data="[]"
+                        :columns="playgroundTableColumns"
+                        :start-index="0"
+                    >
+                        <template #empty>
+                            <div class="playground-table-empty-state">
+                                <strong>No colleges found.</strong>
+                                <GButton size="small">Add college</GButton>
+                            </div>
+                        </template>
+                    </GTable>
                 </section>
                 <div>
                     <GTextarea></GTextarea>

@@ -1339,8 +1339,22 @@ onMounted(() => {
                         </th>
                     </tr>
                 </thead>
+                <tbody v-if="data.length === 0">
+                    <tr aria-rowindex="2">
+                        <td
+                            class="g-table-empty"
+                            :colspan="
+                                visibleColumns.length +
+                                (bulkSelectionEnabled ? 1 : 0)
+                            "
+                        >
+                            <slot name="empty"></slot>
+                        </td>
+                    </tr>
+                </tbody>
                 <!-- @vue-generic {T, C} -->
                 <GTableBody
+                    v-else
                     :data="data"
                     :columns="visibleColumns"
                     :group-by="groupBy"
