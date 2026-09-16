@@ -609,6 +609,14 @@ section > *:not(h2) {
     max-width: 42rem;
 }
 
+.playground-table-empty-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    min-height: 8rem;
+}
+
 .playground-table-demo :deep(.g-table-controls),
 .playground-table-demo :deep(.g-table-head) {
     position: static;
