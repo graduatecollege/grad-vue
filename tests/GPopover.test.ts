@@ -3,7 +3,7 @@ import GPopover from "../packages/grad-vue/src/components/GPopover.vue";
 import GModal from "../packages/grad-vue/src/components/GModal.vue";
 import GTermSelector from "../packages/grad-vue/src/components/GTermSelector.vue";
 import { mnt, testAccessibility } from "./test-utils";
-import { h } from "vue";
+import { defineComponent, h, ref } from "vue";
 import { page } from "vitest/browser";
 
 function defaultWrapper(content: () => any = () => "Popover content") {
@@ -133,6 +133,87 @@ describe("GPopover", () => {
                     '[role="listbox"]',
                 ),
             ).not.toBeNull();
+        });
+
+        it("does not become scrollable when a nested dropdown scrolls", async () => {
+            await page.viewport(500, 290);
+
+            const NestedDropdown = defineComponent({
+                setup() {
+                    const dropdownOpen = ref(false);
+
+                    return () =>
+                        h(GPopover, null, {
+                            trigger: ({ toggle }: { toggle: () => void }) =>
+                                h("button", { onClick: toggle }, "Open"),
+                            default: () =>
+                                h(
+                                    "div",
+                                    {
+                                        style: {
+                                            height: "80px",
+                                            position: "relative",
+                                        },
+                                    },
+                                    [
+                                        h(
+                                            "button",
+                                            {
+                                                onClick: () =>
+                                                    (dropdownOpen.value = true),
+                                            },
+                                            "Open dropdown",
+                                        ),
+                                        dropdownOpen.value
+                                            ? h(
+                                                  "div",
+                                                  {
+                                                      role: "listbox",
+                                                      "aria-label":
+                                                          "Nested dropdown",
+                                                      style: {
+                                                          height: "200px",
+                                                          overflowY: "auto",
+                                                          position: "absolute",
+                                                          top: "100%",
+                                                          width: "100px",
+                                                      },
+                                                  },
+                                                  h("div", {
+                                                      style: {
+                                                          height: "400px",
+                                                      },
+                                                  }),
+                                              )
+                                            : null,
+                                    ],
+                                ),
+                        });
+                },
+            });
+            const wrapper = mnt(NestedDropdown);
+
+            await page.getByRole("button", { name: "Open" }).click();
+            const dialog = page.getByRole("dialog");
+            await expect.element(dialog).toBeVisible();
+            expect(window.getComputedStyle(dialog.element()).overflowY).toBe(
+                "visible",
+            );
+
+            await page.getByRole("button", { name: "Open dropdown" }).click();
+            const listbox = page.getByRole("listbox", {
+                name: "Nested dropdown",
+            });
+            await expect.element(listbox).toBeVisible();
+
+            const listboxElement = listbox.element();
+            listboxElement.scrollTop = 40;
+            listboxElement.dispatchEvent(new Event("scroll"));
+            await wrapper.vm.$nextTick();
+
+            expect(window.getComputedStyle(dialog.element()).overflowY).toBe(
+                "visible",
+            );
         });
 
         it("remains in viewport when inside a modal", async () => {

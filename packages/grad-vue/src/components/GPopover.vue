@@ -77,6 +77,9 @@ const hasTrigger = computed(() => !!slots.trigger);
 
 const triggerRef = useTemplateRef<HTMLElement | null>("triggerRef");
 const popoverRef = useTemplateRef<HTMLElement | null>("popoverRef");
+const popoverContentRef = useTemplateRef<HTMLElement | null>(
+    "popoverContentRef",
+);
 
 // Disable Teleport inside custom elements: scoped named slots
 // break CE slot distribution when content is teleported.
@@ -148,11 +151,12 @@ function getAnchorElement() {
 }
 
 function updatePopoverPosition() {
-    if (!popoverRef.value) {
+    if (!popoverRef.value || !popoverContentRef.value) {
         return;
     }
 
     const popoverEl = popoverRef.value;
+    const popoverContentEl = popoverContentRef.value;
     // Use offsetWidth/offsetHeight for popover dimensions to avoid getting
     // scaled values during the CSS scale() enter transition.
     const viewportRect = new DOMRect(
@@ -165,7 +169,13 @@ function updatePopoverPosition() {
         viewportRect.height - viewportMargin * 2,
         0,
     );
-    const naturalPopoverHeight = popoverEl.scrollHeight;
+    const popoverStyle = window.getComputedStyle(popoverEl);
+    const naturalPopoverHeight =
+        popoverContentEl.offsetHeight +
+        Number.parseFloat(popoverStyle.paddingTop) +
+        Number.parseFloat(popoverStyle.paddingBottom) +
+        Number.parseFloat(popoverStyle.borderTopWidth) +
+        Number.parseFloat(popoverStyle.borderBottomWidth);
 
     // Only turn on scrolling when the popover would exceed the viewport.
     popoverScrollable.value = naturalPopoverHeight > maxPopoverHeight;
@@ -230,7 +240,9 @@ watch(open, (val) => {
                 resizeObserver = new ResizeObserver(() =>
                     updatePopoverPosition(),
                 );
-                resizeObserver.observe(popoverRef.value);
+                if (popoverContentRef.value) {
+                    resizeObserver.observe(popoverContentRef.value);
+                }
             }
         });
     } else {
@@ -306,7 +318,9 @@ defineExpose({
                             :style="arrowPosition"
                             aria-hidden="true"
                         ></div>
-                        <slot></slot>
+                        <div ref="popoverContentRef" class="g-popover-content">
+                            <slot></slot>
+                        </div>
                         <button
                             v-if="!minimal"
                             class="g-popover-close"
@@ -376,6 +390,10 @@ g-popover:not(:defined) {
 
 .g-popover.g-popover-scrollable {
     overflow: auto;
+}
+
+.g-popover-content {
+    display: flow-root;
 }
 
 .g-popover-arrow {
