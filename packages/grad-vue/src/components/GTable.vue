@@ -658,6 +658,7 @@ const visibleColumns = computed(() => {
 const slots = defineSlots<{
     controls?: () => any;
     "right-controls"?: () => any;
+    empty?: () => any;
 }>();
 const hasHiddenColumns = computed(
     () => visibleColumns.value.length !== props.columns.length,
