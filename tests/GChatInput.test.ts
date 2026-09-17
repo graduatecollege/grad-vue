@@ -332,6 +332,64 @@ describe("GChatInput", () => {
             expect(onSend).toHaveBeenCalledWith(model.value);
         });
 
+        it("moves actions below the editor when content has multiple lines", async () => {
+            const wrapper = mountExpandable();
+
+            await expect.element(wrapper.instance).toBeInTheDocument();
+
+            const editor = wrapper.instance.getByRole("textbox");
+            const sendButton = wrapper.instance.getByRole("button", {
+                name: "Send",
+            });
+
+            expect(
+                sendButton.element().getBoundingClientRect().top,
+            ).toBeLessThan(editor.element().getBoundingClientRect().bottom);
+
+            await userEvent.click(editor);
+            await userEvent.keyboard(
+                "A first line{Shift>}{Enter}{/Shift}Second line",
+            );
+
+            await vi.waitUntil(() => {
+                return (
+                    sendButton.element().getBoundingClientRect().top >=
+                    editor.element().getBoundingClientRect().bottom
+                );
+            });
+        });
+
+        it("caps the editor height at maxRows before scrolling", async () => {
+            const short = mnt(GChatInput, {
+                props: { modelValue: "", maxRows: 2 },
+            });
+            const tall = mnt(GChatInput, {
+                props: { modelValue: "", maxRows: 8 },
+            });
+
+            const typeLines = async (wrapper: typeof short) => {
+                const editor = wrapper.container.getByRole("textbox");
+                await userEvent.click(editor);
+                await userEvent.keyboard(
+                    "One{Shift>}{Enter}{/Shift}Two{Shift>}{Enter}{/Shift}Three{Shift>}{Enter}{/Shift}Four",
+                );
+                return editor.element() as HTMLElement;
+            };
+
+            const shortEditor = await typeLines(short);
+            const tallEditor = await typeLines(tall);
+
+            await vi.waitUntil(
+                () => shortEditor.scrollHeight > shortEditor.clientHeight,
+            );
+            expect(tallEditor.scrollHeight).toBeLessThanOrEqual(
+                tallEditor.clientHeight,
+            );
+            expect(shortEditor.clientHeight).toBeLessThan(
+                tallEditor.clientHeight,
+            );
+        });
+
         it("uses a desktop panel and a full-viewport mobile layout", async () => {
             await page.viewport(1200, 800);
             const wrapper = mountExpandable();

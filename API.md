@@ -1596,6 +1596,7 @@ type Props = {
 
 - `controls`
 - `right-controls`
+- `empty`
 
 ---
 
@@ -2082,7 +2083,7 @@ type Props = {
      */
     disabled?: boolean;
     /**
-     * Maximum number of rows
+     * Maximum number of text rows shown before the editor scrolls
      */
     maxRows?: number;
     /**
@@ -2093,7 +2094,7 @@ type Props = {
      * Allow the editor to expand into a large viewport overlay
      */
     expandable?: boolean;
-}
+};
 ```
 
 ---

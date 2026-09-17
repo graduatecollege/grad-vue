@@ -287,7 +287,7 @@ const fname = ref("heh");
                     </p>
                 </section>
                 <GNoteInput :heading-levels="[2]"/>
-                <GChatInput />
+                <GChatInput expandable />
                 <section class="playground-table-demo">
                     <h2>GTable Playground</h2>
                     <p class="playground-table-demo__note">

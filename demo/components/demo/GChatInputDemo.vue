@@ -35,7 +35,7 @@ function handleSend(content: object) {
                 },
                 maxRows: {
                     type: 'number',
-                    label: 'Maximum number of rows',
+                    label: 'Maximum number of text rows shown before the editor scrolls',
                     default: 5
                 },
                 label: {
@@ -61,7 +61,7 @@ function handleSend(content: object) {
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    disabled</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#008000">    /**</span></span>
-<span class="line"><span style="color:#008000">     * Maximum number of rows</span></span>
+<span class="line"><span style="color:#008000">     * Maximum number of text rows shown before the editor scrolls</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    maxRows</span><span style="color:#000000">?: </span><span style="color:#267F99">number</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#008000">    /**</span></span>
@@ -72,7 +72,7 @@ function handleSend(content: object) {
 <span class="line"><span style="color:#008000">     * Allow the editor to expand into a large viewport overlay</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    expandable</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
-<span class="line"><span style="color:#000000">}</span></span></code></pre>
+<span class="line"><span style="color:#000000">};</span></span></code></pre>
 </figure>
 
 </template>
