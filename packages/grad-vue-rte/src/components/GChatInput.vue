@@ -118,6 +118,7 @@ const { editor, focusEditor } = useRichTextEditor({
 function onSend(content: object | undefined | null) {
     if (content) {
         emit("send", content);
+        collapse(false);
     }
 }
 
