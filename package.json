@@ -42,13 +42,13 @@
     "devDependencies": {
         "@axe-core/playwright": "^4.13.0",
         "@types/node": "^24.10.3",
-        "@vitejs/plugin-vue": "^6.0.8",
+        "@vitejs/plugin-vue": "^6.0.9",
         "@vitest/browser-playwright": "^4.1.11",
-        "@vitest/ui": "^4.1.11",
+        "@vitest/ui": "^5.0.1",
         "axe-core": "^4.13.0",
-        "happy-dom": "^20.14.0",
+        "happy-dom": "^20.14.5",
         "jsdom": "^30.0.1",
-        "marked": "^18.0.12",
+        "marked": "^18.0.13",
         "marked-alert": "^2.1.2",
         "marked-shiki": "^1.2.1",
         "pinia": "^4.0.3",
@@ -59,8 +59,8 @@
         "vite": "^8.2.2",
         "vite-plugin-dts": "^5.1.0",
         "vite-plugin-vue-devtools": "^8.2.1",
-        "vitest": "^4.1.11",
-        "vitest-browser-vue": "^2.1.0",
+        "vitest": "^5.0.1",
+        "vitest-browser-vue": "^3.1.0",
         "vue-tsc": "^3.3.11"
     }
 }
