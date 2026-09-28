@@ -105,9 +105,11 @@ matching GSidebar instance and <code>media-query</code> to set the collapsible b
 </template>
             <template #default="{ props }">
                 <GHamburgerMenu v-bind="props">
-                    <nav class="hamburger-menu-demo__popover-nav">
-                        <a href="#students">Students</a>
-                        <a href="#hooders">Hooders</a>
+                    <nav aria-label="Main Navigation">
+                        <ul>
+                            <li><a href="#students">Students</a></li>
+                            <li><a href="#hooders">Hooders</a></li>
+                        </ul>
                     </nav>
                 </GHamburgerMenu>
             </template>
@@ -120,11 +122,5 @@ matching GSidebar instance and <code>media-query</code> to set the collapsible b
     .g-hamburger-button {
         display: flex !important;
     }
-}
-
-.hamburger-menu-demo__popover-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
 }
 </style>

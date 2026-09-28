@@ -332,6 +332,46 @@ describe("GHamburgerMenu", () => {
     });
 
     describe("Popover mode", () => {
+        it("Styles a slotted navigation list by default", async () => {
+            await page.viewport(600, 800);
+            const { vm } = mnt(GHamburgerMenu, {
+                props: { label: "Main Navigation", mode: "popover" },
+                slots: {
+                    default: () =>
+                        h("nav", { "aria-label": "Main Navigation" }, [
+                            h("ul", [
+                                h("li", [
+                                    h("a", { href: "#students" }, "Students"),
+                                ]),
+                                h("li", [
+                                    h("a", { href: "#hooders" }, "Hooders"),
+                                ]),
+                            ]),
+                        ]),
+                },
+            });
+
+            await page.getByLabelText("Main Navigation").click();
+            await tick(vm);
+
+            const nav = page.getByRole("navigation", {
+                name: "Main Navigation",
+            });
+            const list = nav.getByRole("list");
+            const link = nav.getByRole("link", { name: "Students" });
+
+            await expect.element(link).toBeVisible();
+            expect(getComputedStyle(list.element()).listStyleType).toBe("none");
+            expect(getComputedStyle(list.element()).paddingLeft).toBe("0px");
+            expect(getComputedStyle(link.element()).display).toBe("block");
+            expect(getComputedStyle(link.element()).textDecorationLine).toBe(
+                "none",
+            );
+            expect(
+                parseFloat(getComputedStyle(link.element()).paddingTop),
+            ).toBeGreaterThan(0);
+        });
+
         it("Shows slotted content in a popover", async () => {
             await page.viewport(600, 800);
             const { vm } = mountPopoverFixture();

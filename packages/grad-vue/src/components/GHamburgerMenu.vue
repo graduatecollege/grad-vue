@@ -303,6 +303,30 @@ g-hamburger-menu:not(:defined) {
 }
 .g-hamburger-popover {
     display: block;
+
+    nav > ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+
+        > li > a {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: var(--g-primary-500);
+            font-weight: 600;
+            text-decoration: none;
+
+            &:hover {
+                color: var(--g-accent-700);
+                text-decoration: underline;
+            }
+            &:focus-visible {
+                background: var(--ilw-color--focus--background);
+                color: var(--ilw-color--focus--text);
+                outline-color: var(--g-primary-500);
+            }
+        }
+    }
 }
 .g-hamburger-button--collapsible,
 .g-hamburger-button--popover {
