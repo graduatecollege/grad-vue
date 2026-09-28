@@ -42,7 +42,7 @@ This is a monorepo managed with npm workspaces.
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 26+
 - npm 7+
 
 ### Setup

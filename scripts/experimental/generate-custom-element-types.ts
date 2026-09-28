@@ -13,6 +13,7 @@
 import fs from 'node:fs';
 // @ts-ignore
 import path from 'node:path';
+// @ts-ignore
 import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
 import { parse as parseSFC } from '@vue/compiler-sfc';
