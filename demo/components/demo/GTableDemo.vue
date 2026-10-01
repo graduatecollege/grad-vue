@@ -416,8 +416,10 @@ function handleCellChange(payload: CellChangePayload<ProductRow>) {
 <span class="line"><span style="color:#795E26">    groupRender</span><span style="color:#000000">?: (</span><span style="color:#001080">groupValue</span><span style="color:#000000">: </span><span style="color:#267F99">any</span><span style="color:#000000">, </span><span style="color:#001080">row</span><span style="color:#000000">: </span><span style="color:#267F99">T</span><span style="color:#000000">) </span><span style="color:#0000FF">=></span><span style="color:#267F99"> VNode</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#008000">    /**</span></span>
 <span class="line"><span style="color:#008000">     * Filtering object created with useFiltering()</span></span>
+<span class="line"><span style="color:#008000">     *</span></span>
+<span class="line"><span style="color:#008000">     * Filter state is keyed by each column's filter key (`filter.key ?? key`).</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
-<span class="line"><span style="color:#001080">    filtering</span><span style="color:#000000">?: </span><span style="color:#267F99">UseFilteringReturn</span><span style="color:#000000">&#x3C;</span><span style="color:#267F99">any</span><span style="color:#000000">>;</span></span>
+<span class="line"><span style="color:#001080">    filtering</span><span style="color:#000000">?: </span><span style="color:#267F99">UseFilteringReturn</span><span style="color:#000000">&#x3C;</span><span style="color:#267F99">any</span><span style="color:#000000">, </span><span style="color:#267F99">F</span><span style="color:#000000">>;</span></span>
 <span class="line"><span style="color:#008000">    /**</span></span>
 <span class="line"><span style="color:#008000">     * Make the table rows clickable</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
@@ -479,7 +481,12 @@ Instead, look at the source for this demo: <a href="https://github.com/graduatec
 <li>At minimum the configuration must include <code>key</code> for which field of the data
 objects to use, and <code>label</code> for the column header.</li>
 <li><code>sortable: true</code> makes the column sortable.</li>
-<li><code>filter</code> can be used to provide a <code>TableColumnFilter</code> configuration.</li>
+<li><code>filter</code> can be used to provide a <code>TableColumnFilter</code> configuration.
+Filter state is keyed by <code>filter.key</code>, or by the column <code>key</code> when
+<code>filter.key</code> is omitted. Pass a filter/request type as the third
+<code>TableColumn</code> type argument to type-check <code>filter.key</code> and values, and
+use <code>buildFilterRequest()</code> to convert filter state into request values
+(for example <code>match: &quot;contains&quot;</code> produces <code>%text%</code>).</li>
 <li><code>display</code> accepts a custom render function for the column data.</li>
 <li><code>trClass</code> and <code>tdClass</code> can be used to provide custom classes for table rows and cells.</li>
 </ul>

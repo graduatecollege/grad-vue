@@ -8,6 +8,35 @@ import {
     toValue,
     watch,
 } from "vue";
+import type {
+    AnyFilterRecord,
+    ColumnKey,
+    FilterApiValue,
+    FilterKey,
+    TableColumn,
+    TableRow,
+} from "../components/table/TableColumn.ts";
+import {
+    columnFilterKey,
+    filterRequestValue,
+    type FilterInputValue,
+} from "../components/table/columnFilters.ts";
+
+export type { FilterInputValue } from "../components/table/columnFilters.ts";
+
+/**
+ * Raw UI filter state keyed by filter/request keys of `F`.
+ *
+ * Values are kept as entered (or as read from the URL) and are only
+ * converted to request values by `buildFilterRequest()`.
+ */
+export type FilterState<F> = { [K in keyof F]?: FilterInputValue };
+
+/**
+ * A request object built from filter state. Each value has the type of the
+ * corresponding field in `F`.
+ */
+export type FilterRequest<F> = { [K in keyof F]?: FilterApiValue<F, K> };
 
 export type FilterLocationQueryValueRaw = string | number;
 export type FilterRouteQueryValue = string | null;
@@ -34,16 +63,14 @@ export interface FilteringOptions {
     syncWith?: Ref<FilterRouteQuery>;
 }
 
-export interface QueryFilteringOptions<
-    F extends Record<string, any> = Record<string, any>,
-> {
+export interface QueryFilteringOptions<F = AnyFilterRecord> {
     route: {
         query: FilterRouteQuery;
     };
     router: {
         replace: (location: { query: FilterLocationQuery }) => unknown;
     };
-    booleanArrayKeys?: readonly Extract<keyof F, string>[];
+    booleanArrayKeys?: readonly FilterKey<F>[];
 }
 
 /**
@@ -65,15 +92,18 @@ export type FiltersForRecord<
 /**
  * Represents the return type of a composition function used for handling
  * filtering logic in a data structure.
+ *
+ * `T` is the row type and `F` is the independent filter/request type. Filter
+ * state and `filteredColumns` are keyed by filter keys of `F`.
  */
 export interface UseFilteringReturn<
-    T extends Record<string, any> = Record<string, any>,
-    F extends { [K in keyof T]?: any } = Record<keyof T, any>,
+    T extends object = AnyFilterRecord,
+    F = Partial<Record<keyof T, any>>,
 > {
-    filters: Reactive<F>;
+    filters: Reactive<FilterState<F>>;
     isFiltered: Ref<boolean>;
     clearFilters: () => void;
-    filteredColumns: Ref<Partial<Record<keyof T, boolean>>>;
+    filteredColumns: Ref<Partial<Record<FilterKey<F>, boolean>>>;
 }
 
 /**
@@ -193,6 +223,81 @@ function areFilterRecordsEqual(
 }
 
 /**
+ * Serializes a raw filter value for a route query. Unlike
+ * `filtersToQueryParams`, `0` and `false` are kept.
+ */
+function serializeFilterValue(
+    value: FilterInputValue,
+): string | string[] | undefined {
+    if (value === undefined || value === null || value === "") {
+        return undefined;
+    }
+    if (Array.isArray(value)) {
+        const items = value
+            .filter((item) => item !== null && item !== undefined && item !== "")
+            .map((item) => String(item));
+        return items.length > 0 ? items : undefined;
+    }
+    return String(value);
+}
+
+function hasFilterValue(value: FilterInputValue): boolean {
+    return serializeFilterValue(value) !== undefined;
+}
+
+function filterStateToQuery<F>(
+    filters: FilterState<F>,
+): Record<string, string | string[]> {
+    const query: Record<string, string | string[]> = {};
+    for (const [key, value] of Object.entries(toRaw(filters))) {
+        const serialized = serializeFilterValue(value as FilterInputValue);
+        if (serialized !== undefined) {
+            query[key] = serialized;
+        }
+    }
+    return query;
+}
+
+/**
+ * Builds a typed request object from column filter configuration and raw
+ * filter state.
+ *
+ * Each filtered column reads `filters[filter.key ?? column.key]` and applies
+ * its explicit transformation (`match` for search filters, or `transform`).
+ * Only keys produced by column filters are included.
+ *
+ * @example
+ * ```ts
+ * type Query = NonNullable<GetStudentsData["query"]>;
+ * const columns: TableColumn<StudentRow, ColumnKey<StudentRow>, Query>[] = [
+ *     { key: "major", label: "Major", filter: { type: "search", key: "major__like", match: "contains" } },
+ * ];
+ * const query: FilterRequest<Query> = buildFilterRequest(columns, filters);
+ * ```
+ */
+export function buildFilterRequest<T extends TableRow, F>(
+    columns: readonly TableColumn<T, ColumnKey<T>, F>[],
+    filters: FilterState<F>,
+): FilterRequest<F> {
+    const request: FilterRequest<F> = {};
+    const state = filters as Partial<Record<string, FilterInputValue>>;
+    const output = request as Partial<Record<string, unknown>>;
+
+    for (const column of columns) {
+        if (!column.filter) {
+            continue;
+        }
+        const key = columnFilterKey(column);
+        const value = filterRequestValue(column.filter, state[key]);
+        if (value !== undefined) {
+            output[key] = value;
+        }
+    }
+
+    return request;
+}
+
+/**
  * Converts filter criteria into a format suitable for use as a query object
  * in vue-router.
  */
@@ -255,17 +360,21 @@ export function filtersToQueryParams<T extends Record<string, any>>(
  * inside the filter state.
  */
 export function useQueryFiltering<
-    T extends Record<string, any>,
-    F extends { [K in keyof T]?: any } = Record<keyof T, any>,
->(filters: F, options: QueryFilteringOptions<F>): UseFilteringReturn<T, F> {
-    const filterKeys = Object.keys(filters) as Array<Extract<keyof F, string>>;
+    T extends object = AnyFilterRecord,
+    F = Partial<Record<keyof T, any>>,
+>(
+    filters: FilterState<F>,
+    options: QueryFilteringOptions<F>,
+): UseFilteringReturn<T, F> {
+    const defaults = filters as Partial<Record<string, FilterInputValue>>;
+    const filterKeys = Object.keys(filters) as Array<FilterKey<F>>;
     const arrayFilterKeys = new Set(
-        filterKeys.filter((key) => Array.isArray(filters[key])),
+        filterKeys.filter((key) => Array.isArray(defaults[key])),
     );
     const booleanArrayKeys = new Set(options.booleanArrayKeys ?? []);
 
     const parseFilterValue = (
-        key: Extract<keyof F, string>,
+        key: FilterKey<F>,
         value: FilterRouteQuery[string] | undefined,
     ) => {
         if (value === null || value === undefined) {
@@ -276,11 +385,11 @@ export function useQueryFiltering<
             return parseQueryArrayValue(value);
         }
 
-        if (typeof value === "string" && value.includes(",")) {
-            return value.split(",");
+        if (typeof value === "string") {
+            return value.includes(",") ? value.split(",") : value;
         }
 
-        return cloneQueryValue(value);
+        return parseQueryArrayValue(value);
     };
 
     const getFilterQuery = (query: FilterRouteQuery) => {
@@ -302,12 +411,14 @@ export function useQueryFiltering<
 
     const syncWith = ref(getFilterQuery(options.route.query));
     const filtering = useFiltering<T, F>(filters, { syncWith });
-    const filteringState = filtering.filters as Record<string, unknown>;
+    const filteringState = filtering.filters as Partial<
+        Record<string, FilterInputValue>
+    >;
 
     const parseFilterStateValue = (
-        key: Extract<keyof F, string>,
+        key: FilterKey<F>,
         value: FilterRouteQuery[string] | undefined,
-    ) => {
+    ): FilterInputValue => {
         const parsedValue = parseFilterValue(key, value);
 
         if (!booleanArrayKeys.has(key) || parsedValue === undefined) {
@@ -369,35 +480,39 @@ export function useQueryFiltering<
 /**
  * Provides a mechanism to manage and synchronize filterable data with given filters and options.
  *
+ * Filter state is keyed by filter/request keys (`filter.key ?? column.key`)
+ * and holds raw UI values. Use `buildFilterRequest()` to convert it into
+ * typed request values.
+ *
  * @param filters An object that defines the filters applicable to the data record.
  * @param options Configuration options for filtering, such as synchronization.
  * @return Returns an object that can be used with GTable.
  */
 export function useFiltering<
-    T extends Record<string, any> = Record<string, any>,
-    F extends { [K in keyof T]?: any } = Record<keyof T, any>,
->(filters: F, options: FilteringOptions = {}): UseFilteringReturn<T, F> {
-    const values = reactive<T>(
-        Object.fromEntries(
-            Object.entries(filters).map(([key, val]) => [key, val]),
-        ) as any,
-    );
+    T extends object = AnyFilterRecord,
+    F = Partial<Record<keyof T, any>>,
+>(
+    filters: FilterState<F>,
+    options: FilteringOptions = {},
+): UseFilteringReturn<T, F> {
+    const filterKeys = Object.keys(filters);
+    const values = reactive<Record<string, FilterInputValue>>({
+        ...(filters as Record<string, FilterInputValue>),
+    });
     const syncWith = options.syncWith;
 
     if (syncWith) {
         if (syncWith.value) {
             const queryParams = toValue(syncWith);
-            Object.keys(filters).forEach((key) => {
-                if (queryParams[key] !== undefined) {
+            filterKeys.forEach((key) => {
+                const val = queryParams[key];
+                if (typeof val === "string") {
                     // Handle arrays as a comma-separated string
-                    const val = queryParams[key];
-                    if (typeof val === "string") {
-                        if (val.includes(",")) {
-                            values[key] = val.split(",");
-                        } else {
-                            values[key] = val;
-                        }
-                    }
+                    values[key] = val.includes(",") ? val.split(",") : val;
+                } else if (Array.isArray(val)) {
+                    values[key] = val.filter(
+                        (item): item is string => item !== null,
+                    );
                 }
             });
         }
@@ -405,20 +520,15 @@ export function useFiltering<
         watch(
             values,
             (newValues) => {
-                syncWith.value = filtersToQueryParams(newValues);
+                syncWith.value = filterStateToQuery(newValues);
             },
             { deep: true },
         );
     }
 
-    const isFiltered = computed(() => {
-        for (const key of Object.keys(filters)) {
-            if (!!emptyAsUndefined(values[key])) {
-                return true;
-            }
-        }
-        return false;
-    });
+    const isFiltered = computed(() =>
+        filterKeys.some((key) => hasFilterValue(values[key])),
+    );
 
     const clearFilters = () => {
         Object.keys(values).forEach((key) => {
@@ -427,15 +537,15 @@ export function useFiltering<
     };
 
     const filteredColumns = computed(() => {
-        const result: Record<string, boolean> = {};
-        for (const key of Object.keys(filters)) {
-            result[key] = !!emptyAsUndefined(values[key]);
+        const result: Partial<Record<string, boolean>> = {};
+        for (const key of filterKeys) {
+            result[key] = hasFilterValue(values[key]);
         }
-        return result as Record<keyof T, boolean>;
+        return result as Partial<Record<FilterKey<F>, boolean>>;
     });
 
     return {
-        filters: values as any,
+        filters: values as Reactive<FilterState<F>>,
         isFiltered,
         clearFilters,
         filteredColumns,

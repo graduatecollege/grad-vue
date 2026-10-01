@@ -1484,6 +1484,11 @@ Table content is provided with:
     objects to use, and `label` for the column header.
   - `sortable: true` makes the column sortable.
   - `filter` can be used to provide a `TableColumnFilter` configuration.
+    Filter state is keyed by `filter.key`, or by the column `key` when
+    `filter.key` is omitted. Pass a filter/request type as the third
+    `TableColumn` type argument to type-check `filter.key` and values, and
+    use `buildFilterRequest()` to convert filter state into request values
+    (for example `match: "contains"` produces `%text%`).
   - `display` accepts a custom render function for the column data.
   - `trClass` and `tdClass` can be used to provide custom classes for table rows and cells.
 - `data` array with objects containing fields for the columns.
@@ -1540,8 +1545,11 @@ type Props = {
     groupRender?: (groupValue: any, row: T) => VNode;
     /**
      * Filtering object created with useFiltering()
+     *
+     * Filter state is keyed by each column's filter key
+     * (`filter.key ?? key`).
      */
-    filtering?: UseFilteringReturn<any>;
+    filtering?: UseFilteringReturn<any, F>;
     /**
      * Make the table rows clickable
      */

@@ -1,5 +1,5 @@
 import { computed, ComputedRef, shallowReactive } from "vue";
-import { TableColumn, TableRow } from "../components/table/TableColumn.ts";
+import { TableColumnConfig, TableRow } from "../components/table/TableColumn.ts";
 import { createEventHook, EventHook, EventHookOn } from "@vueuse/core";
 
 export type ColumnKey<R extends TableRow> = Extract<keyof R, string>;
@@ -46,7 +46,7 @@ export interface CellChangePayload<
     K extends ColumnKey<T> = ColumnKey<T>,
 > {
     row: T;
-    column: TableColumn<T, K>;
+    column: TableColumnConfig<T, K>;
     value: T[K];
     previousValue: T[K];
 }

@@ -48,7 +48,13 @@ export default defineConfig({
         },
         include: [
             "tests/**/*.test.ts"
-        ]
+        ],
+        typecheck: {
+            enabled: true,
+            checker: "vue-tsc",
+            tsconfig: "./tests/tsconfig.typecheck.json",
+            include: ["tests/types/**/*.test-d.ts"],
+        },
     },
     resolve: {
         alias: {

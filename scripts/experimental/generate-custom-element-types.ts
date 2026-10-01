@@ -188,8 +188,9 @@ function splitOnTopLevelCommas(s: string): string[] {
 }
 
 /**
- * Parse "T extends TableRow, C extends TableColumn<T>" into
- * { T: "TableRow", C: "TableColumn<TableRow>" } (cross-references resolved).
+ * Parse "T extends TableRow, C extends TableColumn<T>, F = AnyFilterRecord" into
+ * { T: "TableRow", C: "TableColumn<TableRow>", F: "AnyFilterRecord" }
+ * (cross-references resolved).
  * Handles multi-line generic attribute values by normalising whitespace first.
  */
 function parseGenericSubstitutions(generic: string): Record<string, string> {
@@ -199,7 +200,11 @@ function parseGenericSubstitutions(generic: string): Record<string, string> {
     const normalized = generic.replace(/\s+/g, ' ').trim();
     const subs: Record<string, string> = {};
     for (const part of splitOnTopLevelCommas(normalized)) {
-        const m = part.trim().match(/^(\w+)\s+extends\s+(.+)$/);
+        // "X extends Y" uses the constraint; "X = Y" (or "X extends Y = Z")
+        // uses the default.
+        const m =
+            part.trim().match(/^(\w+)(?:\s+extends\s+[^=]+?)?\s*=\s*(.+)$/) ??
+            part.trim().match(/^(\w+)\s+extends\s+(.+)$/);
         if (m) {
             let constraint = m[2].trim();
             // Apply already-resolved substitutions so C can reference T
@@ -233,6 +238,8 @@ const KNOWN_EXTERNAL_TYPES: Record<string, string> = {
     TableRow: './components/table/TableColumn.ts',
     TableSort: './components/table/TableColumn.ts',
     UseFilteringReturn: './compose/useFiltering.ts',
+    FilterState: './compose/useFiltering.ts',
+    AnyFilterRecord: './components/table/TableColumn.ts',
     UseTableChangesReturn: './compose/useTableChanges.ts',
     CellChangePayload: './compose/useTableChanges.ts',
     BulkAction: './components/GTable.vue',

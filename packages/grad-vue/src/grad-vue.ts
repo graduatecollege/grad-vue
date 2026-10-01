@@ -116,6 +116,7 @@ export {
 export {
     useFiltering,
     useQueryFiltering,
+    buildFilterRequest,
     filtersToQueryParams,
     filterOmitEmpty,
     filterAsQuery,
@@ -138,6 +139,9 @@ export type {
     UseFilteringReturn,
     FiltersForRecord,
     FilterLocationQuery,
+    FilterInputValue,
+    FilterState,
+    FilterRequest,
 } from "./compose/useFiltering";
 export type {
     UseTableChangesReturn,
@@ -148,8 +152,17 @@ export type {
     ColumnKey,
 } from "./compose/useTableChanges";
 export type {
+    AnyFilterRecord,
+    FilterApiValue,
+    FilterKey,
+    FilterOption,
+    FilterPrimitive,
+    FilterTransform,
+    SearchColumnFilter,
+    SearchFilterMatch,
     SelectColumnFilter,
     MultiSelectColumnFilter,
+    TableColumnConfig,
     TableColumnFilter,
     TableColumnState,
     TableColumnStateValue,

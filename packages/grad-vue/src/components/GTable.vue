@@ -17,6 +17,11 @@
  *     objects to use, and `label` for the column header.
  *   - `sortable: true` makes the column sortable.
  *   - `filter` can be used to provide a `TableColumnFilter` configuration.
+ *     Filter state is keyed by `filter.key`, or by the column `key` when
+ *     `filter.key` is omitted. Pass a filter/request type as the third
+ *     `TableColumn` type argument to type-check `filter.key` and values, and
+ *     use `buildFilterRequest()` to convert filter state into request values
+ *     (for example `match: "contains"` produces `%text%`).
  *   - `display` accepts a custom render function for the column data.
  *   - `trClass` and `tdClass` can be used to provide custom classes for table rows and cells.
  * - `data` array with objects containing fields for the columns.
@@ -32,15 +37,23 @@
 export default {};
 </script>
 
-<script setup lang="ts" generic="T extends TableRow, C extends TableColumn<T>">
+<script setup lang="ts" generic="T extends TableRow, C extends TableColumn<T> = TableColumn<T>, F = AnyFilterRecord">
 import GTableBody from "./table/GTableBody.vue";
 import GPopover from "./GPopover.vue";
 import type {
+    AnyFilterRecord,
     TableColumn,
     TableColumnState,
     TableRow,
     TableSort,
 } from "./table/TableColumn.ts";
+import {
+    columnFilterKey,
+    filterInputValue,
+    filterStateValue,
+    isColumnFilterActive,
+    type FilterInputValue,
+} from "./table/columnFilters.ts";
 import {
     computed,
     getCurrentInstance,
@@ -57,7 +70,10 @@ import GMultiSelect from "./GMultiSelect.vue";
 import GCheckboxGroup from "./GCheckboxGroup.vue";
 import GTablePagination from "./table/GTablePagination.vue";
 import { useFiltering } from "../compose/useFiltering.ts";
-import type { UseFilteringReturn } from "../compose/useFiltering.ts";
+import type {
+    FilterState,
+    UseFilteringReturn,
+} from "../compose/useFiltering.ts";
 import type {
     CellChangePayload,
     UseTableChangesReturn,
@@ -133,8 +149,11 @@ type Props = {
     groupRender?: (groupValue: any, row: T) => VNode;
     /**
      * Filtering object created with useFiltering()
+     *
+     * Filter state is keyed by each column's filter key
+     * (`filter.key ?? key`).
      */
-    filtering?: UseFilteringReturn<any>;
+    filtering?: UseFilteringReturn<any, F>;
     /**
      * Make the table rows clickable
      */
@@ -189,7 +208,7 @@ type Props = {
 const sort = defineModel<TableSort<T>[]>("sort", {
     default: () => [],
 });
-const filter = defineModel<Partial<Record<keyof T, any>>>("filter", {
+const filter = defineModel<FilterState<F>>("filter", {
     default: () => ({}),
 });
 const columnState = defineModel<TableColumnState<T>>("columnState", {
@@ -215,13 +234,10 @@ const emit = defineEmits<{
     (e: "update:pageSize", value: number): void;
 }>();
 
-let filtering: UseFilteringReturn<any> = props.filtering!;
+const filtering: UseFilteringReturn<any, F> =
+    props.filtering ?? useFiltering<AnyFilterRecord, F>({});
 
-if (!filtering) {
-    filtering = useFiltering({}) as any;
-}
-
-const { filters, filteredColumns, isFiltered, clearFilters } = filtering;
+const { isFiltered, clearFilters } = filtering;
 
 // Bulk selection logic
 const allRowKeys = computed(() => props.data.map((row) => row.key));
@@ -716,15 +732,98 @@ const shouldShowControls = computed(() => {
     return false;
 });
 
-function multiSelectFilterOptions(col: C) {
-    if (col.filter?.type !== "multi-select") {
+function filterState(): Partial<Record<string, FilterInputValue>> {
+    return filter.value as Partial<Record<string, FilterInputValue>>;
+}
+
+function columnFilterValue(col: C) {
+    if (!col.filter) {
+        return undefined;
+    }
+    return filterInputValue(col.filter, filterState()[columnFilterKey(col)]);
+}
+
+function setColumnFilterValue(col: C, value: unknown) {
+    if (!col.filter) {
+        return;
+    }
+    // Mutated in place so a reactive object passed as `filter` stays shared
+    // with useFiltering().
+    filterState()[columnFilterKey(col)] = filterStateValue(col.filter, value);
+}
+
+function isColumnFiltered(col: C) {
+    if (!col.filter) {
+        return false;
+    }
+    return isColumnFilterActive(
+        col.filter,
+        filterState()[columnFilterKey(col)],
+    );
+}
+
+// Option controls only accept string values, so options are addressed by
+// index and mapped back to their typed values (numbers, booleans, etc.).
+function optionFilterOptions(col: C) {
+    if (col.filter?.type !== "select" && col.filter?.type !== "multi-select") {
         return [];
     }
-    return col.filter.options.map((option) => ({
+    return col.filter.options;
+}
+
+function optionToken(col: C, value: unknown): string | undefined {
+    const index = optionFilterOptions(col).findIndex(
+        (option) => option.value === value,
+    );
+    return index === -1 ? undefined : String(index);
+}
+
+function optionValue(col: C, token: unknown) {
+    return optionFilterOptions(col)[Number(token)]?.value;
+}
+
+function selectFilterOptions(col: C) {
+    return optionFilterOptions(col).map((option, index) => ({
         label: option.label,
-        value: option.value,
+        value: String(index),
+        description: option.description,
+    }));
+}
+
+function multiSelectFilterOptions(col: C) {
+    return optionFilterOptions(col).map((option, index) => ({
+        label: option.label,
+        value: String(index),
         hint: option.description,
     }));
+}
+
+function selectFilterValue(col: C): string | null {
+    return optionToken(col, columnFilterValue(col)) ?? null;
+}
+
+function setSelectFilterValue(col: C, token: unknown) {
+    setColumnFilterValue(
+        col,
+        token === null || token === undefined ? undefined : optionValue(col, token),
+    );
+}
+
+function multiSelectFilterValue(col: C): string[] {
+    const values = columnFilterValue(col);
+    if (!Array.isArray(values)) {
+        return [];
+    }
+    return values
+        .map((value) => optionToken(col, value))
+        .filter((token): token is string => token !== undefined);
+}
+
+function setMultiSelectFilterValue(col: C, tokens: Array<string | number>) {
+    setColumnFilterValue(
+        col,
+        tokens.map((token) => optionValue(col, token)),
+    );
 }
 
 onBeforeUnmount(() => {
@@ -1128,7 +1227,7 @@ onMounted(() => {
                                 'g-th',
                                 { 'g-th--resizable': resizableColumns },
                                 { sorted: sortIndex(col.key) !== -1 },
-                                { filtered: filteredColumns[col.key] },
+                                { filtered: isColumnFiltered(col) },
                             ]"
                             scope="col"
                         >
@@ -1175,14 +1274,14 @@ onMounted(() => {
                                         <button
                                             @click.stop="toggle"
                                             :aria-label="
-                                                filteredColumns[col.key]
+                                                isColumnFiltered(col)
                                                     ? 'Column Filtered'
                                                     : 'Filter Column'
                                             "
                                             class="g-filter-btn"
                                             :class="{
                                                 'g-active':
-                                                    filteredColumns[col.key],
+                                                    isColumnFiltered(col),
                                             }"
                                             type="button"
                                         >
@@ -1202,8 +1301,11 @@ onMounted(() => {
                                     </template>
                                     <GSelect
                                         v-if="col.filter.type === 'select'"
-                                        v-model="filter[col.key]"
-                                        :options="col.filter.options"
+                                        :model-value="selectFilterValue(col)"
+                                        @update:model-value="
+                                            setSelectFilterValue(col, $event)
+                                        "
+                                        :options="selectFilterOptions(col)"
                                         class="g-filter-select"
                                         label="Filter select"
                                         searchable
@@ -1233,7 +1335,14 @@ onMounted(() => {
                                         <input
                                             type="search"
                                             class="g-filter-search-input"
-                                            v-model="filter[col.key]"
+                                            :value="columnFilterValue(col)"
+                                            @input="
+                                                setColumnFilterValue(
+                                                    col,
+                                                    ($event.target as HTMLInputElement)
+                                                        .value,
+                                                )
+                                            "
                                             :placeholder="col.filter.placeholder"
                                             :aria-label="`Search ${col.label}`"
                                         />
@@ -1242,7 +1351,14 @@ onMounted(() => {
                                         <div class="g-filter-toggle">
                                             <input
                                                 type="checkbox"
-                                                v-model="filter[col.key]"
+                                                :checked="columnFilterValue(col) === true"
+                                                @change="
+                                                    setColumnFilterValue(
+                                                        col,
+                                                        ($event.target as HTMLInputElement)
+                                                            .checked,
+                                                    )
+                                                "
                                                 :id="`${id}-filter-${String(col.key)}`"
                                                 :aria-describedby="
                                                     col.filter.description
@@ -1268,8 +1384,11 @@ onMounted(() => {
                                             col.filter.type === 'multi-select' &&
                                             col.filter.searchable
                                         "
-                                        v-model="filter[col.key]"
-                                        :options="col.filter.options"
+                                        :model-value="multiSelectFilterValue(col)"
+                                        @update:model-value="
+                                            setMultiSelectFilterValue(col, $event)
+                                        "
+                                        :options="selectFilterOptions(col)"
                                         label="Include values"
                                         :placeholder="col.filter.placeholder"
                                         :search-description="col.filter.searchDescription"
@@ -1282,7 +1401,10 @@ onMounted(() => {
                                         class="g-multi-select"
                                     >
                                         <GCheckboxGroup
-                                            v-model="filter[col.key]"
+                                            :model-value="multiSelectFilterValue(col)"
+                                            @update:model-value="
+                                                setMultiSelectFilterValue(col, $event)
+                                            "
                                             :options="multiSelectFilterOptions(col)"
                                             label="Include values"
                                         />
@@ -1290,8 +1412,8 @@ onMounted(() => {
                                             class="clear-multiselect-btn"
                                             theme="accent"
                                             size="small"
-                                            @click="filter[col.key] = []"
-                                            v-if="filter[col.key]?.length"
+                                            @click="setColumnFilterValue(col, [])"
+                                            v-if="isColumnFiltered(col)"
                                         >
                                             Clear
                                         </GButton>

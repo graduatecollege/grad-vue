@@ -1,0 +1,10 @@
+{
+    "extends": "../packages/grad-vue/tsconfig.json",
+    "compilerOptions": {
+        "rootDir": "..",
+        "noEmit": true,
+        "declaration": false,
+        "emitDeclarationOnly": false
+    },
+    "include": ["types/**/*.test-d.ts"]
+}

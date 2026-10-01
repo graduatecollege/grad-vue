@@ -1,11 +1,17 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { Component, defineComponent, h } from "vue";
-import type { TableColumn } from "../packages/grad-vue/src/components/table/TableColumn";
+import type {
+    ColumnKey,
+    TableColumn,
+} from "../packages/grad-vue/src/components/table/TableColumn";
 import { createGTableFixture } from "./fixtures/createGTableFixture";
 import { mnt, testAccessibility } from "./test-utils";
 import { Locator, page, userEvent } from "vitest/browser";
 import GTable from "../packages/grad-vue/src/components/GTable.vue";
-import { useFiltering } from "../packages/grad-vue/src/compose/useFiltering";
+import {
+    buildFilterRequest,
+    useFiltering,
+} from "../packages/grad-vue/src/compose/useFiltering";
 
 interface TableEntry {
     key: string;
@@ -1704,6 +1710,224 @@ describe("GTable", () => {
 
             expect(filters.abbr).toEqual(["SOCW"]);
             expect(getColumn(container, 2)).toEqual(["SOCW"]);
+        });
+    });
+    describe("Mapped Filter Keys", () => {
+        interface CollegeQuery {
+            name__like?: string | null;
+            in_name?: boolean | null;
+            abbr_codes?: string[] | null;
+            has_code?: boolean | null;
+        }
+
+        const mappedColumns: TableColumn<
+            TableEntry,
+            ColumnKey<TableEntry>,
+            CollegeQuery
+        >[] = [
+            {
+                key: "key",
+                label: "Code",
+                sortable: true,
+                filter: { type: "toggle", key: "has_code", label: "Has code" },
+            },
+            {
+                key: "name",
+                label: "Name",
+                sortable: true,
+                filter: { type: "search", key: "name__like", match: "contains" },
+            },
+            {
+                key: "abbr",
+                label: "Abbreviation",
+                filter: {
+                    type: "multi-select",
+                    key: "abbr_codes",
+                    options: [
+                        { label: "COM", value: "COM" },
+                        { label: "SOCW", value: "SOCW" },
+                    ],
+                },
+            },
+            {
+                key: "collegeInName",
+                label: "'College' in Name",
+                filter: {
+                    type: "select",
+                    key: "in_name",
+                    options: [
+                        { label: "Yes", value: true },
+                        { label: "No", value: false },
+                    ],
+                },
+            },
+        ];
+
+        function createMappedFixture(
+            initial: Partial<Record<keyof CollegeQuery, any>> = {},
+        ) {
+            const filtering = useFiltering<TableEntry, CollegeQuery>({
+                name__like: undefined,
+                in_name: undefined,
+                abbr_codes: undefined,
+                has_code: undefined,
+                ...initial,
+            });
+            const { filters } = filtering;
+            const GTableFixture = defineComponent({
+                setup() {
+                    return () =>
+                        h(
+                            GTable<
+                                TableEntry,
+                                (typeof mappedColumns)[number],
+                                CollegeQuery
+                            >,
+                            {
+                                label: "Mapped",
+                                data: tableData,
+                                columns: mappedColumns,
+                                filtering,
+                                filter: filters,
+                                startIndex: 0,
+                            },
+                        );
+                },
+            });
+            return { GTableFixture, filtering, filters };
+        }
+
+        function filterButton(container: Locator, index: number) {
+            return container
+                .element()
+                .querySelectorAll<HTMLButtonElement>(".g-filter-btn")[index];
+        }
+
+        function columnHeader(container: Locator, index: number) {
+            return container
+                .element()
+                .querySelectorAll<HTMLElement>("th.g-th")[index];
+        }
+
+        it("binds search input to the mapped key without transforming state", async () => {
+            const { GTableFixture, filters } = createMappedFixture();
+            const { container } = mnt(GTableFixture);
+
+            filterButton(container, 1).click();
+            await page
+                .getByRole("searchbox", { name: "Search Name" })
+                .fill("School");
+
+            expect(filters.name__like).toBe("School");
+            expect(filters).not.toHaveProperty("name");
+            expect(buildFilterRequest(mappedColumns, filters)).toEqual({
+                name__like: "%School%",
+            });
+            await expect
+                .element(page.getByRole("searchbox", { name: "Search Name" }))
+                .toHaveValue("School");
+            expect(filterButton(container, 1).getAttribute("aria-label")).toBe(
+                "Column Filtered",
+            );
+            expect(columnHeader(container, 1).classList).toContain("filtered");
+            expect(filterButton(container, 0).getAttribute("aria-label")).toBe(
+                "Filter Column",
+            );
+        });
+
+        it("shows state restored under mapped keys", async () => {
+            const { GTableFixture } = createMappedFixture({
+                name__like: "Sch",
+                in_name: "false",
+            });
+            const { container } = mnt(GTableFixture);
+
+            expect(columnHeader(container, 1).classList).toContain("filtered");
+            expect(columnHeader(container, 3).classList).toContain("filtered");
+            expect(columnHeader(container, 2).classList).not.toContain(
+                "filtered",
+            );
+
+            filterButton(container, 1).click();
+            await expect
+                .element(page.getByRole("searchbox", { name: "Search Name" }))
+                .toHaveValue("Sch");
+        });
+
+        it("stores a false select value and marks the column filtered", async () => {
+            const { GTableFixture, filters } = createMappedFixture();
+            const { container } = mnt(GTableFixture);
+
+            filterButton(container, 3).click();
+            await page.getByRole("option", { name: "No" }).click();
+
+            expect(filters.in_name).toBe(false);
+            expect(buildFilterRequest(mappedColumns, filters)).toEqual({
+                in_name: false,
+            });
+            await expect
+                .poll(() => filterButton(container, 3).getAttribute("aria-label"))
+                .toBe("Column Filtered");
+        });
+
+        it("writes multi-select and toggle values to mapped keys", async () => {
+            const { GTableFixture, filters } = createMappedFixture();
+            const { container } = mnt(GTableFixture);
+
+            filterButton(container, 2).click();
+            await page.getByRole("checkbox", { name: "SOCW" }).click();
+
+            expect(filters.abbr_codes).toEqual(["SOCW"]);
+            await expect
+                .poll(() => columnHeader(container, 2).classList.contains("filtered"))
+                .toBe(true);
+
+            await page.getByRole("button", { name: "Clear", exact: true }).click();
+            expect(filters.abbr_codes).toEqual([]);
+            await expect
+                .poll(() => columnHeader(container, 2).classList.contains("filtered"))
+                .toBe(false);
+
+            filterButton(container, 0).click();
+            await page.getByRole("checkbox", { name: "Has code" }).click();
+            expect(filters.has_code).toBe(true);
+            expect(buildFilterRequest(mappedColumns, filters)).toEqual({
+                has_code: true,
+            });
+
+            await page.getByRole("checkbox", { name: "Has code" }).click();
+            expect(filters.has_code).toBeUndefined();
+            await expect
+                .poll(() => columnHeader(container, 0).classList.contains("filtered"))
+                .toBe(false);
+        });
+
+        it("clears mapped filters and active indicators", async () => {
+            const { GTableFixture, filters, filtering } = createMappedFixture({
+                name__like: "School",
+                in_name: false,
+                abbr_codes: ["COM"],
+                has_code: true,
+            });
+            const { container } = mnt(GTableFixture);
+
+            expect(
+                container.element().querySelectorAll("th.g-th.filtered"),
+            ).toHaveLength(4);
+
+            await container
+                .getByRole("button", { name: "Clear Filters" })
+                .click();
+
+            expect(filtering.isFiltered.value).toBe(false);
+            expect(buildFilterRequest(mappedColumns, filters)).toEqual({});
+            await expect
+                .poll(
+                    () =>
+                        container.element().querySelectorAll("th.g-th.filtered")
+                            .length,
+                )
+                .toBe(0);
         });
     });
 });
