@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import { nextTick, reactive, ref } from "vue";
 import {
     buildFilterRequest,
+    filterDefaults,
+    filterStateFromQuery,
     parseQueryArrayValue,
     type FilterLocationQuery,
     type FilterRouteQuery,
@@ -440,5 +442,120 @@ describe("mapped filter state", () => {
         await flushFiltering();
 
         expect(syncWith.value).toEqual({ major__like: "Chem", hooder_count: "0" });
+    });
+});
+
+describe("filterDefaults", () => {
+    it("builds default state keyed by filter key, with arrays for multi-selects", () => {
+        const columns: TableColumn<StudentRow, ColumnKey<StudentRow>, StudentQuery>[] = [
+            ...studentColumns,
+            { key: "first_name", label: "No filter" },
+            {
+                key: "major",
+                label: "College",
+                filter: { type: "multi-select", key: "college", options: [] },
+            },
+        ];
+
+        const defaults = filterDefaults(columns);
+
+        expect(defaults).toEqual({ ...emptyStudentFilters(), college: [] });
+        expect(Object.keys(defaults)).toEqual([
+            "major__like",
+            "first_name__like",
+            "tags",
+            "hooder_count",
+            "deposit_date__notnull",
+            "college",
+        ]);
+    });
+});
+
+describe("filterStateFromQuery", () => {
+    const columns: TableColumn<StudentRow, ColumnKey<StudentRow>, StudentQuery>[] = [
+        ...studentColumns,
+        {
+            key: "major",
+            label: "College",
+            filter: {
+                type: "multi-select",
+                key: "college",
+                options: [
+                    { label: "KP", value: "KP" },
+                    { label: "KV", value: "KV" },
+                ],
+            },
+        },
+        {
+            key: "has_deposit",
+            label: "Confirmed",
+            filter: {
+                type: "select",
+                key: "is_confirmed",
+                options: [
+                    { label: "Yes", value: true },
+                    { label: "No", value: false },
+                ],
+            },
+        },
+    ];
+
+    it("reads only filter keys, keeping array filters as arrays", () => {
+        expect(
+            filterStateFromQuery(filterDefaults(columns), {
+                major__like: "Arts, Science",
+                college: "KP",
+                is_confirmed: "false",
+                unrelated: "1",
+            }),
+        ).toEqual({
+            major__like: ["Arts", " Science"],
+            first_name__like: undefined,
+            tags: undefined,
+            hooder_count: undefined,
+            deposit_date__notnull: undefined,
+            college: ["KP"],
+            is_confirmed: "false",
+        });
+    });
+
+    it("produces the same request as useQueryFiltering", async () => {
+        const query = {
+            major__like: "Arts, Science",
+            tags: "honors,late",
+            hooder_count: "0",
+            college: ["KP", "KV"],
+            is_confirmed: "false",
+        };
+        const { route, router } = createQueryContext(query);
+        const filtering = useQueryFiltering<StudentRow, StudentQuery>(
+            filterDefaults(columns),
+            { route, router },
+        );
+        await flushFiltering();
+
+        const request = buildFilterRequest(
+            columns,
+            filterStateFromQuery(filterDefaults(columns), query),
+        );
+
+        expect(request).toEqual(buildFilterRequest(columns, filtering.filters));
+        expect(request).toEqual({
+            major__like: "%Arts, Science%",
+            tags: ["honors", "late"],
+            hooder_count: 0,
+            college: ["KP", "KV"],
+            is_confirmed: false,
+        });
+    });
+
+    it("converts boolean array keys", () => {
+        expect(
+            filterStateFromQuery<TestFilters>(
+                { depositDate: [] },
+                { depositDate: ["true", "false", "ignore-me"] },
+                { booleanArrayKeys: ["depositDate"] },
+            ),
+        ).toEqual({ depositDate: [true, false] });
     });
 });

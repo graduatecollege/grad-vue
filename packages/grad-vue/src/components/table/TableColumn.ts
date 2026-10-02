@@ -129,7 +129,21 @@ export type SearchColumnFilter<
 
 /**
  * A single-select filter. Without `transform`, option values must match the
- * request field's type.
+ * request field's type. `0` and `false` are valid option values.
+ *
+ * For a "has value / has no value" filter on a nullable field, use boolean
+ * options with a boolean request key; clearing the select removes the filter:
+ *
+ * ```ts
+ * filter: {
+ *     type: "select",
+ *     key: "deposit_date__notnull",
+ *     options: [
+ *         { label: "Has Deposit Date", value: true },
+ *         { label: "No Deposit Date", value: false },
+ *     ],
+ * }
+ * ```
  */
 export type SelectColumnFilter<
     F = AnyFilterRecord,

@@ -63,14 +63,23 @@ export interface FilteringOptions {
     syncWith?: Ref<FilterRouteQuery>;
 }
 
-export interface QueryFilteringOptions<F = AnyFilterRecord> {
+export interface FilterStateFromQueryOptions<F = AnyFilterRecord> {
+    /**
+     * Array filters whose `"true"`/`"false"` query values should be
+     * converted to booleans. Not needed for column filters with boolean
+     * option values, since `buildFilterRequest()` matches those itself.
+     */
+    booleanArrayKeys?: readonly FilterKey<F>[];
+}
+
+export interface QueryFilteringOptions<F = AnyFilterRecord>
+    extends FilterStateFromQueryOptions<F> {
     route: {
         query: FilterRouteQuery;
     };
     router: {
         replace: (location: { query: FilterLocationQuery }) => unknown;
     };
-    booleanArrayKeys?: readonly FilterKey<F>[];
 }
 
 /**
@@ -298,6 +307,100 @@ export function buildFilterRequest<T extends TableRow, F>(
 }
 
 /**
+ * Builds the default filter state for `useFiltering()` / `useQueryFiltering()`
+ * from column filter configuration, so filters don't have to be listed twice.
+ *
+ * Each filtered column adds its filter key (`filter.key ?? column.key`).
+ * Multi-select filters default to `[]`, so their query params are always read
+ * as arrays; all other filters default to `undefined`.
+ *
+ * @example
+ * ```ts
+ * const filtering = useQueryFiltering<StudentRow, Query>(filterDefaults(columns), { route, router });
+ * ```
+ */
+export function filterDefaults<T extends TableRow, F>(
+    columns: readonly TableColumn<T, ColumnKey<T>, F>[],
+): FilterState<F> {
+    const defaults: Partial<Record<string, FilterInputValue>> = {};
+
+    for (const column of columns) {
+        if (column.filter) {
+            defaults[columnFilterKey(column)] =
+                column.filter.type === "multi-select" ? [] : undefined;
+        }
+    }
+
+    return defaults as FilterState<F>;
+}
+
+/**
+ * Reads filter state from route query params, the same way
+ * `useQueryFiltering()` does, without creating reactive state or writing to
+ * the URL.
+ *
+ * Use this when another view needs the filters of a query-synced table, for
+ * example a detail page that loads the same list. Keys come from `defaults`;
+ * filters with array defaults are always read as arrays.
+ *
+ * @example
+ * ```ts
+ * const request = computed(() =>
+ *     buildFilterRequest(columns, filterStateFromQuery(filterDefaults(columns), route.query)),
+ * );
+ * ```
+ */
+export function filterStateFromQuery<F>(
+    defaults: FilterState<F>,
+    query: FilterRouteQuery,
+    options: FilterStateFromQueryOptions<F> = {},
+): FilterState<F> {
+    const defaultValues = defaults as Partial<Record<string, FilterInputValue>>;
+    const booleanArrayKeys = new Set<string>(options.booleanArrayKeys ?? []);
+    const state: Partial<Record<string, FilterInputValue>> = {};
+
+    for (const key of Object.keys(defaultValues)) {
+        const value = parseFilterQueryValue(
+            query[key],
+            Array.isArray(defaultValues[key]),
+        );
+        state[key] =
+            booleanArrayKeys.has(key) && value !== undefined
+                ? parseBooleanArray(value)
+                : value;
+    }
+
+    return state as FilterState<F>;
+}
+
+function parseFilterQueryValue(
+    value: FilterRouteQuery[string],
+    isArrayFilter: boolean,
+): string | string[] | undefined {
+    if (value === null || value === undefined) {
+        return undefined;
+    }
+
+    if (!isArrayFilter && typeof value === "string") {
+        return value.includes(",") ? value.split(",") : value;
+    }
+
+    return parseQueryArrayValue(value);
+}
+
+function parseBooleanArray(value: string | string[]): boolean[] {
+    return (Array.isArray(value) ? value : [value]).flatMap((item) => {
+        if (item === "true") {
+            return [true];
+        }
+        if (item === "false") {
+            return [false];
+        }
+        return [];
+    });
+}
+
+/**
  * Converts filter criteria into a format suitable for use as a query object
  * in vue-router.
  */
@@ -358,6 +461,9 @@ export function filtersToQueryParams<T extends Record<string, any>>(
  * read from and written to query params as arrays, and `booleanArrayKeys` can
  * be used for multi-value filters that should be converted to boolean values
  * inside the filter state.
+ *
+ * Use `filterDefaults(columns)` to build `filters` from column configuration,
+ * and `filterStateFromQuery()` to read the same state elsewhere without syncing.
  */
 export function useQueryFiltering<
     T extends object = AnyFilterRecord,
@@ -368,29 +474,6 @@ export function useQueryFiltering<
 ): UseFilteringReturn<T, F> {
     const defaults = filters as Partial<Record<string, FilterInputValue>>;
     const filterKeys = Object.keys(filters) as Array<FilterKey<F>>;
-    const arrayFilterKeys = new Set(
-        filterKeys.filter((key) => Array.isArray(defaults[key])),
-    );
-    const booleanArrayKeys = new Set(options.booleanArrayKeys ?? []);
-
-    const parseFilterValue = (
-        key: FilterKey<F>,
-        value: FilterRouteQuery[string] | undefined,
-    ) => {
-        if (value === null || value === undefined) {
-            return undefined;
-        }
-
-        if (arrayFilterKeys.has(key)) {
-            return parseQueryArrayValue(value);
-        }
-
-        if (typeof value === "string") {
-            return value.includes(",") ? value.split(",") : value;
-        }
-
-        return parseQueryArrayValue(value);
-    };
 
     const getFilterQuery = (query: FilterRouteQuery) => {
         const nextQuery: Partial<FilterRouteQuery> = {};
@@ -399,10 +482,10 @@ export function useQueryFiltering<
             const value = query[key];
 
             if (value !== undefined) {
-                nextQuery[key] = parseFilterValue(key, value) as
-                    | FilterRouteQueryValue
-                    | FilterRouteQueryValue[]
-                    | undefined;
+                nextQuery[key] = parseFilterQueryValue(
+                    value,
+                    Array.isArray(defaults[key]),
+                );
             }
         }
 
@@ -415,38 +498,14 @@ export function useQueryFiltering<
         Record<string, FilterInputValue>
     >;
 
-    const parseFilterStateValue = (
-        key: FilterKey<F>,
-        value: FilterRouteQuery[string] | undefined,
-    ): FilterInputValue => {
-        const parsedValue = parseFilterValue(key, value);
-
-        if (!booleanArrayKeys.has(key) || parsedValue === undefined) {
-            return parsedValue;
-        }
-
-        const values = Array.isArray(parsedValue) ? parsedValue : [parsedValue];
-        return values
-            .map((item) => {
-                if (item === "true") {
-                    return true;
-                }
-                if (item === "false") {
-                    return false;
-                }
-                return undefined;
-            })
-            .filter((item): item is boolean => item !== undefined);
-    };
-
     watch(
-        () => getFilterQuery(options.route.query),
-        (query) => {
-            for (const key of filterKeys) {
-                const nextValue = parseFilterStateValue(key, query[key]);
+        () => filterStateFromQuery(filters, options.route.query, options),
+        (state) => {
+            const nextState = state as Partial<Record<string, FilterInputValue>>;
 
-                if (!areFilterValuesEqual(filteringState[key], nextValue)) {
-                    filteringState[key] = nextValue;
+            for (const key of filterKeys) {
+                if (!areFilterValuesEqual(filteringState[key], nextState[key])) {
+                    filteringState[key] = nextState[key];
                 }
             }
         },

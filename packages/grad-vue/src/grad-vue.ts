@@ -117,6 +117,8 @@ export {
     useFiltering,
     useQueryFiltering,
     buildFilterRequest,
+    filterDefaults,
+    filterStateFromQuery,
     filtersToQueryParams,
     filterOmitEmpty,
     filterAsQuery,
@@ -133,6 +135,7 @@ export type {
 } from "./compose/usePaging";
 export type {
     FilteringOptions,
+    FilterStateFromQueryOptions,
     QueryFilteringOptions,
     FilterRouteQuery,
     FilterRouteQueryValue,

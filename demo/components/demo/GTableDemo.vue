@@ -486,7 +486,8 @@ Filter state is keyed by <code>filter.key</code>, or by the column <code>key</co
 <code>filter.key</code> is omitted. Pass a filter/request type as the third
 <code>TableColumn</code> type argument to type-check <code>filter.key</code> and values, and
 use <code>buildFilterRequest()</code> to convert filter state into request values
-(for example <code>match: &quot;contains&quot;</code> produces <code>%text%</code>).</li>
+(for example <code>match: &quot;contains&quot;</code> produces <code>%text%</code>). <code>filterDefaults()</code>
+builds the initial filter state from the same columns.</li>
 <li><code>display</code> accepts a custom render function for the column data.</li>
 <li><code>trClass</code> and <code>tdClass</code> can be used to provide custom classes for table rows and cells.</li>
 </ul>

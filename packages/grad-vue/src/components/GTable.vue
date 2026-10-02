@@ -21,7 +21,8 @@
  *     `filter.key` is omitted. Pass a filter/request type as the third
  *     `TableColumn` type argument to type-check `filter.key` and values, and
  *     use `buildFilterRequest()` to convert filter state into request values
- *     (for example `match: "contains"` produces `%text%`).
+ *     (for example `match: "contains"` produces `%text%`). `filterDefaults()`
+ *     builds the initial filter state from the same columns.
  *   - `display` accepts a custom render function for the column data.
  *   - `trClass` and `tdClass` can be used to provide custom classes for table rows and cells.
  * - `data` array with objects containing fields for the columns.
