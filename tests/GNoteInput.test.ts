@@ -59,7 +59,7 @@ describe("GNoteInput", () => {
             await expect.element(toolbar.getByRole("button", { name: "Heading 3", exact: true })).toBeInTheDocument();
             await expect.element(toolbar.getByRole("button", { name: "Heading 1", exact: true })).not.toBeInTheDocument();
 
-            await container.getByLabelText("Note Input").click();
+            await container.getByLabelText("Note input").click();
             await userEvent.keyboard("Heading text");
             await userEvent.click(toolbar.getByRole("button", { name: "Heading 2", exact: true }));
 
@@ -81,7 +81,7 @@ describe("GNoteInput", () => {
                 model,
             });
 
-            await container.getByLabelText("Note Input").click();
+            await container.getByLabelText("Note input").click();
 
             // Type text into the editor
             await userEvent.keyboard("Hello World");

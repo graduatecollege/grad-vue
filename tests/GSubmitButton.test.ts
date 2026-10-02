@@ -11,7 +11,8 @@ describe("GSubmitButton", () => {
 
             await expect.element(wrapper.instance).toBeInTheDocument();
             await expect.element(wrapper.instance).toHaveAttribute("type", "submit");
-            await expect.element(wrapper.instance).toHaveTextContent("Submit");
+            await expect.element(wrapper.instance).toHaveAccessibleName("Submit");
+            await expect.element(wrapper.instance.getByText("Submit")).toBeVisible();
         });
 
         it("can be disabled", async () => {
@@ -32,7 +33,8 @@ describe("GSubmitButton", () => {
             });
 
             await expect.element(wrapper.instance).toBeInTheDocument();
-            await expect.element(wrapper.instance).toHaveTextContent("Save Changes");
+            await expect.element(wrapper.instance).toHaveAccessibleName("Save Changes");
+            await expect.element(wrapper.instance.getByText("Save Changes")).toBeVisible();
         });
     });
 

@@ -38,10 +38,13 @@ describe("GDetailList", () => {
         it("renders labels and values", async () => {
             const wrapper = mnt(Fixture);
 
-            await expect.element(wrapper.instance).toHaveTextContent("Major");
-            await expect.element(wrapper.instance).toHaveTextContent("Engineering");
-            await expect.element(wrapper.instance).toHaveTextContent("Department Code");
-            await expect.element(wrapper.instance).toHaveTextContent("123");
+            const labels = wrapper.instance.getByRole("term");
+            const values = wrapper.instance.getByRole("definition");
+
+            await expect.element(labels.nth(0)).toHaveTextContent("Major");
+            await expect.element(values.nth(0)).toHaveTextContent("Engineering");
+            await expect.element(labels.nth(1)).toHaveTextContent("Department Code");
+            await expect.element(values.nth(1)).toHaveTextContent("123");
         });
     });
 

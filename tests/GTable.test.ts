@@ -445,7 +445,7 @@ describe("GTable", () => {
             const { GTableFixture } = createCollegesTableFixture();
             const { container } = mnt(GTableFixture);
             const filterButton = container.getByRole("button", {
-                name: "Filter",
+                name: "Filter Column",
             });
             await filterButton.click();
 
@@ -461,7 +461,7 @@ describe("GTable", () => {
             const { GTableFixture } = createCollegesTableFixture();
             const { container } = mnt(GTableFixture);
             const filterButton = container.getByRole("button", {
-                name: "Filter",
+                name: "Filter Column",
             });
             await filterButton.click();
             await page
@@ -470,13 +470,13 @@ describe("GTable", () => {
                 })
                 .click();
 
-            await expect.element(container.getByText("1 result")).toBeVisible();
+            await expect.element(container.getByText("1 results")).toBeVisible();
         });
         it("clear filters removes all filters", async () => {
             const { GTableFixture } = createCollegesTableFixture();
             const { container, vm } = mnt(GTableFixture);
             const filterButton = container.getByRole("button", {
-                name: "Filter",
+                name: "Filter Column",
             });
             await filterButton.click();
             const clearFiltersButton = container.getByRole("button", {
@@ -964,10 +964,10 @@ describe("GTable", () => {
                 .element(container.getByText("1 row selected"))
                 .toBeVisible();
             await expect
-                .element(container.getByRole("button", { name: "Delete" }))
+                .element(container.getByRole("button", { name: "Delete 1 row" }))
                 .toBeVisible();
             await expect
-                .element(container.getByRole("button", { name: "Export" }))
+                .element(container.getByRole("button", { name: "Export 1 row" }))
                 .toBeVisible();
         });
 
