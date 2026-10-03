@@ -51,13 +51,13 @@ expect.extend({
         };
     },
 });
-import '@vitest/expect'; // Important: must import to allow augmentation
+import 'vitest'; // Important: must import to allow augmentation
 
 interface CustomMatchers<R = unknown> {
     toBeInView(): Promise<R>;
 }
 
-declare module '@vitest/expect' {
-    interface Assertion<T = any> extends CustomMatchers<T> {}
+declare module 'vitest' {
+    interface Assertion<R, T> extends CustomMatchers<T> {}
     interface AsymmetricMatchersContaining extends CustomMatchers {}
 }
