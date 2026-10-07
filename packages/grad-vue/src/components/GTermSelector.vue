@@ -7,6 +7,7 @@ export default {};
 </script>
 
 <script setup lang="ts">
+import { useId } from "vue";
 import GTermSelectorControl from "./term/GTermSelectorControl.vue";
 import GButton from "./GButton.vue";
 import GPopover from "./GPopover.vue";
@@ -50,13 +51,23 @@ const props = withDefaults(defineProps<Props>(), {
 const term = defineModel<{year: string, name: string}>({
     default: () => ({year: "2026", name: "Spring"}),
 });
+
+const headingId = `${useId()}-heading`;
 </script>
 
 <template>
     <div class="g-term-selector">
-        <GPopover>
-            <template #trigger="{ toggle }">
-                <GButton class="g-term-selector-button" theme="none" outlined @click="toggle">
+        <GPopover :aria-labelledby="headingId">
+            <template #trigger="{ toggle, open, popoverId }">
+                <GButton
+                    class="g-term-selector-button"
+                    theme="none"
+                    outlined
+                    aria-haspopup="dialog"
+                    :aria-expanded="open"
+                    :aria-controls="open ? popoverId : undefined"
+                    @click="toggle"
+                >
                     <span class="g-calendar-icon">
                         <svg role="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M224 64C206.3 64 192 78.3 192 96L192 128L160 128C124.7 128 96 156.7 96 192L96 240L544 240L544 192C544 156.7 515.3 128 480 128L448 128L448 96C448 78.3 433.7 64 416 64C398.3 64 384 78.3 384 96L384 128L256 128L256 96C256 78.3 241.7 64 224 64zM96 288L96 480C96 515.3 124.7 544 160 544L480 544C515.3 544 544 515.3 544 480L544 288L96 288z"/></svg>
                     </span>
@@ -66,7 +77,7 @@ const term = defineModel<{year: string, name: string}>({
                     </span>
                 </GButton>
             </template>
-            <h2 class="g-popover-title" tabindex="-1">{{ heading}}</h2>
+            <h2 :id="headingId" class="g-popover-title" tabindex="-1">{{ heading}}</h2>
             <GTermSelectorControl v-bind="$props" v-model="term" />
         </GPopover>
     </div>

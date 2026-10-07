@@ -252,6 +252,7 @@ const id = useId();
                 @input="onInput"
                 @keydown="onKeydown"
                 role="combobox"
+                :aria-label="props.label"
                 :aria-expanded="expanded"
                 aria-autocomplete="list"
                 :aria-controls="`${id}-list`"
@@ -264,7 +265,6 @@ const id = useId();
             <button
                 type="submit"
                 class="g-search-submit"
-                aria-label="Submit search"
                 @keydown="onKeydown"
             >
                 <template v-if="isLoading">
@@ -272,7 +272,7 @@ const id = useId();
                 </template>
                 <svg
                     role="img"
-                    aria-label="Search"
+                    aria-label="Submit Search"
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 51.26 51.26"
                 >

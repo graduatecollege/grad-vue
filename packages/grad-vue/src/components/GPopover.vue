@@ -6,7 +6,8 @@
  * **Slot** `trigger` is optional. When provided, it should contain an
  * interactive element for opening the popover and it is used for
  * `aria-labelledby`. The trigger is passed a prop `toggle` which is a function
- * that toggles the popover's open state.
+ * that toggles the popover's open state, `open` for its current state, and
+ * `popoverId` for linking the trigger to the dialog with `aria-controls`.
  *
  * Without a trigger slot, open the popover programmatically via `show()` or
  * `toggle()` on the component instance / custom element.
@@ -49,6 +50,10 @@ import { useCustomElementAttrs } from "../compose/useCustomElementAttrs.ts";
 import GClientOnly from "./GClientOnly.vue";
 
 type Props = {
+    /**
+     * ID of the element that labels the dialog. Defaults to the trigger.
+     */
+    ariaLabelledby?: string;
     /**
      * Render without padding
      * @demo
@@ -280,7 +285,12 @@ defineExpose({
             class="g-popover-trigger"
             :id="`${id}-trigger`"
         >
-            <slot name="trigger" :toggle="toggle"></slot>
+            <slot
+                name="trigger"
+                :toggle="toggle"
+                :open="open"
+                :popover-id="`${id}-popover`"
+            ></slot>
         </div>
         <GClientOnly>
             <Teleport to="#modal-root" :disabled="disableTeleport">
@@ -289,6 +299,7 @@ defineExpose({
                         v-if="isCustomElement || open"
                         v-show="open"
                         ref="popoverRef"
+                        :id="`${id}-popover`"
                         :class="{
                             'g-popover': true,
                             'g-popover-above': popoverAbove,
@@ -299,9 +310,9 @@ defineExpose({
                         role="dialog"
                         aria-modal="true"
                         :aria-labelledby="
-                            hasTrigger ? `${id}-trigger` : undefined
+                            ariaLabelledby || (hasTrigger ? `${id}-trigger` : undefined)
                         "
-                        :aria-label="hasTrigger ? undefined : 'Popover'"
+                        :aria-label="ariaLabelledby || hasTrigger ? undefined : 'Popover'"
                         :style="{
                             top: popoverPosition.top + 'px',
                             left: popoverPosition.left + 'px',

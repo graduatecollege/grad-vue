@@ -89,7 +89,7 @@ const slots = defineSlots<{
                 <button
                     class="g-user-menu__avatar"
                     :style="{ backgroundColor: color }"
-                    :aria-label="initials + ' - ' + label"
+                    :aria-label="label + ': ' + initials"
                     :aria-expanded="open"
                     aria-haspopup="menu"
                     @click="toggle"
