@@ -1239,6 +1239,7 @@ onMounted(() => {
                                     class="g-column-head"
                                     @click="onSort(col, $event.shiftKey)"
                                 >
+                                    <span class="g-visually-hidden">Sort by </span>
                                     {{ col.label }}
                                     <span
                                         v-if="sortIndex(col.key) !== -1"

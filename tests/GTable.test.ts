@@ -332,11 +332,30 @@ describe("GTable", () => {
                 "LL",
             ]);
         });
+        it("names column sort buttons with their action and current sort direction", async () => {
+            const { GTableFixture } = createCollegesTableFixture();
+            const { container } = mnt(GTableFixture);
+            const codeSortButton = container.getByRole("button", {
+                name: /^Sort by Code\b/,
+            });
+
+            await expect.element(codeSortButton).toHaveAccessibleName("Sort by Code");
+            await codeSortButton.click();
+            await expect
+                .element(codeSortButton)
+                .toHaveAccessibleName("Sort by Code Sorted ascending");
+            await codeSortButton.click();
+            await expect
+                .element(codeSortButton)
+                .toHaveAccessibleName("Sort by Code Sorted descending");
+            await codeSortButton.click();
+            await expect.element(codeSortButton).toHaveAccessibleName("Sort by Code");
+        });
         it("sorts rows by code in ascending order after clicking on code column header", async () => {
             const { GTableFixture } = createCollegesTableFixture();
             const { container } = mnt(GTableFixture);
             const codeSortButton = container.getByRole("button", {
-                name: /^Code\b/,
+                name: /^Sort by Code\b/,
             });
             await codeSortButton.click();
             expect(getColumn(container, 0)).toEqual(["KL", "KM", "KN"]);
@@ -345,7 +364,7 @@ describe("GTable", () => {
             const { GTableFixture } = createCollegesTableFixture();
             const { container } = mnt(GTableFixture);
             const codeSortButton = container.getByRole("button", {
-                name: /^Code\b/,
+                name: /^Sort by Code\b/,
             });
             await codeSortButton.click();
             await codeSortButton.click();
@@ -355,7 +374,7 @@ describe("GTable", () => {
             const { GTableFixture } = createCollegesTableFixture();
             const { container } = mnt(GTableFixture);
             const codeSortButton = container.getByRole("button", {
-                name: /^Code\b/,
+                name: /^Sort by Code\b/,
             });
             await codeSortButton.click();
             await codeSortButton.click();
@@ -367,10 +386,10 @@ describe("GTable", () => {
             const { container } = mnt(GTableFixture);
 
             await container
-                .getByRole("button", { name: /^Group\b/ })
+                .getByRole("button", { name: /^Sort by Group\b/ })
                 .click();
             await container
-                .getByRole("button", { name: /^Name\b/ })
+                .getByRole("button", { name: /^Sort by Name\b/ })
                 .click({ modifiers: ["Shift"] });
 
             expect(sort.value).toEqual([
@@ -378,13 +397,19 @@ describe("GTable", () => {
                 { key: "name", order: 1 },
             ]);
             expect(getColumn(container, 0)).toEqual(["3", "1", "2", "4"]);
+            await expect
+                .element(container.getByRole("button", { name: /^Sort by Group\b/ }))
+                .toHaveAccessibleName("Sort by Group Sorted ascending, priority 1");
+            await expect
+                .element(container.getByRole("button", { name: /^Sort by Name\b/ }))
+                .toHaveAccessibleName("Sort by Name Sorted ascending, priority 2");
         });
         it("updates the primary sort from the sort builder", async () => {
             const { GTableFixture, sort } = createMultiSortFixture();
             const { container } = mnt(GTableFixture);
 
             await container
-                .getByRole("button", { name: /^Group\b/ })
+                .getByRole("button", { name: /^Sort by Group\b/ })
                 .click();
             await container
                 .getByRole("button", { name: "Choose sort order" })
@@ -608,7 +633,7 @@ describe("GTable", () => {
 
             await expect
                 .element(
-                    container.getByRole("columnheader", { name: "Abbreviation" }),
+                    container.getByRole("columnheader", { name: "Sort by Abbreviation" }),
                 )
                 .not.toBeInTheDocument();
             expect(getColumn(container, 0)).toEqual(["LT", "KL", "KY"]);
@@ -647,7 +672,7 @@ describe("GTable", () => {
             expect(columnState.value.abbr?.visible).toBe(true);
             await expect
                 .element(
-                    container.getByRole("columnheader", { name: "Abbreviation" }),
+                    container.getByRole("columnheader", { name: "Sort by Abbreviation" }),
                 )
                 .toBeVisible();
             expect(getColumn(container, 2)).toEqual(["COM", "ACES", "AHS"]);
@@ -684,7 +709,7 @@ describe("GTable", () => {
             expect(columnState.value.abbr?.visible).toBe(true);
             await expect
                 .element(
-                    container.getByRole("columnheader", { name: "Abbreviation" }),
+                    container.getByRole("columnheader", { name: "Sort by Abbreviation" }),
                 )
                 .toBeVisible();
             await expect
