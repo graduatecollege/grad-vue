@@ -1276,8 +1276,8 @@ onMounted(() => {
                                             @click.stop="toggle"
                                             :aria-label="
                                                 isColumnFiltered(col)
-                                                    ? 'Column Filtered'
-                                                    : 'Filter Column'
+                                                    ? `Filter ${col.label} column (filtered)`
+                                                    : `Filter ${col.label} column`
                                             "
                                             class="g-filter-btn"
                                             :class="{

@@ -445,7 +445,7 @@ describe("GTable", () => {
             const { GTableFixture } = createCollegesTableFixture();
             const { container } = mnt(GTableFixture);
             const filterButton = container.getByRole("button", {
-                name: "Filter Column",
+                name: "Filter 'College' in Name column",
             });
             await filterButton.click();
 
@@ -461,7 +461,7 @@ describe("GTable", () => {
             const { GTableFixture } = createCollegesTableFixture();
             const { container } = mnt(GTableFixture);
             const filterButton = container.getByRole("button", {
-                name: "Filter Column",
+                name: "Filter 'College' in Name column",
             });
             await filterButton.click();
             await page
@@ -476,7 +476,7 @@ describe("GTable", () => {
             const { GTableFixture } = createCollegesTableFixture();
             const { container, vm } = mnt(GTableFixture);
             const filterButton = container.getByRole("button", {
-                name: "Filter Column",
+                name: "Filter 'College' in Name column",
             });
             await filterButton.click();
             const clearFiltersButton = container.getByRole("button", {
@@ -512,7 +512,7 @@ describe("GTable", () => {
             });
             const { container } = mnt(GTableFixture);
             const filterButton = container.getByRole("button", {
-                name: "Filter Column",
+                name: "Filter Name column",
             });
             await filterButton.click();
 
@@ -1562,7 +1562,7 @@ describe("GTable", () => {
             const { container } = mnt(GTableFixture);
 
             const filterButton = container.getByRole("button", {
-                name: "Filter Column",
+                name: "Filter Abbreviation column",
             });
             await filterButton.click();
 
@@ -1576,7 +1576,7 @@ describe("GTable", () => {
             const { container } = mnt(GTableFixture);
 
             const filterButton = container.getByRole("button", {
-                name: "Filter Column",
+                name: "Filter Abbreviation column",
             });
             await filterButton.click();
 
@@ -1590,7 +1590,7 @@ describe("GTable", () => {
             const { container } = mnt(GTableFixture);
 
             const filterButton = container.getByRole("button", {
-                name: "Filter Column",
+                name: "Filter Abbreviation column",
             });
             await filterButton.click();
 
@@ -1607,7 +1607,7 @@ describe("GTable", () => {
             const { container } = mnt(GTableFixture);
 
             const filterButton = container.getByRole("button", {
-                name: "Filter Column",
+                name: "Filter Abbreviation column",
             });
             await filterButton.click();
 
@@ -1676,7 +1676,7 @@ describe("GTable", () => {
             const { container } = mnt(GTableFixture);
 
             await container
-                .getByRole("button", { name: "Filter Column" })
+                .getByRole("button", { name: "Filter Abbreviation column" })
                 .click();
             await page.getByRole("checkbox", { name: "COM" }).click();
             await page.getByRole("checkbox", { name: "ACES" }).click();
@@ -1704,7 +1704,7 @@ describe("GTable", () => {
                 .getByRole("button", { name: "Clear Filters" })
                 .click();
             await container
-                .getByRole("button", { name: "Filter Column" })
+                .getByRole("button", { name: "Filter Abbreviation column" })
                 .click();
             await page.getByRole("checkbox", { name: "SOCW" }).click();
 
@@ -1809,6 +1809,42 @@ describe("GTable", () => {
                 .querySelectorAll<HTMLElement>("th.g-th")[index];
         }
 
+        it("names each filter button by its column and preserves the name when filters are cleared", async () => {
+            const { GTableFixture } = createMappedFixture({
+                name__like: "School",
+                in_name: false,
+                abbr_codes: ["COM"],
+                has_code: true,
+            });
+            const { container } = mnt(GTableFixture);
+
+            for (const column of mappedColumns) {
+                await expect
+                    .element(
+                        container.getByRole("button", {
+                            name: `Filter ${column.label} column (filtered)`,
+                            exact: true,
+                        }),
+                    )
+                    .toBeVisible();
+            }
+
+            await container
+                .getByRole("button", { name: "Clear Filters" })
+                .click();
+
+            for (const column of mappedColumns) {
+                await expect
+                    .element(
+                        container.getByRole("button", {
+                            name: `Filter ${column.label} column`,
+                            exact: true,
+                        }),
+                    )
+                    .toBeVisible();
+            }
+        });
+
         it("binds search input to the mapped key without transforming state", async () => {
             const { GTableFixture, filters } = createMappedFixture();
             const { container } = mnt(GTableFixture);
@@ -1827,11 +1863,11 @@ describe("GTable", () => {
                 .element(page.getByRole("searchbox", { name: "Search Name" }))
                 .toHaveValue("School");
             expect(filterButton(container, 1).getAttribute("aria-label")).toBe(
-                "Column Filtered",
+                "Filter Name column (filtered)",
             );
             expect(columnHeader(container, 1).classList).toContain("filtered");
             expect(filterButton(container, 0).getAttribute("aria-label")).toBe(
-                "Filter Column",
+                "Filter Code column",
             );
         });
 
@@ -1867,7 +1903,7 @@ describe("GTable", () => {
             });
             await expect
                 .poll(() => filterButton(container, 3).getAttribute("aria-label"))
-                .toBe("Column Filtered");
+                .toBe("Filter 'College' in Name column (filtered)");
         });
 
         it("writes multi-select and toggle values to mapped keys", async () => {
