@@ -23,7 +23,7 @@ describe("GUserMenu", () => {
         it("renders avatar with initials", async () => {
             mnt(GUserMenu, J);
 
-            const avatar = page.getByRole("button", { name: "J - User menu" });
+            const avatar = page.getByRole("button", { name: "User menu: J" });
             await expect.element(avatar).toBeVisible();
             await expect.element(avatar).toHaveTextContent("J");
         });
@@ -40,7 +40,7 @@ describe("GUserMenu", () => {
                 },
             });
 
-            const avatar = page.getByRole("button", { name: "XY - Account menu" });
+            const avatar = page.getByRole("button", { name: "Account menu: XY" });
             await expect.element(avatar).toBeVisible();
         });
     });
@@ -49,7 +49,7 @@ describe("GUserMenu", () => {
         it("opens popover on button click", async () => {
             mnt(GUserMenu, J);
 
-            const avatar = page.getByRole("button", { name: "J - User menu" });
+            const avatar = page.getByRole("button", { name: "User menu: J" });
             await avatar.click();
 
             // Check if popover is visible
@@ -66,7 +66,7 @@ describe("GUserMenu", () => {
         it("displays menu items in popover", async () => {
             mnt(GUserMenu, J);
 
-            const avatar = page.getByRole("button", { name: "J - User menu" });
+            const avatar = page.getByRole("button", { name: "User menu: J" });
             await avatar.click();
 
             // Check if menu items are visible
@@ -100,7 +100,7 @@ describe("GUserMenu", () => {
                 slots: J.slots
             });
 
-            const avatar = page.getByRole("button", { name: "J - User menu" });
+            const avatar = page.getByRole("button", { name: "User menu: J" });
             await avatar.click();
 
             // Wait for popover to be visible
