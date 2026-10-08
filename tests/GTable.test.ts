@@ -284,6 +284,11 @@ describe("GTable", () => {
             await nextPageButton.click();
 
             await expect.element(container.getByText("7 to 8")).toBeVisible();
+            await expect
+                .element(container.getByRole("status"))
+                .toHaveTextContent(
+                    "Page 3 of 3. Showing rows 7 to 8 of 8. Last page.",
+                );
 
             expect(getColumn(container, 0)).toEqual(["KV", "LL"]);
         });
@@ -1491,6 +1496,11 @@ describe("GTable", () => {
 
             await page.getByRole("button", { name: "Last Page" }).click();
             await expect.element(container.getByText("7 to 8")).toBeVisible();
+            await expect
+                .element(container.getByRole("status"))
+                .toHaveTextContent(
+                    "Page 3 of 3. Showing rows 7 to 8 of 8. Last page.",
+                );
 
             await expect.element(container.getByRole("button", { name: "More pagination options" })).toBeVisible();
         });

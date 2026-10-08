@@ -60,6 +60,21 @@ const currentPage = computed(() => {
     return Math.floor(startVal.value / pageSizeVal.value) + 1;
 });
 
+const paginationStatus = computed(() => {
+    if (props.total === 0) {
+        return "No rows to display.";
+    }
+    let boundary = "";
+    if (totalPages.value === 1) {
+        boundary = " Only page.";
+    } else if (isFirstPage.value) {
+        boundary = " First page.";
+    } else if (isLastPage.value) {
+        boundary = " Last page.";
+    }
+    return `Page ${currentPage.value} of ${totalPages.value}. Showing rows ${startDisplay.value} to ${end.value} of ${props.total}.${boundary}`;
+});
+
 function goToPage(p: number) {
     if (p < 1 || p > totalPages.value) {
         return;
@@ -78,12 +93,13 @@ function onPageSizeChange(e: Event) {
         <button
             class="first-page g-pagination-button"
             type="button"
+            aria-label="First Page"
             :disabled="isFirstPage"
             @click="goToPage(1)"
         >
             <svg
-                role="img"
-                aria-label="First Page"
+                aria-hidden="true"
+                focusable="false"
                 height="2em"
                 xmlns="http://www.w3.org/2000/svg"
                 width="2em"
@@ -103,12 +119,13 @@ function onPageSizeChange(e: Event) {
         <button
             class="prev-page g-pagination-button"
             type="button"
+            aria-label="Previous Page"
             :disabled="isFirstPage"
             @click="goToPage(currentPage - 1)"
         >
             <svg
-                role="img"
-                aria-label="Previous Page"
+                aria-hidden="true"
+                focusable="false"
                 xmlns="http://www.w3.org/2000/svg"
                 width="2em"
                 height="2em"
@@ -128,12 +145,13 @@ function onPageSizeChange(e: Event) {
         <button
             class="next-page g-pagination-button"
             type="button"
+            aria-label="Next Page"
             :disabled="isLastPage"
             @click="goToPage(currentPage + 1)"
         >
             <svg
-                role="img"
-                aria-label="Next Page"
+                aria-hidden="true"
+                focusable="false"
                 xmlns="http://www.w3.org/2000/svg"
                 width="2em"
                 height="2em"
@@ -152,12 +170,13 @@ function onPageSizeChange(e: Event) {
         <button
             class="last-page g-pagination-button"
             type="button"
+            aria-label="Last Page"
             :disabled="isLastPage"
             @click="goToPage(totalPages)"
         >
             <svg
-                role="img"
-                aria-label="Last Page"
+                aria-hidden="true"
+                focusable="false"
                 xmlns="http://www.w3.org/2000/svg"
                 width="2em"
                 height="2em"
@@ -342,6 +361,14 @@ function onPageSizeChange(e: Event) {
                 </div>
             </GPopover>
         </div>
+        <span
+            class="ilw-sr-only"
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+        >
+            {{ paginationStatus }}
+        </span>
     </nav>
 </template>
 
