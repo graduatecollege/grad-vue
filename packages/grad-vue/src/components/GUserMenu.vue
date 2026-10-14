@@ -76,6 +76,12 @@ const RouterLinkComp = instance?.appContext?.components?.RouterLink as
     | any
     | undefined;
 
+function closeOnLinkClick(event: MouseEvent) {
+    if ((event.target as Element | null)?.closest("a")) {
+        open.value = false;
+    }
+}
+
 const slots = defineSlots<{
     default(): any
 }>();
@@ -106,7 +112,11 @@ const slots = defineSlots<{
                 >
                     {{ email }}
                 </h2>
-                <nav class="g-user-menu__nav" :aria-labelledby="emailHeadingId">
+                <nav
+                    class="g-user-menu__nav"
+                    :aria-labelledby="emailHeadingId"
+                    @click="closeOnLinkClick"
+                >
                     <ul class="g-user-menu__list">
                         <li v-for="(link, index) in slots.default()" :key="index">
                             <component :is="link"></component>

@@ -266,6 +266,7 @@ const fname = ref("heh");
             <template #navigation>
                 <a href="#students">Students</a>
                 <a href="#hooders">Hooders</a>
+                <a href="#skip-link">Skip Link</a>
             </template>
         </GAppHeader>
 
@@ -528,6 +529,10 @@ const fname = ref("heh");
                             </GButton>
                         </div>
                     </GPopover>
+                </section>
+                <section id="skip-link">
+                    <h2>Skip Link</h2>
+                    <GSkipLink target="skip-link" />
                 </section>
             </main>
         </div>

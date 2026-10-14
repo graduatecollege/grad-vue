@@ -79,6 +79,24 @@ describe("GUserMenu", () => {
             const logoutButton = page.getByRole("button", { name: "Logout" });
             await expect.element(logoutButton).toBeVisible();
         });
+
+        it("closes when a link is activated", async () => {
+            mnt(GUserMenu, J);
+
+            await page.getByRole("button", { name: "User menu: J" }).click();
+            await page.getByRole("link", { name: "Profile" }).click();
+
+            await expect.element(page.getByRole("dialog")).not.toBeInTheDocument();
+        });
+
+        it("stays open when a button is activated", async () => {
+            mnt(GUserMenu, J);
+
+            await page.getByRole("button", { name: "User menu: J" }).click();
+            await page.getByRole("button", { name: "Logout" }).click();
+
+            await expect.element(page.getByRole("dialog")).toBeVisible();
+        });
     });
 
     describe("Accessibility Tests", () => {

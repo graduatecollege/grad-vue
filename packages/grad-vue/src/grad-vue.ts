@@ -38,6 +38,8 @@ import GCheckboxGroup from "./components/GCheckboxGroup.vue";
 import GTextarea from "./components/GTextarea.vue";
 import GMultiSelect from "./components/GMultiSelect.vue";
 import GToggle from "./components/GToggle.vue";
+import GSkipLink from "./components/GSkipLink.vue";
+import GMain from "./components/GMain.vue";
 
 import "./css/main.css";
 import VGtooltip from "./directives/v-gtooltip.ts";
@@ -84,6 +86,8 @@ export {
     GTextarea,
     GMultiSelect,
     GToggle,
+    GSkipLink,
+    GMain,
 };
 
 export { calculatePopoverPosition } from "./compose/popoverPosition";
@@ -96,6 +100,16 @@ export {
 
 export { useActiveLinkContent } from "./compose/useActiveLink";
 export { useScrollRestore } from "./compose/useScrollRestore";
+export {
+    useRouteAnnouncer,
+    focusMainTarget,
+} from "./compose/useRouteAnnouncer";
+export type {
+    RouteAnnouncerLocation,
+    RouteAnnouncerRouter,
+    UseRouteAnnouncerOptions,
+    UseRouteAnnouncerReturn,
+} from "./compose/useRouteAnnouncer";
 export { useSidebar } from "./compose/useSidebar";
 export { useWebComponentSidebar } from "./compose/useWebComponentSidebar";
 export { useForm } from "./compose/useForm";

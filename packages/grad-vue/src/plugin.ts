@@ -39,6 +39,8 @@ import {
     GTextarea,
     GMultiSelect,
     GToggle,
+    GSkipLink,
+    GMain,
     VGtooltip,
     VGtooltipDirective,
 } from "./grad-vue.ts";
@@ -86,6 +88,8 @@ export default {
         app.component("GTextarea", GTextarea);
         app.component("GMultiSelect", GMultiSelect);
         app.component("GToggle", GToggle);
+        app.component("GSkipLink", GSkipLink);
+        app.component("GMain", GMain);
     },
 };
 
@@ -106,6 +110,7 @@ declare module "vue" {
         GForm: typeof GForm;
         GHamburgerMenu: typeof GHamburgerMenu;
         GHistoryScroller: typeof GHistoryScroller;
+        GMain: typeof GMain;
         GModal: typeof GModal;
         GMultiSelect: typeof GMultiSelect;
         GOverlay: typeof GOverlay;
@@ -116,6 +121,7 @@ declare module "vue" {
         GSelectButton: typeof GSelectButton;
         GSidebar: typeof GSidebar;
         GSidebarMenu: typeof GSidebarMenu;
+        GSkipLink: typeof GSkipLink;
         GSubmitButton: typeof GSubmitButton;
         GTable: typeof GTable;
         GTableBody: typeof GTableBody;

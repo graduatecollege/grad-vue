@@ -39,6 +39,8 @@ import GNoteInputDemo from "~/components/demo/GNoteInputDemo.vue";
 import GRichTextContentDemo from "~/components/demo/GRichTextContentDemo.vue";
 import GCheckboxGroupDemo from "~/components/demo/GCheckboxGroupDemo.vue";
 import GMultiSelectDemo from "~/components/demo/GMultiSelectDemo.vue";
+import GSkipLinkDemo from "~/components/demo/GSkipLinkDemo.vue";
+import GMainDemo from "~/components/demo/GMainDemo.vue";
 import { onMounted, provide, ref } from "vue";
 import { useTemplateRef } from "#imports";
 import GFormDemo from "~/components/demo/GFormDemo.vue";
@@ -91,6 +93,8 @@ const demoComponents = [
     { label: "Toggle", component: GToggleDemo },
     { label: "Tree Menu", component: GTreeMenuDemo },
     { label: "User Menu", component: GUserMenuDemo },
+    { label: "Skip Link", component: GSkipLinkDemo },
+    { label: "Main", component: GMainDemo },
 ];
 
 const demo = useTemplateRef("demo");

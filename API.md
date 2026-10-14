@@ -746,6 +746,65 @@ type Props = {
 
 ---
 
+## GMain
+
+The `<main>` landmark for a page, set up as the target for
+`GSkipLink` and `useRouteAnnouncer`.
+
+Use one per page, inside each view rather than around `<RouterView>`,
+so sidebars and other complementary content stay outside the landmark.
+
+```vue
+<template>
+    <GSidebar>...</GSidebar>
+    <GMain class="profile">
+        <h1>Profile</h1>
+    </GMain>
+</template>
+```
+
+## Accessible route changes
+
+Use the `useRouteAnnouncer` composable once in the root component.
+After each navigation to a different page, it moves focus to the `<h1>`
+inside `GMain` (or `GMain` itself) and announces the new page title.
+Navigations that only change the query or hash are ignored.
+
+```ts
+// App.vue setup
+import { useRouter } from "vue-router";
+import { useRouteAnnouncer } from "@illinois-grad/grad-vue";
+
+useRouteAnnouncer(useRouter());
+```
+
+```vue
+<GSkipLink />
+<GAppHeader>...</GAppHeader>
+<RouterView />
+```
+
+Options can customize what counts as a new page (`isNewPage`), when focus
+moves (`focus`), waiting for async page data (`ready`), and the
+announcement text (`message`).
+
+### Props
+
+```typescript
+type Props = {
+    /**
+     * Id used by `GSkipLink` and `useRouteAnnouncer` to find the landmark
+     */
+    id?: string;
+};
+```
+
+### Slots
+
+- `default`
+
+---
+
 ## GModal
 
 Generic modal component.
@@ -916,7 +975,8 @@ in the viewport as much as possible.
 **Slot** `trigger` is optional. When provided, it should contain an
 interactive element for opening the popover and it is used for
 `aria-labelledby`. The trigger is passed a prop `toggle` which is a function
-that toggles the popover's open state.
+that toggles the popover's open state, `open` for its current state, and
+`popoverId` for linking the trigger to the dialog with `aria-controls`.
 
 Without a trigger slot, open the popover programmatically via `show()` or
 `toggle()` on the component instance / custom element.
@@ -940,6 +1000,10 @@ Example:
 
 ```typescript
 type Props = {
+    /**
+     * ID of the element that labels the dialog. Defaults to the trigger.
+     */
+    ariaLabelledby?: string;
     /**
      * Render without padding
      */
@@ -1415,6 +1479,45 @@ type Props = {
     compact?: boolean;
 }
 ```
+
+---
+
+## GSkipLink
+
+A "skip to main content" link for keyboard and screen reader users.
+
+Place it as the first focusable element in the app, before `GAppHeader`.
+It stays hidden until it receives keyboard focus. Activating it moves
+focus to the element with the `target` id (usually a `GMain`), falling
+back to the first `<main>` element.
+
+Focus is moved with JavaScript, so it works with client-side routers
+and with targets that are rendered after the link.
+
+```vue
+<GSkipLink />
+<GAppHeader>...</GAppHeader>
+<RouterView />
+```
+
+### Props
+
+```typescript
+type Props = {
+    /**
+     * Id of the element to move focus to
+     */
+    target?: string;
+    /**
+     * Link text
+     */
+    label?: string;
+};
+```
+
+### Slots
+
+- `default`
 
 ---
 

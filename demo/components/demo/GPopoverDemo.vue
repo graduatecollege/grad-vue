@@ -20,6 +20,10 @@ import { GButton, GPopover } from "@illinois-grad/grad-vue";
             <template #props><figure class="highlighted-code">
 <pre class="shiki light-plus" style="background-color:#FFFFFF;color:#000000" tabindex="0"><code><span class="line"><span style="color:#0000FF">type</span><span style="color:#267F99"> Props</span><span style="color:#000000"> = &lcub;</span></span>
 <span class="line"><span style="color:#008000">    /**</span></span>
+<span class="line"><span style="color:#008000">     * ID of the element that labels the dialog. Defaults to the trigger.</span></span>
+<span class="line"><span style="color:#008000">     */</span></span>
+<span class="line"><span style="color:#001080">    ariaLabelledby</span><span style="color:#000000">?: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
+<span class="line"><span style="color:#008000">    /**</span></span>
 <span class="line"><span style="color:#008000">     * Render without padding</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    minimal</span><span style="color:#000000">?: </span><span style="color:#267F99">boolean</span><span style="color:#000000">;</span></span>
@@ -36,7 +40,8 @@ in the viewport as much as possible.</p>
 <p><strong>Slot</strong> <code>trigger</code> is optional. When provided, it should contain an
 interactive element for opening the popover and it is used for
 <code>aria-labelledby</code>. The trigger is passed a prop <code>toggle</code> which is a function
-that toggles the popover&#39;s open state.</p>
+that toggles the popover&#39;s open state, <code>open</code> for its current state, and
+<code>popoverId</code> for linking the trigger to the dialog with <code>aria-controls</code>.</p>
 <p>Without a trigger slot, open the popover programmatically via <code>show()</code> or
 <code>toggle()</code> on the component instance / custom element.</p>
 <p><strong>Slot</strong> <code>default</code> is the content of the popover.</p>
