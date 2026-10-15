@@ -1281,6 +1281,35 @@ describe("GTable", () => {
             expect(controls?.closest(".g-table-table-wrap")).toBeNull();
         });
 
+        it("keeps the controls pinned when a scrolling ancestor scrolls horizontally", async () => {
+            const { GTableFixture } = createCollegesTableFixture();
+            const Scroller = defineComponent({
+                render() {
+                    return h(
+                        "div",
+                        { class: "scroller", style: { width: "250px", overflow: "auto" } },
+                        [h(GTableFixture)],
+                    );
+                },
+            });
+            const { container } = mnt(Scroller);
+
+            const scroller = container.element().querySelector(".scroller") as HTMLElement;
+            const controls = scroller.querySelector(".g-table-controls") as HTMLElement;
+            const table = scroller.querySelector(".g-table") as HTMLElement;
+
+            expect(scroller.scrollWidth).toBeGreaterThan(scroller.clientWidth);
+            expect(table.getBoundingClientRect().width).toBeGreaterThan(250);
+            expect(controls.getBoundingClientRect().width).toBe(250);
+
+            const scrollerLeft = scroller.getBoundingClientRect().left;
+            scroller.scrollLeft = 100;
+            await new Promise((resolve) => requestAnimationFrame(resolve));
+
+            expect(scroller.scrollLeft).toBe(100);
+            expect(controls.getBoundingClientRect().left).toBe(scrollerLeft);
+        });
+
         it("keeps pagination centered and result count pinned right", async () => {
             const { GTableFixture } = createCollegesTableFixture();
             const { container } = mnt(GTableFixture);

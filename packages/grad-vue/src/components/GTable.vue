@@ -352,6 +352,7 @@ const id = useId();
 const instance = getCurrentInstance();
 const sortBuilderRef = ref<HTMLFieldSetElement | null>(null);
 const tableRef = ref<HTMLTableElement | null>(null);
+const outerWrapRef = ref<HTMLDivElement | null>(null);
 const tableWrapRef = ref<HTMLDivElement | null>(null);
 const activeResize = ref<ActiveColumnResize<T> | null>(null);
 const tableElementId = `${id}-table`;
@@ -554,7 +555,7 @@ function currentColumnWidth(key: ColumnStateKey<T>) {
 function columnResizeMax(key: ColumnStateKey<T>) {
     const currentWidth = currentColumnWidth(key);
     const wrapWidth =
-        tableWrapRef.value?.getBoundingClientRect().width ??
+        outerWrapRef.value?.getBoundingClientRect().width ??
         tableRef.value?.getBoundingClientRect().width ??
         currentWidth;
     return normalizeColumnWidth(Math.max(currentWidth, wrapWidth));
@@ -848,94 +849,411 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="g-table-outer-wrap">
-        <div v-if="shouldShowControls" class="g-table-controls">
-            <div class="g-table-control-actions">
-                <div v-if="shouldShowSortBuilder" class="g-sort-builder-wrap">
-                    <GPopover>
-                        <template #trigger="{ toggle }">
-                            <GButton
-                                size="small"
-                                class="g-sort-builder-trigger"
-                                :class="{
-                                    'g-sort-builder-trigger--active':
-                                        activeSorts.length > 0,
-                                }"
-                                aria-label="Choose sort order"
-                                @click="toggle"
-                            >
-                                <svg
-                                    class="g-sort-builder-trigger-icon"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 640 640"
-                                    height="1.5em"
-                                    aria-hidden="true"
+    <div ref="outerWrapRef" class="g-table-outer-wrap">
+        <div class="g-table-inner-wrap">
+            <div v-if="shouldShowControls" class="g-table-controls">
+                <div class="g-table-control-actions">
+                    <div v-if="shouldShowSortBuilder" class="g-sort-builder-wrap">
+                        <GPopover>
+                            <template #trigger="{ toggle }">
+                                <GButton
+                                    size="small"
+                                    class="g-sort-builder-trigger"
+                                    :class="{
+                                        'g-sort-builder-trigger--active':
+                                            activeSorts.length > 0,
+                                    }"
+                                    aria-label="Choose sort order"
+                                    @click="toggle"
                                 >
-                                    <!--!Font Awesome Free v7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
-                                    <path
-                                        fill="currentColor"
-                                        d="M130.4 268.2C135.4 280.2 147 288 160 288L480 288C492.9 288 504.6 280.2 509.6 268.2C514.6 256.2 511.8 242.5 502.7 233.3L342.7 73.3C330.2 60.8 309.9 60.8 297.4 73.3L137.4 233.3C128.2 242.5 125.5 256.2 130.5 268.2zM130.4 371.7C125.4 383.7 128.2 397.4 137.3 406.6L297.3 566.6C309.8 579.1 330.1 579.1 342.6 566.6L502.6 406.6C511.8 397.4 514.5 383.7 509.5 371.7C504.5 359.7 492.9 352 480 352L160 352C147.1 352 135.4 359.8 130.4 371.8z"
-                                    />
-                                </svg>
-                                <span
-                                    v-if="activeSorts.length"
-                                    class="g-sort-builder-count"
-                                >
-                                    {{ activeSorts.length }}
-                                </span>
-                            </GButton>
-                        </template>
-                        <fieldset
-                            ref="sortBuilderRef"
-                            class="g-sort-builder-popover"
-                            tabindex="-1"
-                            popover-focus
-                        >
-                            <legend class="g-sort-builder-legend">
-                                Sort order
-                            </legend>
-                            <p class="g-sort-builder-help">
-                                Click a column header to change the primary sort.
-                                Use Shift-click as a shortcut to add or update
-                                secondary sorts.
-                            </p>
-                            <ol
-                                v-if="activeSorts.length"
-                                class="g-sort-builder-list"
-                            >
-                                <li
-                                    v-for="(sort, index) in activeSorts"
-                                    :key="sort.key"
-                                    class="g-sort-builder-rule"
-                                    tabindex="-1"
-                                    :data-sort-row-key="String(sort.key)"
-                                    :aria-label="`${columnLabel(sort.key)} ${sortDirectionLabel(sort.order)} sort, priority ${index + 1}`"
-                                >
-                                    <span
-                                        class="g-sort-builder-rule-priority"
+                                    <svg
+                                        class="g-sort-builder-trigger-icon"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 640 640"
+                                        height="1.5em"
                                         aria-hidden="true"
                                     >
-                                        {{ index + 1 }}
-                                    </span>
-                                    <span class="g-sort-builder-rule-label">
-                                        {{ columnLabel(sort.key) }}
-                                    </span>
-                                    <button
-                                        type="button"
-                                        class="g-sort-builder-direction"
-                                        :aria-label="`Toggle ${columnLabel(sort.key)} sort direction`"
-                                        @click="toggleSortRuleDirection(sort.key)"
+                                        <!--!Font Awesome Free v7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+                                        <path
+                                            fill="currentColor"
+                                            d="M130.4 268.2C135.4 280.2 147 288 160 288L480 288C492.9 288 504.6 280.2 509.6 268.2C514.6 256.2 511.8 242.5 502.7 233.3L342.7 73.3C330.2 60.8 309.9 60.8 297.4 73.3L137.4 233.3C128.2 242.5 125.5 256.2 130.5 268.2zM130.4 371.7C125.4 383.7 128.2 397.4 137.3 406.6L297.3 566.6C309.8 579.1 330.1 579.1 342.6 566.6L502.6 406.6C511.8 397.4 514.5 383.7 509.5 371.7C504.5 359.7 492.9 352 480 352L160 352C147.1 352 135.4 359.8 130.4 371.8z"
+                                        />
+                                    </svg>
+                                    <span
+                                        v-if="activeSorts.length"
+                                        class="g-sort-builder-count"
                                     >
-                                        <span class="g-visually-hidden">
-                                            {{ sortDirectionLabel(sort.order) }}
+                                        {{ activeSorts.length }}
+                                    </span>
+                                </GButton>
+                            </template>
+                            <fieldset
+                                ref="sortBuilderRef"
+                                class="g-sort-builder-popover"
+                                tabindex="-1"
+                                popover-focus
+                            >
+                                <legend class="g-sort-builder-legend">
+                                    Sort order
+                                </legend>
+                                <p class="g-sort-builder-help">
+                                    Click a column header to change the primary sort.
+                                    Use Shift-click as a shortcut to add or update
+                                    secondary sorts.
+                                </p>
+                                <ol
+                                    v-if="activeSorts.length"
+                                    class="g-sort-builder-list"
+                                >
+                                    <li
+                                        v-for="(sort, index) in activeSorts"
+                                        :key="sort.key"
+                                        class="g-sort-builder-rule"
+                                        tabindex="-1"
+                                        :data-sort-row-key="String(sort.key)"
+                                        :aria-label="`${columnLabel(sort.key)} ${sortDirectionLabel(sort.order)} sort, priority ${index + 1}`"
+                                    >
+                                        <span
+                                            class="g-sort-builder-rule-priority"
+                                            aria-hidden="true"
+                                        >
+                                            {{ index + 1 }}
                                         </span>
-                                        <span class="sort-indicator" aria-hidden="true">
+                                        <span class="g-sort-builder-rule-label">
+                                            {{ columnLabel(sort.key) }}
+                                        </span>
+                                        <button
+                                            type="button"
+                                            class="g-sort-builder-direction"
+                                            :aria-label="`Toggle ${columnLabel(sort.key)} sort direction`"
+                                            @click="toggleSortRuleDirection(sort.key)"
+                                        >
+                                            <span class="g-visually-hidden">
+                                                {{ sortDirectionLabel(sort.order) }}
+                                            </span>
+                                            <span class="sort-indicator" aria-hidden="true">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    viewBox="0 0 640 640"
+                                                    height="1.25em"
+                                                    :style="{
+                                                        transform: `rotate(${sort.order === 1 ? 0 : 180}deg)`,
+                                                    }"
+                                                >
+                                                    <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+                                                    <path
+                                                        fill="currentColor"
+                                                        d="M300.3 199.2C312.9 188.9 331.4 189.7 343.1 201.4L471.1 329.4C480.3 338.6 483 352.3 478 364.3C473 376.3 461.4 384 448.5 384L192.5 384C179.6 384 167.9 376.2 162.9 364.2C157.9 352.2 160.7 338.5 169.9 329.4L297.9 201.4L300.3 199.2z"
+                                                    />
+                                                </svg>
+                                            </span>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            class="g-sort-builder-remove"
+                                            :aria-label="`Remove ${columnLabel(sort.key)} sort`"
+                                            @click="removeSortRule(sort.key)"
+                                        >
+                                            Remove
+                                        </button>
+                                    </li>
+                                </ol>
+                                <p v-else class="g-sort-builder-empty">
+                                    No active sort rules.
+                                </p>
+                                <div
+                                    v-if="inactiveSortColumns.length"
+                                    class="g-sort-builder-add"
+                                >
+                                    <p class="g-sort-builder-add-label">
+                                        Add sort column
+                                    </p>
+                                    <ul class="g-sort-builder-add-list">
+                                        <li
+                                            v-for="col in inactiveSortColumns"
+                                            :key="col.key"
+                                            class="g-sort-builder-add-item"
+                                        >
+                                            <span class="g-sort-builder-add-name">
+                                                {{ col.label }}
+                                            </span>
+                                            <div class="g-sort-builder-add-actions">
+                                                <button
+                                                    type="button"
+                                                    class="g-sort-builder-direction"
+                                                    :aria-label="`Add ${col.label} ascending sort`"
+                                                    @click="
+                                                        addSortRule(
+                                                            col.key as SortKey<T>,
+                                                            1,
+                                                        )
+                                                    "
+                                                >
+                                                    <span class="g-visually-hidden">
+                                                        Add ascending sort
+                                                    </span>
+                                                    <span
+                                                        class="sort-indicator"
+                                                        aria-hidden="true"
+                                                    >
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            viewBox="0 0 640 640"
+                                                            height="1.25em"
+                                                        >
+                                                            <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+                                                            <path
+                                                                fill="currentColor"
+                                                                d="M300.3 199.2C312.9 188.9 331.4 189.7 343.1 201.4L471.1 329.4C480.3 338.6 483 352.3 478 364.3C473 376.3 461.4 384 448.5 384L192.5 384C179.6 384 167.9 376.2 162.9 364.2C157.9 352.2 160.7 338.5 169.9 329.4L297.9 201.4L300.3 199.2z"
+                                                            />
+                                                        </svg>
+                                                    </span>
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    class="g-sort-builder-direction"
+                                                    :aria-label="`Add ${col.label} descending sort`"
+                                                    @click="
+                                                        addSortRule(
+                                                            col.key as SortKey<T>,
+                                                            -1,
+                                                        )
+                                                    "
+                                                >
+                                                    <span class="g-visually-hidden">
+                                                        Add descending sort
+                                                    </span>
+                                                    <span
+                                                        class="sort-indicator"
+                                                        aria-hidden="true"
+                                                    >
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            viewBox="0 0 640 640"
+                                                            height="1.25em"
+                                                            style="transform: rotate(180deg);"
+                                                        >
+                                                            <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+                                                            <path
+                                                                fill="currentColor"
+                                                                d="M300.3 199.2C312.9 188.9 331.4 189.7 343.1 201.4L471.1 329.4C480.3 338.6 483 352.3 478 364.3C473 376.3 461.4 384 448.5 384L192.5 384C179.6 384 167.9 376.2 162.9 364.2C157.9 352.2 160.7 338.5 169.9 329.4L297.9 201.4L300.3 199.2z"
+                                                            />
+                                                        </svg>
+                                                    </span>
+                                                </button>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <GButton
+                                    v-if="activeSorts.length"
+                                    outlined
+                                    size="small"
+                                    class="g-sort-builder-clear"
+                                    @click="clearSorts"
+                                >
+                                    Clear sort
+                                </GButton>
+                            </fieldset>
+                        </GPopover>
+                    </div>
+                    <div
+                        v-if="shouldShowColumnVisibilityControls"
+                        class="g-column-visibility-wrap"
+                    >
+                        <GPopover>
+                            <template #trigger="{ toggle }">
+                                <GButton
+
+                                    size="small"
+                                    class="g-column-visibility-trigger"
+                                    aria-label="Choose visible columns"
+                                    :class="{
+                                        'g-column-visibility-trigger--active':
+                                            hasHiddenColumns,
+                                    }"
+                                    @click="toggle"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 640 640"
+                                        height="1.5em"
+                                        style="transform: rotate(90deg);"
+                                        aria-hidden="true"
+                                    >
+                                        <!--!Font Awesome Free v7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+                                        <path
+                                            fill="currentColor"
+                                            d="M64 160C64 142.3 78.3 128 96 128L480 128C497.7 128 512 142.3 512 160C512 177.7 497.7 192 480 192L96 192C78.3 192 64 177.7 64 160zM128 320C128 302.3 142.3 288 160 288L544 288C561.7 288 576 302.3 576 320C576 337.7 561.7 352 544 352L160 352C142.3 352 128 337.7 128 320zM512 480C512 497.7 497.7 512 480 512L96 512C78.3 512 64 497.7 64 480C64 462.3 78.3 448 96 448L480 448C497.7 448 512 462.3 512 480z"/>
+                                    </svg>
+                                </GButton>
+                            </template>
+                            <fieldset
+                                class="g-column-visibility-popover"
+                                :aria-labelledby="`${id}-column-visibility-heading`"
+                            >
+                                <div class="g-column-visibility-header">
+                                    <span
+                                        :id="`${id}-column-visibility-heading`"
+                                        class="g-column-visibility-heading"
+                                    >
+                                        Shown columns
+                                    </span>
+                                    <span class="g-column-visibility-legend-action">
+                                        <GButton
+                                            text
+                                            size="small"
+                                            class="g-column-visibility-show-all"
+                                            :class="{
+                                                'g-column-visibility-show-all--hidden':
+                                                    !hasHiddenColumns,
+                                            }"
+                                            @click="showAllColumns"
+                                        >
+                                            Show All
+                                        </GButton>
+                                    </span>
+                                </div>
+                                <div class="g-column-visibility-list">
+                                    <label
+                                        v-for="col in columns"
+                                        :key="col.key"
+                                        class="g-column-visibility-option"
+                                    >
+                                        <input
+                                            :checked="isColumnVisible(col)"
+                                            type="checkbox"
+                                            @change="
+                                                setColumnVisibility(
+                                                    col,
+                                                    (
+                                                        $event.target as HTMLInputElement
+                                                    ).checked,
+                                                )
+                                            "
+                                        />
+                                        <span>{{ col.label }}</span>
+                                    </label>
+                                </div>
+                            </fieldset>
+                        </GPopover>
+                    </div>
+                    <div v-if="shouldShowCustomControls" class="g-table-custom-controls">
+                        <slot name="controls"></slot>
+                    </div>
+
+                    <div class="g-clear-filters-wrap">
+                        <GButton
+                            v-if="isFiltered"
+                            outlined
+                            size="small"
+                            class="clear-filters"
+                            aria-label="Clear Filters"
+                            @click="clearFilters"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 640 640"
+                                height="1.5em"
+                                aria-hidden="true"
+                            >
+                                <!--!Font Awesome Free v7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+                                <path
+                                    fill="currentColor"
+                                    d="M64 128C51.1 128 39.4 135.8 34.4 147.8C29.4 159.8 32.2 173.5 41.4 182.6L224 365.3L224 480C224 488.5 227.4 496.6 233.4 502.6L297.4 566.6C299.9 569.1 302.7 571.1 305.7 572.6C284.5 541.7 272.1 504.3 272.1 464C272.1 364.6 347.6 282.9 444.4 273L534.8 182.6C544 173.4 546.7 159.7 541.7 147.7C536.7 135.7 524.9 128 512 128L64 128zM464 608C543.5 608 608 543.5 608 464C608 384.5 543.5 320 464 320C384.5 320 320 384.5 320 464C320 543.5 384.5 608 464 608zM523.3 427.3L486.6 464L523.3 500.7C529.5 506.9 529.5 517.1 523.3 523.3C517.1 529.5 506.9 529.5 500.7 523.3L464 486.6L427.3 523.3C421.1 529.5 410.9 529.5 404.7 523.3C398.5 517.1 398.5 506.9 404.7 500.7L441.4 464L404.7 427.3C398.5 421.1 398.5 410.9 404.7 404.7C410.9 398.5 421.1 398.5 427.3 404.7L464 441.4L500.7 404.7C506.9 398.5 517.1 398.5 523.3 404.7C529.5 410.9 529.5 421.1 523.3 427.3z"
+                                />
+                            </svg>
+                            <span class="g-clear-filters-text"> Clear Filters </span>
+                        </GButton>
+                    </div>
+                </div>
+                <div v-if="shouldShowPagination" class="pagination">
+                    <GTablePagination
+                        :start="startIndex"
+                        :page-size="pageSize!"
+                        :page-sizes="pageSizes"
+                        :total="totalResults"
+                        @update:start="updateStartIndex"
+                        @update:page-size="updatePageSize"
+                    />
+                </div>
+                <div class="g-table-controls-right">
+                    <span class="g-result-count"
+                        >{{ totalResults }} results</span
+                    >
+                    <slot name="right-controls"></slot>
+                </div>
+            </div>
+            <div ref="tableWrapRef" class="g-table-table-wrap">
+                <table
+                    :id="tableElementId"
+                    :class="['g-table', { 'g-table--resizable': resizableColumns }]"
+                    ref="tableRef"
+                    :aria-label="label"
+                    :aria-rowcount="totalResults"
+                >
+                    <colgroup>
+                        <col v-if="bulkSelectionEnabled" />
+                        <col
+                            v-for="col in visibleColumns"
+                            :key="col.key"
+                            :data-column-key="String(col.key)"
+                            :style="columnWidthStyle(col)"
+                        />
+                    </colgroup>
+                    <thead class="g-table-head">
+                        <tr aria-rowindex="1">
+                            <th
+                                v-if="bulkSelectionEnabled"
+                                scope="col"
+                                class="g-th g-th-checkbox"
+                            >
+                                <input
+                                    type="checkbox"
+                                    :checked="allSelected"
+                                    :indeterminate="someSelected"
+                                    @change="toggleAllRows"
+                                    :aria-label="
+                                        allSelected
+                                            ? 'Deselect all rows'
+                                            : 'Select all rows'
+                                    "
+                                    class="g-bulk-select-checkbox"
+                                />
+                            </th>
+                            <th
+                                v-for="col in visibleColumns"
+                                :key="col.key"
+                                :id="`${id}-th-${String(col.key)}`"
+                                :aria-sort="columnAriaSort(col.key)"
+                                :class="[
+                                    'g-th',
+                                    { 'g-th--resizable': resizableColumns },
+                                    { sorted: sortIndex(col.key) !== -1 },
+                                    { filtered: isColumnFiltered(col) },
+                                ]"
+                                scope="col"
+                            >
+                                <div class="th-inner">
+                                    <button
+                                        v-if="col.sortable"
+                                        type="button"
+                                        class="g-column-head"
+                                        @click="onSort(col, $event.shiftKey)"
+                                    >
+                                        <span class="g-visually-hidden">Sort by </span>
+                                        {{ col.label }}
+                                        <span
+                                            v-if="sortIndex(col.key) !== -1"
+                                            class="sort-indicator"
+                                            aria-hidden="true"
+                                        >
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 viewBox="0 0 640 640"
-                                                height="1.25em"
+                                                height="1.5em"
                                                 :style="{
-                                                    transform: `rotate(${sort.order === 1 ? 0 : 180}deg)`,
+                                                    transform: `rotate(${sortForColumn(col.key)?.order === 1 ? 0 : 180}deg)`,
                                                 }"
                                             >
                                                 <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
@@ -945,581 +1263,266 @@ onMounted(() => {
                                                 />
                                             </svg>
                                         </span>
-                                    </button>
-                                    <button
-                                        type="button"
-                                        class="g-sort-builder-remove"
-                                        :aria-label="`Remove ${columnLabel(sort.key)} sort`"
-                                        @click="removeSortRule(sort.key)"
-                                    >
-                                        Remove
-                                    </button>
-                                </li>
-                            </ol>
-                            <p v-else class="g-sort-builder-empty">
-                                No active sort rules.
-                            </p>
-                            <div
-                                v-if="inactiveSortColumns.length"
-                                class="g-sort-builder-add"
-                            >
-                                <p class="g-sort-builder-add-label">
-                                    Add sort column
-                                </p>
-                                <ul class="g-sort-builder-add-list">
-                                    <li
-                                        v-for="col in inactiveSortColumns"
-                                        :key="col.key"
-                                        class="g-sort-builder-add-item"
-                                    >
-                                        <span class="g-sort-builder-add-name">
-                                            {{ col.label }}
+                                        <span
+                                            v-if="sortIndex(col.key) !== -1"
+                                            class="g-visually-hidden"
+                                        >
+                                            {{ columnSortDescription(col.key) }}
                                         </span>
-                                        <div class="g-sort-builder-add-actions">
+                                    </button>
+                                    <span v-else class="g-column-head">{{
+                                        col.label
+                                    }}</span>
+                                    <GPopover v-if="col.filter">
+                                        <template #trigger="{ toggle }">
                                             <button
-                                                type="button"
-                                                class="g-sort-builder-direction"
-                                                :aria-label="`Add ${col.label} ascending sort`"
-                                                @click="
-                                                    addSortRule(
-                                                        col.key as SortKey<T>,
-                                                        1,
-                                                    )
+                                                @click.stop="toggle"
+                                                :aria-label="
+                                                    isColumnFiltered(col)
+                                                        ? `Filter ${col.label} column (filtered)`
+                                                        : `Filter ${col.label} column`
                                                 "
+                                                class="g-filter-btn"
+                                                :class="{
+                                                    'g-active':
+                                                        isColumnFiltered(col),
+                                                }"
+                                                type="button"
                                             >
-                                                <span class="g-visually-hidden">
-                                                    Add ascending sort
-                                                </span>
-                                                <span
-                                                    class="sort-indicator"
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    viewBox="0 0 640 640"
+                                                    height="1.5em"
                                                     aria-hidden="true"
                                                 >
-                                                    <svg
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        viewBox="0 0 640 640"
-                                                        height="1.25em"
-                                                    >
-                                                        <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
-                                                        <path
-                                                            fill="currentColor"
-                                                            d="M300.3 199.2C312.9 188.9 331.4 189.7 343.1 201.4L471.1 329.4C480.3 338.6 483 352.3 478 364.3C473 376.3 461.4 384 448.5 384L192.5 384C179.6 384 167.9 376.2 162.9 364.2C157.9 352.2 160.7 338.5 169.9 329.4L297.9 201.4L300.3 199.2z"
-                                                        />
-                                                    </svg>
-                                                </span>
+                                                    <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+                                                    <path
+                                                        fill="currentColor"
+                                                        d="M96 128C83.1 128 71.4 135.8 66.4 147.8C61.4 159.8 64.2 173.5 73.4 182.6L256 365.3L256 480C256 488.5 259.4 496.6 265.4 502.6L329.4 566.6C338.6 575.8 352.3 578.5 364.3 573.5C376.3 568.5 384 556.9 384 544L384 365.3L566.6 182.7C575.8 173.5 578.5 159.8 573.5 147.8C568.5 135.8 556.9 128 544 128L96 128z"
+                                                    />
+                                                </svg>
                                             </button>
-                                            <button
-                                                type="button"
-                                                class="g-sort-builder-direction"
-                                                :aria-label="`Add ${col.label} descending sort`"
-                                                @click="
-                                                    addSortRule(
-                                                        col.key as SortKey<T>,
-                                                        -1,
-                                                    )
-                                                "
-                                            >
-                                                <span class="g-visually-hidden">
-                                                    Add descending sort
-                                                </span>
-                                                <span
-                                                    class="sort-indicator"
-                                                    aria-hidden="true"
-                                                >
-                                                    <svg
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        viewBox="0 0 640 640"
-                                                        height="1.25em"
-                                                        style="transform: rotate(180deg);"
-                                                    >
-                                                        <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
-                                                        <path
-                                                            fill="currentColor"
-                                                            d="M300.3 199.2C312.9 188.9 331.4 189.7 343.1 201.4L471.1 329.4C480.3 338.6 483 352.3 478 364.3C473 376.3 461.4 384 448.5 384L192.5 384C179.6 384 167.9 376.2 162.9 364.2C157.9 352.2 160.7 338.5 169.9 329.4L297.9 201.4L300.3 199.2z"
-                                                        />
-                                                    </svg>
-                                                </span>
-                                            </button>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                            <GButton
-                                v-if="activeSorts.length"
-                                outlined
-                                size="small"
-                                class="g-sort-builder-clear"
-                                @click="clearSorts"
-                            >
-                                Clear sort
-                            </GButton>
-                        </fieldset>
-                    </GPopover>
-                </div>
-                <div
-                    v-if="shouldShowColumnVisibilityControls"
-                    class="g-column-visibility-wrap"
-                >
-                    <GPopover>
-                        <template #trigger="{ toggle }">
-                            <GButton
-
-                                size="small"
-                                class="g-column-visibility-trigger"
-                                aria-label="Choose visible columns"
-                                :class="{
-                                    'g-column-visibility-trigger--active':
-                                        hasHiddenColumns,
-                                }"
-                                @click="toggle"
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 640 640"
-                                    height="1.5em"
-                                    style="transform: rotate(90deg);"
-                                    aria-hidden="true"
-                                >
-                                    <!--!Font Awesome Free v7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
-                                    <path
-                                        fill="currentColor"
-                                        d="M64 160C64 142.3 78.3 128 96 128L480 128C497.7 128 512 142.3 512 160C512 177.7 497.7 192 480 192L96 192C78.3 192 64 177.7 64 160zM128 320C128 302.3 142.3 288 160 288L544 288C561.7 288 576 302.3 576 320C576 337.7 561.7 352 544 352L160 352C142.3 352 128 337.7 128 320zM512 480C512 497.7 497.7 512 480 512L96 512C78.3 512 64 497.7 64 480C64 462.3 78.3 448 96 448L480 448C497.7 448 512 462.3 512 480z"/>
-                                </svg>
-                            </GButton>
-                        </template>
-                        <fieldset
-                            class="g-column-visibility-popover"
-                            :aria-labelledby="`${id}-column-visibility-heading`"
-                        >
-                            <div class="g-column-visibility-header">
-                                <span
-                                    :id="`${id}-column-visibility-heading`"
-                                    class="g-column-visibility-heading"
-                                >
-                                    Shown columns
-                                </span>
-                                <span class="g-column-visibility-legend-action">
-                                    <GButton
-                                        text
-                                        size="small"
-                                        class="g-column-visibility-show-all"
-                                        :class="{
-                                            'g-column-visibility-show-all--hidden':
-                                                !hasHiddenColumns,
-                                        }"
-                                        @click="showAllColumns"
-                                    >
-                                        Show All
-                                    </GButton>
-                                </span>
-                            </div>
-                            <div class="g-column-visibility-list">
-                                <label
-                                    v-for="col in columns"
-                                    :key="col.key"
-                                    class="g-column-visibility-option"
-                                >
-                                    <input
-                                        :checked="isColumnVisible(col)"
-                                        type="checkbox"
-                                        @change="
-                                            setColumnVisibility(
-                                                col,
-                                                (
-                                                    $event.target as HTMLInputElement
-                                                ).checked,
-                                            )
-                                        "
-                                    />
-                                    <span>{{ col.label }}</span>
-                                </label>
-                            </div>
-                        </fieldset>
-                    </GPopover>
-                </div>
-                <div v-if="shouldShowCustomControls" class="g-table-custom-controls">
-                    <slot name="controls"></slot>
-                </div>
-
-                <div class="g-clear-filters-wrap">
-                    <GButton
-                        v-if="isFiltered"
-                        outlined
-                        size="small"
-                        class="clear-filters"
-                        aria-label="Clear Filters"
-                        @click="clearFilters"
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 640 640"
-                            height="1.5em"
-                            aria-hidden="true"
-                        >
-                            <!--!Font Awesome Free v7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
-                            <path
-                                fill="currentColor"
-                                d="M64 128C51.1 128 39.4 135.8 34.4 147.8C29.4 159.8 32.2 173.5 41.4 182.6L224 365.3L224 480C224 488.5 227.4 496.6 233.4 502.6L297.4 566.6C299.9 569.1 302.7 571.1 305.7 572.6C284.5 541.7 272.1 504.3 272.1 464C272.1 364.6 347.6 282.9 444.4 273L534.8 182.6C544 173.4 546.7 159.7 541.7 147.7C536.7 135.7 524.9 128 512 128L64 128zM464 608C543.5 608 608 543.5 608 464C608 384.5 543.5 320 464 320C384.5 320 320 384.5 320 464C320 543.5 384.5 608 464 608zM523.3 427.3L486.6 464L523.3 500.7C529.5 506.9 529.5 517.1 523.3 523.3C517.1 529.5 506.9 529.5 500.7 523.3L464 486.6L427.3 523.3C421.1 529.5 410.9 529.5 404.7 523.3C398.5 517.1 398.5 506.9 404.7 500.7L441.4 464L404.7 427.3C398.5 421.1 398.5 410.9 404.7 404.7C410.9 398.5 421.1 398.5 427.3 404.7L464 441.4L500.7 404.7C506.9 398.5 517.1 398.5 523.3 404.7C529.5 410.9 529.5 421.1 523.3 427.3z"
-                            />
-                        </svg>
-                        <span class="g-clear-filters-text"> Clear Filters </span>
-                    </GButton>
-                </div>
-            </div>
-            <div v-if="shouldShowPagination" class="pagination">
-                <GTablePagination
-                    :start="startIndex"
-                    :page-size="pageSize!"
-                    :page-sizes="pageSizes"
-                    :total="totalResults"
-                    @update:start="updateStartIndex"
-                    @update:page-size="updatePageSize"
-                />
-            </div>
-            <div class="g-table-controls-right">
-                <span class="g-result-count"
-                    >{{ totalResults }} results</span
-                >
-                <slot name="right-controls"></slot>
-            </div>
-        </div>
-        <div ref="tableWrapRef" class="g-table-table-wrap">
-            <table
-                :id="tableElementId"
-                :class="['g-table', { 'g-table--resizable': resizableColumns }]"
-                ref="tableRef"
-                :aria-label="label"
-                :aria-rowcount="totalResults"
-            >
-                <colgroup>
-                    <col v-if="bulkSelectionEnabled" />
-                    <col
-                        v-for="col in visibleColumns"
-                        :key="col.key"
-                        :data-column-key="String(col.key)"
-                        :style="columnWidthStyle(col)"
-                    />
-                </colgroup>
-                <thead class="g-table-head">
-                    <tr aria-rowindex="1">
-                        <th
-                            v-if="bulkSelectionEnabled"
-                            scope="col"
-                            class="g-th g-th-checkbox"
-                        >
-                            <input
-                                type="checkbox"
-                                :checked="allSelected"
-                                :indeterminate="someSelected"
-                                @change="toggleAllRows"
-                                :aria-label="
-                                    allSelected
-                                        ? 'Deselect all rows'
-                                        : 'Select all rows'
-                                "
-                                class="g-bulk-select-checkbox"
-                            />
-                        </th>
-                        <th
-                            v-for="col in visibleColumns"
-                            :key="col.key"
-                            :id="`${id}-th-${String(col.key)}`"
-                            :aria-sort="columnAriaSort(col.key)"
-                            :class="[
-                                'g-th',
-                                { 'g-th--resizable': resizableColumns },
-                                { sorted: sortIndex(col.key) !== -1 },
-                                { filtered: isColumnFiltered(col) },
-                            ]"
-                            scope="col"
-                        >
-                            <div class="th-inner">
-                                <button
-                                    v-if="col.sortable"
-                                    type="button"
-                                    class="g-column-head"
-                                    @click="onSort(col, $event.shiftKey)"
-                                >
-                                    <span class="g-visually-hidden">Sort by </span>
-                                    {{ col.label }}
-                                    <span
-                                        v-if="sortIndex(col.key) !== -1"
-                                        class="sort-indicator"
-                                        aria-hidden="true"
-                                    >
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 640 640"
-                                            height="1.5em"
-                                            :style="{
-                                                transform: `rotate(${sortForColumn(col.key)?.order === 1 ? 0 : 180}deg)`,
-                                            }"
-                                        >
-                                            <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
-                                            <path
-                                                fill="currentColor"
-                                                d="M300.3 199.2C312.9 188.9 331.4 189.7 343.1 201.4L471.1 329.4C480.3 338.6 483 352.3 478 364.3C473 376.3 461.4 384 448.5 384L192.5 384C179.6 384 167.9 376.2 162.9 364.2C157.9 352.2 160.7 338.5 169.9 329.4L297.9 201.4L300.3 199.2z"
-                                            />
-                                        </svg>
-                                    </span>
-                                    <span
-                                        v-if="sortIndex(col.key) !== -1"
-                                        class="g-visually-hidden"
-                                    >
-                                        {{ columnSortDescription(col.key) }}
-                                    </span>
-                                </button>
-                                <span v-else class="g-column-head">{{
-                                    col.label
-                                }}</span>
-                                <GPopover v-if="col.filter">
-                                    <template #trigger="{ toggle }">
-                                        <button
-                                            @click.stop="toggle"
-                                            :aria-label="
-                                                isColumnFiltered(col)
-                                                    ? `Filter ${col.label} column (filtered)`
-                                                    : `Filter ${col.label} column`
+                                        </template>
+                                        <GSelect
+                                            v-if="col.filter.type === 'select'"
+                                            :model-value="selectFilterValue(col)"
+                                            @update:model-value="
+                                                setSelectFilterValue(col, $event)
                                             "
-                                            class="g-filter-btn"
-                                            :class="{
-                                                'g-active':
-                                                    isColumnFiltered(col),
-                                            }"
-                                            type="button"
+                                            :options="selectFilterOptions(col)"
+                                            class="g-filter-select"
+                                            label="Filter select"
+                                            searchable
+                                            :search-description="col.filter.searchDescription"
+                                            clear-button
+                                        />
+                                        <div
+                                            v-else-if="col.filter.type === 'search'"
+                                            class="g-filter-search"
+                                            role="search"
                                         >
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                viewBox="0 0 640 640"
-                                                height="1.5em"
+                                            <span
+                                                class="g-filter-search-icon"
                                                 aria-hidden="true"
                                             >
-                                                <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
-                                                <path
-                                                    fill="currentColor"
-                                                    d="M96 128C83.1 128 71.4 135.8 66.4 147.8C61.4 159.8 64.2 173.5 73.4 182.6L256 365.3L256 480C256 488.5 259.4 496.6 265.4 502.6L329.4 566.6C338.6 575.8 352.3 578.5 364.3 573.5C376.3 568.5 384 556.9 384 544L384 365.3L566.6 182.7C575.8 173.5 578.5 159.8 573.5 147.8C568.5 135.8 556.9 128 544 128L96 128z"
-                                                />
-                                            </svg>
-                                        </button>
-                                    </template>
-                                    <GSelect
-                                        v-if="col.filter.type === 'select'"
-                                        :model-value="selectFilterValue(col)"
-                                        @update:model-value="
-                                            setSelectFilterValue(col, $event)
-                                        "
-                                        :options="selectFilterOptions(col)"
-                                        class="g-filter-select"
-                                        label="Filter select"
-                                        searchable
-                                        :search-description="col.filter.searchDescription"
-                                        clear-button
-                                    />
-                                    <div
-                                        v-else-if="col.filter.type === 'search'"
-                                        class="g-filter-search"
-                                        role="search"
-                                    >
-                                        <span
-                                            class="g-filter-search-icon"
-                                            aria-hidden="true"
-                                        >
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                viewBox="0 0 51.26 51.26"
-                                                height="1em"
-                                            >
-                                                <path
-                                                    fill="currentColor"
-                                                    d="M30 9.76A14.05 14.05 0 1 0 28.3 31l11.3 13a3.34 3.34 0 0 0 4.72-4.72L31.44 27.86A14.05 14.05 0 0 0 30 9.76ZM27.27 27a10.26 10.26 0 1 1 0-14.5 10.25 10.25 0 0 1 0 14.5Z"
-                                                />
-                                            </svg>
-                                        </span>
-                                        <input
-                                            type="search"
-                                            class="g-filter-search-input"
-                                            :value="columnFilterValue(col)"
-                                            @input="
-                                                setColumnFilterValue(
-                                                    col,
-                                                    ($event.target as HTMLInputElement)
-                                                        .value,
-                                                )
-                                            "
-                                            :placeholder="col.filter.placeholder"
-                                            :aria-label="`Search ${col.label}`"
-                                        />
-                                    </div>
-                                    <div v-else-if="col.filter.type === 'toggle'">
-                                        <div class="g-filter-toggle">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    viewBox="0 0 51.26 51.26"
+                                                    height="1em"
+                                                >
+                                                    <path
+                                                        fill="currentColor"
+                                                        d="M30 9.76A14.05 14.05 0 1 0 28.3 31l11.3 13a3.34 3.34 0 0 0 4.72-4.72L31.44 27.86A14.05 14.05 0 0 0 30 9.76ZM27.27 27a10.26 10.26 0 1 1 0-14.5 10.25 10.25 0 0 1 0 14.5Z"
+                                                    />
+                                                </svg>
+                                            </span>
                                             <input
-                                                type="checkbox"
-                                                :checked="columnFilterValue(col) === true"
-                                                @change="
+                                                type="search"
+                                                class="g-filter-search-input"
+                                                :value="columnFilterValue(col)"
+                                                @input="
                                                     setColumnFilterValue(
                                                         col,
                                                         ($event.target as HTMLInputElement)
-                                                            .checked,
+                                                            .value,
                                                     )
                                                 "
-                                                :id="`${id}-filter-${String(col.key)}`"
-                                                :aria-describedby="
-                                                    col.filter.description
-                                                        ? `${id}-filter-description-${String(col.key)}`
-                                                        : undefined
-                                                "
+                                                :placeholder="col.filter.placeholder"
+                                                :aria-label="`Search ${col.label}`"
                                             />
-                                            <label
-                                                :for="`${id}-filter-${String(col.key)}`"
-                                                >{{ col.filter.label }}</label
-                                            >
-                                            <span
-                                                class="g-filter-description"
-                                                v-if="col.filter.description"
-                                                :id="`${id}-filter-description-${String(col.key)}`"
-                                            >
-                                                {{ col.filter.description }}
-                                            </span>
                                         </div>
-                                    </div>
-                                    <GMultiSelect
-                                        v-else-if="
-                                            col.filter.type === 'multi-select' &&
-                                            col.filter.searchable
-                                        "
-                                        :model-value="multiSelectFilterValue(col)"
-                                        @update:model-value="
-                                            setMultiSelectFilterValue(col, $event)
-                                        "
-                                        :options="selectFilterOptions(col)"
-                                        label="Include values"
-                                        :placeholder="col.filter.placeholder"
-                                        :search-description="col.filter.searchDescription"
-                                        class="g-multi-select-searchable"
-                                    />
-                                    <div
-                                        v-else-if="
-                                            col.filter.type === 'multi-select'
-                                        "
-                                        class="g-multi-select"
-                                    >
-                                        <GCheckboxGroup
+                                        <div v-else-if="col.filter.type === 'toggle'">
+                                            <div class="g-filter-toggle">
+                                                <input
+                                                    type="checkbox"
+                                                    :checked="columnFilterValue(col) === true"
+                                                    @change="
+                                                        setColumnFilterValue(
+                                                            col,
+                                                            ($event.target as HTMLInputElement)
+                                                                .checked,
+                                                        )
+                                                    "
+                                                    :id="`${id}-filter-${String(col.key)}`"
+                                                    :aria-describedby="
+                                                        col.filter.description
+                                                            ? `${id}-filter-description-${String(col.key)}`
+                                                            : undefined
+                                                    "
+                                                />
+                                                <label
+                                                    :for="`${id}-filter-${String(col.key)}`"
+                                                    >{{ col.filter.label }}</label
+                                                >
+                                                <span
+                                                    class="g-filter-description"
+                                                    v-if="col.filter.description"
+                                                    :id="`${id}-filter-description-${String(col.key)}`"
+                                                >
+                                                    {{ col.filter.description }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <GMultiSelect
+                                            v-else-if="
+                                                col.filter.type === 'multi-select' &&
+                                                col.filter.searchable
+                                            "
                                             :model-value="multiSelectFilterValue(col)"
                                             @update:model-value="
                                                 setMultiSelectFilterValue(col, $event)
                                             "
-                                            :options="multiSelectFilterOptions(col)"
+                                            :options="selectFilterOptions(col)"
                                             label="Include values"
+                                            :placeholder="col.filter.placeholder"
+                                            :search-description="col.filter.searchDescription"
+                                            class="g-multi-select-searchable"
                                         />
-                                        <GButton
-                                            class="clear-multiselect-btn"
-                                            theme="accent"
-                                            size="small"
-                                            @click="setColumnFilterValue(col, [])"
-                                            v-if="isColumnFiltered(col)"
+                                        <div
+                                            v-else-if="
+                                                col.filter.type === 'multi-select'
+                                            "
+                                            class="g-multi-select"
                                         >
-                                            Clear
-                                        </GButton>
-                                    </div>
-                                </GPopover>
-                            </div>
-                            <div
-                               v-if="resizableColumns"
-                               :data-column-key="String(col.key)"
-                               class="g-column-resize-handle"
-                               :class="{
-                                   'g-column-resize-handle--active':
-                                       activeResize?.key === col.key,
-                               }"
-                               role="separator"
-                               tabindex="0"
-                               aria-orientation="vertical"
-                               :aria-controls="tableElementId"
-                               :aria-label="`Resize ${col.label} column`"
-                               :aria-valuemin="MIN_COLUMN_WIDTH"
-                               :aria-valuemax="
-                                   columnResizeMax(col.key as ColumnStateKey<T>)
-                               "
-                               :aria-valuenow="
-                                   resizeHandleValue(col.key as ColumnStateKey<T>)
-                               "
-                               :aria-valuetext="
-                                   resizeHandleValueText(
-                                       col.key as ColumnStateKey<T>,
-                                   )
-                               "
-                               @click.stop.prevent
-                               @keydown="
-                                   onColumnResizeKeydown(
-                                       $event,
-                                       col.key as ColumnStateKey<T>,
-                                   )
-                               "
-                               @pointerdown="
-                                   startColumnResize(
-                                       $event,
-                                       col.key as ColumnStateKey<T>,
-                                   )
-                               "
-                            ></div>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody v-if="data.length === 0">
-                    <tr aria-rowindex="2">
-                        <td
-                            class="g-table-empty"
-                            :colspan="
-                                visibleColumns.length +
-                                (bulkSelectionEnabled ? 1 : 0)
-                            "
-                        >
-                            <slot name="empty"></slot>
-                        </td>
-                    </tr>
-                </tbody>
-                <!-- @vue-generic {T, C} -->
-                <GTableBody
-                    v-else
-                    :data="data"
-                    :columns="visibleColumns"
-                    :group-by="groupBy"
-                    :group-render="groupRender"
-                    :row-clickable="rowClickable"
-                    :row-class="rowClass as any"
-                    :start-index="startIndex"
-                    :bulk-selection-enabled="bulkSelectionEnabled"
-                    :selected-rows="selectedRows"
-                    :table-id="id"
-                    :change-tracker="changeTracker"
-                    @row-click="clickRow"
-                    @toggle-row="toggleRow"
-                    @cell-change="handleCellChange"
-                />
-            </table>
-        </div>
-        <div
-            v-if="bulkSelectionEnabled && selectedRows.length > 0"
-            class="g-bulk-actions-toolbar"
-        >
-            <span class="g-selected-count"
-                >{{ selectedRows.length }} row{{
-                    selectedRows.length === 1 ? "" : "s"
-                }}
-                selected</span
+                                            <GCheckboxGroup
+                                                :model-value="multiSelectFilterValue(col)"
+                                                @update:model-value="
+                                                    setMultiSelectFilterValue(col, $event)
+                                                "
+                                                :options="multiSelectFilterOptions(col)"
+                                                label="Include values"
+                                            />
+                                            <GButton
+                                                class="clear-multiselect-btn"
+                                                theme="accent"
+                                                size="small"
+                                                @click="setColumnFilterValue(col, [])"
+                                                v-if="isColumnFiltered(col)"
+                                            >
+                                                Clear
+                                            </GButton>
+                                        </div>
+                                    </GPopover>
+                                </div>
+                                <div
+                                   v-if="resizableColumns"
+                                   :data-column-key="String(col.key)"
+                                   class="g-column-resize-handle"
+                                   :class="{
+                                       'g-column-resize-handle--active':
+                                           activeResize?.key === col.key,
+                                   }"
+                                   role="separator"
+                                   tabindex="0"
+                                   aria-orientation="vertical"
+                                   :aria-controls="tableElementId"
+                                   :aria-label="`Resize ${col.label} column`"
+                                   :aria-valuemin="MIN_COLUMN_WIDTH"
+                                   :aria-valuemax="
+                                       columnResizeMax(col.key as ColumnStateKey<T>)
+                                   "
+                                   :aria-valuenow="
+                                       resizeHandleValue(col.key as ColumnStateKey<T>)
+                                   "
+                                   :aria-valuetext="
+                                       resizeHandleValueText(
+                                           col.key as ColumnStateKey<T>,
+                                       )
+                                   "
+                                   @click.stop.prevent
+                                   @keydown="
+                                       onColumnResizeKeydown(
+                                           $event,
+                                           col.key as ColumnStateKey<T>,
+                                       )
+                                   "
+                                   @pointerdown="
+                                       startColumnResize(
+                                           $event,
+                                           col.key as ColumnStateKey<T>,
+                                       )
+                                   "
+                                ></div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody v-if="data.length === 0">
+                        <tr aria-rowindex="2">
+                            <td
+                                class="g-table-empty"
+                                :colspan="
+                                    visibleColumns.length +
+                                    (bulkSelectionEnabled ? 1 : 0)
+                                "
+                            >
+                                <slot name="empty"></slot>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <!-- @vue-generic {T, C} -->
+                    <GTableBody
+                        v-else
+                        :data="data"
+                        :columns="visibleColumns"
+                        :group-by="groupBy"
+                        :group-render="groupRender"
+                        :row-clickable="rowClickable"
+                        :row-class="rowClass as any"
+                        :start-index="startIndex"
+                        :bulk-selection-enabled="bulkSelectionEnabled"
+                        :selected-rows="selectedRows"
+                        :table-id="id"
+                        :change-tracker="changeTracker"
+                        @row-click="clickRow"
+                        @toggle-row="toggleRow"
+                        @cell-change="handleCellChange"
+                    />
+                </table>
+            </div>
+            <div
+                v-if="bulkSelectionEnabled && selectedRows.length > 0"
+                class="g-bulk-actions-toolbar"
             >
-            <ul class="g-bulk-actions">
-                <li v-for="action in bulkActions" :key="action.id">
-                    <GButton
-                        :theme="action.theme || 'accent'"
-                        @click="handleBulkAction(action.id)"
-                        size="small"
-                    >
-                        {{ action.label }} {{ selectedRows.length }} row{{
-                            selectedRows.length === 1 ? "" : "s"
-                        }}
-                    </GButton>
-                </li>
-            </ul>
+                <span class="g-selected-count"
+                    >{{ selectedRows.length }} row{{
+                        selectedRows.length === 1 ? "" : "s"
+                    }}
+                    selected</span
+                >
+                <ul class="g-bulk-actions">
+                    <li v-for="action in bulkActions" :key="action.id">
+                        <GButton
+                            :theme="action.theme || 'accent'"
+                            @click="handleBulkAction(action.id)"
+                            size="small"
+                        >
+                            {{ action.label }} {{ selectedRows.length }} row{{
+                                selectedRows.length === 1 ? "" : "s"
+                            }}
+                        </GButton>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </template>
@@ -1533,7 +1536,18 @@ g-table {
     container-name: g-table;
 }
 
+/*
+ * Spans the full table width so the sticky controls have room to stay
+ * pinned while a scrolling ancestor scrolls the table horizontally.
+ */
+.g-table-inner-wrap {
+    width: fit-content;
+    min-width: 100%;
+}
+
 .g-table-controls {
+    box-sizing: border-box;
+    width: 100cqw;
     height: 40px;
     position: sticky;
     display: flex;
@@ -2131,6 +2145,8 @@ button.g-column-head {
 }
 
 .g-bulk-actions-toolbar {
+    box-sizing: border-box;
+    width: 100cqw;
     position: sticky;
     bottom: 0;
     left: 0;
