@@ -211,6 +211,18 @@ g-app-header:not(:defined),
         0px 1px 10px 5px rgba(0, 0, 0, 0.08);
 }
 
+/* Let the header scroll away on short viewports (e.g. 400% zoom) */
+@media (max-height: 30rem) {
+    html {
+        scroll-padding-top: 0;
+    }
+
+    g-app-header:not(:defined),
+    .g-app-header {
+        position: absolute;
+    }
+}
+
 g-app-header:not(:defined) {
     > [slot="title"] {
         margin: 0 0 0 calc(78px + 20px);
@@ -243,7 +255,7 @@ g-app-header:not(:defined) {
         font-size: 20px;
         font-family: var(--il-font-sans);
         font-style: normal;
-        line-height: 30px;
+        line-height: 1.1;
         color: var(--g-primary-500);
         margin: 0;
         font-weight: 700;
