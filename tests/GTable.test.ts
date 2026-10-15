@@ -1310,7 +1310,7 @@ describe("GTable", () => {
             expect(controls.getBoundingClientRect().left).toBe(scrollerLeft);
         });
 
-        it("keeps pagination centered and result count pinned right", async () => {
+        it("keeps pagination centered and right controls pinned right", async () => {
             const { GTableFixture } = createCollegesTableFixture();
             const { container } = mnt(GTableFixture);
 
@@ -1320,19 +1320,19 @@ describe("GTable", () => {
             const pagination = controls?.querySelector(
                 ".pagination",
             ) as HTMLElement | null;
-            const resultCount = controls?.querySelector(
-                ".g-result-count",
+            const rightControls = controls?.querySelector(
+                ".g-table-controls-right",
             ) as HTMLElement | null;
 
             expect(controls).not.toBeNull();
             expect(pagination).not.toBeNull();
-            expect(resultCount).not.toBeNull();
+            expect(rightControls).not.toBeNull();
 
             expect(window.getComputedStyle(controls!).display).toBe("grid");
             expect(window.getComputedStyle(pagination!).gridColumnStart).toBe(
                 "2",
             );
-            expect(window.getComputedStyle(resultCount!).gridColumnStart).toBe(
+            expect(window.getComputedStyle(rightControls!).gridColumnStart).toBe(
                 "3",
             );
         });
@@ -1352,7 +1352,7 @@ describe("GTable", () => {
             );
         });
 
-        it("keeps result count on the right without pagination", async () => {
+        it("keeps right controls on the right without pagination", async () => {
             const { GTableFixture } = createMultiSortFixture();
             const { container } = mnt(GTableFixture);
 
@@ -1360,14 +1360,14 @@ describe("GTable", () => {
                 ".g-table-controls",
             ) as HTMLElement | null;
             const pagination = controls?.querySelector(".pagination");
-            const resultCount = controls?.querySelector(
-                ".g-result-count",
+            const rightControls = controls?.querySelector(
+                ".g-table-controls-right",
             ) as HTMLElement | null;
 
             expect(controls).not.toBeNull();
             expect(pagination).toBeNull();
-            expect(resultCount).not.toBeNull();
-            expect(window.getComputedStyle(resultCount!).gridColumnStart).toBe(
+            expect(rightControls).not.toBeNull();
+            expect(window.getComputedStyle(rightControls!).gridColumnStart).toBe(
                 "3",
             );
         });

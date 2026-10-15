@@ -66,6 +66,7 @@ import {
     useId,
 } from "vue";
 import type { VNode } from "vue";
+import { useResizeObserver } from "@vueuse/core";
 import GSelect from "./GSelect.vue";
 import GMultiSelect from "./GMultiSelect.vue";
 import GCheckboxGroup from "./GCheckboxGroup.vue";
@@ -354,6 +355,16 @@ const sortBuilderRef = ref<HTMLFieldSetElement | null>(null);
 const tableRef = ref<HTMLTableElement | null>(null);
 const outerWrapRef = ref<HTMLDivElement | null>(null);
 const tableWrapRef = ref<HTMLDivElement | null>(null);
+const controlsRef = ref<HTMLDivElement | null>(null);
+const controlsHeight = ref(0);
+
+useResizeObserver(controlsRef, (entries) => {
+    const entry = entries[0];
+    controlsHeight.value =
+        entry?.borderBoxSize?.[0]?.blockSize ??
+        entry?.target.getBoundingClientRect().height ??
+        0;
+});
 const activeResize = ref<ActiveColumnResize<T> | null>(null);
 const tableElementId = `${id}-table`;
 
@@ -849,9 +860,19 @@ onMounted(() => {
 </script>
 
 <template>
-    <div ref="outerWrapRef" class="g-table-outer-wrap">
+    <div
+        ref="outerWrapRef"
+        class="g-table-outer-wrap"
+        :style="{
+            '--g-table-controls-height': `${shouldShowControls ? controlsHeight : 0}px`,
+        }"
+    >
         <div class="g-table-inner-wrap">
-            <div v-if="shouldShowControls" class="g-table-controls">
+            <div
+                v-if="shouldShowControls"
+                ref="controlsRef"
+                class="g-table-controls"
+            >
                 <div class="g-table-control-actions">
                     <div v-if="shouldShowSortBuilder" class="g-sort-builder-wrap">
                         <GPopover>
@@ -1548,7 +1569,7 @@ g-table {
 .g-table-controls {
     box-sizing: border-box;
     width: 100cqw;
-    height: 40px;
+    min-height: 40px;
     position: sticky;
     display: flex;
     top: 0;
@@ -1559,8 +1580,22 @@ g-table {
 .g-table-head {
     background: var(--g-surface-0);
     position: sticky;
-    top: 40px;
+    top: var(--g-table-controls-height, 40px);
     z-index: 1;
+}
+
+/*
+ * On short viewports (e.g. 400% zoom) only the column headers stay pinned
+ * so that rows get as much of the screen as possible.
+ */
+@media (max-height: 30rem) {
+    .g-table-controls {
+        top: auto;
+    }
+
+    .g-table-head {
+        top: 0;
+    }
 }
 
 .g-th {
@@ -1768,9 +1803,18 @@ button.g-column-head {
         min-width: 0;
     }
 
-    .g-result-count {
+    .g-table-controls-right {
         grid-column: 3;
         justify-self: end;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 0.25rem 0.5rem;
+        min-width: 0;
+    }
+
+    .g-result-count {
         font-size: 1rem;
         line-height: 1.2;
         text-align: right;
@@ -1788,7 +1832,9 @@ button.g-column-head {
 @container g-table (max-width: 1000px) {
     .g-table-controls {
         display: flex;
+        flex-wrap: wrap;
         justify-content: space-between;
+        row-gap: 0.25rem;
     }
 
     .g-table-controls .pagination {
@@ -1797,9 +1843,10 @@ button.g-column-head {
         justify-content: flex-start;
     }
 
-    .g-table-controls .g-result-count {
+    .g-table-controls .g-table-controls-right {
         grid-column: auto;
         justify-self: auto;
+        margin-left: auto;
     }
 }
 
