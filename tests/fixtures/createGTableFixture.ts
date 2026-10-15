@@ -40,6 +40,7 @@ export type CreateGTableFixtureOptions<
     groupBy?: keyof T;
     groupRender?: (groupValue: any, row: T) => VNode;
     rowClickable?: boolean;
+    onRowClick?: (link: string) => void;
     rowClass?: (row: T) => string | string[] | undefined;
     bulkSelectionEnabled?: boolean;
     bulkActions?: BulkAction[];
@@ -189,6 +190,7 @@ export function createGTableFixture<
                         groupBy: options.groupBy,
                         groupRender: options.groupRender,
                         rowClickable: options.rowClickable,
+                        onRowClick: options.onRowClick,
                         rowClass: options.rowClass,
                         startIndex: start.value,
                         "onUpdate:startIndex": (value: number) => {

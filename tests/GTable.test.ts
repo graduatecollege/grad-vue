@@ -553,6 +553,35 @@ describe("GTable", () => {
 
             expect(getColumn(container, 1)).toEqual(["School of Social Work"]);
         });
+
+        it("emits row-click when inside a focusable ancestor like GMain", async () => {
+            const onRowClick = vi.fn();
+            const linkColumns: TableColumn<TableEntry>[] = [
+                {
+                    key: "key",
+                    label: "Code",
+                    display: (row) => h("a", { href: `/college/${row.key}` }, row.key),
+                },
+                { key: "name", label: "Name" },
+            ];
+            const { GTableFixture } = createGTableFixture<TableEntry>({
+                label: "Colleges",
+                columns: linkColumns,
+                data: tableData.slice(0, 2),
+                rowClickable: true,
+                onRowClick,
+            });
+            const Wrapper = defineComponent({
+                render() {
+                    return h("main", { tabindex: "-1" }, [h(GTableFixture)]);
+                },
+            });
+            const { container } = mnt(Wrapper);
+
+            await container.getByText(tableData[0].name).click();
+
+            expect(onRowClick).toHaveBeenCalledWith(`/college/${tableData[0].key}`);
+        });
     });
     describe("Column Visibility Tests", () => {
         it("hides the column chooser when column visibility is not configured", async () => {

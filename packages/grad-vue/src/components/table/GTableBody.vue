@@ -33,13 +33,22 @@ const emit = defineEmits<{
 }>();
 
 
+// Scoped to the row so focusable ancestors (e.g. GMain's tabindex="-1") don't count
+function isInteractiveTarget(event: MouseEvent): boolean {
+    const row = event.currentTarget as HTMLElement;
+    const interactive = (event.target as HTMLElement).closest(
+        "a,button,[tabindex],input",
+    );
+    return !!interactive && row.contains(interactive);
+}
+
 function handleMouseDown(event: MouseEvent, rowKey: string) {
     // Prevent text selection when shift-clicking for bulk selection
     // Only if bulk selection is enabled and shift is held and we're not on an input
     if (
         props.bulkSelectionEnabled &&
         event.shiftKey &&
-        !(event.target as HTMLElement).closest("a,button,[tabindex],input")
+        !isInteractiveTarget(event)
     ) {
         event.preventDefault();
     }
@@ -50,7 +59,7 @@ function handleRowClick(event: MouseEvent, rowKey: string) {
         return; // Do nothing if rows are not clickable
     }
     // Only trigger if not clicking on a link or button directly
-    if ((event.target as HTMLElement).closest("a,button,[tabindex],input")) {
+    if (isInteractiveTarget(event)) {
         return;
     }
     const row = (event.target as HTMLElement).closest(
