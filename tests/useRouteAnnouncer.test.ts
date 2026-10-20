@@ -101,6 +101,19 @@ describe("useRouteAnnouncer", () => {
         expect(liveRegion()).toHaveAttribute("aria-live", "polite");
     });
 
+    it("removes the heading's temporary tabindex when it loses focus", async () => {
+        const { router } = mountApp();
+        await router.push({ path: "/", title: "Home", view: Home });
+        await router.push({ path: "/profile", title: "Profile", view: Profile });
+
+        const heading = page.getByRole("heading", { name: "Profile" });
+        await expect.element(heading).toHaveFocus();
+        await expect.element(heading).toHaveAttribute("tabindex", "-1");
+
+        (page.getByRole("link", { name: "Nav link" }).element() as HTMLElement).focus();
+        await expect.element(heading).not.toHaveAttribute("tabindex");
+    });
+
     it("focuses the main landmark when there's no h1", async () => {
         const { router } = mountApp();
         await router.push({ path: "/", title: "Home", view: Home });

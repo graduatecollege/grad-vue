@@ -83,6 +83,26 @@ function findMain(mainId: string): HTMLElement | null {
 }
 
 /**
+ * Makes an element focusable only until it loses focus. A permanent
+ * `tabindex="-1"` on a large container makes any click inside it focus it.
+ */
+function addTemporaryTabindex(target: HTMLElement) {
+    if (target.hasAttribute("tabindex")) {
+        return;
+    }
+    target.setAttribute("tabindex", "-1");
+    target.addEventListener(
+        "blur",
+        () => {
+            if (target.getAttribute("tabindex") === "-1") {
+                target.removeAttribute("tabindex");
+            }
+        },
+        { once: true },
+    );
+}
+
+/**
  * Focuses the main landmark identified by `mainId` (or the first `<main>`).
  * When `preferHeading` is set, focuses its first `<h1>` instead if possible.
  *
@@ -106,12 +126,14 @@ export function focusMainTarget(
         if (!target) {
             continue;
         }
-        if (!target.hasAttribute("tabindex")) {
-            target.setAttribute("tabindex", "-1");
-        }
+        const hadTabindex = target.hasAttribute("tabindex");
+        addTemporaryTabindex(target);
         target.focus({ preventScroll: preferHeading });
         if (document.activeElement === target) {
             return true;
+        }
+        if (!hadTabindex) {
+            target.removeAttribute("tabindex");
         }
     }
     return false;

@@ -33,7 +33,7 @@ const emit = defineEmits<{
 }>();
 
 
-// Scoped to the row so focusable ancestors (e.g. GMain's tabindex="-1") don't count
+// Scoped to the row so focusable ancestors (e.g. GMain's temporary tabindex after a skip link) don't count
 function isInteractiveTarget(event: MouseEvent): boolean {
     const row = event.currentTarget as HTMLElement;
     const interactive = (event.target as HTMLElement).closest(

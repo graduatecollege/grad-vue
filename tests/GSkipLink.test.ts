@@ -30,6 +30,23 @@ describe("GSkipLink", () => {
         expect(location.hash).toBe("");
     });
 
+    it("removes the temporary tabindex when main loses focus", async () => {
+        mnt(Layout);
+        const main = page.getByRole("main");
+
+        await userEvent.keyboard("{Tab}");
+        await userEvent.keyboard("{Enter}");
+        await expect.element(main).toHaveFocus();
+        await expect.element(main).toHaveAttribute("tabindex", "-1");
+
+        await userEvent.keyboard("{Tab}");
+        await expect.element(main).not.toHaveFocus();
+        await expect.element(main).not.toHaveAttribute("tabindex");
+
+        await userEvent.click(page.getByRole("heading", { name: "Page" }));
+        await expect.element(main).not.toHaveFocus();
+    });
+
     it("uses a custom target", async () => {
         mnt(Layout, { props: { target: "content" } });
 

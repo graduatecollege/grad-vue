@@ -5,12 +5,12 @@ import GMain from "../packages/grad-vue/src/components/GMain.vue";
 import { mnt, testAccessibility } from "./test-utils";
 
 describe("GMain", () => {
-    it("renders a main landmark that can receive focus", async () => {
+    it("renders a main landmark that isn't focusable by default", async () => {
         mnt(GMain, { slots: { default: () => h("h1", "Profile") } });
 
         const main = page.getByRole("main");
         await expect.element(main).toHaveAttribute("id", "main-content");
-        await expect.element(main).toHaveAttribute("tabindex", "-1");
+        await expect.element(main).not.toHaveAttribute("tabindex");
     });
 
     it("uses a custom id", async () => {

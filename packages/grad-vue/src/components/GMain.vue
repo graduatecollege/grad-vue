@@ -57,7 +57,7 @@ const props = withDefaults(defineProps<Props>(), {
 </script>
 
 <template>
-    <main :id="props.id" class="g-main" tabindex="-1">
+    <main :id="props.id" class="g-main">
         <slot />
     </main>
 </template>
