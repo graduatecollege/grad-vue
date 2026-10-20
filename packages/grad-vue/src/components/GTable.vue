@@ -112,6 +112,8 @@ const LARGE_COLUMN_RESIZE_STEP = 48;
 type Props = {
     /**
      * Accessible label
+     *
+     * Used as the table caption along with the current sort and filter status.
      * @demo Colleges
      */
     label: string;
@@ -423,7 +425,7 @@ function columnAriaSort(key: keyof T) {
 function columnSortDescription(key: keyof T) {
     const index = sortIndex(key);
     if (index === -1) {
-        return "";
+        return "Sortable, not sorted";
     }
 
     const sort = activeSorts.value[index];
@@ -432,6 +434,25 @@ function columnSortDescription(key: keyof T) {
         ? `Sorted ${direction}, priority ${index + 1}`
         : `Sorted ${direction}`;
 }
+
+const captionSortText = computed(() => {
+    if (activeSorts.value.length === 0) {
+        return "";
+    }
+    const parts = activeSorts.value.map(
+        (sort) =>
+            `${columnLabel(sort.key)} ${sort.order === 1 ? "ascending" : "descending"}`,
+    );
+    return `sorted by ${parts.join(", then ")}`;
+});
+
+const captionFilterText = computed(() => {
+    const filtered = props.columns.filter((col) => isColumnFiltered(col));
+    if (filtered.length === 0) {
+        return "";
+    }
+    return `filtered by ${filtered.map((col) => col.label).join(", ")}`;
+});
 
 function sortDirectionLabel(order: 1 | -1) {
     return order === 1 ? "Ascending" : "Descending";
@@ -1210,9 +1231,11 @@ onMounted(() => {
                     :id="tableElementId"
                     :class="['g-table', { 'g-table--resizable': resizableColumns }]"
                     ref="tableRef"
-                    :aria-label="label"
                     :aria-rowcount="totalResults"
                 >
+                    <caption class="g-visually-hidden">
+                        {{ [label, captionSortText, captionFilterText].filter(Boolean).join(", ") }}
+                    </caption>
                     <colgroup>
                         <col v-if="bulkSelectionEnabled" />
                         <col
@@ -1260,9 +1283,9 @@ onMounted(() => {
                                         v-if="col.sortable"
                                         type="button"
                                         class="g-column-head"
+                                        :aria-describedby="`${id}-sort-desc-${String(col.key)}`"
                                         @click="onSort(col, $event.shiftKey)"
                                     >
-                                        <span class="g-visually-hidden">Sort by </span>
                                         {{ col.label }}
                                         <span
                                             v-if="sortIndex(col.key) !== -1"
@@ -1284,25 +1307,20 @@ onMounted(() => {
                                                 />
                                             </svg>
                                         </span>
-                                        <span
-                                            v-if="sortIndex(col.key) !== -1"
-                                            class="g-visually-hidden"
-                                        >
-                                            {{ columnSortDescription(col.key) }}
-                                        </span>
                                     </button>
                                     <span v-else class="g-column-head">{{
                                         col.label
                                     }}</span>
-                                    <GPopover v-if="col.filter">
-                                        <template #trigger="{ toggle }">
+                                    <GPopover
+                                        v-if="col.filter"
+                                        :aria-labelledby="`${id}-filter-label-${String(col.key)}`"
+                                    >
+                                        <template #trigger="{ toggle, open }">
                                             <button
                                                 @click.stop="toggle"
-                                                :aria-label="
-                                                    isColumnFiltered(col)
-                                                        ? `Filter ${col.label} column (filtered)`
-                                                        : `Filter ${col.label} column`
-                                                "
+                                                aria-label="Filter"
+                                                :aria-describedby="`${id}-filter-desc-${String(col.key)}`"
+                                                :aria-expanded="open"
                                                 class="g-filter-btn"
                                                 :class="{
                                                     'g-active':
@@ -1519,6 +1537,25 @@ onMounted(() => {
                         @cell-change="handleCellChange"
                     />
                 </table>
+                <div hidden>
+                    <template v-for="col in visibleColumns" :key="col.key">
+                        <span
+                            v-if="col.sortable"
+                            :id="`${id}-sort-desc-${String(col.key)}`"
+                            >{{ columnSortDescription(col.key) }}</span
+                        >
+                        <template v-if="col.filter">
+                            <span :id="`${id}-filter-desc-${String(col.key)}`"
+                                >{{ col.label }} column{{
+                                    isColumnFiltered(col) ? ", filtered" : ""
+                                }}</span
+                            >
+                            <span :id="`${id}-filter-label-${String(col.key)}`"
+                                >Filter {{ col.label }} column</span
+                            >
+                        </template>
+                    </template>
+                </div>
             </div>
             <div
                 v-if="bulkSelectionEnabled && selectedRows.length > 0"

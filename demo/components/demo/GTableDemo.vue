@@ -364,7 +364,8 @@ function handleCellChange(payload: CellChangePayload<ProductRow>) {
                 label: {
                     type: 'string',
                     label: 'Accessible label',
-                    default: 'Colleges'
+                    default: 'Colleges',
+                    instructions: 'Used as the table caption along with the current sort and filter status.'
                 },
                 bulkSelectionEnabled: {
                     type: 'boolean',
@@ -382,6 +383,8 @@ function handleCellChange(payload: CellChangePayload<ProductRow>) {
 <pre class="shiki light-plus" style="background-color:#FFFFFF;color:#000000" tabindex="0"><code><span class="line"><span style="color:#0000FF">type</span><span style="color:#267F99"> Props</span><span style="color:#000000"> = &lcub;</span></span>
 <span class="line"><span style="color:#008000">    /**</span></span>
 <span class="line"><span style="color:#008000">     * Accessible label</span></span>
+<span class="line"><span style="color:#008000">     *</span></span>
+<span class="line"><span style="color:#008000">     * Used as the table caption along with the current sort and filter status.</span></span>
 <span class="line"><span style="color:#008000">     */</span></span>
 <span class="line"><span style="color:#001080">    label</span><span style="color:#000000">: </span><span style="color:#267F99">string</span><span style="color:#000000">;</span></span>
 <span class="line"><span style="color:#008000">    /**</span></span>

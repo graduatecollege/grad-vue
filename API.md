@@ -1611,6 +1611,8 @@ The controls bar can be extended with the `controls` slot.
 type Props = {
     /**
      * Accessible label
+     *
+     * Used as the table caption along with the current sort and filter status.
      */
     label: string;
     /**

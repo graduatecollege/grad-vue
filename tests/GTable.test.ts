@@ -13,6 +13,13 @@ import {
     useFiltering,
 } from "../packages/grad-vue/src/compose/useFiltering";
 
+function columnFilterButton(container: Locator, label: string) {
+    const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return container
+        .getByRole("columnheader", { name: new RegExp(`^${escaped} Filter`) })
+        .getByRole("button", { name: "Filter", exact: true });
+}
+
 interface TableEntry {
     key: string;
     name: string;
@@ -337,40 +344,51 @@ describe("GTable", () => {
                 "LL",
             ]);
         });
-        it("names column sort buttons with their action and current sort direction", async () => {
+        it("keeps sort state out of column header names", async () => {
             const { GTableFixture } = createCollegesTableFixture();
             const { container } = mnt(GTableFixture);
-            const codeSortButton = container.getByRole("button", {
-                name: /^Sort by Code\b/,
-            });
+            const codeSortButton = container.getByRole("button", { name: "Code", exact: true });
+            const table = container.getByRole("table");
 
-            await expect.element(codeSortButton).toHaveAccessibleName("Sort by Code");
+            await expect.element(codeSortButton).toHaveAccessibleName("Code");
+            await expect.element(codeSortButton).toHaveAccessibleDescription("Sortable, not sorted");
+            await expect.element(table).toHaveAccessibleName("Colleges");
+
+            await codeSortButton.click();
+            await expect.element(codeSortButton).toHaveAccessibleName("Code");
+            await expect
+                .element(codeSortButton)
+                .toHaveAccessibleDescription("Sorted ascending");
+            await expect
+                .element(container.getByRole("columnheader", { name: "Code", exact: true }))
+                .toBeVisible();
+            await expect
+                .element(table)
+                .toHaveAccessibleName("Colleges, sorted by Code ascending");
+
             await codeSortButton.click();
             await expect
                 .element(codeSortButton)
-                .toHaveAccessibleName("Sort by Code Sorted ascending");
-            await codeSortButton.click();
+                .toHaveAccessibleDescription("Sorted descending");
             await expect
-                .element(codeSortButton)
-                .toHaveAccessibleName("Sort by Code Sorted descending");
+                .element(table)
+                .toHaveAccessibleName("Colleges, sorted by Code descending");
+
             await codeSortButton.click();
-            await expect.element(codeSortButton).toHaveAccessibleName("Sort by Code");
+            await expect.element(codeSortButton).toHaveAccessibleDescription("Sortable, not sorted");
+            await expect.element(table).toHaveAccessibleName("Colleges");
         });
         it("sorts rows by code in ascending order after clicking on code column header", async () => {
             const { GTableFixture } = createCollegesTableFixture();
             const { container } = mnt(GTableFixture);
-            const codeSortButton = container.getByRole("button", {
-                name: /^Sort by Code\b/,
-            });
+            const codeSortButton = container.getByRole("button", { name: "Code", exact: true });
             await codeSortButton.click();
             expect(getColumn(container, 0)).toEqual(["KL", "KM", "KN"]);
         });
         it("sorts rows by code in descending order after clicking on code column header twice", async () => {
             const { GTableFixture } = createCollegesTableFixture();
             const { container } = mnt(GTableFixture);
-            const codeSortButton = container.getByRole("button", {
-                name: /^Sort by Code\b/,
-            });
+            const codeSortButton = container.getByRole("button", { name: "Code", exact: true });
             await codeSortButton.click();
             await codeSortButton.click();
             expect(getColumn(container, 0)).toEqual(["LT", "LL", "KY"]);
@@ -378,9 +396,7 @@ describe("GTable", () => {
         it("removes sorting after clicking on code column header thrice", async () => {
             const { GTableFixture } = createCollegesTableFixture();
             const { container } = mnt(GTableFixture);
-            const codeSortButton = container.getByRole("button", {
-                name: /^Sort by Code\b/,
-            });
+            const codeSortButton = container.getByRole("button", { name: "Code", exact: true });
             await codeSortButton.click();
             await codeSortButton.click();
             await codeSortButton.click();
@@ -391,10 +407,10 @@ describe("GTable", () => {
             const { container } = mnt(GTableFixture);
 
             await container
-                .getByRole("button", { name: /^Sort by Group\b/ })
+                .getByRole("button", { name: "Group", exact: true })
                 .click();
             await container
-                .getByRole("button", { name: /^Sort by Name\b/ })
+                .getByRole("button", { name: "Name", exact: true })
                 .click({ modifiers: ["Shift"] });
 
             expect(sort.value).toEqual([
@@ -403,18 +419,21 @@ describe("GTable", () => {
             ]);
             expect(getColumn(container, 0)).toEqual(["3", "1", "2", "4"]);
             await expect
-                .element(container.getByRole("button", { name: /^Sort by Group\b/ }))
-                .toHaveAccessibleName("Sort by Group Sorted ascending, priority 1");
+                .element(container.getByRole("button", { name: "Group", exact: true }))
+                .toHaveAccessibleDescription("Sorted ascending, priority 1");
             await expect
-                .element(container.getByRole("button", { name: /^Sort by Name\b/ }))
-                .toHaveAccessibleName("Sort by Name Sorted ascending, priority 2");
+                .element(container.getByRole("button", { name: "Name", exact: true }))
+                .toHaveAccessibleDescription("Sorted ascending, priority 2");
+            await expect
+                .element(container.getByRole("table"))
+                .toHaveAccessibleName(/sorted by Group ascending, then Name ascending$/);
         });
         it("updates the primary sort from the sort builder", async () => {
             const { GTableFixture, sort } = createMultiSortFixture();
             const { container } = mnt(GTableFixture);
 
             await container
-                .getByRole("button", { name: /^Sort by Group\b/ })
+                .getByRole("button", { name: "Group", exact: true })
                 .click();
             await container
                 .getByRole("button", { name: "Choose sort order" })
@@ -474,9 +493,7 @@ describe("GTable", () => {
         it("filters rows by 'No' in college in name column", async () => {
             const { GTableFixture } = createCollegesTableFixture();
             const { container } = mnt(GTableFixture);
-            const filterButton = container.getByRole("button", {
-                name: "Filter 'College' in Name column",
-            });
+            const filterButton = columnFilterButton(container, "'College' in Name");
             await filterButton.click();
 
             await page
@@ -490,9 +507,7 @@ describe("GTable", () => {
         it("shows correct number of results after filtering", async () => {
             const { GTableFixture } = createCollegesTableFixture();
             const { container } = mnt(GTableFixture);
-            const filterButton = container.getByRole("button", {
-                name: "Filter 'College' in Name column",
-            });
+            const filterButton = columnFilterButton(container, "'College' in Name");
             await filterButton.click();
             await page
                 .getByRole("option", {
@@ -505,9 +520,7 @@ describe("GTable", () => {
         it("clear filters removes all filters", async () => {
             const { GTableFixture } = createCollegesTableFixture();
             const { container, vm } = mnt(GTableFixture);
-            const filterButton = container.getByRole("button", {
-                name: "Filter 'College' in Name column",
-            });
+            const filterButton = columnFilterButton(container, "'College' in Name");
             await filterButton.click();
             const clearFiltersButton = container.getByRole("button", {
                 name: "Clear Filters",
@@ -541,9 +554,7 @@ describe("GTable", () => {
                 filterData: filterCollegesData,
             });
             const { container } = mnt(GTableFixture);
-            const filterButton = container.getByRole("button", {
-                name: "Filter Name column",
-            });
+            const filterButton = columnFilterButton(container, "Name");
             await filterButton.click();
 
             const searchInput = page.getByRole("searchbox", {
@@ -667,7 +678,7 @@ describe("GTable", () => {
 
             await expect
                 .element(
-                    container.getByRole("columnheader", { name: "Sort by Abbreviation" }),
+                    container.getByRole("columnheader", { name: /^Abbreviation\b/ }),
                 )
                 .not.toBeInTheDocument();
             expect(getColumn(container, 0)).toEqual(["LT", "KL", "KY"]);
@@ -706,7 +717,7 @@ describe("GTable", () => {
             expect(columnState.value.abbr?.visible).toBe(true);
             await expect
                 .element(
-                    container.getByRole("columnheader", { name: "Sort by Abbreviation" }),
+                    container.getByRole("columnheader", { name: /^Abbreviation\b/ }),
                 )
                 .toBeVisible();
             expect(getColumn(container, 2)).toEqual(["COM", "ACES", "AHS"]);
@@ -743,7 +754,7 @@ describe("GTable", () => {
             expect(columnState.value.abbr?.visible).toBe(true);
             await expect
                 .element(
-                    container.getByRole("columnheader", { name: "Sort by Abbreviation" }),
+                    container.getByRole("columnheader", { name: /^Abbreviation\b/ }),
                 )
                 .toBeVisible();
             await expect
@@ -1654,9 +1665,7 @@ describe("GTable", () => {
             const { GTableFixture } = createSearchableFixture();
             const { container } = mnt(GTableFixture);
 
-            const filterButton = container.getByRole("button", {
-                name: "Filter Abbreviation column",
-            });
+            const filterButton = columnFilterButton(container, "Abbreviation");
             await filterButton.click();
 
             await expect
@@ -1668,9 +1677,7 @@ describe("GTable", () => {
             const { GTableFixture } = createSearchableFixture();
             const { container } = mnt(GTableFixture);
 
-            const filterButton = container.getByRole("button", {
-                name: "Filter Abbreviation column",
-            });
+            const filterButton = columnFilterButton(container, "Abbreviation");
             await filterButton.click();
 
             await expect
@@ -1682,9 +1689,7 @@ describe("GTable", () => {
             const { GTableFixture } = createSearchableFixture();
             const { container } = mnt(GTableFixture);
 
-            const filterButton = container.getByRole("button", {
-                name: "Filter Abbreviation column",
-            });
+            const filterButton = columnFilterButton(container, "Abbreviation");
             await filterButton.click();
 
             await page.getByRole("combobox").click();
@@ -1699,9 +1704,7 @@ describe("GTable", () => {
             const { GTableFixture } = createSearchableFixture();
             const { container } = mnt(GTableFixture);
 
-            const filterButton = container.getByRole("button", {
-                name: "Filter Abbreviation column",
-            });
+            const filterButton = columnFilterButton(container, "Abbreviation");
             await filterButton.click();
 
             await page.getByRole("combobox").click();
@@ -1768,8 +1771,7 @@ describe("GTable", () => {
             });
             const { container } = mnt(GTableFixture);
 
-            await container
-                .getByRole("button", { name: "Filter Abbreviation column" })
+            await columnFilterButton(container, "Abbreviation")
                 .click();
             await page.getByRole("checkbox", { name: "COM" }).click();
             await page.getByRole("checkbox", { name: "ACES" }).click();
@@ -1796,8 +1798,7 @@ describe("GTable", () => {
             await container
                 .getByRole("button", { name: "Clear Filters" })
                 .click();
-            await container
-                .getByRole("button", { name: "Filter Abbreviation column" })
+            await columnFilterButton(container, "Abbreviation")
                 .click();
             await page.getByRole("checkbox", { name: "SOCW" }).click();
 
@@ -1902,7 +1903,7 @@ describe("GTable", () => {
                 .querySelectorAll<HTMLElement>("th.g-th")[index];
         }
 
-        it("names each filter button by its column and preserves the name when filters are cleared", async () => {
+        it("describes filter buttons by column and status, and lists filters in the caption", async () => {
             const { GTableFixture } = createMappedFixture({
                 name__like: "School",
                 in_name: false,
@@ -1911,31 +1912,45 @@ describe("GTable", () => {
             });
             const { container } = mnt(GTableFixture);
 
-            for (const column of mappedColumns) {
+            for (const [index, column] of mappedColumns.entries()) {
                 await expect
-                    .element(
-                        container.getByRole("button", {
-                            name: `Filter ${column.label} column (filtered)`,
-                            exact: true,
-                        }),
-                    )
-                    .toBeVisible();
+                    .element(filterButton(container, index))
+                    .toHaveAccessibleName("Filter");
+                await expect
+                    .element(filterButton(container, index))
+                    .toHaveAccessibleDescription(`${column.label} column, filtered`);
             }
+            await expect
+                .element(container.getByRole("table"))
+                .toHaveAccessibleName(
+                    `Mapped, filtered by ${mappedColumns.map((c) => c.label).join(", ")}`,
+                );
 
             await container
                 .getByRole("button", { name: "Clear Filters" })
                 .click();
 
-            for (const column of mappedColumns) {
+            for (const [index, column] of mappedColumns.entries()) {
                 await expect
-                    .element(
-                        container.getByRole("button", {
-                            name: `Filter ${column.label} column`,
-                            exact: true,
-                        }),
-                    )
-                    .toBeVisible();
+                    .element(filterButton(container, index))
+                    .toHaveAccessibleDescription(`${column.label} column`);
             }
+            await expect
+                .element(container.getByRole("table"))
+                .toHaveAccessibleName("Mapped");
+        });
+
+        it("labels the filter popover with the column", async () => {
+            const { GTableFixture } = createMappedFixture();
+            const { container } = mnt(GTableFixture);
+
+            filterButton(container, 1).click();
+            await expect
+                .element(page.getByRole("dialog", { name: "Filter Name column" }))
+                .toBeVisible();
+            await expect
+                .element(filterButton(container, 1))
+                .toHaveAttribute("aria-expanded", "true");
         });
 
         it("binds search input to the mapped key without transforming state", async () => {
@@ -1955,13 +1970,13 @@ describe("GTable", () => {
             await expect
                 .element(page.getByRole("searchbox", { name: "Search Name" }))
                 .toHaveValue("School");
-            expect(filterButton(container, 1).getAttribute("aria-label")).toBe(
-                "Filter Name column (filtered)",
-            );
+            await expect
+                .element(filterButton(container, 1))
+                .toHaveAccessibleDescription("Name column, filtered");
             expect(columnHeader(container, 1).classList).toContain("filtered");
-            expect(filterButton(container, 0).getAttribute("aria-label")).toBe(
-                "Filter Code column",
-            );
+            await expect
+                .element(filterButton(container, 0))
+                .toHaveAccessibleDescription("Code column");
         });
 
         it("shows state restored under mapped keys", async () => {
@@ -1995,8 +2010,8 @@ describe("GTable", () => {
                 in_name: false,
             });
             await expect
-                .poll(() => filterButton(container, 3).getAttribute("aria-label"))
-                .toBe("Filter 'College' in Name column (filtered)");
+                .element(filterButton(container, 3))
+                .toHaveAccessibleDescription("'College' in Name column, filtered");
         });
 
         it("writes multi-select and toggle values to mapped keys", async () => {
