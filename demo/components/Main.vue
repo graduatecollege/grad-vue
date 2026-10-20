@@ -105,6 +105,7 @@ onMounted(() => {
 </script>
 
 <template>
+    <GSkipLink />
     <div
         class="app"
         :class="{
@@ -129,7 +130,7 @@ onMounted(() => {
                 v-model="activeId"
             ></GSidebarMenu>
         </GSidebar>
-        <main class="app-main">
+        <GMain class="app-main">
             <div class="demo-page">
                 <div class="demo-page__intro">
                     <h1>
@@ -211,7 +212,7 @@ onMounted(() => {
                     />
                 </div>
             </div>
-        </main>
+        </GMain>
         <GOverlay />
     </div>
 </template>
