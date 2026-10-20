@@ -23,7 +23,7 @@ const titleId = computed(() => `${sectionId.value}-title`);
 </script>
 
 <template>
-    <section
+    <article
         v-bind="$attrs"
         class="demo-section"
         :id="sectionId"
@@ -31,5 +31,5 @@ const titleId = computed(() => `${sectionId.value}-title`);
     >
         <h2 class="demo-section__title" :id="titleId">{{ title }}</h2>
         <slot />
-    </section>
+    </article>
 </template>

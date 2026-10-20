@@ -22,7 +22,7 @@ const isTestSkipped = (status: ComponentTestResult["status"]) => {
 
 <template>
     <div class="test">
-        <h3 class="test__title">Test Results</h3>
+        <h3 class="test__title">{{ componentName }} Test Results</h3>
         <div class="test__summary">
             <span
                 :class="{

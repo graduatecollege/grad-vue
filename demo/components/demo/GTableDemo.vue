@@ -562,7 +562,7 @@ with the link <code>href</code> from the first link in the row.</p>
     .component-demo__preview-inner {
         min-width: 0;
     }
-    .g-table-table-wrap {
+    .g-table-outer-wrap {
         overflow-x: auto;
         max-width: 100%;
     }

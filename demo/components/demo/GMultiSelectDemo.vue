@@ -204,20 +204,5 @@ with a <code>GForm</code>.</p>
                 />
             </template>
         </ComponentDemo>
-        <ComponentDemo
-            description="Options can include an optional description that renders as a smaller second line in the dropdown. Selected chips show only the label."
-            component="GMultiSelect"
-            :props-config="{}"
-        >
-            <template #default>
-                <GMultiSelect
-                    v-model="collegeSelections"
-                    :options="collegeOptions"
-                    label="Filter by college"
-                    placeholder="Select colleges"
-                />
-                <DemoResult label="Selected">{{ collegeSelections }}</DemoResult>
-            </template>
-        </ComponentDemo>
     </ComponentSection>
 </template>
