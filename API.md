@@ -1329,6 +1329,10 @@ collapsible breakpoint.
 When `storage-key` is provided, the sidebar remembers and restores its own
 scroll position from `sessionStorage`.
 
+The dark theme has no background image by default. Set the
+`--g-sidebar-background-image` CSS variable (or the `background-image`
+prop) to add one.
+
 ### Props
 
 ```typescript

@@ -19,6 +19,10 @@
  *
  * When `storage-key` is provided, the sidebar remembers and restores its own
  * scroll position from `sessionStorage`.
+ *
+ * The dark theme has no background image by default. Set the
+ * `--g-sidebar-background-image` CSS variable (or the `background-image`
+ * prop) to add one.
  */
 export default {};
 </script>
@@ -108,7 +112,7 @@ const bgImage = computed(() => {
     if (props.theme === "light") {
         return "none";
     }
-    return "url('https://gradcdn.blob.core.windows.net/public/sidebar-bg2.jpg')";
+    return "var(--g-sidebar-background-image, none)";
 });
 
 const bgColor = computed(() => {
@@ -177,7 +181,8 @@ g-sidebar:not(:defined),
     box-sizing: border-box;
     background-size: cover;
     background-position: top;
-    background-image: url('https://gradcdn.blob.core.windows.net/public/sidebar-bg2.jpg');
+    /*noinspection CssUnresolvedCustomProperty*/
+    background-image: var(--g-sidebar-background-image, none);
     background-color: #030913;
     position: fixed;
     left: 0;

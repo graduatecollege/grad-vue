@@ -111,6 +111,9 @@ with a matching GHamburgerMenu instance and <code>media-query</code> to set the
 collapsible breakpoint.</p>
 <p>When <code>storage-key</code> is provided, the sidebar remembers and restores its own
 scroll position from <code>sessionStorage</code>.</p>
+<p>The dark theme has no background image by default. Set the
+<code>--g-sidebar-background-image</code> CSS variable (or the <code>background-image</code>
+prop) to add one.</p>
 </template>
             <template #default="{ props }">
                 <div style="display: flex; gap: 1rem; flex-direction: column;">
