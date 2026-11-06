@@ -38,17 +38,17 @@
         "watch": "vite build --watch"
     },
     "dependencies": {
-        "@tiptap/core": "^3.32.0",
-        "@tiptap/extension-bold": "^3.32.0",
-        "@tiptap/extension-document": "^3.32.0",
-        "@tiptap/extension-italic": "^3.32.0",
-        "@tiptap/extension-list": "^3.32.0",
-        "@tiptap/extension-paragraph": "^3.32.0",
-        "@tiptap/extension-placeholder": "^3.32.0",
-        "@tiptap/extension-text": "^3.32.0",
-        "@tiptap/extension-heading": "^3.32.0",
+        "@tiptap/core": "^3.32.2",
+        "@tiptap/extension-bold": "^3.32.2",
+        "@tiptap/extension-document": "^3.32.2",
+        "@tiptap/extension-italic": "^3.32.2",
+        "@tiptap/extension-list": "^3.32.2",
+        "@tiptap/extension-paragraph": "^3.32.2",
+        "@tiptap/extension-placeholder": "^3.32.2",
+        "@tiptap/extension-text": "^3.32.2",
+        "@tiptap/extension-heading": "^3.32.2",
         "@tiptap/extensions": "^3.32.0",
-        "@tiptap/vue-3": "^3.32.0",
+        "@tiptap/vue-3": "^3.32.2",
         "@vueuse/core": "^15",
         "@vueuse/integrations": "^15",
         "focus-trap": "^8",
@@ -59,6 +59,6 @@
         "typescript": "^7.0.2",
         "vite": "^8.3.5",
         "vite-plugin-dts": "^5.1.2",
-        "vue-tsc": "^3.3.13"
+        "vue-tsc": "^3.3.14"
     }
 }
