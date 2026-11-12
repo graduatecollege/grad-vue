@@ -41,6 +41,7 @@ import GCheckboxGroupDemo from "~/components/demo/GCheckboxGroupDemo.vue";
 import GMultiSelectDemo from "~/components/demo/GMultiSelectDemo.vue";
 import GSkipLinkDemo from "~/components/demo/GSkipLinkDemo.vue";
 import GMainDemo from "~/components/demo/GMainDemo.vue";
+import GAppUpdateNoticeDemo from "~/components/demo/GAppUpdateNoticeDemo.vue";
 import { onMounted, provide, ref } from "vue";
 import { useTemplateRef } from "#imports";
 import GFormDemo from "~/components/demo/GFormDemo.vue";
@@ -95,6 +96,7 @@ const demoComponents = [
     { label: "User Menu", component: GUserMenuDemo },
     { label: "Skip Link", component: GSkipLinkDemo },
     { label: "Main", component: GMainDemo },
+    { label: "App Update Notice", component: GAppUpdateNoticeDemo },
 ];
 
 const demo = useTemplateRef("demo");

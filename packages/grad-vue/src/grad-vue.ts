@@ -40,6 +40,7 @@ import GMultiSelect from "./components/GMultiSelect.vue";
 import GToggle from "./components/GToggle.vue";
 import GSkipLink from "./components/GSkipLink.vue";
 import GMain from "./components/GMain.vue";
+import GAppUpdateNotice from "./components/GAppUpdateNotice.vue";
 
 import "./css/main.css";
 import VGtooltip from "./directives/v-gtooltip.ts";
@@ -88,6 +89,7 @@ export {
     GToggle,
     GSkipLink,
     GMain,
+    GAppUpdateNotice,
 };
 
 export { calculatePopoverPosition } from "./compose/popoverPosition";
@@ -110,6 +112,12 @@ export type {
     UseRouteAnnouncerOptions,
     UseRouteAnnouncerReturn,
 } from "./compose/useRouteAnnouncer";
+export {
+    useAppUpdateCheck,
+    reloadOnStaleChunks,
+    APP_BUILD_ID_META,
+} from "./compose/useAppUpdateCheck";
+export type { AppUpdateCheckOptions } from "./compose/useAppUpdateCheck";
 export { useSidebar } from "./compose/useSidebar";
 export { useWebComponentSidebar } from "./compose/useWebComponentSidebar";
 export { useForm } from "./compose/useForm";

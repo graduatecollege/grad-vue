@@ -24,6 +24,10 @@
         "./plugin": {
             "import": "./dist/plugin.js"
         },
+        "./vite": {
+            "types": "./dist/vite.d.ts",
+            "import": "./dist/vite.js"
+        },
         "./grad-vue-elements": {
             "import": "./dist/grad-vue-elements.js"
         },
@@ -51,6 +55,14 @@
         "@vueuse/integrations": "^15",
         "focus-trap": "^8",
         "vue": "^3.5"
+    },
+    "peerDependencies": {
+        "vite": ">=6"
+    },
+    "peerDependenciesMeta": {
+        "vite": {
+            "optional": true
+        }
     },
     "devDependencies": {
         "@vitejs/plugin-vue": "^6.0.10",

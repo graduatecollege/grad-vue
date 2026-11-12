@@ -267,6 +267,7 @@ const fname = ref("heh");
                 <a href="#students">Students</a>
                 <a href="#hooders">Hooders</a>
                 <a href="#skip-link">Skip Link</a>
+                <a href="#app-update-notice">App Update Notice</a>
             </template>
         </GAppHeader>
 
@@ -533,6 +534,15 @@ const fname = ref("heh");
                 <section id="skip-link">
                     <h2>Skip Link</h2>
                     <GSkipLink target="skip-link" />
+                </section>
+                <section id="app-update-notice">
+                    <h2>App Update Notice</h2>
+                    <GAppUpdateNotice
+                        ref="appUpdateNotice"
+                        current-build-id="playground"
+                        version-url="data:application/json,%7B%22buildId%22%3A%22newer%22%7D"
+                    />
+                    <GButton @click="($refs.appUpdateNotice as any).check()">Check for updates</GButton>
                 </section>
             </main>
         </div>

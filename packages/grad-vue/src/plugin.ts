@@ -41,6 +41,7 @@ import {
     GToggle,
     GSkipLink,
     GMain,
+    GAppUpdateNotice,
     VGtooltip,
     VGtooltipDirective,
 } from "./grad-vue.ts";
@@ -90,12 +91,14 @@ export default {
         app.component("GToggle", GToggle);
         app.component("GSkipLink", GSkipLink);
         app.component("GMain", GMain);
+        app.component("GAppUpdateNotice", GAppUpdateNotice);
     },
 };
 
 declare module "vue" {
     export interface GlobalComponents {
         GAppHeader: typeof GAppHeader;
+        GAppUpdateNotice: typeof GAppUpdateNotice;
         GAlertDialog: typeof GAlertDialog;
         GButton: typeof GButton;
         GCheckboxGroup: typeof GCheckboxGroup;

@@ -9,7 +9,11 @@ export default defineConfig({
     build: {
         sourcemap: true,
         lib: {
-            entry: [resolve(import.meta.dirname, "src/grad-vue.ts"), resolve(import.meta.dirname, "src/plugin.ts")],
+            entry: [
+                resolve(import.meta.dirname, "src/grad-vue.ts"),
+                resolve(import.meta.dirname, "src/plugin.ts"),
+                resolve(import.meta.dirname, "src/vite.ts"),
+            ],
             formats: ["es"],
             fileName(format, name) {
                 return name + '.js';

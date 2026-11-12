@@ -76,6 +76,34 @@ import { GButton } from '@illinois-grad/grad-vue'
 </template>
 ```
 
+### Notify Users About New Deploys
+
+`GAppUpdateNotice` asks users to refresh when a newer build is deployed while
+their tab is open. Add the Vite plugin, which gives each build a unique ID and
+emits `version.json`:
+
+```javascript
+// vite.config.ts
+import { appBuildVersion } from '@illinois-grad/grad-vue/vite'
+
+export default defineConfig({
+  plugins: [vue(), appBuildVersion()],
+})
+```
+
+Render `<GAppUpdateNotice />` once in the app's root component, and serve
+`version.json` without caching, e.g. in nginx:
+
+```nginx
+location = /version.json {
+    add_header Cache-Control "no-store" always;
+    try_files $uri =404;
+}
+```
+
+Optionally call `reloadOnStaleChunks()` in `main.ts` to reload once when a
+lazily loaded chunk was removed by a deploy.
+
 ## Development
 
 ### Bootstrapping a New Component

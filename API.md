@@ -93,6 +93,66 @@ type Props = {
 
 ---
 
+## GAppUpdateNotice
+
+Tells users that a newer version of the app has been deployed while their tab
+stayed open, and offers to refresh the page.
+
+Build the app with the `appBuildVersion()` Vite plugin, which gives each build
+a unique ID. The notice checks the deployed version when the tab regains focus
+or visibility, and every 10 minutes while it is visible. It does nothing in
+development or without the plugin.
+
+```ts
+// vite.config.ts
+import { appBuildVersion } from "@illinois-grad/grad-vue/vite";
+
+export default defineConfig({
+    plugins: [vue(), appBuildVersion()],
+});
+```
+
+```vue
+<GAppUpdateNotice />
+```
+
+Serve `version.json` with `Cache-Control: no-store`, and optionally call
+`reloadOnStaleChunks()` at startup to recover from lazily loaded chunks that
+a deploy removed.
+
+### Props
+
+```typescript
+type Props = {
+    /**
+     * Message shown when an update is available
+     */
+    message?: string;
+    /**
+     * Refresh button text
+     */
+    reloadLabel?: string;
+    /**
+     * Dismiss button text
+     */
+    dismissLabel?: string;
+    /**
+     * Milliseconds between checks while the tab is visible
+     */
+    intervalMs?: number;
+    /**
+     * URL of the deployed version file, defaults to the one set by `appBuildVersion()`
+     */
+    versionUrl?: string;
+    /**
+     * Build ID of the running app, defaults to the one set by `appBuildVersion()`
+     */
+    currentBuildId?: string;
+};
+```
+
+---
+
 ## GButton
 
 The element or component can be set with the `component` prop, so it can be
