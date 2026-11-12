@@ -14,7 +14,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     container:
-      image: mcr.microsoft.com/playwright:v1.64.1-noble@sha256:7852dc5a7d72f5fe458a597d690f6c42fbc8e9e26ddfa95f8e6ef552558d9bbf # ratchet:mcr.microsoft.com/playwright:v1.64.1-noble
+      image: mcr.microsoft.com/playwright:v1.65.0-noble@sha256:9beb546099e11f52d62e505537914870e01a67e0e6b00ae41da4775324e73dbe # ratchet:mcr.microsoft.com/playwright:v1.65.0-noble
       options: --user 1001
     steps:
       - name: Checkout code
@@ -93,7 +93,7 @@ jobs:
 
       - name: Build Changelog
         id: build_changelog
-        uses: mikepenz/release-changelog-builder-action@aa013739bbc8e7067dbbecd4525ff11aeb51a84b # ratchet:mikepenz/release-changelog-builder-action@v6
+        uses: mikepenz/release-changelog-builder-action@b0db9d18b53447ef9f940a46c8f31653c4d9f621 # ratchet:mikepenz/release-changelog-builder-action@v6
         with:
           configuration: ".github/changelog_config.json"
           mode: 'COMMIT'
@@ -101,7 +101,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
 
       - name: Create Release
-        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # ratchet:softprops/action-gh-release@v3
+        uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # ratchet:softprops/action-gh-release@v3
         with:
           body: ${{ steps.build_changelog.outputs.changelog }}
           draft: false
