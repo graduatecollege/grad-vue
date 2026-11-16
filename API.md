@@ -1132,9 +1132,11 @@ passed back to the component.
 
 **Events**:
 
-- `submit` event is emitted when a search should be performed.
-- `select` event is submitted when a user makes a selection
-  in the dropdown.
+- `submit` event is emitted with `string | null` when a search should be performed.
+- `select` event is emitted when a user selects a result in the dropdown.
+- `action` event is emitted with the chosen `GSearchAction` when a user
+  activates an action in the dropdown, leaving the query and dropdown open.
+- `close` event is emitted when the results dropdown closes.
 
 > [!NOTE]
 > The `v-model` value should *not* be used to trigger a search,
@@ -1146,12 +1148,27 @@ passed back to the component.
   - Pass an array of objects that extend `{ id: string | number; title: string; }`.
   - Pass an array of `GSearchGroup<T>` objects, where the `items` property extends the above type.
     In this case the results are grouped.
+- `actions` renders additional `GSearchAction` items
+  (`{ id: string | number; label: string; icon?: string | false }`) in their own shaded
+  group after the results with a decorative leading icon. They are reachable with the
+  arrow keys, excluded from the result count, and announced to screen readers via a
+  polite status region.
+- `actionsLabel` customizes the label of the actions group (defaults to `"Actions"`).
+- `actionIcon` sets default icon classes (e.g., `"fa-solid fa-arrow-right"`) for the
+  decorative leading icon on actions, or `false` to hide it. Overridden per action by
+  `action.icon` or by the `action-icon` slot.
 - `auto` makes search submit on user input. Defaults to `true`.
   if `false`, submission happens on Enter or clicking the search button.
 - `loading` shows a loading indicator. Use if the search may take longer.
 
-**Slot**: `option` customizes how an option is rendered.
+**Slot**: `option` customizes how a result option is rendered.
 It receives the current item as `option`.
+
+**Slot**: `action` customizes how an action option is rendered.
+It receives the current action as `action`.
+
+**Slot**: `action-icon` customizes the decorative leading icon for an action.
+It receives the current action as `action`.
 
 **Slot**: `group` customizes the group label for each group.
 
@@ -1171,9 +1188,10 @@ const searchData = ref<SearchResult[]>([
 ]);
 const searchResults = ref<SearchResult[]>([]);
 
-function submit(query: string) {
+function submit(query: string | null) {
+    const q = (query ?? "").toLowerCase();
     searchResults.value = searchData.value.filter((result) =>
-        result.title.toLowerCase().includes(query.toLowerCase()),
+        result.title.toLowerCase().includes(q),
     );
 }
 function selected(item: SearchResult) {
@@ -1194,6 +1212,19 @@ function selected(item: SearchResult) {
 ```typescript
 type Props = {
     results: GSearchGroup<T>[] | T[];
+    /**
+     * Actions shown in their own group after search results
+     */
+    actions?: GSearchAction[];
+    /**
+     * Group label for actions
+     */
+    actionsLabel?: string;
+    /**
+     * Default icon classes for a decorative leading icon on actions, or `false` to hide it.
+     * Overridden per action by `action.icon` or by the `action-icon` slot.
+     */
+    actionIcon?: string | false;
     /**
      * Placeholder
      */
@@ -1217,6 +1248,8 @@ type Props = {
 
 - `group`
 - `option`
+- `action`
+- `action-icon`
 
 ---
 

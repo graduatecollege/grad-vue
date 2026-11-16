@@ -199,3 +199,4 @@ export type {
 export { usePersistentTableColumnState } from "./compose/usePersistentTableColumnState";
 export type { BulkAction } from "./components/GTable.vue";
 export type { CheckboxOption } from "./components/GCheckboxGroup.vue";
+export type { GSearchAction, GSearchGroup } from "./components/GSearch.vue";
