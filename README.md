@@ -117,6 +117,8 @@ See individual package READMEs for more details:
 - [grad-vue README](./packages/grad-vue/README.md)
 - [grad-vue-rte README](./packages/grad-vue-rte/README.md)
 
-## License
+## Support
 
-MIT - University of Illinois Graduate College
+This product is supported by the Graduate College, University of Illinois Urbana-Champaign on a best-effort basis.
+
+As of the last update to this README, support for this product will continue until at least 2027-12-31.
