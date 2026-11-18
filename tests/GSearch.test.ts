@@ -272,6 +272,41 @@ describe("GSearch", () => {
                 .toHaveAttribute("aria-expanded", "true");
         });
 
+        it("clicking Submit Search while the dropdown is open keeps focus and does not emit close", async () => {
+            vi.useFakeTimers();
+            const onClose = vi.fn();
+            const onSubmit = vi.fn();
+            const model = ref("");
+            const { container } = mnt(GSearch, {
+                model,
+                props: {
+                    results: [{ id: "1", title: "Option 1" }],
+                    onClose,
+                    onSubmit,
+                },
+            });
+
+            const input = container.getByRole("combobox");
+            await userEvent.type(input, "opt");
+            await vi.advanceTimersByTimeAsync(400);
+            await expect
+                .element(input)
+                .toHaveAttribute("aria-expanded", "true");
+            onSubmit.mockClear();
+
+            await userEvent.click(
+                container.getByRole("button", { name: "Submit Search" }),
+            );
+
+            expect(onClose).not.toHaveBeenCalled();
+            expect(onSubmit).toHaveBeenCalledTimes(1);
+            expect(onSubmit).toHaveBeenCalledWith("opt", { trigger: "button" });
+            await expect.element(input).toHaveFocus();
+            await expect
+                .element(input)
+                .toHaveAttribute("aria-expanded", "true");
+        });
+
         it("pressing Enter on Submit Search button after blurring input submits instead of activating previous highlight", async () => {
             vi.useFakeTimers();
             const onSelect = vi.fn();

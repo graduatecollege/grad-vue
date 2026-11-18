@@ -489,7 +489,11 @@ watch(
                     expanded && activeEntry ? activeEntry.optionId : undefined
                 "
             />
-            <button type="submit" class="g-search-submit">
+            <button
+                type="submit"
+                class="g-search-submit"
+                @mousedown.prevent
+            >
                 <template v-if="isLoading">
                     <GProgress size="tiny" />
                 </template>
