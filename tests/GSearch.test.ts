@@ -3,6 +3,7 @@ import { h, ref } from "vue";
 import GSearch, {
     type GSearchAction,
     type GSearchGroup,
+    type GSearchSubmitDetails,
 } from "../packages/grad-vue/src/components/GSearch.vue";
 import { mnt, testAccessibility } from "./test-utils";
 import { userEvent } from "vitest/browser";
@@ -865,6 +866,77 @@ describe("GSearch", () => {
     });
 
     describe("Submit trigger", () => {
+        it("closes the dropdown once when the parent clears the model, and reopens on typing", async () => {
+            const onClose = vi.fn();
+            const model = ref("");
+            const { container } = mnt(GSearch, {
+                model,
+                props: {
+                    results: [{ id: "1", title: "Option 1" }],
+                    onClose,
+                },
+            });
+
+            const input = container.getByRole("combobox");
+            await userEvent.type(input, "opt");
+            await expect
+                .element(input)
+                .toHaveAttribute("aria-expanded", "true");
+
+            model.value = "";
+            await expect
+                .element(input)
+                .toHaveAttribute("aria-expanded", "false");
+            await expect.element(input).toHaveValue("");
+            await expect.element(input).toHaveFocus();
+            expect(
+                container.getByRole("option", { name: "Option 1" }).query(),
+            ).toBeNull();
+            expect(onClose).toHaveBeenCalledTimes(1);
+
+            await userEvent.type(input, "op");
+            await expect
+                .element(input)
+                .toHaveAttribute("aria-expanded", "true");
+            expect(onClose).toHaveBeenCalledTimes(1);
+        });
+
+        it("closes when the parent clears the model in response to an Enter submit", async () => {
+            const onClose = vi.fn();
+            const model = ref("");
+            const onSubmit = vi.fn(
+                (query: string | null, details: GSearchSubmitDetails) => {
+                    if (details.trigger === "enter" && query === "1588") {
+                        model.value = "";
+                    }
+                },
+            );
+            const { container } = mnt(GSearch, {
+                model,
+                props: {
+                    results: [{ id: "1588", title: "Physics (1588)" }],
+                    onSubmit,
+                    onClose,
+                },
+            });
+
+            const input = container.getByRole("combobox");
+            await userEvent.type(input, "1588");
+            await expect
+                .element(input)
+                .toHaveAttribute("aria-expanded", "true");
+
+            await userEvent.type(input, "{Enter}");
+            expect(onSubmit).toHaveBeenCalledWith("1588", {
+                trigger: "enter",
+            });
+            await expect
+                .element(input)
+                .toHaveAttribute("aria-expanded", "false");
+            await expect.element(input).toHaveValue("");
+            await expect.element(input).toHaveFocus();
+            expect(onClose).toHaveBeenCalledTimes(1);
+        });
         it("reports auto, enter, and button triggers", async () => {
             vi.useFakeTimers();
             const onSubmit = vi.fn();

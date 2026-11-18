@@ -459,6 +459,7 @@ watch(
         if (!val) {
             submit.cancel();
             activeIndex.value = -1;
+            closed.value = true;
         } else if (props.auto) {
             // Auto-submit on input change with debounce
             submit();
