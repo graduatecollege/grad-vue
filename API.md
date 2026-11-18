@@ -1133,6 +1133,10 @@ passed back to the component.
 **Events**:
 
 - `submit` event is emitted with `string | null` when a search should be performed.
+  The second argument is a `GSearchSubmitDetails` object whose `trigger` is
+  `"auto"` for the debounced submit while typing, or `"enter"` / `"button"` when
+  the user explicitly submits. Use an explicit submit to jump straight to an
+  item when the query is an exact identifier (e.g., an ID number).
 - `select` event is emitted when a user selects a result in the dropdown.
 - `action` event is emitted with the chosen `GSearchAction` when a user
   activates an action in the dropdown, leaving the query and dropdown open.

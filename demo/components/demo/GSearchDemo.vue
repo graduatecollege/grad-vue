@@ -7,6 +7,7 @@ import {
     GSearch,
     type GSearchAction,
     type GSearchGroup,
+    type GSearchSubmitDetails,
 } from "@illinois-grad/grad-vue";
 
 const searchQuery = ref("");
@@ -112,6 +113,36 @@ function handleStudentClose() {
 function selectStudent(student: StudentResult) {
     selectedStudent.value = student.title;
 }
+
+interface Department {
+    id: string;
+    title: string;
+}
+
+const departments: Department[] = [
+    { id: "1434", title: "Computer Science (1434)" },
+    { id: "1475", title: "Chemistry (1475)" },
+    { id: "1588", title: "Physics (1588)" },
+    { id: "1612", title: "Mathematics (1612)" },
+];
+
+const departmentQuery = ref("");
+const departmentResults = ref<Department[]>([]);
+const openedDepartment = ref("");
+
+function submitDepartments(query: string | null, details: GSearchSubmitDetails) {
+    const q = (query ?? "").trim().toLowerCase();
+    if (details.trigger !== "auto") {
+        const exact = departments.find((d) => d.id === q);
+        if (exact) {
+            openedDepartment.value = exact.title;
+        }
+    }
+    departmentResults.value =
+        q.length < 2
+            ? []
+            : departments.filter((d) => d.title.toLowerCase().includes(q));
+}
 </script>
 
 <template>
@@ -189,7 +220,11 @@ that can be used to trigger searches, and then the results are
 passed back to the component.</p>
 <p><strong>Events</strong>:</p>
 <ul>
-<li><code>submit</code> event is emitted with <code>string | null</code> when a search should be performed.</li>
+<li><code>submit</code> event is emitted with <code>string | null</code> when a search should be performed.
+The second argument is a <code>GSearchSubmitDetails</code> object whose <code>trigger</code> is
+<code>&quot;auto&quot;</code> for the debounced submit while typing, or <code>&quot;enter&quot;</code> / <code>&quot;button&quot;</code> when
+the user explicitly submits. Use an explicit submit to jump straight to an
+item when the query is an exact identifier (e.g., an ID number).</li>
 <li><code>select</code> event is emitted when a user selects a result in the dropdown.</li>
 <li><code>action</code> event is emitted with the chosen <code>GSearchAction</code> when a user
 activates an action in the dropdown, leaving the query and dropdown open.</li>
@@ -296,6 +331,26 @@ It receives the current action as <code>action</code>.</p>
                 />
                 <DemoResult label="Selected student">{{
                     selectedStudent
+                }}</DemoResult>
+            </template>
+        </ComponentDemo>
+
+        <ComponentDemo
+            description="Jump to an exact ID on Enter: the submit event's trigger tells typing apart from an explicit submit (try typing 1588 and pressing Enter)."
+            component="GSearch"
+            :props-config="{}"
+        >
+            <template #default>
+                <GSearch
+                    v-model="departmentQuery"
+                    label="Search departments"
+                    placeholder="Department name or ID..."
+                    :results="departmentResults"
+                    @submit="submitDepartments"
+                    @select="(d: Department) => (openedDepartment = d.title)"
+                />
+                <DemoResult label="Opened department">{{
+                    openedDepartment
                 }}</DemoResult>
             </template>
         </ComponentDemo>

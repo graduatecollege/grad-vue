@@ -79,7 +79,7 @@ describe("GSearch", () => {
 
             await userEvent.type(input, "ing"); // Should result in "testtest2ing"
             await vi.advanceTimersByTimeAsync(310);
-            expect(callback).toHaveBeenCalledWith("testtest2ing");
+            expect(callback).toHaveBeenCalledWith("testtest2ing", { trigger: "auto" });
 
             vi.useRealTimers();
         });
@@ -121,7 +121,7 @@ describe("GSearch", () => {
             await userEvent.type(input, "test{Enter}");
             await vm.$nextTick();
 
-            expect(callback).toHaveBeenCalledWith("test");
+            expect(callback).toHaveBeenCalledWith("test", { trigger: "enter" });
         });
 
         it("with options open, arrow down should move to next result", async () => {
@@ -234,7 +234,7 @@ describe("GSearch", () => {
 
             expect(onSelect).not.toHaveBeenCalled();
             expect(onSubmit).toHaveBeenCalledTimes(1);
-            expect(onSubmit).toHaveBeenCalledWith("opt");
+            expect(onSubmit).toHaveBeenCalledWith("opt", { trigger: "enter" });
             expect(model.value).toBe("opt");
             await expect
                 .element(input)
@@ -265,7 +265,7 @@ describe("GSearch", () => {
 
             expect(onSelect).not.toHaveBeenCalled();
             expect(onSubmit).toHaveBeenCalledTimes(1);
-            expect(onSubmit).toHaveBeenCalledWith("opt");
+            expect(onSubmit).toHaveBeenCalledWith("opt", { trigger: "button" });
             await expect
                 .element(input)
                 .toHaveAttribute("aria-expanded", "true");
@@ -315,7 +315,7 @@ describe("GSearch", () => {
             expect(onAction).not.toHaveBeenCalled();
             expect(onSelect).not.toHaveBeenCalled();
             expect(onSubmit).toHaveBeenCalledTimes(1);
-            expect(onSubmit).toHaveBeenCalledWith("opt");
+            expect(onSubmit).toHaveBeenCalledWith("opt", { trigger: "button" });
         });
 
         it("choosing an action cancels pending auto-submit so submit is not emitted afterwards", async () => {
@@ -861,6 +861,85 @@ describe("GSearch", () => {
                     }),
                 )
                 .toBeInTheDocument();
+        });
+    });
+
+    describe("Submit trigger", () => {
+        it("reports auto, enter, and button triggers", async () => {
+            vi.useFakeTimers();
+            const onSubmit = vi.fn();
+            const model = ref("");
+            const { container } = mnt(GSearch, {
+                model,
+                props: { results: [], onSubmit },
+            });
+
+            const input = container.getByRole("combobox");
+            await userEvent.type(input, "123");
+            await vi.advanceTimersByTimeAsync(400);
+            expect(onSubmit).toHaveBeenCalledTimes(1);
+            expect(onSubmit).toHaveBeenLastCalledWith("123", {
+                trigger: "auto",
+            });
+
+            await userEvent.type(input, "4{Enter}");
+            await vi.advanceTimersByTimeAsync(400);
+            expect(onSubmit).toHaveBeenCalledTimes(2);
+            expect(onSubmit).toHaveBeenLastCalledWith("1234", {
+                trigger: "enter",
+            });
+
+            await userEvent.click(
+                container.getByRole("button", { name: "Submit Search" }),
+            );
+            expect(onSubmit).toHaveBeenCalledTimes(3);
+            expect(onSubmit).toHaveBeenLastCalledWith("1234", {
+                trigger: "button",
+            });
+        });
+
+        it("Enter before the debounce fires reports only the enter trigger", async () => {
+            vi.useFakeTimers();
+            const onSubmit = vi.fn();
+            const { container } = mnt(GSearch, {
+                props: { modelValue: "", results: [], onSubmit },
+            });
+
+            await userEvent.type(
+                container.getByRole("combobox"),
+                "123456789{Enter}",
+            );
+            await vi.advanceTimersByTimeAsync(400);
+
+            expect(onSubmit).toHaveBeenCalledTimes(1);
+            expect(onSubmit).toHaveBeenCalledWith("123456789", {
+                trigger: "enter",
+            });
+        });
+
+        it("Enter with a highlighted result selects instead of submitting", async () => {
+            const onSubmit = vi.fn();
+            const onSelect = vi.fn();
+            const { container } = mnt(GSearch, {
+                props: {
+                    modelValue: "",
+                    results: [{ id: "1", title: "Option 1" }],
+                    auto: false,
+                    onSubmit,
+                    onSelect,
+                },
+            });
+
+            const input = container.getByRole("combobox");
+            await userEvent.type(input, "opt{Enter}");
+            onSubmit.mockClear();
+            await userEvent.type(input, "{ArrowDown}{Enter}");
+
+            expect(onSelect).toHaveBeenCalledWith({
+                id: "1",
+                title: "Option 1",
+            });
+            expect(onSubmit).not.toHaveBeenCalled();
         });
     });
 

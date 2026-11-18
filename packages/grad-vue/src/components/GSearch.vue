@@ -10,6 +10,10 @@
  * **Events**:
  *
  * - `submit` event is emitted with `string | null` when a search should be performed.
+ *   The second argument is a `GSearchSubmitDetails` object whose `trigger` is
+ *   `"auto"` for the debounced submit while typing, or `"enter"` / `"button"` when
+ *   the user explicitly submits. Use an explicit submit to jump straight to an
+ *   item when the query is an exact identifier (e.g., an ID number).
  * - `select` event is emitted when a user selects a result in the dropdown.
  * - `action` event is emitted with the chosen `GSearchAction` when a user
  *   activates an action in the dropdown, leaving the query and dropdown open.
@@ -117,6 +121,18 @@ export interface GSearchAction {
     icon?: string | false;
 }
 
+/**
+ * What caused a `submit` event:
+ * - `"auto"`: debounced submit while typing (when `auto` is enabled)
+ * - `"enter"`: Enter pressed in the input with no option highlighted
+ * - `"button"`: the search form was submitted with the button
+ */
+export type GSearchSubmitTrigger = "auto" | "enter" | "button";
+
+export interface GSearchSubmitDetails {
+    trigger: GSearchSubmitTrigger;
+}
+
 type ResultEntry<R> = { kind: "result"; optionId: string; item: R };
 
 type NavigableEntry<R> =
@@ -179,7 +195,7 @@ const slots = defineSlots<{
 }>();
 const emit = defineEmits<{
     select: [result: T];
-    submit: [query: string | null];
+    submit: [query: string | null, details: GSearchSubmitDetails];
     action: [action: GSearchAction];
     close: [];
 }>();
@@ -282,18 +298,18 @@ const activeEntry = computed<NavigableEntry<T> | undefined>(() =>
 );
 
 const submit = useDebounceFn(() => {
-    emit("submit", modelValue.value);
+    emit("submit", modelValue.value, { trigger: "auto" });
 }, 300);
 
-function submitImmediate() {
+function submitImmediate(trigger: GSearchSubmitTrigger) {
     submit.cancel();
-    emit("submit", modelValue.value);
+    emit("submit", modelValue.value, { trigger });
     closed.value = false;
 }
 
 function onFormSubmit() {
     inputRef.value?.focus();
-    submitImmediate();
+    submitImmediate("button");
 }
 
 onBeforeUnmount(submit.cancel);
@@ -388,7 +404,7 @@ function onKeydown(ev: KeyboardEvent) {
                 triggerAction(activeEntry.value.action);
             }
         } else {
-            submitImmediate();
+            submitImmediate("enter");
         }
     } else if (ev.key === "Escape") {
         if (expanded.value) {
