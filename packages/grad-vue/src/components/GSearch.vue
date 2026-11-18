@@ -117,8 +117,10 @@ export interface GSearchAction {
     icon?: string | false;
 }
 
+type ResultEntry<R> = { kind: "result"; optionId: string; item: R };
+
 type NavigableEntry<R> =
-    | { kind: "result"; optionId: string; item: R }
+    | ResultEntry<R>
     | { kind: "action"; optionId: string; action: GSearchAction };
 
 type Props = {
@@ -219,8 +221,22 @@ const groupedResults = computed<GSearchGroup<T>[]>(() =>
     isGrouped.value ? (props.results as GSearchGroup<T>[]) : [],
 );
 
-const nonEmptyGroups = computed<GSearchGroup<T>[]>(() =>
-    groupedResults.value.filter((g) => g.items.length > 0),
+// Option ids include the group index so the same item can appear in several groups.
+const groupEntries = computed(() =>
+    groupedResults.value.map((group, groupIndex) => ({
+        group,
+        entries: group.items.map(
+            (item): ResultEntry<T> => ({
+                kind: "result",
+                optionId: `${id}-group-${groupIndex}-option-${item.id}`,
+                item,
+            }),
+        ),
+    })),
+);
+
+const nonEmptyGroupEntries = computed(() =>
+    groupEntries.value.filter((g) => g.entries.length > 0),
 );
 
 const flatResults = computed<T[]>(() => {
@@ -230,23 +246,26 @@ const flatResults = computed<T[]>(() => {
     return (props.results ?? []) as T[];
 });
 
+const resultEntries = computed<ResultEntry<T>[]>(() => {
+    if (isGrouped.value) {
+        return groupEntries.value.flatMap((g) => g.entries);
+    }
+    return flatResults.value.map((item) => ({
+        kind: "result",
+        optionId: `${id}-option-${item.id}`,
+        item,
+    }));
+});
+
 const resultCount = computed(() => flatResults.value.length);
 const actionCount = computed(() => props.actions.length);
-
-function resultOptionId(item: T) {
-    return `${id}-option-${item.id}`;
-}
 
 function actionOptionId(action: GSearchAction) {
     return `${id}-action-${action.id}`;
 }
 
 const navigableItems = computed<NavigableEntry<T>[]>(() => [
-    ...flatResults.value.map((item) => ({
-        kind: "result" as const,
-        optionId: resultOptionId(item),
-        item,
-    })),
+    ...resultEntries.value,
     ...props.actions.map((action) => ({
         kind: "action" as const,
         optionId: actionOptionId(action),
@@ -490,8 +509,11 @@ watch(
                 ref="listboxRef"
                 aria-label="Search results"
             >
-                <template v-if="nonEmptyGroups.length > 0">
-                    <template v-for="group in nonEmptyGroups" :key="group.type">
+                <template v-if="nonEmptyGroupEntries.length > 0">
+                    <template
+                        v-for="{ group, entries } in nonEmptyGroupEntries"
+                        :key="group.type"
+                    >
                         <div
                             class="g-search-group"
                             role="group"
@@ -503,25 +525,24 @@ watch(
                                 </div>
                             </slot>
                             <div
-                                v-for="item in group.items"
-                                :key="item.id"
-                                :id="resultOptionId(item)"
+                                v-for="entry in entries"
+                                :key="entry.item.id"
+                                :id="entry.optionId"
                                 class="g-search-option"
                                 :class="{
                                     'g-search-option-active':
                                         activeEntry?.optionId ===
-                                        resultOptionId(item),
+                                        entry.optionId,
                                 }"
                                 role="option"
                                 @mousedown.prevent
-                                @click="selectResult(item)"
+                                @click="selectResult(entry.item)"
                                 :aria-selected="
-                                    activeEntry?.optionId ===
-                                    resultOptionId(item)
+                                    activeEntry?.optionId === entry.optionId
                                 "
                             >
-                                <slot name="option" :option="item">
-                                    {{ item.title }}
+                                <slot name="option" :option="entry.item">
+                                    {{ entry.item.title }}
                                 </slot>
                             </div>
                         </div>
@@ -529,23 +550,21 @@ watch(
                 </template>
                 <template v-else-if="resultCount > 0">
                     <div
-                        v-for="item in flatResults"
-                        :key="item.id"
-                        :id="resultOptionId(item)"
+                        v-for="entry in resultEntries"
+                        :key="entry.item.id"
+                        :id="entry.optionId"
                         class="g-search-option"
                         :class="{
                             'g-search-option-active':
-                                activeEntry?.optionId === resultOptionId(item),
+                                activeEntry?.optionId === entry.optionId,
                         }"
                         role="option"
                         @mousedown.prevent
-                        @click="selectResult(item)"
-                        :aria-selected="
-                            activeEntry?.optionId === resultOptionId(item)
-                        "
+                        @click="selectResult(entry.item)"
+                        :aria-selected="activeEntry?.optionId === entry.optionId"
                     >
-                        <slot name="option" :option="item">
-                            {{ item.title }}
+                        <slot name="option" :option="entry.item">
+                            {{ entry.item.title }}
                         </slot>
                     </div>
                 </template>

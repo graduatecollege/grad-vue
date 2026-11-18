@@ -864,6 +864,64 @@ describe("GSearch", () => {
         });
     });
 
+    describe("Duplicate items across groups", () => {
+        it("gives each rendered option a unique id and highlights only the active one", async () => {
+            const onSelect = vi.fn();
+            const items = [
+                { id: "1", title: "Option 1" },
+                { id: "2", title: "Option 2" },
+            ];
+            const { container } = mnt(GSearch, {
+                props: {
+                    modelValue: "",
+                    results: [
+                        {
+                            type: "exact",
+                            label: "Exact Match",
+                            items: [items[1]],
+                        },
+                        { type: "all", label: "Options", items },
+                    ] satisfies GSearchGroup<Student>[],
+                    onSelect,
+                },
+            });
+
+            const input = container.getByRole("combobox");
+            await userEvent.type(input, "opt{ArrowDown}");
+
+            const exact = container
+                .getByRole("group", { name: "Exact Match" })
+                .getByRole("option", { name: "Option 2" });
+            const normal = container
+                .getByRole("group", { name: "Options" })
+                .getByRole("option", { name: "Option 2" });
+
+            await expect
+                .element(exact)
+                .toHaveAttribute("aria-selected", "true");
+            await expect
+                .element(normal)
+                .toHaveAttribute("aria-selected", "false");
+            await expect
+                .element(input)
+                .toHaveAttribute("aria-activedescendant", exact.element().id);
+
+            const ids = container
+                .getByRole("option")
+                .elements()
+                .map((el) => el.id);
+            expect(new Set(ids).size).toBe(ids.length);
+
+            await userEvent.type(input, "{ArrowDown}{ArrowDown}");
+            await expect
+                .element(normal)
+                .toHaveAttribute("aria-selected", "true");
+            await expect
+                .element(exact)
+                .toHaveAttribute("aria-selected", "false");
+        });
+    });
+
     describe("Accessibility Tests", () => {
         it("with basic props", async () => {
             await testAccessibility(GSearch, {
@@ -949,6 +1007,34 @@ describe("GSearch", () => {
             await expect
                 .element(
                     container.getByRole("option", { name: "Search all terms" }),
+                )
+                .toHaveAttribute("aria-selected", "true");
+
+            await testAccessibility(container.element());
+        });
+
+        it("with the same item in two groups", async () => {
+            const items = [
+                { id: "1", title: "Alex Rivera" },
+                { id: "2", title: "Samira Patel" },
+            ];
+            const { container } = mnt(GSearch, {
+                props: {
+                    modelValue: "",
+                    results: [
+                        { type: "exact", label: "Exact Match", items: [items[0]] },
+                        { type: "students", label: "Students", items },
+                    ],
+                },
+            });
+
+            const input = container.getByRole("combobox");
+            await userEvent.type(input, "Al{ArrowDown}");
+            await expect
+                .element(
+                    container
+                        .getByRole("group", { name: "Exact Match" })
+                        .getByRole("option", { name: "Alex Rivera" }),
                 )
                 .toHaveAttribute("aria-selected", "true");
 
