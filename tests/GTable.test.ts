@@ -378,6 +378,27 @@ describe("GTable", () => {
             await expect.element(codeSortButton).toHaveAccessibleDescription("Sortable, not sorted");
             await expect.element(table).toHaveAccessibleName("Colleges");
         });
+        it("only shows hover styling on interactive column headers", async () => {
+            const { GTableFixture } = createMultiSortFixture();
+            const { container } = mnt(GTableFixture);
+            const staticHeader = container
+                .getByRole("columnheader", { name: "ID", exact: true })
+                .element()
+                .querySelector(".g-column-head") as HTMLElement;
+            const sortableHeader = container
+                .getByRole("button", { name: "Group", exact: true })
+                .element();
+            const staticHeaderColor = getComputedStyle(staticHeader).color;
+
+            await userEvent.hover(staticHeader);
+            expect(getComputedStyle(staticHeader).textDecorationLine).toBe("none");
+            expect(getComputedStyle(staticHeader).color).toBe(staticHeaderColor);
+
+            await userEvent.hover(sortableHeader);
+            expect(getComputedStyle(sortableHeader).textDecorationLine).toBe(
+                "underline",
+            );
+        });
         it("sorts rows by code in ascending order after clicking on code column header", async () => {
             const { GTableFixture } = createCollegesTableFixture();
             const { container } = mnt(GTableFixture);

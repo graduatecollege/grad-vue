@@ -1682,6 +1682,15 @@ g-table {
         display: inline-flex;
         align-items: center;
     }
+}
+
+th:first-of-type .g-column-head {
+    padding-left: 0;
+}
+
+button.g-column-head {
+    cursor: pointer;
+    height: 2rem;
 
     &:hover {
         text-decoration: underline;
@@ -1693,15 +1702,6 @@ g-table {
         color: var(--ilw-color--focus--text);
         outline-color: var(--ilw-color--focus--outline);
     }
-}
-
-th:first-of-type .g-column-head {
-    padding-left: 0;
-}
-
-button.g-column-head {
-    cursor: pointer;
-    height: 2rem;
 }
 
 .g-table {
