@@ -38,7 +38,7 @@
             "import": "./dist/grad-vue.css"
         },
         "./custom-elements": {
-            "types": "./dist/custom-elements.d.ts"
+            "types": "./dist/grad-vue-elements.d.ts"
         }
     },
     "customElements": "custom-elements.json",

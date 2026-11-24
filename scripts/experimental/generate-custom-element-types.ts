@@ -3,7 +3,7 @@
  * for the grad-vue web components from their Vue SFC sources.
  *
  * Outputs:
- *   packages/grad-vue/src/custom-elements.ts  – compiled by vue-tsc → dist/custom-elements.d.ts
+ *   packages/grad-vue/src/grad-vue-elements.ts – compiled by vue-tsc → dist/grad-vue-elements.d.ts
  *   packages/grad-vue/custom-elements.json    – CEM 2.0.0 for editors that support it
  *
  * Run: node --experimental-strip-types scripts/generate-custom-element-types.ts
@@ -426,7 +426,7 @@ function parseSFCFile(sfcAbsPath: string): Omit<ComponentEntry, keyof TagEntry> 
     return { isGeneric, props, models, emits, neededImports };
 }
 
-// ── Step 4: generate src/custom-elements.ts ───────────────────────────────────
+// ── Step 4: generate src/grad-vue-elements.ts ──────────────────────────────────
 
 function generateTypesFile(entries: ComponentEntry[]): string {
     const lines: string[] = [
