@@ -7,6 +7,11 @@
  * injection. In custom-elements mode, use matching `form-key` values to pair
  * with a `GForm`.
  *
+ * A closed select follows native keyboard selection: type-ahead, Arrow Up /
+ * Arrow Down, Home, and End update the value immediately. Enter, Space, F4,
+ * and Alt + Arrow open the menu. While open, Enter commits the active option;
+ * Space is ignored to avoid accidental selection.
+ *
  * The component can be marked `searchable` to enable search functionality.
  * This turns it into a text input that filters the options. Filtering is
  * done with a simple lower-case string search that matches both the option
@@ -23,7 +28,15 @@ export default {};
 </script>
 
 <script setup lang="ts">
-import { computed, nextTick, ref, useId, watch, toRef } from "vue";
+import {
+    computed,
+    nextTick,
+    onBeforeUnmount,
+    ref,
+    useId,
+    watch,
+    toRef,
+} from "vue";
 import { useSelectDropdown, normalizeSelectOptions, type SelectOption } from "../compose/useSelectDropdown.ts";
 import { useFormField } from "../compose/useFormField.ts";
 import GFormErrorMessages from "./form/GFormErrorMessages.vue";
@@ -116,6 +129,8 @@ const open = ref(false);
 const activeIndex = ref(0);
 const ignoreBlur = ref(false);
 const ignoreFocus = ref(false);
+const typeaheadQuery = ref("");
+let typeaheadTimer: ReturnType<typeof setTimeout> | undefined;
 
 const { displayErrors, hasErrors } = useFormField({
     name: props.name,
@@ -154,28 +169,51 @@ const selectedIndex = computed(() => {
     return filteredOptions.value.findIndex((opt) => opt.value === model.value);
 });
 
+const activeOptionId = computed(() => {
+    if (
+        !open.value ||
+        activeIndex.value < 0 ||
+        activeIndex.value >= filteredOptions.value.length
+    ) {
+        return undefined;
+    }
+    return `${baseId}-option-${activeIndex.value}`;
+});
+
 watch(
     () => model.value,
     (val) => {
         const idx = filteredOptions.value.findIndex((opt) => opt.value === val);
-        if (idx !== -1) {
-            activeIndex.value = idx;
+        activeIndex.value = idx !== -1 ? idx : 0;
+    },
+);
+
+watch(
+    () => props.disabled,
+    (disabled) => {
+        if (disabled) {
+            closeMenu();
         }
     },
 );
+
+function clearTypeahead() {
+    typeaheadQuery.value = "";
+    clearTimeout(typeaheadTimer);
+    typeaheadTimer = undefined;
+}
+
+onBeforeUnmount(clearTypeahead);
 
 function openMenu() {
     if (props.disabled) {
         return;
     }
+    clearTypeahead();
     open.value = true;
+    activeIndex.value = selectedIndex.value !== -1 ? selectedIndex.value : 0;
     if (props.searchable) {
         searchQuery.value = "";
-        // If a value is selected, highlight it in filtered list
-        const idx = filteredOptions.value.findIndex(
-            (opt) => opt.value === model.value,
-        );
-        activeIndex.value = idx !== -1 ? idx : 0;
         nextTick(() => {
             if (comboInputRef.value) {
                 comboInputRef.value.focus();
@@ -186,6 +224,7 @@ function openMenu() {
 
 function closeMenu() {
     open.value = false;
+    clearTypeahead();
     if (props.searchable) {
         searchQuery.value = "";
     }
@@ -239,12 +278,20 @@ function onComboBlur(e: FocusEvent) {
     closeMenu();
 }
 
-function selectOption(idx: number) {
+function commitOption(idx: number) {
     const opt = filteredOptions.value[idx];
-    if (opt && opt.value !== model.value) {
+    if (!opt) {
+        return;
+    }
+    activeIndex.value = idx;
+    if (opt.value !== model.value) {
         model.value = opt.value;
         emit("change", opt.value);
     }
+}
+
+function selectOption(idx: number) {
+    commitOption(idx);
     ignoreFocus.value = true;
     closeMenu();
     // We want to ignore the focus just briefly so it doesn't re-open
@@ -264,12 +311,78 @@ function onComboClick() {
     }
 }
 
+function typeahead(e: KeyboardEvent): boolean {
+    if (
+        props.searchable ||
+        e.defaultPrevented ||
+        e.key === " " ||
+        e.key.length !== 1 ||
+        e.altKey ||
+        e.ctrlKey ||
+        e.metaKey
+    ) {
+        return false;
+    }
+
+    e.preventDefault();
+    const key = e.key.toLocaleLowerCase();
+    const isRepeatedCharacter =
+        typeaheadQuery.value.length > 0 &&
+        [...typeaheadQuery.value].every((character) => character === key);
+    typeaheadQuery.value = isRepeatedCharacter
+        ? key
+        : typeaheadQuery.value + key;
+    clearTimeout(typeaheadTimer);
+    typeaheadTimer = setTimeout(clearTypeahead, 1000);
+
+    const options = filteredOptions.value;
+    const currentIndex = open.value
+        ? activeIndex.value
+        : selectedIndex.value;
+    const startIndex =
+        currentIndex >= 0 && currentIndex < options.length ? currentIndex : -1;
+    const matchIndex = options
+        .map((_, offset) => (startIndex + offset + 1) % options.length)
+        .find(
+            (index) =>
+                options[index].label
+                    .toLocaleLowerCase()
+                    .startsWith(typeaheadQuery.value),
+        );
+
+    if (matchIndex !== undefined) {
+        if (open.value) {
+            activeIndex.value = matchIndex;
+            scrollOptionIntoView();
+        } else {
+            commitOption(matchIndex);
+        }
+    }
+    return true;
+}
+
 function onComboKeydown(e: KeyboardEvent) {
-    if (props.disabled) {
+    if (props.disabled || e.target !== e.currentTarget) {
         return;
     }
     const max = filteredOptions.value.length - 1;
-    if (!open.value && ["ArrowDown", "ArrowUp", "Enter", " "].includes(e.key)) {
+
+    if (
+        e.key === "F4" ||
+        (e.altKey && (e.key === "ArrowDown" || e.key === "ArrowUp"))
+    ) {
+        e.preventDefault();
+        if (!open.value) {
+            openMenu();
+        }
+        return;
+    }
+
+    if (typeahead(e)) {
+        return;
+    }
+
+    if (!open.value && ["Enter", " "].includes(e.key)) {
         e.preventDefault();
         openMenu();
         return;
@@ -277,8 +390,19 @@ function onComboKeydown(e: KeyboardEvent) {
     switch (e.key) {
         case "ArrowDown":
             e.preventDefault();
-            if (!open.value) {
+            if (props.searchable && !open.value) {
                 openMenu();
+                break;
+            }
+            if (max < 0) {
+                break;
+            }
+            if (!open.value) {
+                const nextIndex =
+                    selectedIndex.value === -1
+                        ? 0
+                        : Math.min(max, selectedIndex.value + 1);
+                commitOption(nextIndex);
             } else {
                 activeIndex.value = Math.min(max, activeIndex.value + 1);
                 scrollOptionIntoView();
@@ -286,22 +410,47 @@ function onComboKeydown(e: KeyboardEvent) {
             break;
         case "ArrowUp":
             e.preventDefault();
-            if (!open.value) {
+            if (props.searchable && !open.value) {
                 openMenu();
+                break;
+            }
+            if (max < 0) {
+                break;
+            }
+            if (!open.value) {
+                const nextIndex =
+                    selectedIndex.value === -1
+                        ? max
+                        : Math.max(0, selectedIndex.value - 1);
+                commitOption(nextIndex);
             } else {
                 activeIndex.value = Math.max(0, activeIndex.value - 1);
                 scrollOptionIntoView();
             }
             break;
         case "Home":
+            if (props.searchable || max < 0) {
+                return;
+            }
             e.preventDefault();
-            activeIndex.value = 0;
-            scrollOptionIntoView();
+            if (open.value) {
+                activeIndex.value = 0;
+                scrollOptionIntoView();
+            } else {
+                commitOption(0);
+            }
             break;
         case "End":
+            if (props.searchable || max < 0) {
+                return;
+            }
             e.preventDefault();
-            activeIndex.value = max;
-            scrollOptionIntoView();
+            if (open.value) {
+                activeIndex.value = max;
+                scrollOptionIntoView();
+            } else {
+                commitOption(max);
+            }
             break;
         case "Enter":
             e.preventDefault();
@@ -310,6 +459,12 @@ function onComboKeydown(e: KeyboardEvent) {
             } else {
                 openMenu();
             }
+            break;
+        case " ":
+            if (props.searchable) {
+                return;
+            }
+            e.preventDefault();
             break;
         case "Escape":
             if (isTop.value) {
@@ -392,8 +547,10 @@ function clearValue() {
                      :aria-expanded="open ? 'true' : 'false'"
                      :aria-required="props.required ? 'true' : undefined"
                      aria-haspopup="listbox"
-                    :aria-activedescendant="
-                        open ? baseId + '-option-' + activeIndex : undefined
+                    :aria-activedescendant="activeOptionId"
+                    :aria-invalid="hasErrors ? 'true' : 'false'"
+                    :aria-describedby="
+                        hasErrors ? 'error-message-' + baseId : undefined
                     "
                     v-bind="
                         hiddenLabel
@@ -447,16 +604,19 @@ function clearValue() {
                 :aria-controls="baseId + '-listbox'"
                  :aria-expanded="open ? 'true' : 'false'"
                  :aria-required="props.required ? 'true' : undefined"
+                 :aria-disabled="props.disabled ? 'true' : undefined"
+                 :aria-invalid="hasErrors ? 'true' : 'false'"
+                 :aria-describedby="
+                     hasErrors ? 'error-message-' + baseId : undefined
+                 "
                  aria-haspopup="listbox"
                 v-bind="
                     hiddenLabel
                         ? { 'aria-label': props.label }
                         : { 'aria-labelledby': baseId + '-label' }
                 "
-                :aria-activedescendant="
-                    open ? baseId + '-option-' + activeIndex : undefined
-                "
-                tabindex="0"
+                :aria-activedescendant="activeOptionId"
+                :tabindex="props.disabled ? -1 : 0"
                 @click="onComboClick"
                 @keydown="onComboKeydown"
                 @focus="onComboFocus"
@@ -615,7 +775,8 @@ g-select {
         box-shadow: 0 0 0 2px var(--g-info-200);
     }
 
-    &:disabled {
+    &:disabled,
+    &[aria-disabled="true"] {
         opacity: 0.6;
         cursor: not-allowed;
     }
@@ -769,4 +930,3 @@ g-select {
     background: var(--g-danger-100);
 }
 </style>
-

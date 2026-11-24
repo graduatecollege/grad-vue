@@ -8,9 +8,18 @@ import { GSelect } from "@illinois-grad/grad-vue";
 const selectedValue = ref<string | number | undefined>(undefined);
 const searchableValue = ref<string | number | undefined>(undefined);
 const selectOptions = ref([
-    { value: "option1", label: "Option 1" },
-    { value: "option2", label: "Option 2" },
-    { value: "option3", label: "Option 3" },
+    { value: "accountancy", label: "Accountancy" },
+    { value: "aerospace-engineering", label: "Aerospace Engineering" },
+    { value: "architecture", label: "Architecture" },
+    { value: "bioengineering", label: "Bioengineering" },
+    { value: "business-administration", label: "Business Administration" },
+    { value: "computer-science", label: "Computer Science" },
+    { value: "creative-writing", label: "Creative Writing" },
+    { value: "education-policy", label: "Education Policy" },
+    { value: "library-information-science", label: "Library & Information Science" },
+    { value: "psychology", label: "Psychology" },
+    { value: "social-work", label: "Social Work" },
+    { value: "urban-regional-planning", label: "Urban and Regional Planning" },
 ]);
 const collegeValue = ref<string | number | undefined>(undefined);
 const collegeOptions = ref([
@@ -142,6 +151,10 @@ custom styling.</p>
 <p>In standard Vue usage, this registers with the nearest parent <code>GForm</code> via
 injection. In custom-elements mode, use matching <code>form-key</code> values to pair
 with a <code>GForm</code>.</p>
+<p>A closed select follows native keyboard selection: type-ahead, Arrow Up /
+Arrow Down, Home, and End update the value immediately. Enter, Space, F4,
+and Alt + Arrow open the menu. While open, Enter commits the active option;
+Space is ignored to avoid accidental selection.</p>
 <p>The component can be marked <code>searchable</code> to enable search functionality.
 This turns it into a text input that filters the options. Filtering is
 done with a simple lower-case string search that matches both the option

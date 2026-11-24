@@ -1266,6 +1266,11 @@ In standard Vue usage, this registers with the nearest parent `GForm` via
 injection. In custom-elements mode, use matching `form-key` values to pair
 with a `GForm`.
 
+A closed select follows native keyboard selection: type-ahead, Arrow Up /
+Arrow Down, Home, and End update the value immediately. Enter, Space, F4,
+and Alt + Arrow open the menu. While open, Enter commits the active option;
+Space is ignored to avoid accidental selection.
+
 The component can be marked `searchable` to enable search functionality.
 This turns it into a text input that filters the options. Filtering is
 done with a simple lower-case string search that matches both the option

@@ -144,7 +144,10 @@ export function useSelectDropdown({
         if (val) {
             push();
             addWindowListeners();
-            nextTick(() => updateMenuPlacement());
+            nextTick(() => {
+                updateMenuPlacement();
+                scrollOptionIntoView();
+            });
         } else {
             pop();
             removeListeners();
