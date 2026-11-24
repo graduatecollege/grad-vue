@@ -1,7 +1,7 @@
 {
     "mode": "COMMIT",
     "template": "#{{CHANGELOG}}",
-    "commit_template": "- #{{RELEASE_NOTE}} ([#{{SHORT_SHA}}](https://github.com/#{{OWNER}}/#{{REPO}}/commit/#{{MERGE_SHA}}))",
+    "commit_template": "- #{{TITLE}} ([#{{MERGE_SHA}}](https://github.com/#{{OWNER}}/#{{REPO}}/commit/#{{MERGE_SHA}}))",
     "categories": [
         {
             "title": "## Features",
@@ -10,30 +10,21 @@
         {
             "title": "## Bug Fixes",
             "labels": ["fix"]
-        }
-    ],
-    "custom_placeholders": [
-        {
-            "name": "RELEASE_NOTE",
-            "source": "BODY",
-            "transformer": {
-                "pattern": "^[^\\n]*\\n+([\\s\\S]*?)(?:\\n+Co-authored-by:.*)?$",
-                "target": "$1"
-            }
         },
         {
-            "name": "SHORT_SHA",
-            "source": "MERGE_SHA",
-            "transformer": {
-                "pattern": "^(.{7}).*$",
-                "target": "$1"
-            }
+            "title": "## Dependency Updates",
+            "labels": ["deps"]
         }
     ],
     "label_extractor": [
         {
             "pattern": "^(feat|fix)(?:\\([^)]+\\))?!?:.*$",
             "target": "$1",
+            "on_property": "title"
+        },
+        {
+            "pattern": "^deps(?:\\([^)]+\\))?!?:.*$",
+            "target": "deps",
             "on_property": "title"
         }
     ],

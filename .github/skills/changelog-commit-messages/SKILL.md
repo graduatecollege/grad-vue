@@ -26,7 +26,6 @@ Common examples:
 - Tests only
 - Deployment or CI changes
 - Refactors with no user-facing behavior change
-- Dependency updates
 - Internal cleanup
 - Build tooling or configuration changes
 
@@ -67,6 +66,16 @@ Guidance:
 - The title should name the added capability for developers.
 - The body should explain the user benefit in plain language.
 
+### 4. `deps:`
+
+Use `deps:` for dependency-only updates that should appear in a dependency
+updates section of the release notes.
+
+Examples:
+
+- Application or development dependency upgrades
+- Coordinated dependency maintenance that has no separate user-facing story
+
 ## Required Structure
 
 Write commits in this format:
@@ -79,7 +88,7 @@ Write commits in this format:
 
 Rules:
 
-- Use `feat`, `fix`, or `chore` as the type.
+- Use `feat`, `fix`, `chore`, or `deps` as the type.
 - Keep the first line technical enough for developers to scan history quickly.
 - Treat the body as release-note text that can be published as written.
 - If the change is a `chore:` with no user-facing effect, the body should usually be omitted.
@@ -110,21 +119,23 @@ The body must not mention:
 ## Decision Process
 
 1. Ask whether a user would notice the change without reading code or release notes.
-2. If no, use `chore:`.
-3. If yes and it fixes something broken or incorrect, use `fix:`.
-4. If yes and it adds or expands capability, use `feat:`.
-5. If the repo contains mixed changes that belong to different types or different user-facing stories, split them into multiple commits.
-6. Keep unrelated chores separate from user-facing `feat:` or `fix:` commits whenever possible.
-7. Write the first line for developers.
-8. Write the body as release-note text for users.
-9. Remove any technical detail from the body.
-10. If the body still reads like engineering work, either rewrite it in user language or downgrade the commit to `chore:`.
+2. If the change only updates dependencies, use `deps:`.
+3. If no user-visible outcome remains, use `chore:`.
+4. If yes and it fixes something broken or incorrect, use `fix:`.
+5. If yes and it adds or expands capability, use `feat:`.
+6. If the repo contains mixed changes that belong to different types or different user-facing stories, split them into multiple commits.
+7. Keep unrelated chores separate from user-facing `feat:`, `fix:`, or `deps:` commits whenever possible.
+8. Write the first line for developers.
+9. Write the body as release-note text for users.
+10. Remove any technical detail from the body.
+11. If the body still reads like engineering work, either rewrite it in user language or downgrade the commit to `chore:`.
 
 ## Version Bumps
 
 If the user asks for bumping, using `bump`, or calling `bump` as part of the process:
 
 - Run `bump.sh` from the repository root.
+- Treat `bump.sh` as a global tool available on `PATH`; do not assume it is checked into the repository.
 - Use no arguments by default.
 - If the user explicitly asks for `major` or `minor`, pass that argument to `bump.sh`.
 - Do not invent other bump arguments unless the user specifies them.
