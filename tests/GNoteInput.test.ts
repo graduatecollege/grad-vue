@@ -91,6 +91,32 @@ describe("GNoteInput", () => {
             const renderedText = renderTipTapText(model.value);
             expect(renderedText).toBe('Hello World');
         });
+
+        it("turns a typed list marker into a list and preserves the item text", async () => {
+            const model = ref<object | "">("");
+            const { container } = mnt(GNoteInput, {
+                props: { modelValue: "" },
+                model,
+            });
+
+            const editor = container.getByRole("textbox", { name: "Note input" });
+            await editor.click();
+            await userEvent.keyboard("- First item");
+
+            await expect.element(editor.getByRole("listitem")).toHaveTextContent("First item");
+            expect(model.value).toMatchObject({
+                content: [{
+                    type: "bulletList",
+                    content: [{
+                        type: "listItem",
+                        content: [{
+                            type: "paragraph",
+                            content: [{ type: "text", text: "First item" }],
+                        }],
+                    }],
+                }],
+            });
+        });
     });
 
     describe("Accessibility Tests", () => {
